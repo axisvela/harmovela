@@ -9,6 +9,7 @@ description = "Draft Agent Event Protocol Python reference implementation."
 requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2",
+    "jsonschema>=4",
 ]
 
 [project.optional-dependencies]

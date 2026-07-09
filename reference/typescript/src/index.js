@@ -11,3 +11,4 @@ export { StdioTransport, MockStdioTransport } from "./transport/stdio.js";
 export { WsServerTransport, WsClientTransport } from "./transport/websocket.js";
 export { SseServerTransport, SseClientTransport } from "./transport/sse.js";
 export { McpBridge, asyncToolHandler } from "./bridge/mcp-bridge.js";
+export { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema } from "./schema.js";

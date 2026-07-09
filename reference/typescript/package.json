@@ -13,6 +13,7 @@
     "test": "node --test"
   },
   "dependencies": {
+    "ajv": "^8.20.0",
     "ws": "^8.18.0"
   },
   "engines": {

@@ -1,4 +1,5 @@
 import { validateEnvelope } from "./validate.js";
+import { isValidBySchema } from "./schema.js";
 import { AepSession } from "./session.js";
 import { TaskTracker } from "./task.js";
 import { EventRouter } from "./router.js";
@@ -9,6 +10,7 @@ export class AepHarness {
   constructor(options = {}) {
     this.source = options.source ?? "harness:aep";
     this.now = options.now ?? (() => new Date().toISOString());
+    this.useSchemaValidation = options.useSchemaValidation ?? false;
     this._sequence = 0;
     this._subscriptions = new Map();
     this._tasks = new Map();
@@ -39,6 +41,13 @@ export class AepHarness {
       return [this._event("event.rejected", value, {
         errors,
         error: errorPayload(ErrorCode.INVALID_ENVELOPE, errors[0])
+      })];
+    }
+
+    if (this.useSchemaValidation && !isValidBySchema(value, "envelope")) {
+      return [this._event("event.rejected", value, {
+        errors: ["schema validation failed"],
+        error: errorPayload(ErrorCode.INVALID_ENVELOPE, "envelope does not conform to JSON Schema")
       })];
     }
 

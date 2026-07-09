@@ -6,6 +6,7 @@ from .session import AepSession
 from .task import TaskTracker, TaskState
 from .router import EventRouter
 from .harness import AepHarness
+from .schema_validator import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
 
 __all__ = [
     "ErrorCode", "error_payload", "is_retryable",
@@ -16,4 +17,5 @@ __all__ = [
     "TaskTracker", "TaskState",
     "EventRouter",
     "AepHarness",
+    "validate_envelope_schema", "validate_subscription_schema", "is_valid_by_schema",
 ]
