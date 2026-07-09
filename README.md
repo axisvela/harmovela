@@ -73,7 +73,7 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `reference/` — language-specific reference implementations
 - `reference/typescript/` — first runnable AEP draft harness
 - `reference/python/` — planned second-priority reference implementation
-- `reference/go/` — planned infrastructure-oriented reference implementation
+- `reference/go/` — draft reference implementation with C0/C1 conformance
 - `reference/java/` — planned JVM reference implementation
 - `.github/workflows/` — repository CI
 
