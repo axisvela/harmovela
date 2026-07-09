@@ -54,6 +54,20 @@ func TestRouterCollectsMultipleResponses(t *testing.T) {
 	}
 }
 
+func TestRouterHandlesSliceOfAnyResponses(t *testing.T) {
+	r := NewEventRouter()
+	r.OnAll(func(event map[string]any) any {
+		return []any{
+			map[string]any{"type": "event.acknowledged"},
+			map[string]any{"type": "task.completed"},
+		}
+	})
+	results := r.Dispatch(map[string]any{"type": "task.started"})
+	if len(results) != 2 {
+		t.Fatalf("expected 2 results from []any, got %d", len(results))
+	}
+}
+
 func TestRouterNoMatchReturnsEmpty(t *testing.T) {
 	r := NewEventRouter()
 	r.On(func(event map[string]any) bool {
