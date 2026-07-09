@@ -4,48 +4,31 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { validateEnvelope } from "../src/index.js";
+import { isValidBySchema } from "../src/schema.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const conformanceDir = resolve(here, "../../../conformance/fixtures");
+const conformanceDir = resolve(here, "../../../conformance");
+const manifest = JSON.parse(readFileSync(resolve(conformanceDir, "manifest.json"), "utf8"));
 
-test("shared task lifecycle fixture contains valid envelopes", () => {
-  const events = readNdjson(resolve(conformanceDir, "task-lifecycle.ndjson"));
-
-  assert.equal(events.length, 3);
-  assert.deepEqual(events.map((event) => event.type), ["task.submitted", "task.progress", "task.completed"]);
-  assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
+test("conformance manifest declares known draft levels", () => {
+  assert.deepEqual(manifest.levels, ["AEP-C0", "AEP-C1", "AEP-C2"]);
+  assert.equal(manifest.default_target_level, "AEP-C1");
 });
 
-test("shared memory/context/ack fixture contains valid envelopes", () => {
-  const events = readNdjson(resolve(conformanceDir, "memory-context-ack.ndjson"));
+for (const fixture of manifest.fixtures) {
+  test(`${fixture.level} ${fixture.path} contains valid envelopes`, () => {
+    const events = readNdjson(resolve(conformanceDir, fixture.path));
 
-  assert.equal(events.length, 4);
-  assert.deepEqual(events.map((event) => event.type), [
-    "subscription.requested",
-    "memory.fact.added",
-    "context.invalidated",
-    "event.acknowledged"
-  ]);
-  assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
-});
-
-test("shared delivery fixture contains valid envelopes", () => {
-  const events = readNdjson(resolve(conformanceDir, "delivery.ndjson"));
-
-  assert.equal(events.length, 5);
-  assert.deepEqual(events.map((event) => event.type), [
-    "task.submitted",
-    "task.progress",
-    "event.acknowledged",
-    "event.redelivered",
-    "event.dead_lettered"
-  ]);
-  assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
-});
+    assert.deepEqual(events.map((event) => event.type), fixture.expected_types);
+    assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
+    assert.equal(events.every((event) => isValidBySchema(event, "envelope")), true);
+  });
+}
 
 function readNdjson(path) {
   return readFileSync(path, "utf8")
     .trim()
     .split("\n")
+    .filter(Boolean)
     .map((line) => JSON.parse(line));
 }
