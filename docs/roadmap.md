@@ -68,7 +68,7 @@ Deliverables:
 - MCP tool call to AEP task bridge (`reference/typescript/src/bridge/mcp-bridge.js`)
 - AEP task completion events from MCP tools
 - Example MCP server emitting AEP events (`reference/typescript/examples/mcp-bridge/demo.js`)
-- Example agent consuming both MCP and AEP
+- Example agent consuming both MCP and AEP (`reference/typescript/examples/mcp-aep-consumer.js`)
 
 ## Phase 5: Reliability And Production Semantics
 
