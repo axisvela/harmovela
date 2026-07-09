@@ -34,6 +34,12 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 - [x] Add protocol error model with standard error codes.
 - [x] Add event router with type-pattern dispatch.
 - [x] Add session flow conformance fixture.
+- [x] Write session lifecycle specification (`docs/specs/session.md`).
+- [x] Write subscription model specification (`docs/specs/subscription.md`).
+- [x] Write task lifecycle specification (`docs/specs/task-lifecycle.md`).
+- [x] Write error model specification (`docs/specs/error-model.md`).
+- [x] Write versioning rules specification (`docs/specs/versioning.md`).
+- [x] Update README, roadmap, AGENTS.md, CLAUDE.md with new spec references.
 
 ## Verification
 

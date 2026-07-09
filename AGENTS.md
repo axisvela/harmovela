@@ -30,6 +30,11 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `docs/protocol-design.md` | Envelope, event families, lifecycle, subscriptions |
 | `docs/mcp-relationship.md` | MCP comparison and interop model |
 | `docs/roadmap.md` | Milestones toward a usable open protocol |
+| `docs/specs/session.md` | Session lifecycle specification |
+| `docs/specs/subscription.md` | Subscription model specification |
+| `docs/specs/task-lifecycle.md` | Task lifecycle specification |
+| `docs/specs/error-model.md` | Error model specification |
+| `docs/specs/versioning.md` | Versioning rules specification |
 | `docs/superpowers/specs/` | Superpowers-backed design specs |
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |

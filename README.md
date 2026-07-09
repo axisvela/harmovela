@@ -51,10 +51,16 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/protocol-design.md` — initial protocol model, envelope, events, and lifecycle
 - `docs/mcp-relationship.md` — detailed comparison and interop model with MCP
 - `docs/roadmap.md` — proposed phases toward a usable open protocol
+- `docs/specs/session.md` — session lifecycle specification
+- `docs/specs/subscription.md` — subscription model specification
+- `docs/specs/task-lifecycle.md` — task lifecycle specification
+- `docs/specs/error-model.md` — error model specification
+- `docs/specs/versioning.md` — versioning rules specification
 
 ## Repository Layout
 
-- `docs/` — protocol vision, architecture, design drafts, roadmap, and Superpowers artifacts
+- `docs/` — protocol vision, architecture, design drafts, specifications, roadmap, and Superpowers artifacts
+- `docs/specs/` — per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning)
 - `schemas/` — shared draft JSON Schema assets
 - `conformance/` — shared fixtures for reference implementation parity
 - `reference/` — language-specific reference implementations

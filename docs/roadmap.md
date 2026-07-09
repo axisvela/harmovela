@@ -18,14 +18,14 @@ Goal: produce a minimal implementable protocol specification.
 
 Deliverables:
 
-- Event envelope JSON Schema
-- Standard event type registry
-- Session and capability negotiation spec
-- Subscription spec
-- Task lifecycle spec
-- Error model
-- Versioning rules
-- Shared conformance fixtures for reference implementations
+- Event envelope JSON Schema (`schemas/aep-envelope.schema.json`)
+- Standard event type registry (`reference/typescript/src/event-types.js`)
+- Session and capability negotiation spec (`docs/specs/session.md`)
+- Subscription spec (`docs/specs/subscription.md`)
+- Task lifecycle spec (`docs/specs/task-lifecycle.md`)
+- Error model (`docs/specs/error-model.md`)
+- Versioning rules (`docs/specs/versioning.md`)
+- Shared conformance fixtures for reference implementations (`conformance/fixtures/`)
 
 ## Phase 2: Transport Bindings
 
