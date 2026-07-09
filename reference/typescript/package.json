@@ -10,6 +10,9 @@
   "scripts": {
     "harness": "node ./src/stdio.js",
     "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
+    "demo:async-tool": "node ./examples/async-tool-producer.js",
+    "demo:memory": "node ./examples/memory-event-producer.js",
+    "demo:agent": "node ./examples/agent-subscriber.js",
     "test": "node --test"
   },
   "dependencies": {

@@ -14,6 +14,15 @@ Run the stdio harness:
 npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson
 ```
 
+Run examples:
+
+```sh
+npm run demo:async-tool
+npm run demo:memory
+npm run demo:agent
+npm run demo:mcp-bridge
+```
+
 Current scope:
 
 - Envelope required-field validation
@@ -24,4 +33,9 @@ Current scope:
 - Standard error model with typed error codes and retryability
 - Event router with type-pattern dispatch
 - Stdio newline-delimited JSON harness
+- WebSocket and HTTP SSE transport bindings
+- JSON Schema validation with shared schemas
+- Delivery tracking with ack/retry/dead-letter helpers
+- MCP bridge and demo
+- Async tool producer, memory event producer, and agent subscriber demos
 - Deterministic shared fixtures from `../../conformance/fixtures/`

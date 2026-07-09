@@ -98,7 +98,16 @@ Run the stdio harness:
 cd reference/typescript && npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson
 ```
 
-The harness currently validates draft envelope fields, checks event types against the standard registry, creates subscriptions, acknowledges valid events, and rejects invalid envelopes.
+Run examples:
+
+```sh
+cd reference/typescript && npm run demo:async-tool
+cd reference/typescript && npm run demo:memory
+cd reference/typescript && npm run demo:agent
+cd reference/typescript && npm run demo:mcp-bridge
+```
+
+The harness validates draft envelope fields, checks event types against the standard registry, creates subscriptions, tracks task lifecycle, supports stdio/WebSocket/SSE transports, validates shared JSON Schemas, and demonstrates MCP interop.
 
 ## Status
 

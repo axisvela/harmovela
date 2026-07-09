@@ -54,9 +54,9 @@ Deliverables:
 - Python reference client
 - JSON Schema validation
 - Simple local router
-- Example async tool
-- Example memory event producer
-- Example agent subscriber
+- Example async tool (`reference/typescript/examples/async-tool-producer.js`)
+- Example memory event producer (`reference/typescript/examples/memory-event-producer.js`)
+- Example agent subscriber (`reference/typescript/examples/agent-subscriber.js`)
 - Cross-language conformance tests using shared fixtures
 
 ## Phase 4: MCP Bridge
