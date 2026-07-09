@@ -60,8 +60,8 @@ export async function runMcpAepConsumerDemo(options = {}) {
     }), { method: "tools/list" });
 
     const callSpecs = [
-      { id: 3, toolName: "web_crawl", arguments: { url: "https://example.com", depth: 2 } },
-      { id: 4, toolName: "index_docs", arguments: { path: "/docs" } }
+      { id: 3, toolName: "web_crawl", arguments: { _task_id: "task_demo_web_crawl", url: "https://example.com", depth: 2 } },
+      { id: 4, toolName: "index_docs", arguments: { _task_id: "task_demo_index_docs", path: "/docs" } }
     ];
 
     const calls = [];
@@ -99,6 +99,10 @@ export function parseTaskResult(response, context = {}) {
   const text = response?.result?.content?.find((item) => item.type === "text")?.text;
   if (typeof text !== "string") {
     throw new Error(`MCP ${context.toolName ?? "tool"} response did not include text content`);
+  }
+
+  if (response?.result?.isError) {
+    throw new Error(`MCP ${context.method ?? "request"} for ${context.toolName ?? "unknown"} failed: ${text}`);
   }
 
   let parsed;

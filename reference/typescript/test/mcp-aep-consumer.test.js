@@ -27,6 +27,17 @@ test("parseTaskResult rejects MCP error responses", () => {
   }, { method: "tools/call", toolName: "missing" }), /MCP tools\/call for missing failed: Unknown tool: missing/);
 });
 
+test("parseTaskResult rejects MCP tool-level error results", () => {
+  assert.throws(() => parseTaskResult({
+    jsonrpc: "2.0",
+    id: 1,
+    result: {
+      isError: true,
+      content: [{ type: "text", text: "something broke" }]
+    }
+  }, { method: "tools/call", toolName: "bad_tool" }), /MCP tools\/call for bad_tool failed: something broke/);
+});
+
 test("groupEventsByTask groups only task events with task_id", () => {
   const grouped = groupEventsByTask([
     { type: "task.accepted", task_id: "task_a" },
@@ -45,6 +56,7 @@ test("runMcpAepConsumerDemo correlates MCP task IDs with AEP lifecycle events", 
 
   assert.deepEqual(summary.tools.map((tool) => tool.name), ["web_crawl", "index_docs"]);
   assert.equal(summary.calls.length, 2);
+  assert.deepEqual(summary.calls.map((call) => call.task_id), ["task_demo_web_crawl", "task_demo_index_docs"]);
 
   for (const call of summary.calls) {
     assert.ok(call.task_id);
