@@ -91,7 +91,7 @@ Deliverables:
 
 - Public specification site
 - Compatibility test suite
-- Conformance levels
+- Conformance levels (`docs/specs/conformance.md`, `conformance/manifest.json`)
 - Event registry governance
 - Contribution guide
 - Security considerations

@@ -1,0 +1,39 @@
+{
+  "aep_version": "0.1",
+  "default_target_level": "AEP-C1",
+  "levels": ["AEP-C0", "AEP-C1", "AEP-C2"],
+  "fixtures": [
+    {
+      "path": "fixtures/task-lifecycle.ndjson",
+      "level": "AEP-C1",
+      "description": "Task submitted, progress, and completion lifecycle flow.",
+      "expectation": "stateful_flow",
+      "tags": ["task"],
+      "expected_types": ["task.submitted", "task.progress", "task.completed"]
+    },
+    {
+      "path": "fixtures/memory-context-ack.ndjson",
+      "level": "AEP-C0",
+      "description": "Subscription request followed by memory, context, and acknowledgement events.",
+      "expectation": "accept_all",
+      "tags": ["subscription", "memory", "context", "ack"],
+      "expected_types": ["subscription.requested", "memory.fact.added", "context.invalidated", "event.acknowledged"]
+    },
+    {
+      "path": "fixtures/session-flow.ndjson",
+      "level": "AEP-C1",
+      "description": "Capabilities, session open, subscription, and session close flow.",
+      "expectation": "stateful_flow",
+      "tags": ["session", "subscription"],
+      "expected_types": ["capabilities.requested", "session.opened", "subscription.requested", "session.closed"]
+    },
+    {
+      "path": "fixtures/delivery.ndjson",
+      "level": "AEP-C2",
+      "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
+      "expectation": "accept_all",
+      "tags": ["delivery", "ack", "reliability"],
+      "expected_types": ["task.submitted", "task.progress", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
+    }
+  ]
+}

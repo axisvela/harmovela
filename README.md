@@ -59,6 +59,7 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/specs/transport-stdio.md` — stdio transport specification
 - `docs/specs/transport-websocket.md` — WebSocket transport specification
 - `docs/specs/transport-sse.md` — HTTP SSE transport specification
+- `docs/specs/conformance.md` — draft conformance levels and shared fixture manifest rules
 
 ## Repository Layout
 
@@ -90,6 +91,12 @@ Run tests:
 
 ```sh
 cd reference/typescript && npm test
+```
+
+Run TypeScript conformance fixtures:
+
+```sh
+cd reference/typescript && npm run conformance
 ```
 
 Run the stdio harness:
