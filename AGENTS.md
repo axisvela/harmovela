@@ -43,7 +43,7 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
 | `reference/typescript/` | Primary runnable reference harness |
-| `reference/python/` | Planned Python reference implementation |
+| `reference/python/` | Second-priority Python reference implementation |
 | `reference/go/` | Planned Go reference implementation |
 | `reference/java/` | Planned Java reference implementation |
 | `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
