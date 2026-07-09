@@ -1,6 +1,12 @@
 # AEP TypeScript Reference
 
-This is the first runnable AEP draft harness. It is currently zero-dependency Node ESM so the protocol draft can be exercised without a build step.
+This is the first runnable AEP draft harness. It uses Node ESM so the protocol draft can be exercised without a build step.
+
+Install dependencies:
+
+```sh
+npm install
+```
 
 Run tests:
 

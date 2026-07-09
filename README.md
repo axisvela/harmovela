@@ -59,6 +59,9 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/specs/transport-stdio.md` — stdio transport specification
 - `docs/specs/transport-websocket.md` — WebSocket transport specification
 - `docs/specs/transport-sse.md` — HTTP SSE transport specification
+- `docs/specs/delivery.md` — delivery semantics, acknowledgement, and replay specification
+- `docs/specs/reliability.md` — retry, durability, and dead-letter handling specification
+- `docs/specs/security.md` — identity, authorization, audit, and tenant isolation specification
 - `docs/specs/conformance.md` — draft conformance levels and shared fixture manifest rules
 
 ## Repository Layout
@@ -85,11 +88,12 @@ This project uses Superpowers as its agent development harness. OpenCode loads i
 
 ## AEP Harness
 
-The repository includes a minimal local AEP 0.1 draft conformance harness. It is intentionally zero-dependency and uses newline-delimited JSON over stdio.
+The repository includes a minimal local AEP 0.1 draft conformance harness that uses newline-delimited JSON over stdio.
 
 Run tests:
 
 ```sh
+cd reference/typescript && npm install
 cd reference/typescript && npm test
 ```
 
@@ -119,4 +123,4 @@ The harness validates draft envelope fields, checks event types against the stan
 
 ## Status
 
-This repository currently contains the initial vision and design documents. The protocol is not yet finalized and should be treated as a design draft.
+This repository remains a draft and provisional protocol workspace. It now includes layered specifications, shared schemas and conformance fixtures, and ongoing TypeScript and Python reference work.
