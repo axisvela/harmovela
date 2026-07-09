@@ -8,6 +8,12 @@ Run tests:
 npm test
 ```
 
+Run conformance fixtures:
+
+```sh
+npm run conformance
+```
+
 Run the stdio harness:
 
 ```sh

@@ -9,7 +9,7 @@
       "description": "Task submitted, progress, and completion lifecycle flow.",
       "expectation": "stateful_flow",
       "tags": ["task"],
-      "expected_types": ["task.submitted", "task.progress", "task.completed"]
+      "expected_types": ["task.submitted", "task.accepted", "task.started", "task.progress", "task.completed"]
     },
     {
       "path": "fixtures/memory-context-ack.ndjson",

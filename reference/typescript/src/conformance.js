@@ -1,0 +1,96 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import { validateEnvelope } from "./validate.js";
+import { isValidBySchema } from "./schema.js";
+import { AepHarness } from "./harness.js";
+
+const LEVEL_ORDER = new Map([
+  ["AEP-C0", 0],
+  ["AEP-C1", 1],
+  ["AEP-C2", 2]
+]);
+
+const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "../../..");
+const conformanceDir = resolve(repoRoot, "conformance");
+
+export function loadManifest(path = resolve(conformanceDir, "manifest.json")) {
+  return JSON.parse(readFileSync(path, "utf8"));
+}
+
+export function shouldRunFixture(fixture, targetLevel) {
+  if (!LEVEL_ORDER.has(fixture.level)) {
+    throw new Error(`unknown fixture level: ${fixture.level}`);
+  }
+  if (!LEVEL_ORDER.has(targetLevel)) {
+    throw new Error(`unknown target level: ${targetLevel}`);
+  }
+  return LEVEL_ORDER.get(fixture.level) <= LEVEL_ORDER.get(targetLevel);
+}
+
+export function readNdjson(path) {
+  return readFileSync(path, "utf8")
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+}
+
+export function runConformance(options = {}) {
+  const manifest = options.manifest ?? loadManifest();
+  const targetLevel = options.targetLevel ?? manifest.default_target_level ?? "AEP-C1";
+  const results = [];
+
+  for (const fixture of manifest.fixtures) {
+    if (!shouldRunFixture(fixture, targetLevel)) {
+      results.push({ fixture, status: "skipped", reason: `above target ${targetLevel}` });
+      continue;
+    }
+
+    const events = readNdjson(resolve(conformanceDir, fixture.path));
+    results.push(verifyFixture(fixture, events));
+  }
+
+  return { targetLevel, results };
+}
+
+export function verifyFixture(fixture, events) {
+  const failures = [];
+  const types = events.map((event) => event.type);
+
+  if (fixture.expected_types && JSON.stringify(types) !== JSON.stringify(fixture.expected_types)) {
+    failures.push(`expected types ${JSON.stringify(fixture.expected_types)}, got ${JSON.stringify(types)}`);
+  }
+
+  events.forEach((event, index) => {
+    const envelopeErrors = validateEnvelope(event);
+    if (envelopeErrors.length > 0) {
+      failures.push(`event ${index} envelope: ${envelopeErrors.join("; ")}`);
+    }
+    if (!isValidBySchema(event, "envelope")) {
+      failures.push(`event ${index} schema validation failed`);
+    }
+  });
+
+  if (fixture.expectation === "stateful_flow") {
+    const harness = new AepHarness({ useSchemaValidation: true });
+    events.forEach((event, index) => {
+      const responses = harness.handle(event) ?? [];
+      const rejected = responses.find((response) => response.type === "event.rejected");
+      if (rejected) {
+        failures.push(`event ${index} rejected: ${rejected.payload?.error?.message ?? "unknown error"}`);
+      }
+    });
+  }
+
+  if (!["accept_all", "stateful_flow"].includes(fixture.expectation)) {
+    failures.push(`unsupported expectation: ${fixture.expectation}`);
+  }
+
+  return {
+    fixture,
+    status: failures.length === 0 ? "passed" : "failed",
+    failures
+  };
+}
