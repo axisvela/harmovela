@@ -123,6 +123,7 @@ func (s *AepSession) Close() (map[string]any, error) {
 		"created_at":  now,
 		"payload": map[string]any{
 			"session_id": s.ID,
+			"reason":     "done",
 		},
 	}, nil
 }

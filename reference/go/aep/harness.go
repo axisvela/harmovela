@@ -88,11 +88,21 @@ func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[
 	}
 
 	tk.State = nextState
-	if payload == nil {
-		payload = map[string]any{}
+
+	result := make(map[string]any, len(payload)+2)
+	if payload != nil {
+		for k, v := range payload {
+			result[k] = v
+		}
 	}
-	payload["task_id"] = tk.ID
-	payload["state"] = string(tk.State)
+	result["task_id"] = tk.ID
+	result["state"] = string(tk.State)
+
+	if terminalTaskStates[tk.State] {
+		if _, ok := result["result"]; !ok {
+			result["result"] = string(tk.State)
+		}
+	}
 
 	tk.eventID++
 	return map[string]any{
@@ -102,7 +112,7 @@ func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[
 		"source":      tk.Source,
 		"task_id":     tk.ID,
 		"created_at":  time.Now().UTC().Format(time.RFC3339),
-		"payload":     payload,
+		"payload":     result,
 	}
 }
 
@@ -342,11 +352,14 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	h.session = NewAepSession(sessionID, h.Source, "0.1")
 	opened, _ := h.session.Opened()
 
-	ready, _ := h.session.Ready(map[string]any{
-		"protocol":    "aep",
-		"aep_version": "0.1",
-		"transports":  []string{"stdio"},
-		"features":    []string{"envelope", "subscription", "task_lifecycle", "error_model"},
+	ready := h.newEvent("session.ready", event, map[string]any{
+		"session_id": sessionID,
+		"capabilities": map[string]any{
+			"protocol":    "aep",
+			"aep_version": "0.1",
+			"transports":  []string{"stdio"},
+			"features":    []string{"envelope", "subscription", "task_lifecycle", "error_model"},
+		},
 	})
 
 	return []map[string]any{opened, ready}
@@ -358,7 +371,7 @@ func (h *Harness) handleSessionClosed(event map[string]any) any {
 			"acknowledged_event_id": event["id"],
 		}),
 	}
-	if h.session != nil && h.session.IsActive() {
+	if h.session != nil && h.session.IsOpen() {
 		closed, err := h.session.Close()
 		if err == nil && closed != nil {
 			responses = append(responses, closed)
