@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.aep.dev/subscription-filter.v0.1.schema.json",
+  "$id": "https://schemas.axisrobo.com/subscription-filter.v0.1.schema.json",
   "title": "AEP Subscription Filter",
   "type": "object",
   "additionalProperties": true,

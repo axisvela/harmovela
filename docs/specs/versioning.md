@@ -14,7 +14,7 @@ AEP versions four distinct assets independently:
 |---|---|---|---|
 | Protocol envelope | `aep_version` | `"0.1"` | Envelope field set, required fields, semantic rules |
 | Event type families | Event type registry | — | Standard event type names and semantics |
-| Payload schemas | `payload_schema` (URI) | `https://schemas.aep.dev/tool.call.progress.v1.json` | Per-event payload structure |
+| Payload schemas | `payload_schema` (URI) | `https://schemas.axisrobo.com/tool.call.progress.v1.json` | Per-event payload structure |
 | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. |
 
 ## Protocol Envelope Versioning
@@ -56,7 +56,7 @@ Each event type family may define one or more payload schemas. A payload schema 
 ```json
 {
   "type": "memory.fact.added",
-  "payload_schema": "https://schemas.aep.dev/memory.fact.added.v1.json",
+  "payload_schema": "https://schemas.axisrobo.com/memory.fact.added.v1.json",
   "payload": { ... }
 }
 ```

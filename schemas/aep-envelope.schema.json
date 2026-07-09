@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.aep.dev/aep-envelope.v0.1.schema.json",
+  "$id": "https://schemas.axisrobo.com/aep-envelope.v0.1.schema.json",
   "title": "AEP Event Envelope",
   "type": "object",
   "additionalProperties": true,
