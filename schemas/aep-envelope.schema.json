@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aep.dev/aep-envelope.v0.1.schema.json",
+  "title": "AEP Event Envelope",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["aep_version", "id", "type", "source", "created_at", "payload"],
+  "properties": {
+    "aep_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "conversation_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "causation_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mode": {
+          "enum": ["best_effort", "at_least_once", "replayable"]
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cursor": {
+          "type": "string"
+        }
+      }
+    },
+    "payload_schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "payload": true
+  }
+}

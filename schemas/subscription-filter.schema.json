@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.aep.dev/subscription-filter.v0.1.schema.json",
+  "title": "AEP Subscription Filter",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "types": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "source": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "target": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "topic": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "session_id": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "conversation_id": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "task_id": {
+      "$ref": "#/$defs/stringOrStringArray"
+    },
+    "from_cursor": {
+      "type": "string"
+    },
+    "delivery_mode": {
+      "enum": ["best_effort", "at_least_once", "replayable"]
+    }
+  },
+  "$defs": {
+    "stringOrStringArray": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  }
+}

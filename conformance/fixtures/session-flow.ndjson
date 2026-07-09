@@ -1,0 +1,4 @@
+{"aep_version":"0.1","id":"evt_cap_001","type":"capabilities.requested","source":"agent:researcher","target":"harness:aep","session_id":"sess_01","created_at":"2026-07-09T10:00:00Z","payload":{}}
+{"aep_version":"0.1","id":"evt_sess_001","type":"session.opened","source":"agent:researcher","target":"harness:aep","session_id":"sess_01","created_at":"2026-07-09T10:00:01Z","payload":{"session_id":"sess_01","version":"0.1"}}
+{"aep_version":"0.1","id":"evt_sub_001","type":"subscription.requested","source":"agent:researcher","target":"harness:aep","session_id":"sess_01","created_at":"2026-07-09T10:00:02Z","payload":{"types":["task.*","context.*"],"target":"agent:researcher"}}
+{"aep_version":"0.1","id":"evt_close_001","type":"session.closed","source":"agent:researcher","target":"harness:aep","session_id":"sess_01","created_at":"2026-07-09T10:05:00Z","payload":{"session_id":"sess_01","reason":"done"}}
