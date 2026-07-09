@@ -65,9 +65,9 @@ Goal: demonstrate clean interop with MCP.
 
 Deliverables:
 
-- MCP tool call to AEP task bridge
+- MCP tool call to AEP task bridge (`reference/typescript/src/bridge/mcp-bridge.js`)
 - AEP task completion events from MCP tools
-- Example MCP server emitting AEP events
+- Example MCP server emitting AEP events (`reference/typescript/examples/mcp-bridge/demo.js`)
 - Example agent consuming both MCP and AEP
 
 ## Phase 5: Reliability And Production Semantics

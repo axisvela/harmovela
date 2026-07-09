@@ -38,6 +38,7 @@ AEP complements MCP. MCP is the synchronous call layer; AEP is the asynchronous 
 | `reference/python/` | Planned Python reference implementation |
 | `reference/go/` | Planned Go reference implementation |
 | `reference/java/` | Planned Java reference implementation |
+| `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
 
 ## Verification
 

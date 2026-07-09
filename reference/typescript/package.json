@@ -9,6 +9,7 @@
   },
   "scripts": {
     "harness": "node ./src/stdio.js",
+    "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
     "test": "node --test"
   },
   "dependencies": {

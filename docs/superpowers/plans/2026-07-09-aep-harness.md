@@ -48,6 +48,11 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 - [x] Implement HTTP SSE transport with server and client.
 - [x] Add transport-level tests (12 tests, 51 total).
 - [x] Run full suite verification: 51 pass, clean exit.
+- [x] Implement MCP bridge module (`src/bridge/mcp-bridge.js`).
+- [x] Implement MCP JSON-RPC stdio transport (`src/bridge/stdio.js`).
+- [x] Build MCP bridge demo (`examples/mcp-bridge/demo.js`).
+- [x] Add MCP bridge tests (5 tests, 56 total).
+- [x] Update roadmap Phase 4 with MCP bridge links.
 
 ## Verification
 

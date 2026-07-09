@@ -46,6 +46,7 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `reference/python/` | Planned Python reference implementation |
 | `reference/go/` | Planned Go reference implementation |
 | `reference/java/` | Planned Java reference implementation |
+| `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
 
 ## Working Rules
 
