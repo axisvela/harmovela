@@ -35,6 +35,9 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `docs/specs/task-lifecycle.md` | Task lifecycle specification |
 | `docs/specs/error-model.md` | Error model specification |
 | `docs/specs/versioning.md` | Versioning rules specification |
+| `docs/specs/transport-stdio.md` | stdio transport specification |
+| `docs/specs/transport-websocket.md` | WebSocket transport specification |
+| `docs/specs/transport-sse.md` | HTTP SSE transport specification |
 | `docs/superpowers/specs/` | Superpowers-backed design specs |
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |

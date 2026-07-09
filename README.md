@@ -56,6 +56,9 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/specs/task-lifecycle.md` — task lifecycle specification
 - `docs/specs/error-model.md` — error model specification
 - `docs/specs/versioning.md` — versioning rules specification
+- `docs/specs/transport-stdio.md` — stdio transport specification
+- `docs/specs/transport-websocket.md` — WebSocket transport specification
+- `docs/specs/transport-sse.md` — HTTP SSE transport specification
 
 ## Repository Layout
 

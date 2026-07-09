@@ -33,9 +33,9 @@ Goal: define how AEP runs over common transports.
 
 Initial bindings:
 
-- `stdio` for local process integration
-- `WebSocket` for bidirectional streams
-- `HTTP SSE` for server-to-client event streams
+- `stdio` for local process integration (`docs/specs/transport-stdio.md`, implemented in `reference/typescript/src/transport/stdio.js`)
+- `WebSocket` for bidirectional streams (`docs/specs/transport-websocket.md`, implemented in `reference/typescript/src/transport/websocket.js`)
+- `HTTP SSE` for server-to-client event streams (`docs/specs/transport-sse.md`, implemented in `reference/typescript/src/transport/sse.js`)
 
 Later bindings:
 

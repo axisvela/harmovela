@@ -6,3 +6,7 @@ export { AepSession } from "./session.js";
 export { TaskTracker } from "./task.js";
 export { EventRouter } from "./router.js";
 export { ErrorCode, errorPayload, isRetryableCode } from "./errors.js";
+export { Transport } from "./transport/base.js";
+export { StdioTransport, MockStdioTransport } from "./transport/stdio.js";
+export { WsServerTransport, WsClientTransport } from "./transport/websocket.js";
+export { SseServerTransport, SseClientTransport } from "./transport/sse.js";

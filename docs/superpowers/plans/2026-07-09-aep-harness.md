@@ -40,6 +40,14 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 - [x] Write error model specification (`docs/specs/error-model.md`).
 - [x] Write versioning rules specification (`docs/specs/versioning.md`).
 - [x] Update README, roadmap, AGENTS.md, CLAUDE.md with new spec references.
+- [x] Write stdio transport specification (`docs/specs/transport-stdio.md`).
+- [x] Write WebSocket transport specification (`docs/specs/transport-websocket.md`).
+- [x] Write HTTP SSE transport specification (`docs/specs/transport-sse.md`).
+- [x] Implement Transport base class and StdioTransport (`src/transport/`).
+- [x] Implement WebSocket transport with server and client.
+- [x] Implement HTTP SSE transport with server and client.
+- [x] Add transport-level tests (12 tests, 51 total).
+- [x] Run full suite verification: 51 pass, clean exit.
 
 ## Verification
 
