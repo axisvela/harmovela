@@ -1,0 +1,17 @@
+{
+  "name": "@axisrobo/aep-reference-typescript",
+  "version": "0.1.0-draft",
+  "private": true,
+  "type": "module",
+  "description": "Draft Agent Event Protocol TypeScript reference harness.",
+  "bin": {
+    "aep-harness": "./src/stdio.js"
+  },
+  "scripts": {
+    "harness": "node ./src/stdio.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
