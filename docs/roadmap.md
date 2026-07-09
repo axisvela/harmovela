@@ -76,12 +76,12 @@ Goal: support durable and distributed deployments.
 
 Deliverables:
 
-- Replay cursors
-- Acknowledgement protocol
-- Dead-letter events
-- Retry policy metadata
-- Authorization model
-- Multi-tenant routing model
+- Replay cursors (`docs/specs/delivery.md`)
+- Acknowledgement protocol (`docs/specs/delivery.md`)
+- Dead-letter events (`docs/specs/reliability.md`, `reference/typescript/src/delivery.js`)
+- Retry policy metadata (`docs/specs/reliability.md`, `reference/typescript/src/delivery.js`)
+- Authorization model (`docs/specs/reliability.md` — draft hooks reserved)
+- Multi-tenant routing model (`docs/specs/reliability.md` — field reserved)
 
 ## Phase 6: Ecosystem And Governance
 

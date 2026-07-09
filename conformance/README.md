@@ -13,6 +13,7 @@ This directory contains shared assets that every reference implementation should
 | `task-lifecycle.ndjson` | Task submitted, progress, completed |
 | `memory-context-ack.ndjson` | Subscription, memory, context, acknowledgement |
 | `session-flow.ndjson` | Capabilities, session open/close, subscription |
+| `delivery.ndjson` | Task lifecycle with delivery tracking, ack, redelivery, dead-letter |
 
 ## Rules
 

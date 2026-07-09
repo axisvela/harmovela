@@ -29,15 +29,16 @@ test("shared memory/context/ack fixture contains valid envelopes", () => {
   assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
 });
 
-test("shared session flow fixture contains valid envelopes", () => {
-  const events = readNdjson(resolve(conformanceDir, "session-flow.ndjson"));
+test("shared delivery fixture contains valid envelopes", () => {
+  const events = readNdjson(resolve(conformanceDir, "delivery.ndjson"));
 
-  assert.equal(events.length, 4);
+  assert.equal(events.length, 5);
   assert.deepEqual(events.map((event) => event.type), [
-    "capabilities.requested",
-    "session.opened",
-    "subscription.requested",
-    "session.closed"
+    "task.submitted",
+    "task.progress",
+    "event.acknowledged",
+    "event.redelivered",
+    "event.dead_lettered"
   ]);
   assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
 });

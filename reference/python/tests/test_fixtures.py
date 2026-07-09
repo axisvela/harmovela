@@ -26,11 +26,12 @@ class TestFixtures:
         for event in events:
             assert validate_envelope(event) == []
 
-    def test_session_flow_fixture(self):
-        events = _read_ndjson(FIXTURE_DIR / "session-flow.ndjson")
-        assert len(events) == 4
+    def test_delivery_fixture(self):
+        events = _read_ndjson(FIXTURE_DIR / "delivery.ndjson")
+        assert len(events) == 5
         assert [e["type"] for e in events] == [
-            "capabilities.requested", "session.opened", "subscription.requested", "session.closed"
+            "task.submitted", "task.progress", "event.acknowledged",
+            "event.redelivered", "event.dead_lettered",
         ]
         for event in events:
             assert validate_envelope(event) == []

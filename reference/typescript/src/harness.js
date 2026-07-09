@@ -5,6 +5,7 @@ import { TaskTracker } from "./task.js";
 import { EventRouter } from "./router.js";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isStandardEventType } from "./event-types.js";
+import { DeliveryTracker } from "./delivery.js";
 
 export class AepHarness {
   constructor(options = {}) {
@@ -16,6 +17,7 @@ export class AepHarness {
     this._tasks = new Map();
     this._router = new EventRouter();
     this._session = null;
+    this.delivery = new DeliveryTracker(options.delivery);
 
     this._setupRouter();
   }
