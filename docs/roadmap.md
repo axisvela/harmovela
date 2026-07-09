@@ -80,8 +80,8 @@ Deliverables:
 - Acknowledgement protocol (`docs/specs/delivery.md`)
 - Dead-letter events (`docs/specs/reliability.md`, `reference/typescript/src/delivery.js`)
 - Retry policy metadata (`docs/specs/reliability.md`, `reference/typescript/src/delivery.js`)
-- Authorization model (`docs/specs/reliability.md` — draft hooks reserved)
-- Multi-tenant routing model (`docs/specs/reliability.md` — field reserved)
+- Authorization model (`docs/specs/security.md`)
+- Multi-tenant routing model (`docs/specs/security.md`)
 
 ## Phase 6: Ecosystem And Governance
 

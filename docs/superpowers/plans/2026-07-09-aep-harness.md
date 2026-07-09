@@ -53,6 +53,12 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 - [x] Build MCP bridge demo (`examples/mcp-bridge/demo.js`).
 - [x] Add MCP bridge tests (5 tests, 56 total).
 - [x] Update roadmap Phase 4 with MCP bridge links.
+- [x] Create Python reference implementation (envelope, session, task, router, harness, 39 tests).
+- [x] Add JSON Schema validation (ajv for TS, jsonschema for Python, 12 schema tests).
+- [x] Write delivery semantics specification (`docs/specs/delivery.md`).
+- [x] Write reliability specification (`docs/specs/reliability.md`).
+- [x] Implement DeliveryTracker with sequence, ack, retry, dead-letter (8 delivery tests).
+- [x] Write security model specification (`docs/specs/security.md`).
 
 ## Verification
 

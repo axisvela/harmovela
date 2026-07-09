@@ -30,6 +30,9 @@ AEP complements MCP. MCP is the synchronous call layer; AEP is the asynchronous 
 | `docs/specs/transport-stdio.md` | stdio transport specification |
 | `docs/specs/transport-websocket.md` | WebSocket transport specification |
 | `docs/specs/transport-sse.md` | HTTP SSE transport specification |
+| `docs/specs/delivery.md` | Delivery semantics, ack protocol, replay |
+| `docs/specs/reliability.md` | Retry policy, dead-letter, durability |
+| `docs/specs/security.md` | Identity, authorization, audit, tenant isolation |
 | `docs/superpowers/specs/` | Superpowers-backed design specs |
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |

@@ -133,34 +133,10 @@ subscription_id: sub_0001
 
 When a consumer acknowledges `evt_01` and `evt_02`, they are removed from pending. The cursor advances to `stream_01:97`. If a consumer reconnects from a prior cursor, all events after that cursor are redelivered.
 
-## Authorization Model (Draft)
-
-Phase 5 introduces authorization hooks. The full specification is deferred to a future version, but the protocol must reserve these slots:
-
-- An `authorization` envelope field (optional) for bearer tokens or capability keys.
-- `session.ready` capabilities may include `auth.required: true`.
-- `event.rejected` may carry `unauthorized` error codes for denied access.
-
-No mandatory auth protocol is defined in 0.1. Implementations may use transport-level auth (TLS client certs, HTTP auth headers, etc.) without AEP-level awareness.
-
-## Multi-Tenant Routing (Draft)
-
-Phase 5 also reserves a `tenant_id` field on the envelope for multi-tenant deployments:
-
-```json
-{
-  "aep_version": "0.1",
-  "id": "evt_01",
-  "tenant_id": "org_acme",
-  ...
-}
-```
-
-Routing and isolation by `tenant_id` is implementation-defined. The protocol only reserves the field name.
-
 ## Implementation Notes
 
 - Retry policy metadata on events is advisory. Producers may override with their own policies.
 - Dead-letter events should use a standard error payload following the [error model](./error-model.md).
 - The durability model is best-effort for in-process implementations. Production deployments should persist events in a durable store.
 - Cursor format is opaque. Consumers should treat cursors as strings and not parse or interpret them.
+- Authorization, identity verification, and multi-tenant isolation are defined in the [security model](./security.md).
