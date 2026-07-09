@@ -1,7 +1,6 @@
 package aep
 
 import (
-	"slices"
 	"testing"
 )
 
@@ -56,10 +55,14 @@ func TestValidateEnvelopeRejectsUnsupportedVersion(t *testing.T) {
 	if len(errs) == 0 {
 		t.Fatal("expected error for unsupported version")
 	}
-	hasVersion := slices.ContainsFunc(errs, func(s string) bool {
-		return len(s) > 0 && (s[0:7] == "unsuppo" || s[0:4] == "aep_")
-	})
-	if !hasVersion {
-		t.Logf("errors: %v", errs)
+	found := false
+	for _, s := range errs {
+		if len(s) >= 9 && s[:9] == "unsupport" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("expected unsupported version error, got %v", errs)
 	}
 }
