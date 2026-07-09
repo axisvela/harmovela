@@ -1,0 +1,119 @@
+# AEP And MCP
+
+## Summary
+
+AEP is the asynchronous counterpart to MCP.
+
+MCP standardizes how a model or agent synchronously invokes capabilities. AEP standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.
+
+They should be complementary protocols.
+
+## Why MCP Alone Is Not Enough
+
+MCP is centered on request-response interactions:
+
+- List tools
+- Call a tool
+- List resources
+- Read a resource
+- List prompts
+- Get a prompt
+
+This is a strong model for synchronous capability invocation, but many agent workflows are event-driven:
+
+- A long-running tool needs to report progress.
+- A background indexing task completes later.
+- A memory fact is invalidated after the agent already used it.
+- An environment observer detects a relevant change.
+- Another agent finishes a subtask.
+- A task needs cancellation or timeout handling.
+- A disconnected agent needs to replay missed events.
+
+These are not naturally represented as a single synchronous tool result.
+
+## Correspondence Table
+
+| MCP Capability | AEP Counterpart |
+| --- | --- |
+| `initialize` | `session.opened`, `session.ready`, capability negotiation |
+| `tools/list` | `capabilities.requested`, `capabilities.declared` |
+| `tools/call` | `tool.call.requested`, lifecycle events |
+| `resources/list` | `streams/list` or subscription capabilities |
+| `resources/read` | `context.snapshot.requested`, `context.snapshot.ready` |
+| `notifications/*` | General event publish / subscribe |
+| Request-response result | Deferred result stream |
+
+## Interop Model
+
+### MCP Tool Calls Producing AEP Events
+
+A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing AEP events later.
+
+Example:
+
+```text
+Agent --MCP--> call tool: ingest_document
+Tool --MCP--> returns accepted result
+Tool --AEP--> task.progress
+Tool --AEP--> memory.summary.ready
+Tool --AEP--> task.completed
+```
+
+### AEP Events Requesting MCP Tool Calls
+
+AEP can carry an event that asks a runtime to execute an MCP tool asynchronously.
+
+```json
+{
+  "type": "tool.call.requested",
+  "payload": {
+    "protocol": "mcp",
+    "server": "mneme",
+    "tool": "search_memory",
+    "arguments": {
+      "query": "async agent protocols"
+    }
+  }
+}
+```
+
+The result is emitted as AEP lifecycle events rather than returned synchronously.
+
+### MCP For Current State, AEP For Change Over Time
+
+MCP can read a current resource snapshot. AEP can notify agents that the snapshot changed.
+
+```text
+MCP: read current context
+AEP: context.updated / context.invalidated
+```
+
+## Design Boundary
+
+AEP should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.
+
+AEP should define:
+
+- Event envelope
+- Subscription model
+- Async task lifecycle
+- Delivery semantics
+- Context and memory event types
+- Agent-to-agent message events
+
+MCP should continue to define:
+
+- Synchronous tool discovery
+- Synchronous tool invocation
+- Resource reading
+- Prompt retrieval
+
+## Naming Recommendation
+
+Avoid calling the project "Async MCP".
+
+Recommended framing:
+
+> AEP is the event layer for agent systems. MCP is the call layer.
+
+This keeps the protocol independent, general, and useful beyond the MCP ecosystem while still allowing first-class MCP integration.
