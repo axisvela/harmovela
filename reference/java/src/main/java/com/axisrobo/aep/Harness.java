@@ -92,7 +92,8 @@ public class Harness {
                 return t != null && t.startsWith("task.") && !"task.submitted".equals(t);
             }, this::handleTaskEvent)
             .on(e -> "session.opened".equals(e.get("type")), this::handleSessionOpened)
-            .on(e -> "session.closed".equals(e.get("type")), this::handleSessionClosed);
+            .on(e -> "session.closed".equals(e.get("type")), this::handleSessionClosed)
+            .on(e -> "session.error".equals(e.get("type")), this::handleSessionError);
     }
 
     public Session getSession() { return session; }
@@ -193,7 +194,11 @@ public class Harness {
         if (taskId == null && event.get("payload") instanceof Map<?, ?> p) {
             taskId = (String) p.get("task_id");
         }
-        if (taskId == null) return null;
+        if (taskId == null) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "task event missing task_id", false)
+            ));
+        }
 
         var tracker = tasks.get(taskId);
         if (tracker == null) {
@@ -253,22 +258,32 @@ public class Harness {
         return responses;
     }
 
+    private Object handleSessionError(Map<String, Object> event) {
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
+    }
+
     private int nextSeq() { return ++sequence; }
 
     private Map<String, Object> newEvent(String type, Map<String, Object> input, Map<String, Object> payload) {
         var seq = nextSeq();
-        var event = new LinkedHashMap<String, Object>();
-        event.put("aep_version", input.getOrDefault("aep_version", "0.1"));
-        event.put("id", "evt_harness_" + String.format("%06d", seq));
-        event.put("type", type);
-        event.put("source", SOURCE);
-        event.put("target", input.get("source"));
-        event.put("session_id", input.get("session_id"));
-        event.put("task_id", input.get("task_id"));
-        event.put("causation_id", input.get("id"));
-        event.put("created_at", Instant.now().toString());
-        event.put("delivery", Map.of("mode", "best_effort", "sequence", seq));
-        event.put("payload", payload);
-        return event;
+        var map = new LinkedHashMap<String, Object>();
+        map.put("aep_version", input.getOrDefault("aep_version", "0.1"));
+        map.put("id", "evt_harness_" + String.format("%06d", seq));
+        map.put("type", type);
+        map.put("source", SOURCE);
+        putIfNotNull(map, "target", input.get("source"));
+        putIfNotNull(map, "session_id", input.get("session_id"));
+        putIfNotNull(map, "task_id", input.get("task_id"));
+        putIfNotNull(map, "causation_id", input.get("id"));
+        map.put("created_at", Instant.now().toString());
+        map.put("delivery", Map.of("mode", "best_effort", "sequence", seq));
+        map.put("payload", payload);
+        return map;
+    }
+
+    private static void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
     }
 }
