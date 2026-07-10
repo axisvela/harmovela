@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-nats.html">Transport Nats</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Roadmap</h1>
 <h1>AEP Roadmap</h1>
 <h2>Phase 0: Vision And Design ✅ Complete</h2>
@@ -59,7 +59,7 @@
 <p>Later bindings:</p>
 <ul>
 <li>gRPC streaming (<code>docs/specs/transport-grpc.md</code>, implemented in <code>reference/typescript/src/transport/grpc.js</code>)</li>
-<li>NATS</li>
+<li>NATS (<code>docs/specs/transport-nats.md</code>, implemented in <code>reference/go/aep/transport_nats.go</code>)</li>
 <li>Kafka</li>
 <li>Redis Streams</li>
 </ul>
@@ -143,6 +143,6 @@
 </ul>
 <h2>Current Completion State</h2>
 <p>All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.</p>
-<p>Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production delivery-store backends, formal protocol versioning, and community governance structures.</p>
+<p>Future roadmap work should focus on: additional transport bindings (Kafka, Redis Streams), production delivery-store backends, formal protocol versioning, and community governance structures.</p>
 </body>
 </html>

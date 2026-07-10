@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Nats — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-nats.html">Transport Nats</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Transport Nats</h1>
+<h1>AEP Transport Binding: NATS</h1>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<h2>Purpose</h2>
+<p>Define how AEP runs over NATS, supporting subject-based publish/subscribe with optional JetStream durability.</p>
+<h2>Framing</h2>
+<p>AEP over NATS uses JSON-encoded AEP events as NATS message bodies:</p>
+<ul>
+<li>Each NATS message body is a complete, valid JSON-encoded AEP event.</li>
+<li>Messages are delivered via NATS subject-based routing.</li>
+<li>The transport does not fragment events across multiple messages.</li>
+</ul>
+<h2>Subject Mapping</h2>
+<p>AEP topics map to NATS subjects using a configurable prefix:</p>
+<table>
+<thead><tr><th>AEP context</th><th>NATS subject pattern</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Topic <code>tasks.task_01</code></td><td><code>aep.tasks.task_01</code></td><td><code>aep.tasks.task_01</code></td></tr>
+<tr><td>Source <code>agent:researcher</code></td><td><code>aep.agent.researcher</code></td><td><code>aep.agent.researcher</code></td></tr>
+<tr><td>Wildcard subscription <code>task.*</code></td><td><code>aep.task.&gt;</code></td><td><code>aep.task.&gt;</code></td></tr>
+<tr><td>Session-scoped</td><td><code>aep.sess.&lt;session_id&gt;</code></td><td><code>aep.sess.sess_01</code></td></tr>
+</tbody>
+</table>
+<p>The default subject prefix is <code>aep</code>. Implementations should make this configurable.</p>
+<h3>Subject Construction</h3>
+<table>
+<thead><tr><th>Pattern</th><th>Behavior</th></tr></thead>
+<tbody>
+<tr><td><code>aep.type.&lt;type&gt;</code></td><td>Route by event type (e.g. <code>aep.type.task.progress</code>)</td></tr>
+<tr><td><code>aep.source.&lt;source&gt;</code></td><td>Route by event source</td></tr>
+<tr><td><code>aep.topic.&lt;topic&gt;</code></td><td>Route by explicit AEP topic</td></tr>
+<tr><td><code>aep.sess.&lt;session_id&gt;</code></td><td>Route to all events for a session</td></tr>
+<tr><td><code>aep.conv.&lt;conversation_id&gt;</code></td><td>Route to all events for a conversation</td></tr>
+</tbody>
+</table>
+<p>Producers should publish on the most specific subject. Consumers subscribe with wildcards.</p>
+<h2>Delivery Modes</h2>
+<h3>Core NATS (Best Effort)</h3>
+<ul>
+<li><code>best_effort</code>: fire-and-forget publish. No acknowledgement or replay guarantee.</li>
+<li>Messages are lost if no consumer is subscribed at publish time.</li>
+</ul>
+<h3>JetStream (At Least Once, Replayable)</h3>
+<ul>
+<li><code>at_least_once</code>: JetStream consumer with explicit ack. Messages are persisted and re-delivered on timeout.</li>
+<li><code>replayable</code>: JetStream stream with configurable retention. Consumers replay from any sequence number.</li>
+</ul>
+<h3>Delivery Mode Selection</h3>
+<table>
+<thead><tr><th>AEP Delivery Mode</th><th>NATS Mechanism</th></tr></thead>
+<tbody>
+<tr><td><code>best_effort</code></td><td>Core NATS publish</td></tr>
+<tr><td><code>at_least_once</code></td><td>JetStream push consumer with <code>AckWait</code></td></tr>
+<tr><td><code>replayable</code></td><td>JetStream pull consumer with <code>DeliverPolicy</code></td></tr>
+</tbody>
+</table>
+<h2>Session Lifecycle</h2>
+<table>
+<thead><tr><th>NATS State</th><th>Session State</th></tr></thead>
+<tbody>
+<tr><td>Connection established</td><td><code>CREATED</code></td></tr>
+<tr><td>First subscription created</td><td><code>OPENED</code></td></tr>
+<tr><td>Capability negotiation complete</td><td><code>READY</code></td></tr>
+<tr><td>Connection drain + close</td><td><code>CLOSED</code></td></tr>
+<tr><td>Connection lost (no reconnect)</td><td><code>ERROR</code></td></tr>
+</tbody>
+</table>
+<h2>Connection</h2>
+<p>The transport should support:</p>
+<ul>
+<li><code>nats://localhost:4222</code> (default)</li>
+<li>TLS via <code>tls://</code> URLs</li>
+<li>Authentication via NKey, token, or credentials file</li>
+<li>Auto-reconnect with configurable max attempts</li>
+</ul>
+<h2>Implementation Notes</h2>
+<h3>Core NATS</h3>
+<ul>
+<li>Use <code>nats.Conn.Subscribe(subject, handler)</code> for inbound.</li>
+<li>Use <code>nats.Conn.Publish(subject, data)</code> for outbound.</li>
+<li>Each inbound NATS message is parsed as JSON into an AEP envelope.</li>
+<li>Malformed JSON should emit an error event but not crash the subscription.</li>
+</ul>
+<h3>JetStream</h3>
+<ul>
+<li>Use <code>js.AddStream(&amp;nats.StreamConfig{...})</code> to create a stream on first use.</li>
+<li>Use <code>js.Subscribe(subject, handler, ...opts)</code> for durable consumers.</li>
+<li>Ack after successful envelope validation.</li>
+<li>Nack on parse failure to trigger redelivery.</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://docs.nats.io/">NATS Documentation</a></li>
+<li><a href="https://github.com/nats-io/nats.go">NATS Go Client</a></li>
+</ul>
+</body>
+</html>
