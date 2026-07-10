@@ -120,7 +120,7 @@ test("DeliveryTracker uses provided store and journal", () => {
   assert.equal(store.isAcknowledged("evt_store_001"), true);
 
   journal.append({ type: "task.submitted" });
-  assert.equal(journal.getStats().totalEvents, 1);
+  assert.equal(journal.getStats().totalEvents, 2);
 
   const stats = tracker.stats;
   assert.equal(stats.pending, 0);

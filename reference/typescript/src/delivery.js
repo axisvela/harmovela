@@ -23,9 +23,7 @@ export class DeliveryTracker {
   }
 
   nextSequence() {
-    return this._store._sequence !== undefined
-      ? ++this._store._sequence
-      : this._store.nextSequence();
+    return this._store.nextSequence();
   }
 
   get cursor() {
@@ -40,7 +38,9 @@ export class DeliveryTracker {
   }
 
   track(eventId, subscriptionId = "_default") {
-    return this._store.track(eventId, subscriptionId);
+    const seq = this._store.track(eventId, subscriptionId);
+    this._journal.append({ type: "delivery.tracked", eventId, subscriptionId, sequence: seq });
+    return seq;
   }
 
   ack(eventId) {
