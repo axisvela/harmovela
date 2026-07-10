@@ -4,6 +4,19 @@
 
 AEP is designed as the asynchronous counterpart to MCP. MCP is good at synchronous capability invocation: listing tools, calling tools, reading resources, and returning immediate results. AEP focuses on the communication patterns MCP does not naturally cover: event streams, long-running task lifecycle, background feedback, memory updates, context invalidation, durable delivery, replay, cancellation, and agent-to-agent coordination.
 
+## About
+
+AEP 0.1 draft is a multi-language protocol repository with:
+
+- **16 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
+- **4 reference implementations** (TypeScript, Python, Go, Java) with cross-language conformance verified against shared fixtures
+- **4 transport bindings** (stdio, WebSocket, SSE, gRPC) implemented across all languages
+- **SQLite-backed delivery stores** with retry, dead-letter, and replay support in every language
+- **~320 tests** across four languages, all passing
+- **Spec site** at [axisrobo.github.io/aep](https://axisrobo.github.io/aep/)
+
+[中文文档](README_zh.md)
+
 ## Vision
 
 Agents should not only ask for capabilities. They also need to listen, react, coordinate, and recover.
