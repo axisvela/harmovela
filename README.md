@@ -75,10 +75,10 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `schemas/` — shared draft JSON Schema assets
 - `conformance/` — shared fixtures for reference implementation parity
 - `reference/` — language-specific reference implementations
-- `reference/typescript/` — first runnable AEP draft harness
-- `reference/python/` — planned second-priority reference implementation
-- `reference/go/` — draft reference implementation with C0/C1 conformance
-- `reference/java/` — draft reference implementation with C0/C1 conformance (JDK 21)
+- `reference/typescript/` — primary runnable AEP reference implementation
+- `reference/python/` — second-priority reference implementation with full transport and delivery support
+- `reference/go/` — Go reference implementation with C0/C1 conformance
+- `reference/java/` — Java reference implementation with C0/C1 conformance (JDK 21)
 - `.github/workflows/` — repository CI
 
 ## Development Harness
@@ -129,10 +129,15 @@ cd reference/typescript && npm run demo:memory
 cd reference/typescript && npm run demo:agent
 cd reference/typescript && npm run demo:mcp-bridge
 cd reference/typescript && npm run demo:mcp-aep-consumer
+cd reference/typescript && npm run demo:production-e2e
 ```
 
 The harness validates draft envelope fields, checks event types against the standard registry, creates subscriptions, tracks task lifecycle, supports stdio/WebSocket/SSE transports, validates shared JSON Schemas, and demonstrates MCP interop.
 
+## Spec Site
+
+The rendered specification is published at **[https://axisrobo.github.io/aep/](https://axisrobo.github.io/aep/)**.
+
 ## Status
 
-This repository remains a draft and provisional protocol workspace. It now includes layered specifications, shared schemas and conformance fixtures, and ongoing TypeScript and Python reference work.
+AEP is a draft open protocol with four active reference implementations (TypeScript, Python, Go, Java) maintaining cross-language parity. The repo includes layered specifications for session, subscription, task lifecycle, error model, versioning, conformance, delivery, reliability, security, event registry governance, and four transport bindings (stdio, WebSocket, SSE, gRPC). Each reference supports SQLite-backed delivery stores, and a cross-language conformance runner (`node tools/conformance-runner.js`) validates shared fixtures across all four languages.
