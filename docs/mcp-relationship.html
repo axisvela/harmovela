@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Mcp Relationship</h1>
 <h1>AEP And MCP</h1>
 <h2>Summary</h2>
@@ -60,18 +60,7 @@ Tool  --AEP--------&gt; task.completed | task.failed | task.cancelled (task_id)
 </code></pre>
 <p>The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft AEP lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.</p>
 <h2>Correspondence Table</h2>
-<table>
-<thead><tr><th>MCP Capability</th><th>AEP Counterpart</th></tr></thead>
-<tbody>
-<tr><td><code>initialize</code></td><td><code>session.opened</code>, <code>session.ready</code>, capability negotiation</td></tr>
-<tr><td><code>tools/list</code></td><td><code>capabilities.requested</code>, <code>capabilities.declared</code></td></tr>
-<tr><td><code>tools/call</code></td><td><code>tool.call.requested</code>, lifecycle events</td></tr>
-<tr><td><code>resources/list</code></td><td><code>streams/list</code> or subscription capabilities</td></tr>
-<tr><td><code>resources/read</code></td><td><code>context.snapshot.requested</code>, <code>context.snapshot.ready</code></td></tr>
-<tr><td><code>notifications/*</code></td><td>General event publish / subscribe</td></tr>
-<tr><td>Request-response result</td><td>Deferred result stream</td></tr>
-</tbody>
-</table>
+<p>| MCP Capability | AEP Counterpart | | --- | --- | | <code>initialize</code> | <code>session.opened</code>, <code>session.ready</code>, capability negotiation | | <code>tools/list</code> | <code>capabilities.requested</code>, <code>capabilities.declared</code> | | <code>tools/call</code> | <code>tool.call.requested</code>, lifecycle events | | <code>resources/list</code> | <code>streams/list</code> or subscription capabilities | | <code>resources/read</code> | <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code> | | <code>notifications/*</code> | General event publish / subscribe | | Request-response result | Deferred result stream |</p>
 <h2>Interop Model</h2>
 <h3>MCP Tool Calls Producing AEP Events</h3>
 <p>A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing AEP events later.</p>

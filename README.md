@@ -79,6 +79,7 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/specs/security.md` — identity, authorization, audit, and tenant isolation specification
 - `docs/specs/conformance.md` — draft conformance levels and shared fixture manifest rules
 - `docs/specs/event-registry-governance.md` — event type registry governance and versioning
+- `docs/specs/agent-runtime-semantics.md` — belief, freshness, delegation, interruption, and provenance metadata
 - `CONTRIBUTING.md` — contribution guide and repository conventions
 - `CODE_OF_CONDUCT.md` — contributor code of conduct
 

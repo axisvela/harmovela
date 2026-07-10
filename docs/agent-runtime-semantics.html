@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Runtime Semantics — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Agent Runtime Semantics</h1>
+<h1>AEP Agent Runtime Semantics</h1>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<h2>Purpose</h2>
+<p>Define recommended envelope metadata fields and event types for agent-runtime concerns that go beyond transport, session, subscription, and task lifecycle: belief revision, freshness and validity, delegation and handoff, interruption and cancellation safety, and provenance and trust.</p>
+<p>All additions are optional. No existing required fields change. All fields fall under the envelope <code>additionalProperties: true</code> policy.</p>
+<h2>Epistemic Metadata</h2>
+<h3>Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Values</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>belief_status</code></td><td>string</td><td><code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code></td><td>Epistemic relationship of this event to prior knowledge</td></tr>
+<tr><td><code>belief_scope</code></td><td>string</td><td><code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code></td><td>Category of the assertion</td></tr>
+<tr><td><code>confidence</code></td><td>number</td><td>0.0 – 1.0</td><td>Optional producer-assigned confidence</td></tr>
+</tbody>
+</table>
+<h3>Events</h3>
+<p>#### <code>belief.revised</code></p>
+<p>Emitted when an agent discovers an earlier belief was incorrect and publishes the corrected state.</p>
+<pre><code>{
+  "type": "belief.revised",
+  "belief_status": "revised",
+  "belief_scope": "fact",
+  "confidence": 0.95,
+  "causation_id": "evt_original_assertion",
+  "payload": {
+    "previous": "Paris is the capital of France",
+    "corrected": "Berlin is the capital of Germany",
+    "reason": "correction from user feedback"
+  }
+}
+</code></pre>
+<p>#### <code>belief.conflict.detected</code></p>
+<p>Emitted when multiple sources assert contradictory claims about the same subject.</p>
+<pre><code>{
+  "type": "belief.conflict.detected",
+  "belief_status": "contradicted",
+  "payload": {
+    "subject": "current temperature in Tokyo",
+    "claims": [
+      {"source": "weather_service_a", "value": "22C", "confidence": 0.9},
+      {"source": "weather_service_b", "value": "25C", "confidence": 0.85}
+    ],
+    "resolution_hint": "prefer_higher_confidence"
+  }
+}
+</code></pre>
+<h3>Consumer Guidance</h3>
+<ul>
+<li>On <code>memory.fact.invalidated</code> with <code>belief_status: "retracted"</code>, consumers should inspect which working conclusions depend on the retracted fact and mark them for re-evaluation.</li>
+<li>On <code>belief.conflict.detected</code>, consumers that have not yet acted on contested claims should defer until a <code>belief.revised</code> or a higher-authority resolution arrives.</li>
+<li><code>confidence</code> is advisory. Consumers should combine it with their own trust model; 0.95 confidence from an unverified source may carry less weight than 0.6 from a verified source.</li>
+</ul>
+<h2>Freshness And Validity</h2>
+<h3>Fields</h3>
+<p>Distinct from <code>expires_at</code> (which governs event delivery lifetime). These fields describe when the *asserted content* becomes stale.</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>valid_from</code></td><td>RFC 3339</td><td>The point in time from which the assertion is considered valid</td></tr>
+<tr><td><code>valid_until</code></td><td>RFC 3339</td><td>The point in time after which the assertion should be considered stale</td></tr>
+<tr><td><code>stale_after</code></td><td>ISO 8601 duration</td><td>Relative staleness duration from <code>created_at</code> (alternative to <code>valid_until</code>)</td></tr>
+<tr><td><code>refresh_hint</code></td><td>URI</td><td>Where to obtain a more current version of this assertion</td></tr>
+</tbody>
+</table>
+<h3>Events</h3>
+<p>#### <code>freshness.expired</code></p>
+<p>Emitted by a runtime or observer when it detects cached state has exceeded its validity window.</p>
+<pre><code>{
+  "type": "freshness.expired",
+  "causation_id": "evt_cached_snapshot",
+  "payload": {
+    "resource": "context:file_tree",
+    "cached_at": "2026-07-10T09:00:00Z",
+    "valid_until": "2026-07-10T09:05:00Z",
+    "detected_at": "2026-07-10T09:06:00Z"
+  }
+}
+</code></pre>
+<p>#### <code>freshness.window.changed</code></p>
+<p>Emitted when a previously declared validity window is shortened or extended.</p>
+<pre><code>{
+  "type": "freshness.window.changed",
+  "payload": {
+    "resource": "memory:user_preferences",
+    "previous_valid_until": "2026-07-10T10:00:00Z",
+    "new_valid_until": "2026-07-10T09:30:00Z",
+    "reason": "user manually updated preferences"
+  }
+}
+</code></pre>
+<h3>Consumer Guidance</h3>
+<ul>
+<li>When <code>valid_until</code> has passed, consumers should treat the assertion as potentially stale. If <code>refresh_hint</code> is present, they may request a fresh copy.</li>
+<li>When <code>freshness.expired</code> arrives for a resource the consumer relies on, it should re-read or re-request that resource before proceeding with decisions that depend on it.</li>
+<li><code>stale_after</code> and <code>valid_until</code> are mutually informative. If both are present, the earliest point governs.</li>
+</ul>
+<h2>Delegation And Handoff</h2>
+<h3>Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>delegated_by</code></td><td>string</td><td>Identifier of the delegating agent or runtime</td></tr>
+<tr><td><code>delegated_to</code></td><td>string</td><td>Identifier of the accepting agent or runtime</td></tr>
+<tr><td><code>parent_task_id</code></td><td>string</td><td>The delegating task; establishes parent-child relationship</td></tr>
+<tr><td><code>handoff_token</code></td><td>string</td><td>Opaque token proving ownership transfer</td></tr>
+</tbody>
+</table>
+<h3>Events</h3>
+<p>#### <code>delegation.requested</code></p>
+<pre><code>{
+  "type": "delegation.requested",
+  "delegated_by": "agent:planner",
+  "delegated_to": "agent:worker",
+  "parent_task_id": "task_01",
+  "task_id": "task_02",
+  "payload": {
+    "work_description": "Index all PDFs in the documents directory",
+    "deadline": "2026-07-10T12:00:00Z",
+    "priority": "normal"
+  }
+}
+</code></pre>
+<p>#### <code>delegation.accepted</code></p>
+<pre><code>{
+  "type": "delegation.accepted",
+  "delegated_by": "agent:planner",
+  "delegated_to": "agent:worker",
+  "parent_task_id": "task_01",
+  "task_id": "task_02"
+}
+</code></pre>
+<p>#### <code>delegation.rejected</code></p>
+<pre><code>{
+  "type": "delegation.rejected",
+  "delegated_by": "agent:planner",
+  "delegated_to": "agent:worker",
+  "parent_task_id": "task_01",
+  "task_id": "task_02",
+  "payload": {
+    "reason": "worker is at capacity",
+    "retry_after": "2026-07-10T12:05:00Z"
+  }
+}
+</code></pre>
+<p>#### <code>delegation.handoff.completed</code></p>
+<p>Emitted when ownership transfer is acknowledged by both sides.</p>
+<pre><code>{
+  "type": "delegation.handoff.completed",
+  "delegated_by": "agent:planner",
+  "delegated_to": "agent:worker",
+  "parent_task_id": "task_01",
+  "task_id": "task_02",
+  "handoff_token": "ht_abc123"
+}
+</code></pre>
+<p>#### <code>delegation.escalated</code></p>
+<p>Emitted when a delegated task is escalated to a supervisor or higher-authority agent.</p>
+<pre><code>{
+  "type": "delegation.escalated",
+  "delegated_by": "agent:worker",
+  "delegated_to": "agent:supervisor",
+  "parent_task_id": "task_01",
+  "task_id": "task_02",
+  "payload": {
+    "reason": "task exceeds worker capability",
+    "progress_so_far": 0.3
+  }
+}
+</code></pre>
+<h3>Consumer Guidance</h3>
+<ul>
+<li>A child task with <code>parent_task_id</code> must not transition to a terminal state (completed, failed, cancelled) before its parent task reaches a terminal state — unless the parent is explicitly cancelled first.</li>
+<li>When a parent task is cancelled, all child tasks should be cancelled. The runtime or orchestrator should emit <code>task.cancelled</code> for each child, referencing the parent via <code>causation_id</code>.</li>
+<li><code>handoff_token</code> should be treated as opaque. Consumers must not parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.</li>
+<li>On <code>delegation.escalated</code>, consumers tracking the original task should route further status queries through the new delegate (<code>delegated_to</code>).</li>
+</ul>
+<h2>Interruption And Cancellation Safety</h2>
+<h3>Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>checkpoint_id</code></td><td>string</td><td>Identifier for saved execution state</td></tr>
+<tr><td><code>checkpoint_at</code></td><td>RFC 3339</td><td>Timestamp when the checkpoint was saved</td></tr>
+<tr><td><code>interruption_policy</code></td><td>string</td><td><code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code></td></tr>
+<tr><td><code>compensation_id</code></td><td>string</td><td>Links a compensation task to the task it compensates for</td></tr>
+</tbody>
+</table>
+<h3>Events</h3>
+<p>#### Interruption Lifecycle</p>
+<pre><code>interruption.requested
+      │
+      ▼
+interruption.acknowledged
+      │
+      ├──▶ interruption.saved ──▶ (later) interruption.resumed ──▶ task.progress
+      │
+      └──▶ interruption.cancelled
+</code></pre>
+<p>#### <code>interruption.requested</code></p>
+<pre><code>{
+  "type": "interruption.requested",
+  "task_id": "task_01",
+  "interruption_policy": "save_and_stop",
+  "payload": {
+    "reason": "maintenance window approaching",
+    "grace_period_ms": 5000
+  }
+}
+</code></pre>
+<p>#### <code>interruption.acknowledged</code></p>
+<pre><code>{
+  "type": "interruption.acknowledged",
+  "task_id": "task_01",
+  "interruption_policy": "save_and_stop"
+}
+</code></pre>
+<p>#### <code>interruption.saved</code></p>
+<pre><code>{
+  "type": "interruption.saved",
+  "task_id": "task_01",
+  "checkpoint_id": "ckpt_task_01_20260710_100500",
+  "checkpoint_at": "2026-07-10T10:05:00Z",
+  "payload": {
+    "bytes_saved": 4096,
+    "location": "s3://checkpoints/task_01/ckpt_20260710_100500"
+  }
+}
+</code></pre>
+<p>#### <code>interruption.resumed</code></p>
+<pre><code>{
+  "type": "interruption.resumed",
+  "task_id": "task_01",
+  "checkpoint_id": "ckpt_task_01_20260710_100500",
+  "causation_id": "evt_interruption_saved"
+}
+</code></pre>
+<p>#### <code>interruption.cancelled</code></p>
+<p>Emitted when an interrupted task is terminated rather than resumed.</p>
+<pre><code>{
+  "type": "interruption.cancelled",
+  "task_id": "task_01",
+  "causation_id": "evt_interruption_requested",
+  "payload": {
+    "reason": "maintenance extended; task will be recreated",
+    "checkpoint_id": "ckpt_task_01_20260710_100500"
+  }
+}
+</code></pre>
+<p>#### Compensation Events</p>
+<p>#### <code>compensation.requested</code></p>
+<pre><code>{
+  "type": "compensation.requested",
+  "task_id": "task_comp_01",
+  "compensation_id": "task_original_01",
+  "payload": {
+    "original_task": "task_01",
+    "reason": "partial effects must be rolled back",
+    "description": "Delete any files created during the aborted indexing run",
+    "deadline": "2026-07-10T11:00:00Z"
+  }
+}
+</code></pre>
+<p>#### <code>compensation.completed</code></p>
+<pre><code>{
+  "type": "compensation.completed",
+  "task_id": "task_comp_01",
+  "compensation_id": "task_original_01",
+  "payload": {
+    "files_deleted": 14,
+    "bytes_reclaimed": 204800
+  }
+}
+</code></pre>
+<h3>Consumer Guidance</h3>
+<ul>
+<li>On <code>interruption.requested</code> with policy <code>save_and_stop</code>, the task should create a checkpoint, emit <code>interruption.saved</code>, and stop within the grace period.</li>
+<li>On <code>interruption.requested</code> with policy <code>drain_then_stop</code>, the task should finish its current unit of work before saving and stopping.</li>
+<li>On <code>interruption.requested</code> with policy <code>force_stop</code>, the task should stop as soon as possible. Checkpoints are optional but encouraged.</li>
+<li>Recovery after <code>interruption.resumed</code> should use the <code>checkpoint_id</code> to locate saved state. If the checkpoint is unavailable, the task should re-emit <code>task.failed</code> with a <code>checkpoint_missing</code> error code.</li>
+<li><code>compensation_id</code> should reference the original <code>task_id</code> of the task whose side effects need reversal. Compensation tasks should follow the standard task lifecycle.</li>
+</ul>
+<h2>Provenance</h2>
+<h3>Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>evidence_chain</code></td><td>array of objects with <code>source</code> (string) and <code>id</code> (string)</td><td>Ordered list of events and sources that contributed to this assertion, from origin to immediate predecessor</td></tr>
+<tr><td><code>source_trust</code></td><td>string</td><td><code>"verified"</code>, <code>"attested"</code>, <code>"unverified"</code>, <code>"signed"</code></td></tr>
+<tr><td><code>attestation_count</code></td><td>number</td><td>Number of independent verifications of this assertion</td></tr>
+<tr><td><code>data_provenance</code></td><td>URI</td><td>Link to a machine-readable provenance document</td></tr>
+</tbody>
+</table>
+<p>The <code>evidence_chain</code> field extends <code>causation_id</code> (which identifies only the single immediately preceding event) into a multi-hop lineage:</p>
+<pre><code>{
+  "evidence_chain": [
+    {"source": "sensor:temperature_a", "id": "evt_raw_reading"},
+    {"source": "agent:analytics", "id": "evt_aggregated"},
+    {"source": "agent:reporter", "id": "evt_current_assertion"}
+  ],
+  "causation_id": "evt_aggregated"
+}
+</code></pre>
+<h3>Events</h3>
+<p>#### <code>provenance.attestation.added</code></p>
+<pre><code>{
+  "type": "provenance.attestation.added",
+  "causation_id": "evt_original_assertion",
+  "payload": {
+    "attestor": "agent:verifier",
+    "method": "cross_reference",
+    "result": "confirmed"
+  }
+}
+</code></pre>
+<p>#### <code>provenance.attestation.revoked</code></p>
+<pre><code>{
+  "type": "provenance.attestation.revoked",
+  "causation_id": "evt_attestation_added",
+  "payload": {
+    "attestor": "agent:verifier",
+    "reason": "cross-reference source has been retracted"
+  }
+}
+</code></pre>
+<p>#### <code>provenance.chain.truncated</code></p>
+<p>Emitted when a runtime detects that earlier links in an evidence chain are no longer available (e.g., due to retention policy).</p>
+<pre><code>{
+  "type": "provenance.chain.truncated",
+  "causation_id": "evt_original_assertion",
+  "payload": {
+    "earliest_available": "evt_aggregated",
+    "missing_from": "evt_raw_reading",
+    "reason": "events before 2026-07-01 have been purged per retention policy"
+  }
+}
+</code></pre>
+<h3>Consumer Guidance</h3>
+<ul>
+<li><code>evidence_chain</code> should be read as a time-ordered list from origin (earliest) to most recent. The last entry should be the immediate predecessor (<code>causation_id</code>).</li>
+<li>Assertions with <code>source_trust: "unverified"</code> should be treated as provisional. Consumers should avoid making irreversible decisions based solely on unverified assertions.</li>
+<li><code>source_trust: "signed"</code> can be verified through the identity and authorization mechanisms outlined in <code>docs/specs/security.md</code>.</li>
+<li>When <code>provenance.chain.truncated</code> arrives, consumers that relied on the missing portion should assess whether their conclusions remain valid. If not, treat the affected assertion as <code>belief_status: "unknown"</code>.</li>
+<li><code>attestation_count</code> increments with each <code>provenance.attestation.added</code> and effectively decrements with each <code>provenance.attestation.revoked</code>. Consumers should not use it as a sole trust signal without considering attestor identity.</li>
+</ul>
+<h2>Relationship To Other Specs</h2>
+<table>
+<thead><tr><th>Spec</th><th>Relationship</th></tr></thead>
+<tbody>
+<tr><td><code>task-lifecycle.md</code></td><td>Delegation, interruption, and compensation events compose with the task state machine</td></tr>
+<tr><td><code>session.md</code></td><td>Session close should trigger interruption with policy <code>save_and_stop</code> for all active tasks</td></tr>
+<tr><td><code>subscription.md</code></td><td>Consumers can subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code></td></tr>
+<tr><td><code>delivery.md</code></td><td>Checkpoint events should use <code>at_least_once</code> delivery</td></tr>
+<tr><td><code>security.md</code></td><td><code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation may require identity/auth metadata</td></tr>
+<tr><td><code>error-model.md</code></td><td>Use standard error payloads for delegation rejection, interruption failure, and provenance verification failure</td></tr>
+</tbody>
+</table>
+<h2>Field Summary</h2>
+<table>
+<thead><tr><th>Domain</th><th>Fields Added</th></tr></thead>
+<tbody>
+<tr><td>Epistemic</td><td><code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code></td></tr>
+<tr><td>Freshness</td><td><code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code></td></tr>
+<tr><td>Delegation</td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code></td></tr>
+<tr><td>Interruption</td><td><code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code></td></tr>
+<tr><td>Provenance</td><td><code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code></td></tr>
+</tbody>
+</table>
+<p>All fields are optional envelope properties. All event types follow the <code>domain.object.action</code> naming convention. No existing required fields or event types change.</p>
+</body>
+</html>

@@ -28,6 +28,14 @@
       "expected_types": ["capabilities.requested", "session.opened", "subscription.requested", "session.closed"]
     },
     {
+      "path": "fixtures/agent-runtime-semantics.ndjson",
+      "level": "AEP-C0",
+      "description": "Belief revision, freshness, delegation, interruption, compensation, and provenance events.",
+      "expectation": "accept_all",
+      "tags": ["belief", "freshness", "delegation", "interruption", "compensation", "provenance"],
+      "expected_types": ["belief.revised", "freshness.expired", "delegation.requested", "delegation.accepted", "delegation.handoff.completed", "interruption.requested", "interruption.acknowledged", "interruption.saved", "compensation.requested", "provenance.attestation.added"]
+    },
+    {
       "path": "fixtures/delivery.ndjson",
       "level": "AEP-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",

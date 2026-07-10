@@ -22,7 +22,15 @@ public final class EventTypes {
         "memory.preference.updated", "memory.constraint.updated", "memory.summary.ready", "memory.retrieval.ready",
         "agent.message.sent", "agent.message.received", "agent.message.failed",
         "agent.request.created", "agent.response.created", "agent.decision.recorded",
-        "environment.observed", "environment.changed", "environment.alerted", "environment.error"
+        "environment.observed", "environment.changed", "environment.alerted", "environment.error",
+        "belief.revised", "belief.conflict.detected",
+        "freshness.expired", "freshness.window.changed",
+        "delegation.requested", "delegation.accepted", "delegation.rejected",
+        "delegation.handoff.completed", "delegation.escalated",
+        "interruption.requested", "interruption.acknowledged", "interruption.saved",
+        "interruption.resumed", "interruption.cancelled",
+        "compensation.requested", "compensation.completed",
+        "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated"
     );
 
     public static boolean isStandardEventType(String type) {
