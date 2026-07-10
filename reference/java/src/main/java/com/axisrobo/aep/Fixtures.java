@@ -16,7 +16,8 @@ public final class Fixtures {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ManifestFixture(String path, String level, String description,
                                   String expectation, List<String> tags,
-                                  @JsonProperty("expected_types") List<String> expectedTypes) {}
+                                  @JsonProperty("expected_types") List<String> expectedTypes,
+                                  @JsonProperty("expected_stats") Map<String, Object> expectedStats) {}
 
     public record Manifest(@JsonProperty("aep_version") String aep_version,
                            @JsonProperty("default_target_level") String default_target_level,

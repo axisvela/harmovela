@@ -1,63 +1,147 @@
 {
   "aep_version": "0.1",
-  "default_target_level": "AEP-C2",
-  "levels": ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"],
+  "default_target_level": "AEP-C3",
+  "levels": [
+    "AEP-C0",
+    "AEP-C1",
+    "AEP-C2",
+    "AEP-C3"
+  ],
   "fixtures": [
     {
       "path": "fixtures/task-lifecycle.ndjson",
       "level": "AEP-C1",
       "description": "Task submitted, progress, and completion lifecycle flow.",
       "expectation": "stateful_flow",
-      "tags": ["task"],
-      "expected_types": ["task.submitted", "task.accepted", "task.started", "task.progress", "task.completed"]
+      "tags": [
+        "task"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.progress",
+        "task.completed"
+      ]
     },
     {
       "path": "fixtures/memory-context-ack.ndjson",
       "level": "AEP-C0",
       "description": "Subscription request followed by memory, context, and acknowledgement events.",
       "expectation": "accept_all",
-      "tags": ["subscription", "memory", "context", "ack"],
-      "expected_types": ["subscription.requested", "memory.fact.added", "context.invalidated", "event.acknowledged"]
+      "tags": [
+        "subscription",
+        "memory",
+        "context",
+        "ack"
+      ],
+      "expected_types": [
+        "subscription.requested",
+        "memory.fact.added",
+        "context.invalidated",
+        "event.acknowledged"
+      ]
     },
     {
       "path": "fixtures/session-flow.ndjson",
       "level": "AEP-C1",
       "description": "Capabilities, session open, subscription, and session close flow.",
       "expectation": "stateful_flow",
-      "tags": ["session", "subscription"],
-      "expected_types": ["capabilities.requested", "session.opened", "subscription.requested", "session.closed"]
+      "tags": [
+        "session",
+        "subscription"
+      ],
+      "expected_types": [
+        "capabilities.requested",
+        "session.opened",
+        "subscription.requested",
+        "session.closed"
+      ]
     },
     {
       "path": "fixtures/agent-runtime-semantics.ndjson",
       "level": "AEP-C0",
       "description": "Belief revision, freshness, delegation, interruption, compensation, and provenance events.",
       "expectation": "accept_all",
-      "tags": ["belief", "freshness", "delegation", "interruption", "compensation", "provenance"],
-      "expected_types": ["belief.revised", "freshness.expired", "delegation.requested", "delegation.accepted", "delegation.handoff.completed", "interruption.requested", "interruption.acknowledged", "interruption.saved", "compensation.requested", "provenance.attestation.added"]
+      "tags": [
+        "belief",
+        "freshness",
+        "delegation",
+        "interruption",
+        "compensation",
+        "provenance"
+      ],
+      "expected_types": [
+        "belief.revised",
+        "freshness.expired",
+        "delegation.requested",
+        "delegation.accepted",
+        "delegation.handoff.completed",
+        "interruption.requested",
+        "interruption.acknowledged",
+        "interruption.saved",
+        "compensation.requested",
+        "provenance.attestation.added"
+      ]
     },
     {
       "path": "fixtures/delivery.ndjson",
       "level": "AEP-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
       "expectation": "accept_all",
-      "tags": ["delivery", "ack", "reliability"],
-      "expected_types": ["task.submitted", "task.progress", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
+      "tags": [
+        "delivery",
+        "ack",
+        "reliability"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.progress",
+        "event.acknowledged",
+        "event.redelivered",
+        "event.dead_lettered"
+      ]
     },
     {
       "path": "fixtures/delivery-stateful.ndjson",
       "level": "AEP-C2",
       "description": "Full task lifecycle with delivery events exercised through harness stateful flow.",
       "expectation": "stateful_flow",
-      "tags": ["delivery", "task", "ack", "reliability"],
-      "expected_types": ["task.submitted", "task.started", "task.progress", "task.completed", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
+      "tags": [
+        "delivery",
+        "task",
+        "ack",
+        "reliability"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.started",
+        "task.progress",
+        "task.completed",
+        "event.acknowledged",
+        "event.redelivered",
+        "event.dead_lettered"
+      ]
     },
     {
       "path": "fixtures/delivery-e2e.ndjson",
       "level": "AEP-C3",
       "description": "End-to-end delivery tracking: track → ack, track → nack, track → dead-letter, with DeliveryTracker stats verification.",
       "expectation": "delivery_e2e",
-      "tags": ["delivery", "e2e", "ack", "reliability"],
-      "expected_types": ["task.submitted", "task.started", "task.progress", "event.acknowledged", "event.redelivered", "event.dead_lettered"],
+      "tags": [
+        "delivery",
+        "e2e",
+        "ack",
+        "reliability"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.started",
+        "task.progress",
+        "event.acknowledged",
+        "event.redelivered",
+        "event.dead_lettered"
+      ],
       "expected_stats": {
         "pending": 1,
         "acknowledged": 1,

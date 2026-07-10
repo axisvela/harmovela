@@ -22,8 +22,8 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	if !reflect.DeepEqual(manifest.Levels, expectedLevels) {
 		t.Fatalf("expected levels %v, got %v", expectedLevels, manifest.Levels)
 	}
-	if manifest.DefaultTargetLevel != "AEP-C2" {
-		t.Fatalf("expected default target AEP-C2, got %v", manifest.DefaultTargetLevel)
+	if manifest.DefaultTargetLevel != "AEP-C3" {
+		t.Fatalf("expected default target AEP-C3, got %v", manifest.DefaultTargetLevel)
 	}
 }
 
@@ -84,6 +84,47 @@ func TestConformanceFixtures(t *testing.T) {
 					}
 				}
 			}
+
+			if fixture.Expectation == "delivery_e2e" {
+				harness := NewHarness()
+				for i, event := range events {
+					responses := harness.Handle(event)
+					for _, resp := range responses {
+						if typ, _ := resp["type"].(string); typ == "event.rejected" {
+							errMsg := "unknown"
+							if payload, ok := resp["payload"].(map[string]any); ok {
+								if errObj, ok := payload["error"].(map[string]any); ok {
+									errMsg, _ = errObj["message"].(string)
+								}
+							}
+							t.Fatalf("event %d rejected: %s", i, errMsg)
+						}
+					}
+				}
+				if fixture.ExpectedStats != nil {
+					stats := harness.Delivery.GetStats()
+					for key, expected := range fixture.ExpectedStats {
+						expectedNum, expOk := toFloat64(expected)
+						actualNum, actOk := toFloat64(stats[key])
+						if expOk && actOk && actualNum != expectedNum {
+							t.Fatalf("delivery stat %s: expected %.0f, got %.0f", key, expectedNum, actualNum)
+						}
+					}
+				}
+			}
 		})
+	}
+}
+
+func toFloat64(v any) (float64, bool) {
+	switch val := v.(type) {
+	case float64:
+		return val, true
+	case int:
+		return float64(val), true
+	case int64:
+		return float64(val), true
+	default:
+		return 0, false
 	}
 }

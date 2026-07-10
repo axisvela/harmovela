@@ -123,6 +123,7 @@ type Harness struct {
 	tasks         map[string]*TaskTracker
 	router        *EventRouter
 	session       *AepSession
+	Delivery      *DeliveryTracker
 }
 
 func NewHarness() *Harness {
@@ -131,8 +132,10 @@ func NewHarness() *Harness {
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*TaskTracker),
 		router:        NewEventRouter(),
+		Delivery:      NewDeliveryTracker(nil, nil),
 	}
 	h.setupRouter()
+	h.setupDeliveryRouter()
 	return h
 }
 
@@ -180,6 +183,22 @@ func (h *Harness) setupRouter() {
 		}, h.handleSessionClosed)
 }
 
+func (h *Harness) setupDeliveryRouter() {
+	h.router.
+		On(func(event map[string]any) bool {
+			typ, _ := event["type"].(string)
+			return typ == "event.acknowledged"
+		}, h.handleInboundAck).
+		On(func(event map[string]any) bool {
+			typ, _ := event["type"].(string)
+			return typ == "event.redelivered"
+		}, h.handleInboundRedeliver).
+		On(func(event map[string]any) bool {
+			typ, _ := event["type"].(string)
+			return typ == "event.dead_lettered"
+		}, h.handleInboundDeadLetter)
+}
+
 func (h *Harness) Handle(value map[string]any) []map[string]any {
 	errs := ValidateEnvelope(value)
 	if len(errs) > 0 {
@@ -202,6 +221,17 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 			"errors": []string{"unsupported protocol version: " + v},
 			"error":  ErrorPayload(ErrorCodeUnsupportedVersion, "unsupported version "+v, false),
 		})}
+	}
+
+	if delivery, ok := value["delivery"].(map[string]any); ok {
+		if mode, _ := delivery["mode"].(string); mode != "" {
+			eventID, _ := value["id"].(string)
+			sessionID, _ := value["session_id"].(string)
+			if sessionID == "" {
+				sessionID = "_default"
+			}
+			h.Delivery.Track(eventID, sessionID)
+		}
 	}
 
 	routed := h.router.Dispatch(value)
@@ -378,6 +408,43 @@ func (h *Harness) handleSessionClosed(event map[string]any) any {
 		}
 	}
 	return responses
+}
+
+func (h *Harness) handleInboundAck(event map[string]any) any {
+	if payload, ok := event["payload"].(map[string]any); ok {
+		if eventID, ok := payload["acknowledged_event_id"].(string); ok && eventID != "" {
+			h.Delivery.Ack(eventID)
+		}
+	}
+	return h.newEvent("event.acknowledged", event, map[string]any{
+		"acknowledged_event_id": event["id"],
+	})
+}
+
+func (h *Harness) handleInboundRedeliver(event map[string]any) any {
+	if payload, ok := event["payload"].(map[string]any); ok {
+		if eventID, ok := payload["original_event_id"].(string); ok && eventID != "" {
+			h.Delivery.Nack(eventID)
+		}
+	}
+	return h.newEvent("event.acknowledged", event, map[string]any{
+		"acknowledged_event_id": event["id"],
+	})
+}
+
+func (h *Harness) handleInboundDeadLetter(event map[string]any) any {
+	if payload, ok := event["payload"].(map[string]any); ok {
+		if eventID, ok := payload["original_event_id"].(string); ok && eventID != "" {
+			reason := map[string]any{"code": "unknown"}
+			if err, ok := payload["error"].(map[string]any); ok {
+				reason = err
+			}
+			h.Delivery.DeadLetter(eventID, reason)
+		}
+	}
+	return h.newEvent("event.acknowledged", event, map[string]any{
+		"acknowledged_event_id": event["id"],
+	})
 }
 
 func (h *Harness) nextSeq() int {

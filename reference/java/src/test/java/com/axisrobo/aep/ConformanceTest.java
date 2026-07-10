@@ -14,7 +14,7 @@ class ConformanceTest {
     void manifestDeclaresKnownDraftLevels() throws Exception {
         var manifest = Fixtures.loadManifest("../../conformance/manifest.json");
         assertEquals(List.of("AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"), manifest.levels());
-        assertEquals("AEP-C2", manifest.default_target_level());
+        assertEquals("AEP-C3", manifest.default_target_level());
     }
 
     @Test
@@ -53,6 +53,33 @@ class ConformanceTest {
                             }
                             fail("event " + i + " rejected: " + errMsg);
                         }
+                    }
+                }
+            }
+
+            if ("delivery_e2e".equals(fixture.expectation())) {
+                var harness = new Harness();
+                for (int i = 0; i < events.size(); i++) {
+                    var responses = harness.handle(events.get(i));
+                    for (var resp : responses) {
+                        if ("event.rejected".equals(resp.get("type"))) {
+                            var errMsg = "unknown";
+                            if (resp.get("payload") instanceof Map<?, ?> p
+                                && p.get("error") instanceof Map<?, ?> e) {
+                                errMsg = String.valueOf(e.get("message"));
+                            }
+                            fail("event " + i + " rejected: " + errMsg);
+                        }
+                    }
+                }
+                var expectedStats = fixture.expectedStats();
+                if (expectedStats != null) {
+                    var stats = harness.getDelivery().getStats();
+                    for (var entry : expectedStats.entrySet()) {
+                        var key = entry.getKey();
+                        var expected = entry.getValue();
+                        var actual = stats.get(key);
+                        assertEquals(expected, actual, "delivery stat " + key);
                     }
                 }
             }

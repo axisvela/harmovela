@@ -79,9 +79,12 @@ public class Harness {
     private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
     private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
     private final EventRouter router = new EventRouter();
+    private final DeliveryTracker delivery;
     private Session session;
 
     public Harness() {
+        this.delivery = new DeliveryTracker();
+        setupDeliveryRouter();
         router
             .on(e -> "capabilities.requested".equals(e.get("type")), this::handleCapabilities)
             .on(e -> "subscription.requested".equals(e.get("type")), this::handleSubscriptionRequested)
@@ -99,6 +102,14 @@ public class Harness {
     public Session getSession() { return session; }
     public Map<String, Map<String, Object>> getSubscriptions() { return subscriptions; }
     public Map<String, TaskTracker> getTasks() { return tasks; }
+    public DeliveryTracker getDelivery() { return delivery; }
+
+    private void setupDeliveryRouter() {
+        router
+            .on(e -> "event.acknowledged".equals(e.get("type")), this::handleInboundAck)
+            .on(e -> "event.redelivered".equals(e.get("type")), this::handleInboundRedeliver)
+            .on(e -> "event.dead_lettered".equals(e.get("type")), this::handleInboundDeadLetter);
+    }
 
     public List<Map<String, Object>> handle(Map<String, Object> value) {
         var errs = Envelope.validate(value);
@@ -121,6 +132,13 @@ public class Harness {
                 "errors", List.of("unsupported protocol version: " + value.get("aep_version")),
                 "error", Errors.errorPayload(Errors.UNSUPPORTED_VERSION, "unsupported version " + value.get("aep_version"), false)
             )));
+        }
+
+        var deliveryMeta = value.get("delivery");
+        if (deliveryMeta instanceof Map<?,?> dm && dm.get("mode") instanceof String mode && !mode.isEmpty()) {
+            var eventId = (String) value.get("id");
+            var sessionId = (String) value.getOrDefault("session_id", "_default");
+            delivery.track(eventId, sessionId);
         }
 
         var routed = router.dispatch(value);
@@ -259,6 +277,43 @@ public class Harness {
     }
 
     private Object handleSessionError(Map<String, Object> event) {
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleInboundAck(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.get("payload");
+        if (payload != null) {
+            var eventId = (String) payload.get("acknowledged_event_id");
+            if (eventId != null) delivery.ack(eventId);
+        }
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleInboundRedeliver(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.get("payload");
+        if (payload != null) {
+            var eventId = (String) payload.get("original_event_id");
+            if (eventId != null) delivery.nack(eventId);
+        }
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleInboundDeadLetter(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.get("payload");
+        if (payload != null) {
+            var eventId = (String) payload.get("original_event_id");
+            if (eventId != null) {
+                var reason = new HashMap<String, Object>();
+                reason.put("code", "unknown");
+                if (payload.get("error") instanceof Map<?,?> err) {
+                    reason.putAll((Map<String, Object>) err);
+                }
+                delivery.deadLetter(eventId, reason);
+            }
+        }
         return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
     }
 

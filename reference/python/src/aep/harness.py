@@ -6,6 +6,7 @@ from .session import AepSession
 from .task import TaskTracker
 from .router import EventRouter
 from .errors import ErrorCode, error_payload
+from .delivery import DeliveryTracker
 
 
 class AepHarness:
@@ -17,7 +18,9 @@ class AepHarness:
         self._tasks: dict[str, TaskTracker] = {}
         self._router = EventRouter()
         self._session: AepSession | None = None
+        self._delivery = DeliveryTracker()
         self._setup_router()
+        self._setup_delivery_router()
 
     @property
     def session(self) -> AepSession | None:
@@ -42,6 +45,12 @@ class AepHarness:
             .on("session.opened", self._handle_session_opened) \
             .on("session.closed", self._handle_session_closed)
 
+    def _setup_delivery_router(self):
+        self._router \
+            .on("event.acknowledged", self._handle_inbound_ack) \
+            .on("event.redelivered", self._handle_inbound_redeliver) \
+            .on("event.dead_lettered", self._handle_inbound_dead_letter)
+
     def handle(self, value: dict) -> list[dict]:
         errors = validate_envelope(value)
         if errors:
@@ -62,6 +71,10 @@ class AepHarness:
                 "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, f"unsupported version {value.get('aep_version')}",
                                        details={"supported": ["0.1"]}),
             })]
+
+        delivery = value.get("delivery", {})
+        if isinstance(delivery, dict) and delivery.get("mode"):
+            self._delivery.track(value.get("id"), value.get("session_id", "_default"))
 
         routed = self._router.dispatch(value)
         if routed:
@@ -190,6 +203,30 @@ class AepHarness:
         if closed_event:
             responses.append(closed_event)
         return responses
+
+    def _handle_inbound_ack(self, event: dict) -> list:
+        event_id = event.get("payload", {}).get("acknowledged_event_id")
+        if event_id:
+            self._delivery.ack(event_id)
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
+
+    def _handle_inbound_redeliver(self, event: dict) -> list:
+        event_id = event.get("payload", {}).get("original_event_id")
+        if event_id:
+            self._delivery.nack(event_id)
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
+
+    def _handle_inbound_dead_letter(self, event: dict) -> list:
+        event_id = event.get("payload", {}).get("original_event_id")
+        if event_id:
+            self._delivery.dead_letter(event_id, event.get("payload", {}).get("error", {"code": "unknown"}))
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
 
     def _event(self, type_: str, input_: dict, payload: dict | None = None) -> dict:
         self._sequence += 1

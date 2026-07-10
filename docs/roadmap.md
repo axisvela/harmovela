@@ -124,8 +124,20 @@ Deliverables (all delivered):
 - All 4 language event registries updated with 18 new event types
 - Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)
 
+## Phase 8: Delivery End-to-End Conformance ✅ Complete
+
+Goal: exercise real DeliveryTracker trace (track → ack, track → nack, track → dead-letter) in every language's conformance harness.
+
+Deliverables (all delivered):
+
+- AEP-C3 conformance level with `delivery_e2e` expectation
+- `conformance/fixtures/delivery-e2e.ndjson` — full tracking lifecycle fixture
+- DeliveryTracker integration in all 4 language harnesses
+- Cross-language delivery-e2e fixture PASS at AEP-C3 default target
+- Payload schema validation for 26 event types in TypeScript and Python (`schemas/aep-payloads.schema.json`)
+
 ## Current Completion State
 
-All seven roadmap phases (Phase 0 through Phase 7) are fully delivered. The protocol covers 17 specifications, 4 transport bindings, ~340 tests across four languages, cross-language conformance with 5 passing fixtures, and a published spec site at https://axisrobo.github.io/aep/. Agent-runtime semantics now cover belief revision, freshness/validity, delegation/handoff, interruption/cancellation safety, and provenance/trust.
+All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.
 
-Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production hardening of delivery/reliability subsystems, formal protocol versioning, and community governance structures.
+Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production delivery-store backends, formal protocol versioning, and community governance structures.

@@ -131,8 +131,18 @@
 <li>All 4 language event registries updated with 18 new event types</li>
 <li>Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)</li>
 </ul>
+<h2>Phase 8: Delivery End-to-End Conformance ✅ Complete</h2>
+<p>Goal: exercise real DeliveryTracker trace (track → ack, track → nack, track → dead-letter) in every language's conformance harness.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>AEP-C3 conformance level with <code>delivery_e2e</code> expectation</li>
+<li><code>conformance/fixtures/delivery-e2e.ndjson</code> — full tracking lifecycle fixture</li>
+<li>DeliveryTracker integration in all 4 language harnesses</li>
+<li>Cross-language delivery-e2e fixture PASS at AEP-C3 default target</li>
+<li>Payload schema validation for 26 event types in TypeScript and Python (<code>schemas/aep-payloads.schema.json</code>)</li>
+</ul>
 <h2>Current Completion State</h2>
-<p>All seven roadmap phases (Phase 0 through Phase 7) are fully delivered. The protocol covers 17 specifications, 4 transport bindings, ~340 tests across four languages, cross-language conformance with 5 passing fixtures, and a published spec site at https://axisrobo.github.io/aep/. Agent-runtime semantics now cover belief revision, freshness/validity, delegation/handoff, interruption/cancellation safety, and provenance/trust.</p>
-<p>Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production hardening of delivery/reliability subsystems, formal protocol versioning, and community governance structures.</p>
+<p>All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.</p>
+<p>Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production delivery-store backends, formal protocol versioning, and community governance structures.</p>
 </body>
 </html>

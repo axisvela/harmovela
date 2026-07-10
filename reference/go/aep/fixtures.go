@@ -7,12 +7,13 @@ import (
 )
 
 type ManifestFixture struct {
-	Path          string   `json:"path"`
-	Level         string   `json:"level"`
-	Description   string   `json:"description"`
-	Expectation   string   `json:"expectation"`
-	Tags          []string `json:"tags"`
-	ExpectedTypes []string `json:"expected_types"`
+	Path          string         `json:"path"`
+	Level         string         `json:"level"`
+	Description   string         `json:"description"`
+	Expectation   string         `json:"expectation"`
+	Tags          []string       `json:"tags"`
+	ExpectedTypes []string       `json:"expected_types"`
+	ExpectedStats map[string]any `json:"expected_stats,omitempty"`
 }
 
 type Manifest struct {

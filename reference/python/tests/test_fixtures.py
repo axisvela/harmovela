@@ -46,7 +46,7 @@ def _target_fixtures() -> list[dict]:
 
 def test_conformance_manifest_declares_known_draft_levels():
     assert MANIFEST["levels"] == ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"]
-    assert MANIFEST["default_target_level"] == "AEP-C2"
+    assert MANIFEST["default_target_level"] == "AEP-C3"
 
 
 @pytest.mark.parametrize("fixture", _target_fixtures(), ids=lambda f: f["path"])
@@ -64,7 +64,7 @@ def test_conformance_fixture_validation(fixture: dict):
 
 @pytest.mark.parametrize(
     "fixture",
-    [fixture for fixture in _target_fixtures() if fixture["expectation"] == "stateful_flow"],
+    [fixture for fixture in _target_fixtures() if fixture["expectation"] in ("stateful_flow", "delivery_e2e")],
     ids=lambda f: f["path"],
 )
 def test_conformance_stateful_flows_are_accepted(fixture: dict):
@@ -75,3 +75,9 @@ def test_conformance_stateful_flows_are_accepted(fixture: dict):
         responses = harness.handle(event) or []
         rejected = [response for response in responses if response["type"] == "event.rejected"]
         assert rejected == [], f"event {index} rejected: {rejected}"
+
+    if fixture["expectation"] == "delivery_e2e":
+        expected_stats = fixture.get("expected_stats", {})
+        stats = harness._delivery.stats
+        for key, value in expected_stats.items():
+            assert stats.get(key) == value, f"delivery stat {key}: expected {value}, got {stats.get(key)}"
