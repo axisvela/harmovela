@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Grpc — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Transport Grpc</h1>
+<p><h1>AEP Transport Binding: gRPC</h1></p>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<p><h2>Purpose</h2></p>
+<p>Define how AEP runs over gRPC, supporting bidirectional event streams using a single bidirectional RPC with JSON-encoded payloads carried in protobuf messages.</p>
+<p><h2>Service Definition</h2></p>
+<p>``<code>
+service AepTransport {
+  rpc Stream(stream AepMessage) returns (stream AepMessage);
+}
+</code>`<code></p>
+<p><h3>Message</h3></p>
+<p></code>`<code>protobuf
+message AepMessage {
+  string json_payload = 1;
+}
+</code>`<code></p>
+<p>The </code>json_payload<code> field carries a JSON-encoded AEP event envelope. Protobuf is used only for framing; the AEP event schema remains JSON-defined. This avoids duplicating the AEP envelope schema in protobuf and keeps the transport layer independent of protocol evolution.</p>
+<p><h2>Connection</h2></p>
+<p><h3>URI Scheme</h3></p>
+<p></code>`<code>
+grpc://host:port/servicePath
+</code>`<code></p>
+<p>For TLS-secured connections:</p>
+<p></code>`<code>
+grpcs://host:port/servicePath
+</code>`<code></p>
+<p>The default service path is </code>/aep.v1.AepTransport/Stream<code>.</p>
+<p><h3>Connection Negotiation</h3></p>
+<p>The gRPC transport uses standard gRPC channel establishment:</p>
+<p>1. Client creates a gRPC channel to the server address.
+2. Client invokes the </code>Stream<code> bidirectional RPC, receiving a call object.
+3. Both peers may immediately begin writing </code>AepMessage<code> frames.
+4. The stream is long-lived; there is no per-event request/response cycle.</p>
+<p><h3>Metadata</h3></p>
+<p>gRPC metadata (headers and trailers) may carry transport-level parameters:</p>
+<p><table>
+<tr><td>Metadata Key</td><td>Direction</td><td>Description</td></tr>
+</table>
+
+<table>
+<tr><td></code>aep-session-id<code></td><td>Client → Server</td><td>Session identifier for connection binding</td></tr>
+<tr><td></code>aep-version<code></td><td>Client → Server</td><td>AEP protocol version (e.g., </code>0.1<code>)</td></tr>
+<tr><td></code>aep-agent-id<code></td><td>Client → Server</td><td>Optional agent identity</td></tr>
+<tr><td></code>x-aep-cursor<code></td><td>Server → Client (trailer)</td><td>Last committed event cursor on stream close</td></tr></table>
+</p>
+<p>Metadata is not part of the AEP event envelope and must not be used to carry event semantics.</p>
+<p><h2>Framing</h2></p>
+<p><table>
+<tr><td>Aspect</td><td>Specification</td></tr>
+</table>
+
+<table>
+<tr><td>Frame type</td><td>gRPC protobuf messages (binary)</td></tr>
+<tr><td>Message format</td><td>One complete JSON AEP event in </code>json_payload<code> per message</td></tr>
+<tr><td>Encoding</td><td>UTF-8 for the JSON payload; standard protobuf framing</td></tr>
+<tr><td>Flow control</td><td>Managed by gRPC/HTTP/2 flow control</td></tr>
+<tr><td>Message boundaries</td><td>Each </code>AepMessage<code> is one AEP event</td></tr></table>
+</p>
+<p><h2>Session Lifecycle</h2></p>
+<p><table>
+<tr><td>gRPC State</td><td>Session State</td><td>Notes</td></tr>
+</table>
+
+<table>
+<tr><td>Channel connecting</td><td></code>CREATED<code></td></tr>
+<tr><td>Stream open (bidirectional)</td><td></code>OPENED<code></td></tr>
+<tr><td>After </code>session.ready<code></td><td></code>READY<code></td></tr>
+<tr><td>Stream end (OK status, code 0)</td><td></code>CLOSED<code></td><td>Graceful shutdown</td></tr>
+<tr><td>Stream end (non-zero status)</td><td></code>ERROR<code></td><td>See error mapping below</td></tr>
+<tr><td>Channel disconnected</td><td></code>ERROR<code></td><td>Network failure</td></tr></table>
+</p>
+<p><h2>Heartbeat</h2></p>
+<p>gRPC provides HTTP/2 PING frames as a transport-level heartbeat. Application-level keep-alive is supported via standard gRPC channel options:</p>
+<p><ul>
+<li></code>grpc.keepalive_time_ms<code>: Interval between keep-alive pings.</li>
+<li></code>grpc.keepalive_timeout_ms<code>: Time to wait for a keep-alive acknowledgment.</li>
+<li></code>grpc.keepalive_permit_without_calls<code>: Whether keep-alive is allowed when no streams are active.</li>
+</ul></p>
+<p>Application-level </code>session.heartbeat<code> events may still be sent over the stream to carry structured metadata, but transport-level keep-alive should be handled by gRPC keep-alive configuration.</p>
+<p>A peer that does not receive a PING acknowledgment within </code>keepalive_timeout_ms<code> should transition the session to </code>ERROR<code>.</p>
+<p><h2>Reconnect and Cursor Recovery</h2></p>
+<p>A disconnected client may reconnect and resume the event stream:</p>
+<p>1. Client opens a new gRPC channel and invokes </code>Stream<code>.
+2. Client sends </code>session.opened<code> with a new or existing </code>session_id<code>.
+3. Client sends </code>subscription.requested<code> with </code>from_cursor<code> set to the last received cursor value.
+4. Server replays events from the cursor position.</p>
+<p>The cursor value may also be communicated in the server's response trailer under the </code>x-aep-cursor<code> metadata key to allow the client to persist the last known position for recovery.</p>
+<p><h2>Status Code Mapping</h2></p>
+<p>gRPC status codes are mapped to AEP semantics:</p>
+<p><table>
+<tr><td>gRPC Status Code</td><td>Code</td><td>AEP Mapping</td></tr>
+</table>
+
+<table>
+<tr><td>OK</td><td>0</td><td></code>session.closed<code> with reason </code>"normal"<code></td></tr>
+<tr><td>CANCELLED</td><td>1</td><td></code>session.closed<code> with reason </code>"cancelled"<code></td></tr>
+<tr><td>UNAVAILABLE</td><td>14</td><td></code>session.error<code> with code </code>"transport_unavailable"<code></td></tr>
+<tr><td>PERMISSION_DENIED</td><td>7</td><td></code>session.error<code> with code </code>"unauthorized"<code></td></tr>
+<tr><td>UNAUTHENTICATED</td><td>16</td><td></code>session.error<code> with code </code>"unauthenticated"<code></td></tr>
+<tr><td>INTERNAL</td><td>13</td><td></code>session.error<code> with code </code>"internal_error"<code></td></tr>
+<tr><td>INVALID_ARGUMENT</td><td>3</td><td></code>session.error<code> with code </code>"invalid_envelope"<code></td></tr>
+<tr><td>RESOURCE_EXHAUSTED</td><td>8</td><td></code>session.error<code> with code </code>"rate_limited"<code></td></tr>
+<tr><td>DEADLINE_EXCEEDED</td><td>4</td><td></code>session.error<code> with code </code>"timeout"<code></td></tr>
+<tr><td>ABORTED</td><td>10</td><td></code>session.error<code> with code </code>"aborted"<code></td></tr>
+<tr><td>UNKNOWN</td><td>2</td><td></code>session.error<code> with code </code>"unknown"<code></td></tr></table>
+</p>
+<p><h2>gRPC-Specific Options</h2></p>
+<p><table>
+<tr><td>Option</td><td>Default</td><td>Description</td></tr>
+</table>
+
+<table>
+<tr><td></code>grpc.max_receive_message_length<code></td><td>4194304 (4 MB)</td><td>Maximum message size in bytes</td></tr>
+<tr><td></code>grpc.max_send_message_length<code></td><td>4194304 (4 MB)</td><td>Maximum send message size in bytes</td></tr>
+<tr><td></code>grpc.keepalive_time_ms<code></td><td>30000</td><td>Keep-alive ping interval</td></tr>
+<tr><td></code>grpc.keepalive_timeout_ms<code></td><td>10000</td><td>Keep-alive acknowledgment timeout</td></tr></table>
+</p>
+<p><h2>Implementation Notes</h2></p>
+<p><ul>
+<li>Implementations should set a reasonable maximum message size. Messages exceeding the limit will trigger a </code>RESOURCE_EXHAUSTED<code> gRPC error.</li>
+<li>TLS (</code>grpcs://<code>) is strongly recommended for any network-exposed deployment.</li>
+<li>The gRPC transport may coexist with other transports in the same AEP runtime.</li>
+<li>gRPC bidirectional streaming provides native multiplexing without requiring a separate ingest endpoint (unlike SSE).</li>
+<li>Service reflection may be enabled to allow tools like </code>grpcurl` to inspect the service definition.</li>
+<li>See the <a href="../session.md">session lifecycle specification</a> for session state machine details.</li>
+</ul>
+</p>
+</body>
+</html>

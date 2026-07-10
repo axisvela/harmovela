@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Lifecycle — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Task Lifecycle</h1>
+<p><h1>AEP Task Lifecycle</h1></p>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<p><h2>Purpose</h2></p>
+<p>Define the lifecycle of long-running asynchronous tasks. A task is a unit of work that may span multiple events and take an arbitrary amount of time to complete.</p>
+<p><h2>Task States</h2></p>
+<p>``<code>
+                ┌─────────┐
+                │SUBMITTED│
+                └────┬────┘
+                     │
+                ┌────▼────┐
+                │ACCEPTED ├────────────────────────┐
+                └────┬────┘                        │
+                     │                              │
+                ┌────▼────┐                         │
+           ┌────┤ STARTED ├────┐                    │
+           │    └────┬────┘    │                    │
+           │         │         │                    │
+      ┌────▼───┐ ┌───▼────┐ ┌─▼──────┐             │
+      │BLOCKED │ │PROGRESS│ │ OUTPUT │             │
+      └────┬───┘ └───┬────┘ └─┬──────┘             │
+           │         │         │                    │
+           └─────────┴─────────┘                    │
+                     │           ┌──────────┬───────┘
+          ┌──────────┼───────────┤          │
+          │          │           │          │
+     ┌────▼──┐ ┌─────▼────┐ ┌───▼───┐ ┌───▼───────┐
+     │FAILED │ │COMPLETED │ │CANCELLED│ │ TIMED_OUT │
+     └───────┘ └──────────┘ └────────┘ └───────────┘
+</code>`<code></p>
+<p><h3>State Transitions</h3></p>
+<p><table>
+<tr><td>From</td><td>To</td><td>Event</td><td>Notes</td></tr>
+</table>
+
+<table>
+<tr><td>—</td><td></code>SUBMITTED<code></td><td></code>task.submitted<code></td><td>Initial state</td></tr>
+<tr><td></code>SUBMITTED<code></td><td></code>ACCEPTED<code></td><td></code>task.accepted<code></td><td>Producer accepts the task</td></tr>
+<tr><td></code>SUBMITTED<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Pre-validation failure</td></tr>
+<tr><td></code>SUBMITTED<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled before acceptance</td></tr>
+<tr><td></code>SUBMITTED<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Expired before acceptance</td></tr>
+<tr><td></code>ACCEPTED<code></td><td></code>STARTED<code></td><td></code>task.started<code></td><td>Work begins</td></tr>
+<tr><td></code>ACCEPTED<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Failed before starting</td></tr>
+<tr><td></code>ACCEPTED<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled before starting</td></tr>
+<tr><td></code>ACCEPTED<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Expired before starting</td></tr>
+<tr><td></code>STARTED<code></td><td></code>PROGRESS<code></td><td></code>task.progress<code></td><td>Intermediate progress report</td></tr>
+<tr><td></code>STARTED<code></td><td></code>OUTPUT<code></td><td></code>task.output<code></td><td>Partial output produced</td></tr>
+<tr><td></code>STARTED<code></td><td></code>BLOCKED<code></td><td></code>task.blocked<code></td><td>Waiting for dependency</td></tr>
+<tr><td></code>STARTED<code></td><td></code>COMPLETED<code></td><td></code>task.completed<code></td><td>Task finished successfully</td></tr>
+<tr><td></code>STARTED<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Task failed during execution</td></tr>
+<tr><td></code>STARTED<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled during execution</td></tr>
+<tr><td></code>STARTED<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Exceeded deadline</td></tr>
+<tr><td></code>BLOCKED<code></td><td></code>STARTED<code></td><td></code>task.started<code></td><td>Resumed after unblocking</td></tr>
+<tr><td></code>BLOCKED<code></td><td></code>PROGRESS<code></td><td></code>task.progress<code></td><td>Progress while blocked</td></tr>
+<tr><td></code>BLOCKED<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Failed while blocked</td></tr>
+<tr><td></code>BLOCKED<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled while blocked</td></tr>
+<tr><td></code>BLOCKED<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Expired while blocked</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>PROGRESS<code></td><td></code>task.progress<code></td><td>Repeated progress updates</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>OUTPUT<code></td><td></code>task.output<code></td><td>Partial output</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>BLOCKED<code></td><td></code>task.blocked<code></td><td>Blocked during progress</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>COMPLETED<code></td><td></code>task.completed<code></td><td>Task finished</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Failed during progress</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled during progress</td></tr>
+<tr><td></code>PROGRESS<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Expired during progress</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>PROGRESS<code></td><td></code>task.progress<code></td><td>More progress after partial output</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>OUTPUT<code></td><td></code>task.output<code></td><td>Additional partial output</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>BLOCKED<code></td><td></code>task.blocked<code></td><td>Blocked after partial output</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>COMPLETED<code></td><td></code>task.completed<code></td><td>Final output = completion</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>FAILED<code></td><td></code>task.failed<code></td><td>Failed after partial output</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>CANCELLED<code></td><td></code>task.cancelled<code></td><td>Cancelled after partial output</td></tr>
+<tr><td></code>OUTPUT<code></td><td></code>TIMED_OUT<code></td><td></code>task.timed_out<code></td><td>Expired after partial output</td></tr></table>
+</p>
+<p>Terminal states: </code>COMPLETED<code>, </code>FAILED<code>, </code>CANCELLED<code>, </code>TIMED_OUT<code>.</p>
+<p><h2>Task Events</h2></p>
+<p>All task events share a common envelope pattern:</p>
+<p></code>`<code>json
+{
+  "type": "task.&lt;action&gt;",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "&lt;current_state&gt;"
+  }
+}
+</code>`<code></p>
+<p><h3></code>task.submitted<code></h3></p>
+<p>Initiates a task. Sent by the consumer or orchestrator.</p>
+<p></code>`<code>json
+{
+  "type": "task.submitted",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "description": "crawl example.org",
+    "timeout_ms": 300000,
+    "priority": "normal"
+  }
+}
+</code>`<code></p>
+<p>Optional payload fields: </code>description<code>, </code>timeout_ms<code>, </code>priority<code>.</p>
+<p><h3></code>task.accepted<code></h3></p>
+<p>Producer confirms it will execute the task.</p>
+<p><h3></code>task.started<code></h3></p>
+<p>Producer has begun execution.</p>
+<p><h3></code>task.progress<code></h3></p>
+<p>Intermediate progress update.</p>
+<p></code>`<code>json
+{
+  "type": "task.progress",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "progress",
+    "message": "Indexed 120 of 500 pages",
+    "progress": 0.24
+  }
+}
+</code>`<code></p>
+<p>Optional payload fields: </code>message<code> (string), </code>progress<code> (number 0..1).</p>
+<p><h3></code>task.output<code></h3></p>
+<p>Partial or streaming output from an in-progress task.</p>
+<p><h3></code>task.blocked<code></h3></p>
+<p>Task cannot proceed until a dependency is resolved.</p>
+<p></code>`<code>json
+{
+  "type": "task.blocked",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "blocked",
+    "reason": "waiting for memory indexing"
+  }
+}
+</code>`<code></p>
+<p><h3></code>task.completed<code></h3></p>
+<p>Task finished successfully.</p>
+<p></code>`<code>json
+{
+  "type": "task.completed",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "completed",
+    "result": { "pages_indexed": 500 }
+  }
+}
+</code>`<code></p>
+<p>The </code>result<code> field carries the task's final output.</p>
+<p><h3></code>task.failed<code></h3></p>
+<p>Task execution failed.</p>
+<p></code>`<code>json
+{
+  "type": "task.failed",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "failed",
+    "error": {
+      "code": "tool_error",
+      "message": "crawler returned HTTP 503",
+      "retryable": true
+    }
+  }
+}
+</code>`<code></p>
+<p><h3></code>task.cancelled<code></h3></p>
+<p>Task was cancelled, either by the consumer or the producer.</p>
+<p></code>`<code>json
+{
+  "type": "task.cancelled",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "cancelled",
+    "reason": "user requested cancellation"
+  }
+}
+</code>`<code></p>
+<p><h3></code>task.timed_out<code></h3></p>
+<p>Task exceeded its configured timeout.</p>
+<p></code>`<code>json
+{
+  "type": "task.timed_out",
+  "task_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "state": "timed_out",
+    "error": {
+      "code": "task_timeout",
+      "message": "task task_01 timed out",
+      "retryable": true
+    }
+  }
+}
+</code>`<code></p>
+<p><h2>Cancellation Protocol</h2></p>
+<p>Cancellation is a two-phase process:</p>
+<p>1. <strong>Request</strong>: Consumer sends </code>task.cancel.requested<code> (note: distinct event type from </code>task.cancelled<code>).
+2. <strong>Confirm</strong>: Producer sends </code>task.cancelled<code> after stopping work and cleaning up.</p>
+<p>The task may still produce events between the request and confirmation. Consumers must handle this.</p>
+<p><h2>Timeout Semantics</h2></p>
+<p>A </code>timeout_ms<code> value in </code>task.submitted<code> sets a deadline. The producer is responsible for sending </code>task.timed_out<code> if the task does not reach a terminal state within the deadline.</p>
+<p>A producer may also apply a default timeout for tasks without an explicit </code>timeout_ms<code>.</p>
+<p><h2>Implementation Notes</h2></p>
+<p><ul>
+<li>Task state transitions must be enforced. Attempting an illegal transition should result in an </code>event.rejected<code> or </code>task.failed<code> response.</li>
+<li>Terminal states are final. No further task events should be accepted or produced after a terminal state.</li>
+<li>The </code>task_id<code> must be present in the envelope top-level </code>task_id<code> field and in </code>payload.task_id<code> for consistency.</li>
+<li>Producers should assign </code>task_id<code> if the consumer does not provide one, and return it in </code>task.accepted`.</li>
+</ul>
+</p>
+</body>
+</html>
