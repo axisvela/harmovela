@@ -21,8 +21,8 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	if !reflect.DeepEqual(manifest.Levels, expectedLevels) {
 		t.Fatalf("expected levels %v, got %v", expectedLevels, manifest.Levels)
 	}
-	if manifest.DefaultTargetLevel != "AEP-C1" {
-		t.Fatalf("expected default target AEP-C1, got %v", manifest.DefaultTargetLevel)
+	if manifest.DefaultTargetLevel != "AEP-C2" {
+		t.Fatalf("expected default target AEP-C2, got %v", manifest.DefaultTargetLevel)
 	}
 }
 

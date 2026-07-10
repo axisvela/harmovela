@@ -33,7 +33,7 @@ def _target_fixtures() -> list[dict]:
 
 def test_conformance_manifest_declares_known_draft_levels():
     assert MANIFEST["levels"] == ["AEP-C0", "AEP-C1", "AEP-C2"]
-    assert MANIFEST["default_target_level"] == "AEP-C1"
+    assert MANIFEST["default_target_level"] == "AEP-C2"
 
 
 @pytest.mark.parametrize("fixture", _target_fixtures(), ids=lambda f: f["path"])

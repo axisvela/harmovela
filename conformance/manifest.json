@@ -1,6 +1,6 @@
 {
   "aep_version": "0.1",
-  "default_target_level": "AEP-C1",
+  "default_target_level": "AEP-C2",
   "levels": ["AEP-C0", "AEP-C1", "AEP-C2"],
   "fixtures": [
     {

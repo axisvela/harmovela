@@ -14,7 +14,7 @@ class ConformanceTest {
     void manifestDeclaresKnownDraftLevels() throws Exception {
         var manifest = Fixtures.loadManifest("../../conformance/manifest.json");
         assertEquals(List.of("AEP-C0", "AEP-C1", "AEP-C2"), manifest.levels());
-        assertEquals("AEP-C1", manifest.default_target_level());
+        assertEquals("AEP-C2", manifest.default_target_level());
     }
 
     @Test

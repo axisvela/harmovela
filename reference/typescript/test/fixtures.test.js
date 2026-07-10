@@ -12,7 +12,7 @@ const manifest = JSON.parse(readFileSync(resolve(conformanceDir, "manifest.json"
 
 test("conformance manifest declares known draft levels", () => {
   assert.deepEqual(manifest.levels, ["AEP-C0", "AEP-C1", "AEP-C2"]);
-  assert.equal(manifest.default_target_level, "AEP-C1");
+  assert.equal(manifest.default_target_level, "AEP-C2");
 });
 
 for (const fixture of manifest.fixtures) {
