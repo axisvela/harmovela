@@ -19,13 +19,16 @@
     "conformance": "node ./src/conformance-cli.js"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.11.0",
+    "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",
     "better-sqlite3": "^11.0.0",
-    "ws": "^8.18.0",
-    "@grpc/grpc-js": "^1.11.0",
-    "@grpc/proto-loader": "^0.7.0"
+    "ws": "^8.18.0"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "nats": "^2.29.3"
   }
 }
