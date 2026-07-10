@@ -90,11 +90,12 @@ Goal: make AEP usable as a general open protocol.
 Deliverables:
 
 - Public specification site
-- Compatibility test suite
+- Compatibility test suite (`tools/conformance-runner.js`)
 - Conformance levels (`docs/specs/conformance.md`, `conformance/manifest.json`)
-- Event registry governance
-- Contribution guide
-- Security considerations
+- Event registry governance (`docs/specs/event-registry-governance.md`)
+- Contribution guide (`CONTRIBUTING.md`)
+- Code of conduct (`CODE_OF_CONDUCT.md`)
+- Security considerations (`docs/specs/security.md`)
 
 ## Suggested First Milestone
 
