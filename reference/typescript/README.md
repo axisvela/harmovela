@@ -47,7 +47,7 @@ Current scope:
 - Standard error model with typed error codes and retryability
 - Event router with type-pattern dispatch
 - Stdio newline-delimited JSON harness
-- WebSocket and HTTP SSE transport bindings
+- WebSocket, HTTP SSE, and gRPC streaming transport bindings
 - JSON Schema validation with shared schemas
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store (InMemory + SQLite), and event journal
 - MCP bridge, bridge demo, and MCP+AEP consumer demo
