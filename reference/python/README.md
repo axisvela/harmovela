@@ -18,6 +18,7 @@ Current scope:
 - Standard error model with typed error codes
 - Event router with type-pattern dispatch
 - Harness with capabilities, session, subscription, and task handling
+- Transport bindings: stdio, WebSocket (server/client), SSE, gRPC (server/client)
 - Pytest conformance tests using shared fixtures from `../../conformance/fixtures/`
 
 Aligned with `reference/typescript/` behavior.
