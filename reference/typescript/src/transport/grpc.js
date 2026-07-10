@@ -46,7 +46,7 @@ export class GrpcServerTransport extends Transport {
     });
 
     this.#server.addService(service, {
-      stream: (call) => {
+      Stream: (call) => {
         const callId = ++this.#nextCallId;
         this.#calls.set(callId, call);
 
@@ -88,7 +88,6 @@ export class GrpcServerTransport extends Transport {
       this.#server.bindAsync(this.address, this.credentials, (err, port) => {
         if (err) return reject(err);
         this.port = port;
-        this.#server.start();
         resolve();
       });
     });
