@@ -22,14 +22,14 @@ public class DeliveryTracker {
         return Math.min(backoff * (int) Math.pow(multiplier, attempt - 1), max);
     }
 
-    private final InMemoryDeliveryStore store;
+    private final DeliveryStore store;
     private final DeliveryJournal journal;
 
     public DeliveryTracker() {
         this(new InMemoryDeliveryStore(), new DeliveryJournal());
     }
 
-    public DeliveryTracker(InMemoryDeliveryStore store, DeliveryJournal journal) {
+    public DeliveryTracker(DeliveryStore store, DeliveryJournal journal) {
         this.store = store;
         this.journal = journal;
     }

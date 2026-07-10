@@ -4,7 +4,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.util.*;
 
-public class SqliteDeliveryStore {
+public class SqliteDeliveryStore implements DeliveryStore {
 
     private final String streamId;
     private final Connection conn;
@@ -152,16 +152,16 @@ public class SqliteDeliveryStore {
         } catch (SQLException e) {
             throw new RuntimeException("deadLetter failed", e);
         }
+        var payload = new LinkedHashMap<String, Object>();
+        payload.put("original_event_id", eventId);
+        payload.put("subscription_id", entry.get("subscription_id"));
+        payload.put("cursor", entry.get("cursor"));
+        payload.put("attempts", Integer.parseInt(entry.get("attempts")));
+        payload.put("last_attempt_at", entry.get("last_attempt_at"));
+        payload.put("error", reason.get("error"));
         return Map.of(
             "type", "event.dead_lettered",
-            "payload", Map.of(
-                "original_event_id", eventId,
-                "subscription_id", entry.get("subscription_id"),
-                "cursor", entry.get("cursor"),
-                "attempts", Integer.parseInt(entry.get("attempts")),
-                "last_attempt_at", entry.get("last_attempt_at"),
-                "error", reason.get("error")
-            )
+            "payload", payload
         );
     }
 

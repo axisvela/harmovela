@@ -3,7 +3,7 @@ package com.axisrobo.aep;
 import java.time.Instant;
 import java.util.*;
 
-public class InMemoryDeliveryStore {
+public class InMemoryDeliveryStore implements DeliveryStore {
     private int sequence;
     private final String streamId;
     private final Map<String, Map<String, Object>> pending = new LinkedHashMap<>();
