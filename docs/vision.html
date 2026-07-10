@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Vision</h1>
+<h1>AEP Vision</h1>
+<h2>One-Line Vision</h2>
+<p>AEP makes asynchronous communication a first-class capability for LLM agents.</p>
+<h2>Problem</h2>
+<p>Modern agent systems are no longer simple request-response programs. They run background tasks, watch external environments, update memory, collaborate with other agents, receive delayed tool results, and react to context changes after the original prompt has moved on.</p>
+<p>MCP standardizes how agents synchronously discover and call tools. That is necessary but incomplete. Agents also need a standard way to receive events, progress, state changes, memory updates, and deferred results.</p>
+<p>Without such a protocol, every runtime invents its own pattern:</p>
+<ul>
+<li>Polling for task state</li>
+<li>Custom webhooks</li>
+<li>Tool-specific callbacks</li>
+<li>Ad hoc message queues</li>
+<li>Non-standard JSON events</li>
+<li>Prompt-level conventions that are not machine-verifiable</li>
+</ul>
+<p>These approaches do not compose well across agent runtimes, tools, memory systems, and deployment environments.</p>
+<h2>Vision</h2>
+<p>AEP should become the common asynchronous event layer for agentic systems.</p>
+<p>An agent should be able to subscribe to a memory stream, launch a long-running tool task, receive progress events, observe external state changes, cancel work, replay missed events, and correlate all of this with a conversation or task without depending on one vendor's runtime.</p>
+<h2>Core Use Cases</h2>
+<h3>Event Streams</h3>
+<p>Agents need to receive events from tools, environments, memory systems, orchestrators, and other agents.</p>
+<p>Examples:</p>
+<ul>
+<li>A memory system emits <code>memory.fact.invalidated</code>.</li>
+<li>A browser observer emits <code>environment.page.changed</code>.</li>
+<li>A robotics sensor emits <code>environment.object.detected</code>.</li>
+<li>A workflow engine emits <code>task.blocked</code>.</li>
+</ul>
+<h3>Async Tool Calls</h3>
+<p>Some tool calls are too slow or open-ended for synchronous RPC.</p>
+<p>Examples:</p>
+<ul>
+<li>Web crawling</li>
+<li>Long research tasks</li>
+<li>Codebase indexing</li>
+<li>Video or audio processing</li>
+<li>Simulation</li>
+<li>Multi-step planning</li>
+</ul>
+<p>AEP should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.</p>
+<h3>Context And Memory Events</h3>
+<p>Agents need to react when their context changes.</p>
+<p>Examples:</p>
+<ul>
+<li>New relevant memory has been indexed.</li>
+<li>A previously trusted fact is invalidated.</li>
+<li>A constraint changes.</li>
+<li>A user preference is updated.</li>
+<li>A retrieved context bundle is ready.</li>
+</ul>
+<h3>Agent-To-Agent Communication</h3>
+<p>Agents need to exchange messages without blocking each other.</p>
+<p>Examples:</p>
+<ul>
+<li>A researcher agent publishes findings to a planner.</li>
+<li>A reviewer agent flags a risk.</li>
+<li>A worker agent asks for clarification.</li>
+<li>A coordinator cancels duplicate work.</li>
+</ul>
+<h2>Goals</h2>
+<ul>
+<li>Define a protocol-level event envelope suitable for LLM agents.</li>
+<li>Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, and agent messages.</li>
+<li>Support local and distributed runtimes.</li>
+<li>Support multiple transports without making the protocol depend on one broker.</li>
+<li>Preserve causality and correlation across conversations, tasks, tool calls, and events.</li>
+<li>Enable replay and recovery after disconnection.</li>
+<li>Keep the core small enough for easy implementation.</li>
+</ul>
+<h2>Non-Goals</h2>
+<ul>
+<li>AEP is not a replacement for MCP.</li>
+<li>AEP is not a new LLM inference API.</li>
+<li>AEP is not a general database API.</li>
+<li>AEP is not a mandatory message broker implementation.</li>
+<li>AEP does not define every domain-specific event schema.</li>
+</ul>
+<h2>Design Principles</h2>
+<ul>
+<li><strong>Protocol before platform</strong>: define interoperable messages before choosing infrastructure.</li>
+<li><strong>MCP-compatible, not MCP-dependent</strong>: integrate with MCP while remaining useful outside MCP.</li>
+<li><strong>Event-first</strong>: asynchronous communication should not be modeled as fake synchronous calls.</li>
+<li><strong>Durability optional, semantics explicit</strong>: transports may be ephemeral or durable, but delivery guarantees must be declared.</li>
+<li><strong>Causality matters</strong>: every event should be traceable to a task, conversation, or triggering event when available.</li>
+<li><strong>Human-readable, machine-validatable</strong>: JSON should be easy to inspect and schema-check.</li>
+<li><strong>Small core, extensible domains</strong>: standardize the envelope and lifecycle events; allow domain-specific payloads.</li>
+</ul>
+</body>
+</html>

@@ -26,6 +26,12 @@ MCP answers: "What can I call, and what is the result now?"
 
 AEP answers: "What happened, what is still happening, and what should I react to?"
 
+## What AEP Adds
+
+Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. AEP does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, and agent coordination.
+
+AEP also recommends consistently named relationship fields such as `session_id`, `conversation_id`, `task_id`, `correlation_id`, and `causation_id`. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.
+
 ## Major Components
 
 ### Agent

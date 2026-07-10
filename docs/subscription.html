@@ -24,14 +24,13 @@
 <body>
 <nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Subscription</h1>
-<p><h1>AEP Subscription Model</h1></p>
+<h1>AEP Subscription Model</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define how consumers express interest in event streams and how producers route events to subscribers based on filter criteria.</p>
-<p><h2>Subscription Filter</h2></p>
+<h2>Subscription Filter</h2>
 <p>A subscription filter describes which events a consumer wants to receive. All filter fields are optional; an absent field means "match everything."</p>
-<p>``<code>json
-{
+<pre><code>{
   "types": ["memory.*", "context.*"],
   "source": ["memory:main"],
   "target": "agent:researcher",
@@ -42,50 +41,47 @@
   "from_cursor": "stream_01:42",
   "delivery_mode": "at_least_once"
 }
-</code>`<code></p>
-<p><table>
-<tr><td>Field</td><td>Type</td><td>Description</td></tr>
-</table>
-
+</code></pre>
 <table>
-<tr><td></code>types<code></td><td>string or string[]</td><td>Event type patterns to match</td></tr>
-<tr><td></code>source<code></td><td>string or string[]</td><td>Event source identity</td></tr>
-<tr><td></code>target<code></td><td>string or string[]</td><td>Event target identity</td></tr>
-<tr><td></code>topic<code></td><td>string or string[]</td><td>Routing topic</td></tr>
-<tr><td></code>session_id<code></td><td>string or string[]</td><td>Session scope</td></tr>
-<tr><td></code>conversation_id<code></td><td>string or string[]</td><td>Conversation scope</td></tr>
-<tr><td></code>task_id<code></td><td>string or string[]</td><td>Task scope</td></tr>
-<tr><td></code>from_cursor<code></td><td>string</td><td>Replay starting point</td></tr>
-<tr><td></code>delivery_mode<code></td><td>string</td><td>Requested delivery guarantee</td></tr></table>
-</p>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>types</code></td><td>string or string[]</td><td>Event type patterns to match</td></tr>
+<tr><td><code>source</code></td><td>string or string[]</td><td>Event source identity</td></tr>
+<tr><td><code>target</code></td><td>string or string[]</td><td>Event target identity</td></tr>
+<tr><td><code>topic</code></td><td>string or string[]</td><td>Routing topic</td></tr>
+<tr><td><code>session_id</code></td><td>string or string[]</td><td>Session scope</td></tr>
+<tr><td><code>conversation_id</code></td><td>string or string[]</td><td>Conversation scope</td></tr>
+<tr><td><code>task_id</code></td><td>string or string[]</td><td>Task scope</td></tr>
+<tr><td><code>from_cursor</code></td><td>string</td><td>Replay starting point</td></tr>
+<tr><td><code>delivery_mode</code></td><td>string</td><td>Requested delivery guarantee</td></tr>
+</tbody>
+</table>
 <p>Each string-valued field accepts a single string or an array of strings. An event matches the field if its corresponding envelope field equals any value in the filter array.</p>
-<p><h3>Type Pattern Matching</h3></p>
-<p>The </code>types<code> filter uses dotted pattern matching:</p>
-<p><table>
-<tr><td>Pattern</td><td>Matches</td></tr>
-</table>
-
+<h3>Type Pattern Matching</h3>
+<p>The <code>types</code> filter uses dotted pattern matching:</p>
 <table>
-<tr><td></code>"*"<code></td><td>All event types</td></tr>
-<tr><td></code>"memory.*"<code></td><td>All </code>memory.*<code> events (e.g., </code>memory.fact.added<code>, </code>memory.episode.stored<code>)</td></tr>
-<tr><td></code>"tool.call.*"<code></td><td>All </code>tool.call.*<code> events</td></tr>
-<tr><td></code>"tool.*.progress"<code></td><td></code>tool.call.progress<code>, </code>tool.any.progress<code></td></tr>
-<tr><td></code>"task.progress"<code></td><td>Exact match only</td></tr></table>
-</p>
-<p>Rules:
+<thead><tr><th>Pattern</th><th>Matches</th></tr></thead>
+<tbody>
+<tr><td><code>"*"</code></td><td>All event types</td></tr>
+<tr><td><code>"memory.*"</code></td><td>All <code>memory.*</code> events (e.g., <code>memory.fact.added</code>, <code>memory.episode.stored</code>)</td></tr>
+<tr><td><code>"tool.call.*"</code></td><td>All <code>tool.call.*</code> events</td></tr>
+<tr><td><code>"tool.*.progress"</code></td><td><code>tool.call.progress</code>, <code>tool.any.progress</code></td></tr>
+<tr><td><code>"task.progress"</code></td><td>Exact match only</td></tr>
+</tbody>
+</table>
+<p>Rules:</p>
 <ul>
-<li>Patterns are compared as segments delimited by </code>.<code>.</li>
-<li></code>*<code> matches exactly one segment.</li>
-<li>A trailing </code>.*<code> matches any number of trailing segments.</li>
-<li>A leading </code>*<code> (single </code>*<code> with no prefix) matches all types.</li>
+<li>Patterns are compared as segments delimited by <code>.</code>.</li>
+<li><code>*</code> matches exactly one segment.</li>
+<li>A trailing <code>.*</code> matches any number of trailing segments.</li>
+<li>A leading <code>*</code> (single <code>*</code> with no prefix) matches all types.</li>
 <li>Patterns are case-sensitive.</li>
-</ul></p>
-<p><h3>Combined Filtering</h3></p>
+</ul>
+<h3>Combined Filtering</h3>
 <p>An event matches a subscription when <strong>all</strong> specified filter fields match. If no filter fields are specified (empty filter object), the subscription matches no events.</p>
-<p>Implementation must require at least one of </code>types<code>, </code>source<code>, </code>target<code>, or </code>topic<code>.</p>
-<p><h2>Subscription Lifecycle</h2></p>
-<p></code>`<code>
-subscription.requested
+<p>Implementation must require at least one of <code>types</code>, <code>source</code>, <code>target</code>, or <code>topic</code>.</p>
+<h2>Subscription Lifecycle</h2>
+<pre><code>subscription.requested
        │
        ├──► subscription.created
        │          │
@@ -94,14 +90,13 @@ subscription.requested
        │          └──► subscription.expired
        │
        └──► subscription.rejected
-</code>`<code></p>
-<p><h3></code>subscription.requested<code></h3></p>
+</code></pre>
+<h3><code>subscription.requested</code></h3>
 <p>Sent by a consumer to request a new subscription.</p>
-<p>Payload: a filter object as defined above. At least one of </code>types<code>, </code>source<code>, </code>target<code>, or </code>topic<code> must be present.</p>
-<p><h3></code>subscription.created<code></h3></p>
+<p>Payload: a filter object as defined above. At least one of <code>types</code>, <code>source</code>, <code>target</code>, or <code>topic</code> must be present.</p>
+<h3><code>subscription.created</code></h3>
 <p>Sent by the producer to confirm a subscription.</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "type": "subscription.created",
   "payload": {
     "subscription_id": "sub_0001",
@@ -110,12 +105,11 @@ subscription.requested
     "expires_at": null
   }
 }
-</code>`<code></p>
-<p>Required payload fields: </code>subscription_id<code>, </code>filter<code>.</p>
-<p><h3></code>subscription.rejected<code></h3></p>
+</code></pre>
+<p>Required payload fields: <code>subscription_id</code>, <code>filter</code>.</p>
+<h3><code>subscription.rejected</code></h3>
 <p>Sent by the producer when a subscription cannot be created.</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "type": "subscription.rejected",
   "payload": {
     "subscription_id": "sub_0001",
@@ -127,39 +121,36 @@ subscription.requested
     }
   }
 }
-</code>`<code></p>
-<p><h3></code>subscription.cancelled<code></h3></p>
-<p>Sent by the consumer to cancel an active subscription. The producer should stop delivering events for this subscription and may send a final </code>subscription.cancelled<code> confirmation.</p>
-<p></code>`<code>json
-{
+</code></pre>
+<h3><code>subscription.cancelled</code></h3>
+<p>Sent by the consumer to cancel an active subscription. The producer should stop delivering events for this subscription and may send a final <code>subscription.cancelled</code> confirmation.</p>
+<pre><code>{
   "type": "subscription.cancelled",
   "payload": {
     "subscription_id": "sub_0001"
   }
 }
-</code>`<code></p>
+</code></pre>
 <p>After cancellation, events in flight may still be delivered. Consumers must handle this gracefully.</p>
-<p><h3></code>subscription.expired<code></h3></p>
+<h3><code>subscription.expired</code></h3>
 <p>Sent by the producer when a subscription reaches its expiry time. Same semantics as cancellation but initiated by the producer.</p>
-<p><h2>Delivery Modes</h2></p>
-<p><table>
-<tr><td>Mode</td><td>Guarantee</td><td>Use Case</td></tr>
-</table>
-
+<h2>Delivery Modes</h2>
 <table>
-<tr><td></code>best_effort<code></td><td>At most once. May be dropped.</td><td>Transient UI updates, progress events</td></tr>
-<tr><td></code>at_least_once<code></td><td>Durable. May deliver duplicates.</td><td>Task results, memory updates</td></tr>
-<tr><td></code>replayable<code></td><td>Cursor-based replay supported.</td><td>Late-joining consumers, recovery</td></tr></table>
-</p>
-<p>The delivery mode is declared in the subscription filter as </code>delivery_mode<code>. The actual delivery mode may be downgraded by the producer; the producer must include the effective delivery mode on each delivered event envelope under </code>delivery.mode<code>.</p>
-<p><h2>Cursor Semantics</h2></p>
-<p>A </code>from_cursor<code> value requests replay from a specific position in the event stream. The cursor format is transport-specific. A producer that does not support replay must reject the subscription with code </code>subscription_rejected<code> and detail </code>"replay not supported"<code>.</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>Implementations should validate filter fields on </code>subscription.requested<code> before creating the subscription.</li>
+<thead><tr><th>Mode</th><th>Guarantee</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td><code>best_effort</code></td><td>At most once. May be dropped.</td><td>Transient UI updates, progress events</td></tr>
+<tr><td><code>at_least_once</code></td><td>Durable. May deliver duplicates.</td><td>Task results, memory updates</td></tr>
+<tr><td><code>replayable</code></td><td>Cursor-based replay supported.</td><td>Late-joining consumers, recovery</td></tr>
+</tbody>
+</table>
+<p>The delivery mode is declared in the subscription filter as <code>delivery_mode</code>. The actual delivery mode may be downgraded by the producer; the producer must include the effective delivery mode on each delivered event envelope under <code>delivery.mode</code>.</p>
+<h2>Cursor Semantics</h2>
+<p>A <code>from_cursor</code> value requests replay from a specific position in the event stream. The cursor format is transport-specific. A producer that does not support replay must reject the subscription with code <code>subscription_rejected</code> and detail <code>"replay not supported"</code>.</p>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Implementations should validate filter fields on <code>subscription.requested</code> before creating the subscription.</li>
 <li>Subscriptions are scoped to a session. Cancelling or closing a session must implicitly cancel all subscriptions created in that session.</li>
-<li>The </code>subscription_id` is assigned by the producer and must be unique within a session.</li>
+<li>The <code>subscription_id</code> is assigned by the producer and must be unique within a session.</li>
 </ul>
-</p>
 </body>
 </html>

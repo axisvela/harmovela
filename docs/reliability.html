@@ -24,14 +24,13 @@
 <body>
 <nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Reliability</h1>
-<p><h1>AEP Reliability Model</h1></p>
+<h1>AEP Reliability Model</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define retry policies, dead-letter handling, and durability guarantees for AEP event delivery.</p>
-<p><h2>Retry Policy</h2></p>
+<h2>Retry Policy</h2>
 <p>Events may carry retry policy metadata in the delivery block:</p>
-<p>``<code>json
-{
+<pre><code>{
   "delivery": {
     "mode": "at_least_once",
     "sequence": 42,
@@ -44,26 +43,23 @@
     }
   }
 }
-</code>`<code></p>
-<p><table>
-<tr><td>Field</td><td>Type</td><td>Default</td><td>Description</td></tr>
-</table>
-
+</code></pre>
 <table>
-<tr><td></code>max_attempts<code></td><td>number</td><td>3</td><td>Maximum delivery attempts before dead-letter</td></tr>
-<tr><td></code>backoff_ms<code></td><td>number</td><td>1000</td><td>Initial backoff delay in milliseconds</td></tr>
-<tr><td></code>backoff_multiplier<code></td><td>number</td><td>2</td><td>Exponential backoff multiplier</td></tr>
-<tr><td></code>max_backoff_ms<code></td><td>number</td><td>30000</td><td>Maximum backoff ceiling</td></tr>
-<tr><td></code>ack_timeout_ms<code></td><td>number</td><td>30000</td><td>Time to wait for </code>event.acknowledged<code></td></tr></table>
-</p>
-<p><h3>Backoff Calculation</h3></p>
-<p></code>`<code>
-delay_n = min(backoff_ms × backoff_multiplier^(n-1), max_backoff_ms)
-</code>`<code></p>
-<p>Where </code>n<code> is the 1-indexed attempt number.</p>
-<p><h3>Retry Flow</h3></p>
-<p></code>`<code>
-Producer sends event (attempt 1)
+<thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>max_attempts</code></td><td>number</td><td>3</td><td>Maximum delivery attempts before dead-letter</td></tr>
+<tr><td><code>backoff_ms</code></td><td>number</td><td>1000</td><td>Initial backoff delay in milliseconds</td></tr>
+<tr><td><code>backoff_multiplier</code></td><td>number</td><td>2</td><td>Exponential backoff multiplier</td></tr>
+<tr><td><code>max_backoff_ms</code></td><td>number</td><td>30000</td><td>Maximum backoff ceiling</td></tr>
+<tr><td><code>ack_timeout_ms</code></td><td>number</td><td>30000</td><td>Time to wait for <code>event.acknowledged</code></td></tr>
+</tbody>
+</table>
+<h3>Backoff Calculation</h3>
+<pre><code>delay_n = min(backoff_ms × backoff_multiplier^(n-1), max_backoff_ms)
+</code></pre>
+<p>Where <code>n</code> is the 1-indexed attempt number.</p>
+<h3>Retry Flow</h3>
+<pre><code>Producer sends event (attempt 1)
   → waits ack_timeout_ms
   → no ack received
 Producer waits backoff_ms × backoff_multiplier^(1-1) = backoff_ms
@@ -74,11 +70,10 @@ Producer waits backoff_ms × backoff_multiplier^(2-1) = backoff_ms × 2
 Producer sends event (attempt 3, max_attempts reached)
   → no ack received
 Producer dead-letters the event
-</code>`<code></p>
-<p><h2>Dead-Letter Events</h2></p>
-<p>When an event cannot be delivered within </code>max_attempts<code>, the producer emits a dead-letter event:</p>
-<p></code>`<code>json
-{
+</code></pre>
+<h2>Dead-Letter Events</h2>
+<p>When an event cannot be delivered within <code>max_attempts</code>, the producer emits a dead-letter event:</p>
+<pre><code>{
   "type": "event.dead_lettered",
   "payload": {
     "original_event_id": "evt_01JZ0000000000000000000000",
@@ -93,27 +88,25 @@ Producer dead-letters the event
     "original_event": { "aep_version": "0.1", ... }
   }
 }
-</code>`<code></p>
-<p>The dead-letter event:
+</code></pre>
+<p>The dead-letter event:</p>
 <ul>
-<li>Carries the full original event in </code>original_event<code> for inspection.</li>
+<li>Carries the full original event in <code>original_event</code> for inspection.</li>
 <li>Records all delivery attempts and the last error.</li>
 <li>Is delivered to a designated dead-letter subscription or stored for administrator review.</li>
-</ul></p>
-<p><h2>Durability Guarantees</h2></p>
+</ul>
+<h2>Durability Guarantees</h2>
 <p>Durability is declared per-delivery, not per-transport:</p>
-<p><table>
-<tr><td>Delivery Mode</td><td>Durability</td><td>Impact</td></tr>
-</table>
-
 <table>
-<tr><td></code>best_effort<code></td><td>None</td><td>Event lost if consumer is unavailable</td></tr>
-<tr><td></code>at_least_once<code></td><td>Durable until acked</td><td>Producer must persist events until acknowledged</td></tr>
-<tr><td></code>replayable<code></td><td>Durable with history</td><td>Producer must retain events for replay window</td></tr></table>
-</p>
-<p>Producers must declare their durability support in </code>session.ready<code> capabilities:</p>
-<p></code>`<code>json
-{
+<thead><tr><th>Delivery Mode</th><th>Durability</th><th>Impact</th></tr></thead>
+<tbody>
+<tr><td><code>best_effort</code></td><td>None</td><td>Event lost if consumer is unavailable</td></tr>
+<tr><td><code>at_least_once</code></td><td>Durable until acked</td><td>Producer must persist events until acknowledged</td></tr>
+<tr><td><code>replayable</code></td><td>Durable with history</td><td>Producer must retain events for replay window</td></tr>
+</tbody>
+</table>
+<p>Producers must declare their durability support in <code>session.ready</code> capabilities:</p>
+<pre><code>{
   "capabilities": {
     "delivery": {
       "modes": ["best_effort", "at_least_once", "replayable"],
@@ -123,20 +116,18 @@ Producer dead-letters the event
     }
   }
 }
-</code>`<code></p>
-<p><table>
-<tr><td>Field</td><td>Description</td></tr>
-</table>
-
+</code></pre>
 <table>
-<tr><td></code>replay_window_ms<code></td><td>Maximum age of events available for replay</td></tr>
-<tr><td></code>max_retention_events<code></td><td>Maximum number of events retained for replay</td></tr>
-<tr><td></code>dead_letter_support<code></td><td>Whether the producer supports dead-letter queues</td></tr></table>
-</p>
-<p><h2>Subscription-Level Delivery Tracking</h2></p>
+<thead><tr><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>replay_window_ms</code></td><td>Maximum age of events available for replay</td></tr>
+<tr><td><code>max_retention_events</code></td><td>Maximum number of events retained for replay</td></tr>
+<tr><td><code>dead_letter_support</code></td><td>Whether the producer supports dead-letter queues</td></tr>
+</tbody>
+</table>
+<h2>Subscription-Level Delivery Tracking</h2>
 <p>A producer tracks delivery state per subscription:</p>
-<p></code>`<code>
-subscription_id: sub_0001
+<pre><code>subscription_id: sub_0001
   mode: at_least_once
   last_sequence: 99
   last_acknowledged_cursor: stream_01:95
@@ -144,16 +135,15 @@ subscription_id: sub_0001
     - event_id: evt_01  sequence: 96  attempts: 1  next_retry_at: 2026-07-09T10:00:31Z
     - event_id: evt_02  sequence: 97  attempts: 1  next_retry_at: 2026-07-09T10:00:31Z
     - event_id: evt_03  sequence: 98  attempts: 2  next_retry_at: 2026-07-09T10:00:58Z
-</code>`<code></p>
-<p>When a consumer acknowledges </code>evt_01<code> and </code>evt_02<code>, they are removed from pending. The cursor advances to </code>stream_01:97`. If a consumer reconnects from a prior cursor, all events after that cursor are redelivered.</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
+</code></pre>
+<p>When a consumer acknowledges <code>evt_01</code> and <code>evt_02</code>, they are removed from pending. The cursor advances to <code>stream_01:97</code>. If a consumer reconnects from a prior cursor, all events after that cursor are redelivered.</p>
+<h2>Implementation Notes</h2>
+<ul>
 <li>Retry policy metadata on events is advisory. Producers may override with their own policies.</li>
-<li>Dead-letter events should use a standard error payload following the <a href="./error-model.md">error model</a>.</li>
+<li>Dead-letter events should use a standard error payload following the <a href="error-model.html">error model</a>.</li>
 <li>The durability model is best-effort for in-process implementations. Production deployments should persist events in a durable store.</li>
 <li>Cursor format is opaque. Consumers should treat cursors as strings and not parse or interpret them.</li>
-<li>Authorization, identity verification, and multi-tenant isolation are defined in the <a href="./security.md">security model</a>.</li>
+<li>Authorization, identity verification, and multi-tenant isolation are defined in the <a href="security.html">security model</a>.</li>
 </ul>
-</p>
 </body>
 </html>
