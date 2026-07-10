@@ -31,6 +31,21 @@ This is a strong model for synchronous capability invocation, but many agent wor
 
 These are not naturally represented as a single synchronous tool result.
 
+## Why HTTPS Request-Response Is Not The Async Layer
+
+HTTPS request-response, whether used for an MCP call or another API, is useful for submitting work and receiving an immediate acknowledgement. It does not by itself provide a shared stream for changes that occur after that exchange.
+
+For a long-running operation, submission and acceptance are distinct from progress and the terminal result:
+
+```text
+Agent --MCP/HTTPS--> submit ingest_document
+Tool  --MCP/HTTPS--> accepted (task_id)
+Tool  --AEP--------> task.progress (task_id)
+Tool  --AEP--------> task.completed | task.failed | task.cancelled (task_id)
+```
+
+The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft AEP lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.
+
 ## Correspondence Table
 
 | MCP Capability | AEP Counterpart |

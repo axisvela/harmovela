@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Architecture</h1>
+<h1>AEP Architecture</h1>
+<h2>Architectural Position</h2>
+<p>AEP sits beside MCP as an asynchronous communication protocol for agentic systems.</p>
+<pre><code>LLM Agent / Agent Runtime
+        |
+        | synchronous calls
+        v
+      MCP
+        |
+        | tools, resources, prompts
+
+LLM Agent / Agent Runtime
+        ^
+        | asynchronous events
+        v
+      AEP
+        |
+        | tools, memory, context, environments, agents, orchestrators
+</code></pre>
+<p>MCP answers: "What can I call, and what is the result now?"</p>
+<p>AEP answers: "What happened, what is still happening, and what should I react to?"</p>
+<h2>What AEP Adds</h2>
+<p>Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. AEP does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, and agent coordination.</p>
+<p>AEP also recommends consistently named relationship fields such as <code>session_id</code>, <code>conversation_id</code>, <code>task_id</code>, <code>correlation_id</code>, and <code>causation_id</code>. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.</p>
+<h2>Major Components</h2>
+<h3>Agent</h3>
+<p>An agent is a producer and consumer of events. It may publish messages, subscribe to topics, launch async tasks, receive progress, react to context changes, and coordinate with other agents.</p>
+<h3>Tool</h3>
+<p>A tool may expose synchronous MCP calls, asynchronous AEP tasks, or both. A slow tool can accept work quickly and emit task lifecycle events over AEP.</p>
+<h3>Memory System</h3>
+<p>A memory system emits events when facts, episodes, preferences, constraints, summaries, or retrieval results change. It may also consume agent events to build long-term memory.</p>
+<h3>Context Provider</h3>
+<p>A context provider emits updates, invalidations, snapshots, and readiness events. This allows an agent to avoid stale context without constant polling.</p>
+<h3>Environment Observer</h3>
+<p>An observer watches external state such as browsers, files, robots, APIs, sensors, logs, or user activity and emits events into AEP.</p>
+<h3>Orchestrator</h3>
+<p>An orchestrator coordinates subscriptions, routes events, tracks task lifecycle, applies delivery policy, and bridges transports.</p>
+<h2>Protocol Layers</h2>
+<h3>1. Transport Binding</h3>
+<p>AEP should support several transports:</p>
+<ul>
+<li><code>stdio</code> for local process integration</li>
+<li><code>WebSocket</code> for bidirectional local or remote streams</li>
+<li><code>HTTP SSE</code> for server-to-client event streams</li>
+<li><code>gRPC stream</code> for strongly typed service integration</li>
+<li><code>NATS</code>, <code>Kafka</code>, or <code>Redis Streams</code> for durable production deployments</li>
+</ul>
+<p>The protocol should not require one transport. Each binding must declare its delivery behavior.</p>
+<h3>2. Session Layer</h3>
+<p>The session layer handles initialization, capability negotiation, heartbeat, authentication metadata, and graceful shutdown.</p>
+<p>Example responsibilities:</p>
+<ul>
+<li>Protocol version negotiation</li>
+<li>Supported event types</li>
+<li>Supported transports</li>
+<li>Delivery guarantees</li>
+<li>Replay support</li>
+<li>Maximum payload size</li>
+<li>Compression support</li>
+</ul>
+<h3>3. Event Envelope Layer</h3>
+<p>All messages use a common envelope with stable fields for identity, source, target, causality, correlation, timestamps, and payload.</p>
+<p>The envelope is the most important interoperability surface.</p>
+<h3>4. Subscription Layer</h3>
+<p>Consumers subscribe to event streams by topic, type pattern, source, target, conversation, task, or domain.</p>
+<p>Examples:</p>
+<ul>
+<li>Subscribe to all events for <code>task_123</code>.</li>
+<li>Subscribe to <code>memory.*</code> for a session.</li>
+<li>Subscribe to <code>tool.call.*</code> from a crawler tool.</li>
+<li>Subscribe to <code>agent.message.*</code> targeted at <code>agent:planner</code>.</li>
+</ul>
+<h3>5. Task Lifecycle Layer</h3>
+<p>Long-running work is represented as a task stream. A task is not a single response. It is a sequence of events with clear lifecycle semantics.</p>
+<p>Standard task states:</p>
+<ul>
+<li><code>submitted</code></li>
+<li><code>accepted</code></li>
+<li><code>running</code></li>
+<li><code>blocked</code></li>
+<li><code>progress</code></li>
+<li><code>output</code></li>
+<li><code>completed</code></li>
+<li><code>failed</code></li>
+<li><code>cancelled</code></li>
+<li><code>timed_out</code></li>
+</ul>
+<h3>6. Domain Event Layer</h3>
+<p>Domain events describe specific systems such as memory, context, tools, environment observers, and agent messages.</p>
+<p>The core protocol should define common domain families but allow extension.</p>
+<h2>Data Flow Examples</h2>
+<h3>Async Tool Call</h3>
+<pre><code>Agent -&gt; AEP: tool.call.requested
+AEP -&gt; Tool: tool.call.requested
+Tool -&gt; AEP: tool.call.accepted
+Tool -&gt; AEP: tool.call.progress
+Tool -&gt; AEP: tool.call.output
+Tool -&gt; AEP: tool.call.completed
+AEP -&gt; Agent: task result events
+</code></pre>
+<h3>Memory Update</h3>
+<pre><code>Agent -&gt; Tool: synchronous MCP call
+Tool -&gt; Memory: stores new fact
+Memory -&gt; AEP: memory.fact.added
+AEP -&gt; subscribed agents: memory.fact.added
+Agent -&gt; AEP: event.acknowledged
+</code></pre>
+<h3>Context Invalidation</h3>
+<pre><code>Context provider -&gt; AEP: context.invalidated
+AEP -&gt; Agent: context.invalidated
+Agent -&gt; MCP or AEP: requests fresh context
+Context provider -&gt; AEP: context.snapshot.ready
+</code></pre>
+<h2>Reliability Model</h2>
+<p>AEP should support multiple reliability levels:</p>
+<ul>
+<li><strong>Best effort</strong>: transient events, no replay guarantee.</li>
+<li><strong>At least once</strong>: durable delivery with possible duplicates.</li>
+<li><strong>Exactly once illusion</strong>: consumer-side idempotency using event IDs.</li>
+<li><strong>Replayable stream</strong>: consumers can reconnect from a cursor.</li>
+</ul>
+<p>The protocol should require globally unique event IDs and recommend idempotent consumers.</p>
+<h2>Security Model</h2>
+<p>AEP needs security at the identity, subscription, and payload levels.</p>
+<p>Required concepts:</p>
+<ul>
+<li>Producer identity</li>
+<li>Consumer identity</li>
+<li>Capability-scoped subscriptions</li>
+<li>Targeted delivery</li>
+<li>Optional payload redaction</li>
+<li>Audit trail for durable deployments</li>
+</ul>
+<p>The first version can define metadata hooks without prescribing a full authentication system.</p>
+</body>
+</html>

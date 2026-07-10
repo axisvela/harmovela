@@ -61,6 +61,7 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 
 - `docs/vision.md` — project vision, goals, non-goals, and principles
 - `docs/architecture.md` — system architecture and major protocol layers
+- `docs/differentiation.md` — non-normative positioning and comparison material
 - `docs/protocol-design.md` — initial protocol model, envelope, events, and lifecycle
 - `docs/mcp-relationship.md` — detailed comparison and interop model with MCP
 - `docs/roadmap.md` — proposed phases toward a usable open protocol

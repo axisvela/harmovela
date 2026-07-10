@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Differentiation — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Differentiation</h1>
+<h1>How AEP Differs From Existing Event Systems</h1>
+<p>&gt; Status: non-normative positioning document. AEP is a draft protocol; this document does not add protocol requirements.</p>
+<h2>Scope And Honest Baseline</h2>
+<p>AEP is intended to make asynchronous changes in agent systems interoperable. It builds on established event and messaging practice rather than replacing it.</p>
+<ul>
+<li>CloudEvents provides a broadly useful event metadata model and interoperable event-format mappings.</li>
+<li>AsyncAPI can describe asynchronous API operations, channels, messages, and transport bindings.</li>
+<li>Brokers such as Kafka, NATS, and Redis Streams provide durable or transient transport, routing, retention, consumer coordination, and broker-specific delivery behavior.</li>
+<li>Actor runtimes provide useful execution, isolation, supervision, mailbox, and message-passing models.</li>
+<li>Event sourcing provides a useful way to persist and reconstruct state from an append-only event history.</li>
+</ul>
+<p>AEP does not claim a new generic event envelope, broker, delivery algorithm, or transport. Those are established infrastructure concerns. Instead, AEP registers a small set of agent-relevant event names and proposes relationship, lifecycle, and subscription conventions on top of that infrastructure. See the draft <a href="protocol-design.html">protocol design</a>, <a href="delivery.html">delivery semantics</a>, and <a href="task-lifecycle.html">task lifecycle</a>.</p>
+<h2>What AEP Standardizes</h2>
+<p>The distinction is between an idea being new, being a consistently named recommended envelope field, and being supplied by infrastructure:</p>
+<table>
+<thead><tr><th>Concern</th><th>AEP position</th></tr></thead>
+<tbody>
+<tr><td>Generic event metadata and serialization</td><td>Established practice. AEP defines a draft envelope for its own events, but does not claim generic-envelope novelty.</td></tr>
+<tr><td><code>session_id</code>, <code>conversation_id</code>, and <code>task_id</code></td><td>Recommended AEP envelope fields. Applications have modeled equivalent concepts before; the intended value is consistently named, interoperable use for agent events, not mandatory placement.</td></tr>
+<tr><td><code>correlation_id</code> and <code>causation_id</code></td><td>Established distributed-systems concepts and recommended AEP envelope fields for operation grouping and immediate event lineage.</td></tr>
+<tr><td>Task lifecycle event names and valid transitions</td><td>Agent-level protocol semantics. The task lifecycle defines a shared basis for producers and consumers to validate an observed task stream.</td></tr>
+<tr><td><code>context.invalidated</code> and <code>memory.fact.invalidated</code></td><td>Registered AEP event types. Their detailed payload schemas and consumer semantics remain future specification work.</td></tr>
+<tr><td>Filtering, acknowledgement, replay, retention, routing, and delivery implementation</td><td>Shared protocol concepts with transport-dependent realization. AEP does not replace broker capabilities or make stronger guarantees than its draft delivery specification.</td></tr>
+</tbody>
+</table>
+<h3>Agent-Relevant Correlation</h3>
+<p><code>session_id</code>, <code>conversation_id</code>, and <code>task_id</code> are distinct, composable scopes commonly used in an agent runtime:</p>
+<ul>
+<li>A <code>session_id</code> identifies a runtime connection or execution session.</li>
+<li>A <code>conversation_id</code> identifies an interaction thread.</li>
+<li>A <code>task_id</code> identifies a unit of asynchronous work.</li>
+</ul>
+<p>This is not a claim that no prior application has modeled sessions, conversations, or tasks. The consistently named fields give independently developed agents, tools, context providers, and memory systems an interoperable way to attach an asynchronous event to the relevant runtime, interaction, or work scope. An event may carry any combination of these recommended fields; consumers must not infer containment or parentage from their presence alone. <code>correlation_id</code> can group a broader logical operation, while <code>causation_id</code> identifies the event that directly caused another event.</p>
+<h3>Invalidation Is A Consumer Signal</h3>
+<p>The draft registers <code>context.invalidated</code> and <code>memory.fact.invalidated</code>, but does not yet define full payload schemas or normative consumer behavior for them. The intended application-level positioning is that a consumer which relied on prior context or a memory fact may evaluate whether to refresh, discard, annotate, or otherwise revise its working state. These events do not declare a universal truth-maintenance system, prove that every cached conclusion is false, or guarantee that any consumer will revise its beliefs. Detailed invalidation semantics remain future specification work.</p>
+<h2>Comparison</h2>
+<p>The following comparisons describe intended roles, not claims that one system subsumes another.</p>
+<table>
+<thead><tr><th>Capability</th><th>AEP</th><th>CloudEvents</th><th>AsyncAPI</th><th>Kafka, NATS, Redis Streams</th></tr></thead>
+<tbody>
+<tr><td>Session, conversation, and task correlation</td><td>Recommended, consistently named envelope fields: <code>session_id</code>, <code>conversation_id</code>, <code>task_id</code>, <code>correlation_id</code>, and <code>causation_id</code>. Their co-presence does not imply containment.</td><td>Generic extension attributes can carry these values; their agent meaning is not defined by CloudEvents.</td><td>Can document messages containing these fields, but does not define their runtime semantics.</td><td>Headers, keys, subjects, streams, and payloads can carry them; semantics are application-defined.</td></tr>
+<tr><td>Task lifecycle validation</td><td>Draft shared event family and transition model for task streams.</td><td>Represents lifecycle events but does not define task states or transitions.</td><td>Documents lifecycle messages and channels but does not define transition validity.</td><td>Transports events; validation belongs to applications or consumers.</td></tr>
+<tr><td>Context and memory invalidation</td><td>Registers <code>context.invalidated</code> and <code>memory.fact.invalidated</code>; payload schemas and normative consumer behavior remain future work.</td><td>Can carry invalidation events without defining their meaning.</td><td>Can describe invalidation messages without defining consumer action.</td><td>Transports invalidation messages without interpreting them.</td></tr>
+<tr><td>Causation</td><td><code>causation_id</code> is a recommended envelope field for direct event lineage.</td><td>Extension attributes can represent lineage.</td><td>Can describe a lineage field.</td><td>Metadata or payload convention chosen by the application.</td></tr>
+<tr><td>Subscription filtering</td><td>Draft filters include event type, source, target, topic, session, conversation, task, time, and cursor.</td><td>No subscription protocol.</td><td>Describes subscription operations; does not provide a broker.</td><td>Native filtering varies by broker and binding.</td></tr>
+<tr><td>Replay</td><td>Draft cursor-based replay and acknowledgement semantics, realized by capable transports.</td><td>No replay semantics.</td><td>Can document replay-capable bindings.</td><td>Support varies by product, retention policy, and consumer configuration.</td></tr>
+<tr><td>Synchronous capability calls</td><td>Outside AEP's primary role; compose with MCP.</td><td>Not a call protocol.</td><td>Can describe request-reply patterns but is not the runtime call layer.</td><td>Request-reply may be available, but capability discovery and invocation semantics are application-defined.</td></tr>
+</tbody>
+</table>
+<table>
+<thead><tr><th>Capability</th><th>AEP</th><th>Actor systems</th><th>Event sourcing</th><th>MCP</th></tr></thead>
+<tbody>
+<tr><td>Session, conversation, and task correlation</td><td>Recommended, consistently named envelope fields for distinct agent scopes; their co-presence does not imply containment.</td><td>Actor identity and message metadata can model relationships; no common agent correlation convention.</td><td>Aggregate and stream identities can relate events; agent scope relationships are application-specific.</td><td>Session and request identifiers are available where defined; task-level async relationship semantics are outside its core call model.</td></tr>
+<tr><td>Task lifecycle validation</td><td>Shared draft lifecycle enables participants to interpret and validate task progress, completion, failure, and cancellation consistently.</td><td>Actors can implement a lifecycle in behavior and state; no interoperable lifecycle is implied.</td><td>Event histories can represent lifecycle changes; transition rules are domain-specific.</td><td>A synchronous call has request and result semantics; it does not standardize a general async task stream.</td></tr>
+<tr><td>Context and memory invalidation</td><td>Registered event types; payload schemas and normative consumer behavior remain future work.</td><td>Actors may send such messages as application behavior.</td><td>Invalidation can be recorded as a domain event.</td><td>Notifications or tool results may expose changes, but no shared invalidation model is defined.</td></tr>
+<tr><td>Causation</td><td>Recommended <code>causation_id</code> envelope field.</td><td>Can be modeled in message metadata or payload.</td><td>Can be modeled in event payloads.</td><td>Request IDs can associate a response with a request; event causation across an async graph is not its primary model.</td></tr>
+<tr><td>Subscription filtering</td><td>AEP-level filter vocabulary over agent event attributes.</td><td>Actor mailboxes are usually addressed delivery rather than general subscriptions.</td><td>Projections and consumers select event streams by application convention; event sourcing does not define a general subscription filter model.</td><td>MCP does not define an AEP-style cross-source event subscription filter vocabulary; any subscription facility depends on the MCP feature and server.</td></tr>
+<tr><td>Replay</td><td>Cursor-based replay is part of the draft delivery model when the transport supports it.</td><td>Usually not inherent to actor mailboxes.</td><td>Persisted histories can be re-read to rebuild projections or state; this is not a live delivery replay contract.</td><td>MCP does not define replay of a general asynchronous lifecycle event stream; recovery behavior depends on the server and transport.</td></tr>
+<tr><td>Synchronous capability calls</td><td>Delegated to MCP or another call protocol.</td><td>Message asks and futures can support calls, but are runtime-specific.</td><td>Event sourcing records domain events and does not define capability invocation or request-reply.</td><td>MCP's primary role is capability discovery and synchronous invocation.</td></tr>
+</tbody>
+</table>
+<h2>Composition Boundaries</h2>
+<p>AEP is designed to compose with, not replace, existing layers:</p>
+<ul>
+<li>A broker transports AEP events and supplies its own routing, persistence, ordering, and consumer mechanics.</li>
+<li>CloudEvents-compatible mappings are possible when an AEP deployment needs CloudEvents format or protocol bindings. Such a mapping must preserve the AEP fields and event semantics it uses.</li>
+<li>AsyncAPI can describe AEP channels, message schemas, and transport bindings. It is a description mechanism, not the event runtime.</li>
+<li>MCP remains the synchronous call layer for capability discovery, tool invocation, resource reading, and prompt retrieval. AEP carries changes and lifecycle events over time; it should not become a second synchronous tool protocol. See <a href="mcp-relationship.html">AEP and MCP</a>.</li>
+<li>Event-sourced systems may store AEP events, but AEP does not require event sourcing or prescribe how state is reconstructed.</li>
+<li>Actor runtimes may emit and consume AEP events, but AEP does not require actors or adopt a particular actor supervision or mailbox model.</li>
+</ul>
+<h2>Current Limits</h2>
+<p>The draft semantics intentionally stop short of several agent-runtime concerns. These are areas for future specification, not current protocol guarantees:</p>
+<ul>
+<li>Belief revision: invalidation signals can prompt local revision, but AEP does not define a universal belief model or reconciliation algorithm.</li>
+<li>Delegation: task events can describe work, but delegated authority, ownership transfer, and subtask accountability need further definition.</li>
+<li>Provenance: <code>causation_id</code> provides direct event lineage only; evidence, source trust, and derivation chains need further definition.</li>
+<li>Freshness: timestamps, expiration, and invalidation can inform freshness decisions, but AEP does not define a universal freshness policy.</li>
+<li>Interruption: cancellation events exist in the draft task lifecycle, but interruption safety, rollback, partial effects, and cross-runtime guarantees need further definition.</li>
+</ul>
+<p>Implementations should state their transport, retention, ordering, retry, authorization, and consumer-state policies explicitly. They should not infer guarantees beyond the draft <a href="delivery.html">delivery semantics</a> or the particular broker and binding they deploy.</p>
+</body>
+</html>

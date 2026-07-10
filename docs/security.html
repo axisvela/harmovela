@@ -24,62 +24,55 @@
 <body>
 <nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Security</h1>
-<p><h1>AEP Security Model</h1></p>
+<h1>AEP Security Model</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define the identity, authorization, and audit boundaries for AEP communication. AEP does not prescribe a specific authentication protocol; this document defines the security metadata hooks that transports and implementations must respect.</p>
-<p><h2>Design Principle</h2></p>
+<h2>Design Principle</h2>
 <p>AEP security is <strong>defense in layers</strong>:</p>
-<p>1. <strong>Transport-level security</strong> (TLS, mTLS, SSH tunnels) — handled by the transport binding, not AEP.
-2. <strong>AEP-level identity</strong> — who is sending and receiving events.
-3. <strong>AEP-level authorization</strong> — what a given identity is allowed to send, subscribe to, or receive.
-4. <strong>AEP-level audit</strong> — what happened, recorded for inspection.</p>
+<p>1. <strong>Transport-level security</strong> (TLS, mTLS, SSH tunnels) — handled by the transport binding, not AEP. 2. <strong>AEP-level identity</strong> — who is sending and receiving events. 3. <strong>AEP-level authorization</strong> — what a given identity is allowed to send, subscribe to, or receive. 4. <strong>AEP-level audit</strong> — what happened, recorded for inspection.</p>
 <p>AEP layer 2-4 are the scope of this specification.</p>
-<p><h2>Identity Model</h2></p>
-<p><h3>Producer Identity</h3></p>
+<h2>Identity Model</h2>
+<h3>Producer Identity</h3>
 <p>Every event carries a <code>source</code> field that identifies the producer:</p>
-<p>``<code>json
-{
+<pre><code>{
   "source": "tool:web_crawler",
   ...
 }
-</code>`<code></p>
+</code></pre>
 <p>The source format uses a dotted prefix convention:</p>
-<p><table>
-<tr><td>Prefix</td><td>Meaning</td><td>Example</td></tr>
-</table>
-
 <table>
-<tr><td></code>agent:<code></td><td>An agent instance</td><td></code>agent:researcher<code></td></tr>
-<tr><td></code>tool:<code></td><td>A tool or tool server</td><td></code>tool:web_crawler<code></td></tr>
-<tr><td></code>memory:<code></td><td>A memory system</td><td></code>memory:main<code></td></tr>
-<tr><td></code>context:<code></td><td>A context provider</td><td></code>context:browser<code></td></tr>
-<tr><td></code>environment:<code></td><td>An environment observer</td><td></code>environment:sensors<code></td></tr>
-<tr><td></code>harness:<code></td><td>Protocol harness or orchestrator</td><td></code>harness:aep<code></td></tr></table>
-</p>
-<p><h3>Consumer Identity</h3></p>
-<p>Every event may carry a </code>target<code> field that identifies the intended consumer:</p>
-<p></code>`<code>json
-{
+<thead><tr><th>Prefix</th><th>Meaning</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><code>agent:</code></td><td>An agent instance</td><td><code>agent:researcher</code></td></tr>
+<tr><td><code>tool:</code></td><td>A tool or tool server</td><td><code>tool:web_crawler</code></td></tr>
+<tr><td><code>memory:</code></td><td>A memory system</td><td><code>memory:main</code></td></tr>
+<tr><td><code>context:</code></td><td>A context provider</td><td><code>context:browser</code></td></tr>
+<tr><td><code>environment:</code></td><td>An environment observer</td><td><code>environment:sensors</code></td></tr>
+<tr><td><code>harness:</code></td><td>Protocol harness or orchestrator</td><td><code>harness:aep</code></td></tr>
+</tbody>
+</table>
+<h3>Consumer Identity</h3>
+<p>Every event may carry a <code>target</code> field that identifies the intended consumer:</p>
+<pre><code>{
   "target": "agent:researcher",
   ...
 }
-</code>`<code></p>
-<p>Missing </code>target<code> means the event is broadcast (subject to subscription matching).</p>
-<p><h3>Identity Verification</h3></p>
-<p>Identity claims in </code>source<code> and </code>target<code> must be verifiable. The verification mechanism is transport-specific:</p>
-<p><ul>
+</code></pre>
+<p>Missing <code>target</code> means the event is broadcast (subject to subscription matching).</p>
+<h3>Identity Verification</h3>
+<p>Identity claims in <code>source</code> and <code>target</code> must be verifiable. The verification mechanism is transport-specific:</p>
+<ul>
 <li><strong>stdio</strong>: The process identity is the transport identity (OS-level process). The transport provides the identity claim.</li>
 <li><strong>WebSocket</strong>: TLS client certificates provide transport-level identity. The AEP identity is mapped from the certificate.</li>
-<li><strong>HTTP SSE</strong>: HTTP headers (e.g., </code>Authorization: Bearer<code>) or mTLS provide identity.</li>
-</ul></p>
-<p>A transport that cannot verify identity must reject events with a falsified </code>source<code> field.</p>
-<p><h2>Authorization Model</h2></p>
-<p><h3>Capability-Scoped Subscriptions</h3></p>
+<li><strong>HTTP SSE</strong>: HTTP headers (e.g., <code>Authorization: Bearer</code>) or mTLS provide identity.</li>
+</ul>
+<p>A transport that cannot verify identity must reject events with a falsified <code>source</code> field.</p>
+<h2>Authorization Model</h2>
+<h3>Capability-Scoped Subscriptions</h3>
 <p>A subscription is scoped to the capabilities of the subscribing identity. An identity may only subscribe to events it is authorized to receive.</p>
-<p>Capability negotiation during </code>session.ready<code> may include authorization constraints:</p>
-<p></code>`<code>json
-{
+<p>Capability negotiation during <code>session.ready</code> may include authorization constraints:</p>
+<pre><code>{
   "type": "session.ready",
   "payload": {
     "capabilities": {
@@ -90,23 +83,19 @@
     }
   }
 }
-</code>`<code></p>
-<p><table>
-<tr><td>Scope</td><td>Meaning</td></tr>
-</table>
-
+</code></pre>
 <table>
-<tr><td></code>read:&lt;domain&gt;<code></td><td>May receive events from the domain</td></tr>
-<tr><td></code>write:&lt;domain&gt;<code></td><td>May send events to the domain</td></tr>
-<tr><td></code>subscribe:&lt;pattern&gt;<code></td><td>May subscribe to event type patterns</td></tr></table>
-</p>
-<p><h3>Subscription Enforcement</h3></p>
+<thead><tr><th>Scope</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>read:&lt;domain&gt;</code></td><td>May receive events from the domain</td></tr>
+<tr><td><code>write:&lt;domain&gt;</code></td><td>May send events to the domain</td></tr>
+<tr><td><code>subscribe:&lt;pattern&gt;</code></td><td>May subscribe to event type patterns</td></tr>
+</tbody>
+</table>
+<h3>Subscription Enforcement</h3>
 <p>When a consumer requests a subscription, the producer must verify that the consumer's scopes cover the requested filter:</p>
-<p>1. For each </code>types<code> pattern in the subscription filter, check that the consumer has a matching </code>subscribe:<code> scope.
-2. For each </code>source<code> filter, check that the consumer has </code>read:<code> scope for the source domain.
-3. If any check fails, reject the subscription with </code>unauthorized<code>.</p>
-<p></code>`<code>json
-{
+<p>1. For each <code>types</code> pattern in the subscription filter, check that the consumer has a matching <code>subscribe:</code> scope. 2. For each <code>source</code> filter, check that the consumer has <code>read:</code> scope for the source domain. 3. If any check fails, reject the subscription with <code>unauthorized</code>.</p>
+<pre><code>{
   "type": "subscription.rejected",
   "payload": {
     "error": {
@@ -115,90 +104,84 @@
     }
   }
 }
-</code>`<code></p>
-<p><h3>Targeted Delivery Enforcement</h3></p>
-<p>When an event has a </code>target<code> field, the producer must verify that the producer is authorized to send to that target. An identity may only target identities within its authorized scope.</p>
-<p><h2>Event-Level Authorization</h2></p>
-<p>Events may carry an </code>authorization<code> field for transport-agnostic auth tokens:</p>
-<p></code>`<code>json
-{
+</code></pre>
+<h3>Targeted Delivery Enforcement</h3>
+<p>When an event has a <code>target</code> field, the producer must verify that the producer is authorized to send to that target. An identity may only target identities within its authorized scope.</p>
+<h2>Event-Level Authorization</h2>
+<p>Events may carry an <code>authorization</code> field for transport-agnostic auth tokens:</p>
+<pre><code>{
   "authorization": {
     "scheme": "bearer",
     "token": "eyJhbGci..."
   }
 }
-</code>`<code></p>
-<p>The </code>authorization<code> field is optional. When present:</p>
-<p><ul>
-<li>The </code>scheme<code> field declares the token type (e.g., </code>bearer<code>, </code>capability<code>).</li>
-<li>The </code>token<code> field carries the credential.</li>
+</code></pre>
+<p>The <code>authorization</code> field is optional. When present:</p>
+<ul>
+<li>The <code>scheme</code> field declares the token type (e.g., <code>bearer</code>, <code>capability</code>).</li>
+<li>The <code>token</code> field carries the credential.</li>
 <li>The producer and consumer must agree on the scheme during capability negotiation.</li>
-</ul></p>
-<p>A producer that does not support the requested scheme must reject the event with </code>unauthorized<code>.</p>
-<p><h2>Payload Redaction</h2></p>
+</ul>
+<p>A producer that does not support the requested scheme must reject the event with <code>unauthorized</code>.</p>
+<h2>Payload Redaction</h2>
 <p>Sensitive data in event payloads may be redacted before delivery to unauthorized consumers. The redaction policy is implementation-defined, but AEP defines metadata for declaring sensitivity:</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "payload": {
     "user_query": "what is the capital of France",
     "_redacted": ["financial_data", "pii"]
   }
 }
-</code>`<code></p>
-<p>The </code>_redacted<code> key (reserved, prefix </code>_<code>) declares that specific fields in the payload were removed before delivery. Consumers should treat </code>_redacted<code> as informational and not attempt to reconstruct the removed data.</p>
-<p><h2>Audit Trail</h2></p>
+</code></pre>
+<p>The <code>_redacted</code> key (reserved, prefix <code>_</code>) declares that specific fields in the payload were removed before delivery. Consumers should treat <code>_redacted</code> as informational and not attempt to reconstruct the removed data.</p>
+<h2>Audit Trail</h2>
 <p>Productions deployments should maintain an audit trail of all AEP events. The minimum audit record for each event includes:</p>
-<p><table>
-<tr><td>Field</td><td>Source</td></tr>
-</table>
-
 <table>
-<tr><td>Event </code>id<code></td><td>Envelope</td></tr>
-<tr><td>Event </code>type<code></td><td>Envelope</td></tr>
-<tr><td></code>source<code> identity</td><td>Envelope</td></tr>
-<tr><td></code>target<code> identity</td><td>Envelope</td></tr>
-<tr><td></code>created_at<code></td><td>Envelope</td></tr>
+<thead><tr><th>Field</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Event <code>id</code></td><td>Envelope</td></tr>
+<tr><td>Event <code>type</code></td><td>Envelope</td></tr>
+<tr><td><code>source</code> identity</td><td>Envelope</td></tr>
+<tr><td><code>target</code> identity</td><td>Envelope</td></tr>
+<tr><td><code>created_at</code></td><td>Envelope</td></tr>
 <tr><td>Transport identity</td><td>Transport binding</td></tr>
-<tr><td>Auth identity (if different from source)</td><td>Transport or envelope </code>authorization<code></td></tr>
-<tr><td>Delivery status</td><td>Delivery tracker</td></tr></table>
-</p>
-<p>Audit records are implementation-specific and not defined by the AEP wire protocol. A conformant implementation may expose audit events as AEP events (e.g., </code>audit.event.delivered<code>), but this is not required.</p>
-<p><h2>Threat Model Summary</h2></p>
-<p><table>
-<tr><td>Threat</td><td>Mitigation</td></tr>
+<tr><td>Auth identity (if different from source)</td><td>Transport or envelope <code>authorization</code></td></tr>
+<tr><td>Delivery status</td><td>Delivery tracker</td></tr>
+</tbody>
 </table>
-
+<p>Audit records are implementation-specific and not defined by the AEP wire protocol. A conformant implementation may expose audit events as AEP events (e.g., <code>audit.event.delivered</code>), but this is not required.</p>
+<h2>Threat Model Summary</h2>
 <table>
-<tr><td>Impersonation (spoofed </code>source<code>)</td><td>Transport-level identity verification</td></tr>
+<thead><tr><th>Threat</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td>Impersonation (spoofed <code>source</code>)</td><td>Transport-level identity verification</td></tr>
 <tr><td>Unauthorized subscription</td><td>Capability-scoped subscription enforcement</td></tr>
 <tr><td>Unauthorized targeted delivery</td><td>Producer-to-target authorization check</td></tr>
 <tr><td>Eavesdropping</td><td>Transport-level encryption (TLS)</td></tr>
 <tr><td>Payload data leak</td><td>Payload redaction before delivery</td></tr>
-<tr><td>Replay attacks</td><td>Event </code>id<code> idempotency + idempotent consumers</td></tr>
-<tr><td>Audit tampering</td><td>Append-only audit log, external to AEP</td></tr></table>
-</p>
-<p><h2>Multi-Tenant Isolation</h2></p>
-<p>In shared deployments, the </code>tenant_id<code> envelope field provides namespace isolation:</p>
-<p></code>`<code>json
-{
+<tr><td>Replay attacks</td><td>Event <code>id</code> idempotency + idempotent consumers</td></tr>
+<tr><td>Audit tampering</td><td>Append-only audit log, external to AEP</td></tr>
+</tbody>
+</table>
+<h2>Multi-Tenant Isolation</h2>
+<p>In shared deployments, the <code>tenant_id</code> envelope field provides namespace isolation:</p>
+<pre><code>{
   "tenant_id": "org_acme",
   ...
 }
-</code>`<code></p>
+</code></pre>
 <p>Rules:</p>
-<p><ul>
-<li>Events with </code>tenant_id<code> must not be delivered to sessions of a different tenant.</li>
+<ul>
+<li>Events with <code>tenant_id</code> must not be delivered to sessions of a different tenant.</li>
 <li>Subscriptions are scoped to the tenant of the subscribing session.</li>
-<li>A session without </code>tenant_id<code> is single-tenant and isolated by definition.</li>
-</ul></p>
-<p>Tenant isolation is enforced by the producer/orchestrator, not by the protocol wire format.</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>The </code>authorization<code> envelope field is defined by this spec but no mandatory scheme is defined in AEP 0.1. Implementations may use </code>bearer<code> tokens, capability URLs, or custom schemes.</li>
-<li>The </code>_redacted<code> payload prefix is reserved. Implementations must not use this prefix for application data.</li>
-<li>Capability scopes use glob-style pattern matching (same as event type matching).</li>
-<li>Transport bindings may define additional security requirements (e.g., WebSocket mandates TLS for </code>wss://`).</li>
+<li>A session without <code>tenant_id</code> is single-tenant and isolated by definition.</li>
 </ul>
-</p>
+<p>Tenant isolation is enforced by the producer/orchestrator, not by the protocol wire format.</p>
+<h2>Implementation Notes</h2>
+<ul>
+<li>The <code>authorization</code> envelope field is defined by this spec but no mandatory scheme is defined in AEP 0.1. Implementations may use <code>bearer</code> tokens, capability URLs, or custom schemes.</li>
+<li>The <code>_redacted</code> payload prefix is reserved. Implementations must not use this prefix for application data.</li>
+<li>Capability scopes use glob-style pattern matching (same as event type matching).</li>
+<li>Transport bindings may define additional security requirements (e.g., WebSocket mandates TLS for <code>wss://</code>).</li>
+</ul>
 </body>
 </html>

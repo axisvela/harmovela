@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mcp Relationship — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Mcp Relationship</h1>
+<h1>AEP And MCP</h1>
+<h2>Summary</h2>
+<p>AEP is the asynchronous counterpart to MCP.</p>
+<p>MCP standardizes how a model or agent synchronously invokes capabilities. AEP standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.</p>
+<p>They should be complementary protocols.</p>
+<h2>Why MCP Alone Is Not Enough</h2>
+<p>MCP is centered on request-response interactions:</p>
+<ul>
+<li>List tools</li>
+<li>Call a tool</li>
+<li>List resources</li>
+<li>Read a resource</li>
+<li>List prompts</li>
+<li>Get a prompt</li>
+</ul>
+<p>This is a strong model for synchronous capability invocation, but many agent workflows are event-driven:</p>
+<ul>
+<li>A long-running tool needs to report progress.</li>
+<li>A background indexing task completes later.</li>
+<li>A memory fact is invalidated after the agent already used it.</li>
+<li>An environment observer detects a relevant change.</li>
+<li>Another agent finishes a subtask.</li>
+<li>A task needs cancellation or timeout handling.</li>
+<li>A disconnected agent needs to replay missed events.</li>
+</ul>
+<p>These are not naturally represented as a single synchronous tool result.</p>
+<h2>Why HTTPS Request-Response Is Not The Async Layer</h2>
+<p>HTTPS request-response, whether used for an MCP call or another API, is useful for submitting work and receiving an immediate acknowledgement. It does not by itself provide a shared stream for changes that occur after that exchange.</p>
+<p>For a long-running operation, submission and acceptance are distinct from progress and the terminal result:</p>
+<pre><code>Agent --MCP/HTTPS--&gt; submit ingest_document
+Tool  --MCP/HTTPS--&gt; accepted (task_id)
+Tool  --AEP--------&gt; task.progress (task_id)
+Tool  --AEP--------&gt; task.completed | task.failed | task.cancelled (task_id)
+</code></pre>
+<p>The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft AEP lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.</p>
+<h2>Correspondence Table</h2>
+<table>
+<thead><tr><th>MCP Capability</th><th>AEP Counterpart</th></tr></thead>
+<tbody>
+<tr><td><code>initialize</code></td><td><code>session.opened</code>, <code>session.ready</code>, capability negotiation</td></tr>
+<tr><td><code>tools/list</code></td><td><code>capabilities.requested</code>, <code>capabilities.declared</code></td></tr>
+<tr><td><code>tools/call</code></td><td><code>tool.call.requested</code>, lifecycle events</td></tr>
+<tr><td><code>resources/list</code></td><td><code>streams/list</code> or subscription capabilities</td></tr>
+<tr><td><code>resources/read</code></td><td><code>context.snapshot.requested</code>, <code>context.snapshot.ready</code></td></tr>
+<tr><td><code>notifications/*</code></td><td>General event publish / subscribe</td></tr>
+<tr><td>Request-response result</td><td>Deferred result stream</td></tr>
+</tbody>
+</table>
+<h2>Interop Model</h2>
+<h3>MCP Tool Calls Producing AEP Events</h3>
+<p>A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing AEP events later.</p>
+<p>Example:</p>
+<pre><code>Agent --MCP--&gt; call tool: ingest_document
+Tool --MCP--&gt; returns accepted result
+Tool --AEP--&gt; task.progress
+Tool --AEP--&gt; memory.summary.ready
+Tool --AEP--&gt; task.completed
+</code></pre>
+<h3>AEP Events Requesting MCP Tool Calls</h3>
+<p>AEP can carry an event that asks a runtime to execute an MCP tool asynchronously.</p>
+<pre><code>{
+  "type": "tool.call.requested",
+  "payload": {
+    "protocol": "mcp",
+    "server": "mneme",
+    "tool": "search_memory",
+    "arguments": {
+      "query": "async agent protocols"
+    }
+  }
+}
+</code></pre>
+<p>The result is emitted as AEP lifecycle events rather than returned synchronously.</p>
+<h3>MCP For Current State, AEP For Change Over Time</h3>
+<p>MCP can read a current resource snapshot. AEP can notify agents that the snapshot changed.</p>
+<pre><code>MCP: read current context
+AEP: context.updated / context.invalidated
+</code></pre>
+<h2>Design Boundary</h2>
+<p>AEP should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.</p>
+<p>AEP should define:</p>
+<ul>
+<li>Event envelope</li>
+<li>Subscription model</li>
+<li>Async task lifecycle</li>
+<li>Delivery semantics</li>
+<li>Context and memory event types</li>
+<li>Agent-to-agent message events</li>
+</ul>
+<p>MCP should continue to define:</p>
+<ul>
+<li>Synchronous tool discovery</li>
+<li>Synchronous tool invocation</li>
+<li>Resource reading</li>
+<li>Prompt retrieval</li>
+</ul>
+<h2>Naming Recommendation</h2>
+<p>Avoid calling the project "Async MCP".</p>
+<p>Recommended framing:</p>
+<p>&gt; AEP is the event layer for agent systems. MCP is the call layer.</p>
+<p>This keeps the protocol independent, general, and useful beyond the MCP ecosystem while still allowing first-class MCP integration.</p>
+</body>
+</html>

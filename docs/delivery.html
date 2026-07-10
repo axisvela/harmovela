@@ -24,32 +24,30 @@
 <body>
 <nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Delivery</h1>
-<p><h1>AEP Delivery Semantics</h1></p>
+<h1>AEP Delivery Semantics</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define the event delivery contract between producer and consumer across all transports, including acknowledgement, sequence tracking, and replay.</p>
-<p><h2>Delivery Modes</h2></p>
-<p><table>
-<tr><td>Mode</td><td>Delivery</td><td>Duplicates</td><td>Replay</td><td>Use Case</td></tr>
-</table>
-
+<h2>Delivery Modes</h2>
 <table>
+<thead><tr><th>Mode</th><th>Delivery</th><th>Duplicates</th><th>Replay</th><th>Use Case</th></tr></thead>
+<tbody>
 <tr><td><code>best_effort</code></td><td>At most once</td><td>No</td><td>No</td><td>Transient UI updates, heartbeat</td></tr>
 <tr><td><code>at_least_once</code></td><td>Always delivered</td><td>Possible</td><td>No</td><td>Task results, memory facts</td></tr>
-<tr><td><code>replayable</code></td><td>Always delivered</td><td>Possible</td><td>Yes (cursor)</td><td>Late-joining consumers, audit</td></tr></table>
-</p>
+<tr><td><code>replayable</code></td><td>Always delivered</td><td>Possible</td><td>Yes (cursor)</td><td>Late-joining consumers, audit</td></tr>
+</tbody>
+</table>
 <p>Delivery mode is declared in the subscription filter as <code>delivery_mode</code> and carried on each event under <code>delivery.mode</code>.</p>
-<p><h2>Event Identity</h2></p>
+<h2>Event Identity</h2>
 <p>Every event has a globally unique <code>id</code>. Consumers use the <code>id</code> for idempotent processing:</p>
-<p><ul>
+<ul>
 <li>Process each event at most once based on <code>id</code>.</li>
 <li>If a duplicate arrives, acknowledge it without re-processing.</li>
-</ul></p>
-<p><h2>Acknowledgement Protocol</h2></p>
-<p><h3>AEP-level Acknowledgement</h3></p>
+</ul>
+<h2>Acknowledgement Protocol</h2>
+<h3>AEP-level Acknowledgement</h3>
 <p>When a consumer has successfully processed an event, it sends:</p>
-<p>``<code>json
-{
+<pre><code>{
   "type": "event.acknowledged",
   "causation_id": "evt_01JZ0000000000000000000000",
   "payload": {
@@ -57,15 +55,14 @@
     "cursor": "stream_01:42"
   }
 }
-</code>`<code></p>
-<p><ul>
-<li></code>acknowledged_event_id<code> — the </code>id<code> of the event being acknowledged.</li>
-<li></code>cursor<code> — optional; the stream position after this event, for replay bookmarking.</li>
-</ul></p>
-<p><h3>Rejection</h3></p>
+</code></pre>
+<ul>
+<li><code>acknowledged_event_id</code> — the <code>id</code> of the event being acknowledged.</li>
+<li><code>cursor</code> — optional; the stream position after this event, for replay bookmarking.</li>
+</ul>
+<h3>Rejection</h3>
 <p>When a consumer cannot process an event:</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "type": "event.rejected",
   "causation_id": "evt_01JZ0000000000000000000000",
   "payload": {
@@ -76,55 +73,48 @@
     }
   }
 }
-</code>`<code></p>
-<p><h3>Ack Expectations</h3></p>
-<p><ul>
-<li></code>best_effort<code>: No ack expected. Producer fires and forgets.</li>
-<li></code>at_least_once<code>: Producer expects </code>event.acknowledged<code> within a timeout. If no ack, the event may be redelivered.</li>
-<li></code>replayable<code>: Same as </code>at_least_once<code>, with cursor tracking.</li>
-</ul></p>
-<p><h2>Sequence Tracking</h2></p>
+</code></pre>
+<h3>Ack Expectations</h3>
+<ul>
+<li><code>best_effort</code>: No ack expected. Producer fires and forgets.</li>
+<li><code>at_least_once</code>: Producer expects <code>event.acknowledged</code> within a timeout. If no ack, the event may be redelivered.</li>
+<li><code>replayable</code>: Same as <code>at_least_once</code>, with cursor tracking.</li>
+</ul>
+<h2>Sequence Tracking</h2>
 <p>Each event in a delivery stream carries a sequence number:</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "delivery": {
     "mode": "at_least_once",
     "sequence": 42,
     "cursor": "stream_01:42"
   }
 }
-</code>`<code></p>
-<p><ul>
-<li></code>sequence<code> — monotonically increasing integer per stream. Gaps indicate lost or skipped events.</li>
-<li></code>cursor<code> — opaque string identifying a position in the event stream, used for replay.</li>
-</ul></p>
+</code></pre>
+<ul>
+<li><code>sequence</code> — monotonically increasing integer per stream. Gaps indicate lost or skipped events.</li>
+<li><code>cursor</code> — opaque string identifying a position in the event stream, used for replay.</li>
+</ul>
 <p>The cursor format is transport-specific and opaque to consumers. Common formats:</p>
-<p><table>
-<tr><td>Transport</td><td>Cursor Format</td></tr>
-</table>
-
 <table>
+<thead><tr><th>Transport</th><th>Cursor Format</th></tr></thead>
+<tbody>
 <tr><td>stdio</td><td>Not applicable (no replay)</td></tr>
-<tr><td>WebSocket</td><td></code>&lt;stream_id&gt;:&lt;sequence&gt;<code></td></tr>
-<tr><td>HTTP SSE</td><td>Event </code>id<code> from SSE protocol</td></tr>
-<tr><td>NATS/Kafka</td><td>Native offset or timestamp</td></tr></table>
-</p>
-<p><h2>Replay</h2></p>
-<p>A consumer replays events by subscribing with </code>from_cursor<code>:</p>
-<p></code>`<code>json
-{
+<tr><td>WebSocket</td><td><code>&lt;stream_id&gt;:&lt;sequence&gt;</code></td></tr>
+<tr><td>HTTP SSE</td><td>Event <code>id</code> from SSE protocol</td></tr>
+<tr><td>NATS/Kafka</td><td>Native offset or timestamp</td></tr>
+</tbody>
+</table>
+<h2>Replay</h2>
+<p>A consumer replays events by subscribing with <code>from_cursor</code>:</p>
+<pre><code>{
   "types": ["task.*"],
   "from_cursor": "stream_01:42",
   "delivery_mode": "replayable"
 }
-</code>`<code></p>
-<p>The producer:
-1. Finds the stream position matching the cursor.
-2. Delivers all events from that position forward (including the event at the cursor position if </code>from_cursor<code> is inclusive).
-3. Transitions to live delivery once caught up.</p>
+</code></pre>
+<p>The producer: 1. Finds the stream position matching the cursor. 2. Delivers all events from that position forward (including the event at the cursor position if <code>from_cursor</code> is inclusive). 3. Transitions to live delivery once caught up.</p>
 <p>When replay is complete and the stream is caught up, the producer may send:</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "type": "event.replayed",
   "payload": {
     "from_cursor": "stream_01:42",
@@ -132,26 +122,24 @@
     "events_replayed": 57
   }
 }
-</code>`<code></p>
-<p><h2>Redelivery</h2></p>
+</code></pre>
+<h2>Redelivery</h2>
 <p>When a consumer disconnects before acknowledging events, the producer may redeliver unacknowledged events on reconnect. Redelivered events carry:</p>
-<p></code>`<code>json
-{
+<pre><code>{
   "type": "event.redelivered",
   "payload": {
     "original_event_id": "evt_01JZ0000000000000000000000",
     "attempt": 2
   }
 }
-</code>`<code></p>
-<p>The </code>attempt<code> field counts 1-indexed delivery attempts for the same event.</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
+</code></pre>
+<p>The <code>attempt</code> field counts 1-indexed delivery attempts for the same event.</p>
+<h2>Implementation Notes</h2>
+<ul>
 <li>Producers must maintain at least the last acknowledged cursor per subscription.</li>
 <li>Consumers must track their last processed cursor and provide it on reconnect or re-subscription.</li>
 <li>The ack timeout is implementation-defined but should be reasonable (default 30s).</li>
-<li>Event </code>id<code> must be unique; implementors should use a format like </code>evt_&lt;ULID&gt;<code> or </code>evt_&lt;UUID v7&gt;`.</li>
+<li>Event <code>id</code> must be unique; implementors should use a format like <code>evt_&lt;ULID&gt;</code> or <code>evt_&lt;UUID v7&gt;</code>.</li>
 </ul>
-</p>
 </body>
 </html>

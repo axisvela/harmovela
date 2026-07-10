@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocol Design — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Protocol Design</h1>
+<h1>AEP Protocol Design Draft</h1>
+<h2>Protocol Name</h2>
+<p>Working name: <strong>AEP — Agent Event Protocol</strong>.</p>
+<p>Expanded scope: asynchronous events, async tool lifecycle, context events, memory events, and agent coordination messages.</p>
+<h2>Core Message Envelope</h2>
+<p>Every AEP event uses a common envelope.</p>
+<pre><code>{
+  "aep_version": "0.1",
+  "id": "evt_01JZ0000000000000000000000",
+  "type": "tool.call.progress",
+  "source": "tool:web_crawler",
+  "target": "agent:researcher",
+  "topic": "tasks.task_01",
+  "session_id": "sess_01",
+  "conversation_id": "conv_01",
+  "task_id": "task_01",
+  "correlation_id": "corr_01",
+  "causation_id": "evt_01JYZZZZZZZZZZZZZZZZZZZZZZ",
+  "created_at": "2026-07-09T10:00:00Z",
+  "expires_at": null,
+  "delivery": {
+    "mode": "at_least_once",
+    "sequence": 42,
+    "cursor": "stream_01:42"
+  },
+  "payload_schema": "https://schemas.axisrobo.com/tool.call.progress.v1.json",
+  "payload": {
+    "message": "Indexed 120 of 500 pages",
+    "progress": 0.24
+  }
+}
+</code></pre>
+<h2>Required Envelope Fields</h2>
+<ul>
+<li><code>aep_version</code>: protocol version</li>
+<li><code>id</code>: globally unique event ID</li>
+<li><code>type</code>: event type using dotted naming</li>
+<li><code>source</code>: event producer identity</li>
+<li><code>created_at</code>: event creation timestamp</li>
+<li><code>payload</code>: event-specific body</li>
+</ul>
+<h2>Recommended Envelope Fields</h2>
+<ul>
+<li><code>target</code>: intended consumer or audience</li>
+<li><code>topic</code>: routing topic</li>
+<li><code>session_id</code>: runtime session</li>
+<li><code>conversation_id</code>: conversation or interaction thread</li>
+<li><code>task_id</code>: related long-running task</li>
+<li><code>correlation_id</code>: logical operation correlation key</li>
+<li><code>causation_id</code>: event that caused this event</li>
+<li><code>expires_at</code>: event relevance deadline</li>
+<li><code>delivery</code>: delivery metadata</li>
+<li><code>payload_schema</code>: schema URI for validation</li>
+</ul>
+<h2>Event Type Naming</h2>
+<p>Event types use dotted namespaces:</p>
+<pre><code>domain.object.action
+</code></pre>
+<p>Examples:</p>
+<ul>
+<li><code>event.acknowledged</code></li>
+<li><code>subscription.created</code></li>
+<li><code>tool.call.requested</code></li>
+<li><code>tool.call.progress</code></li>
+<li><code>tool.call.completed</code></li>
+<li><code>memory.fact.invalidated</code></li>
+<li><code>context.snapshot.ready</code></li>
+<li><code>agent.message.sent</code></li>
+<li><code>environment.observed</code></li>
+</ul>
+<h2>Standard Event Families</h2>
+<h3>Session Events</h3>
+<ul>
+<li><code>session.opened</code></li>
+<li><code>session.ready</code></li>
+<li><code>session.heartbeat</code></li>
+<li><code>session.closed</code></li>
+<li><code>session.error</code></li>
+</ul>
+<h3>Capability Events</h3>
+<ul>
+<li><code>capabilities.requested</code></li>
+<li><code>capabilities.declared</code></li>
+<li><code>capabilities.changed</code></li>
+</ul>
+<h3>Subscription Events</h3>
+<ul>
+<li><code>subscription.requested</code></li>
+<li><code>subscription.created</code></li>
+<li><code>subscription.rejected</code></li>
+<li><code>subscription.cancelled</code></li>
+<li><code>subscription.expired</code></li>
+</ul>
+<h3>Delivery Events</h3>
+<ul>
+<li><code>event.acknowledged</code></li>
+<li><code>event.rejected</code></li>
+<li><code>event.redelivered</code></li>
+<li><code>event.replayed</code></li>
+<li><code>event.dead_lettered</code></li>
+</ul>
+<h3>Async Tool Events</h3>
+<ul>
+<li><code>tool.call.requested</code></li>
+<li><code>tool.call.accepted</code></li>
+<li><code>tool.call.rejected</code></li>
+<li><code>tool.call.started</code></li>
+<li><code>tool.call.progress</code></li>
+<li><code>tool.call.output</code></li>
+<li><code>tool.call.completed</code></li>
+<li><code>tool.call.failed</code></li>
+<li><code>tool.call.cancel.requested</code></li>
+<li><code>tool.call.cancelled</code></li>
+<li><code>tool.call.timed_out</code></li>
+</ul>
+<h3>Task Events</h3>
+<ul>
+<li><code>task.submitted</code></li>
+<li><code>task.accepted</code></li>
+<li><code>task.started</code></li>
+<li><code>task.blocked</code></li>
+<li><code>task.progress</code></li>
+<li><code>task.output</code></li>
+<li><code>task.completed</code></li>
+<li><code>task.failed</code></li>
+<li><code>task.cancel.requested</code></li>
+<li><code>task.cancelled</code></li>
+<li><code>task.timed_out</code></li>
+</ul>
+<h3>Context Events</h3>
+<ul>
+<li><code>context.updated</code></li>
+<li><code>context.invalidated</code></li>
+<li><code>context.snapshot.requested</code></li>
+<li><code>context.snapshot.ready</code></li>
+<li><code>context.retrieval.started</code></li>
+<li><code>context.retrieval.completed</code></li>
+<li><code>context.retrieval.failed</code></li>
+</ul>
+<h3>Memory Events</h3>
+<ul>
+<li><code>memory.fact.added</code></li>
+<li><code>memory.fact.updated</code></li>
+<li><code>memory.fact.invalidated</code></li>
+<li><code>memory.episode.stored</code></li>
+<li><code>memory.preference.updated</code></li>
+<li><code>memory.constraint.updated</code></li>
+<li><code>memory.summary.ready</code></li>
+<li><code>memory.retrieval.ready</code></li>
+</ul>
+<h3>Agent Message Events</h3>
+<ul>
+<li><code>agent.message.sent</code></li>
+<li><code>agent.message.received</code></li>
+<li><code>agent.message.failed</code></li>
+<li><code>agent.request.created</code></li>
+<li><code>agent.response.created</code></li>
+<li><code>agent.decision.recorded</code></li>
+</ul>
+<h3>Environment Events</h3>
+<ul>
+<li><code>environment.observed</code></li>
+<li><code>environment.changed</code></li>
+<li><code>environment.alerted</code></li>
+<li><code>environment.error</code></li>
+</ul>
+<h2>Async Tool Lifecycle</h2>
+<p>An async tool call is a task-like stream.</p>
+<pre><code>tool.call.requested
+tool.call.accepted
+tool.call.started
+tool.call.progress
+tool.call.output
+tool.call.completed
+</code></pre>
+<p>Failure path:</p>
+<pre><code>tool.call.requested
+tool.call.accepted
+tool.call.started
+tool.call.failed
+</code></pre>
+<p>Cancellation path:</p>
+<pre><code>tool.call.cancel.requested
+tool.call.cancelled
+</code></pre>
+<h2>Subscription Model</h2>
+<p>A subscription describes what a consumer wants to receive.</p>
+<pre><code>{
+  "types": ["memory.*", "tool.call.*"],
+  "source": ["memory:main", "tool:web_crawler"],
+  "target": "agent:researcher",
+  "conversation_id": "conv_01",
+  "from_cursor": "stream_01:12",
+  "delivery_mode": "at_least_once"
+}
+</code></pre>
+<p>Subscriptions may filter by:</p>
+<ul>
+<li>Event type pattern</li>
+<li>Source</li>
+<li>Target</li>
+<li>Topic</li>
+<li>Session</li>
+<li>Conversation</li>
+<li>Task</li>
+<li>Time range</li>
+<li>Cursor</li>
+</ul>
+<h2>Delivery Semantics</h2>
+<p>The protocol should define delivery modes but leave implementation to transports.</p>
+<p>Valid modes:</p>
+<ul>
+<li><code>best_effort</code></li>
+<li><code>at_least_once</code></li>
+<li><code>replayable</code></li>
+</ul>
+<p>AEP should avoid promising strict exactly-once delivery. Instead, every event has a stable ID so consumers can deduplicate.</p>
+<h2>Error Model</h2>
+<p>Errors should be events, not only transport failures.</p>
+<p>Standard error payload:</p>
+<pre><code>{
+  "code": "tool_timeout",
+  "message": "Crawler exceeded the configured timeout",
+  "retryable": true,
+  "details": {}
+}
+</code></pre>
+<h2>Versioning</h2>
+<p>AEP should version:</p>
+<ul>
+<li>Protocol envelope</li>
+<li>Event type families</li>
+<li>Payload schemas</li>
+<li>Transport bindings</li>
+</ul>
+<p>The envelope should remain stable across minor versions.</p>
+<h2>Minimal V0.1 Surface</h2>
+<p>The first useful version should include:</p>
+<ul>
+<li>Event envelope</li>
+<li>Session initialization</li>
+<li>Capability declaration</li>
+<li>Subscription create/cancel</li>
+<li>Event publish</li>
+<li>Event acknowledgement</li>
+<li>Async tool lifecycle events</li>
+<li>Context and memory event families</li>
+<li>WebSocket and stdio transport bindings</li>
+</ul>
+</body>
+</html>

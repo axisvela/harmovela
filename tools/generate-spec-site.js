@@ -14,34 +14,115 @@ const docsDir = resolve(root, "docs");
 const outDir = resolve(root, "docs");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
-const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md"];
+const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];
 
 mkdirSync(outDir, { recursive: true });
 
 function mdToHtml(md) {
-  let html = md
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+  const blocks = [];
+  const links = [];
+  const escapeHtml = (value) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const escapeAttribute = (value) => escapeHtml(value).replace(/"/g, "&quot;");
+  const addBlock = (html) => {
+    const placeholder = `@@AEP_BLOCK_${blocks.length}@@`;
+    blocks.push(html);
+    return placeholder;
+  };
+  const renderInline = (value) => escapeHtml(value)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/^- (.+)$/gm, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>\n${m}</ul>\n`)
-    .replace(/\n\n/g, "</p>\n<p>")
-    .replace(/\|(.+)\|/g, (m) => {
-      const cells = m.split("|").filter((c) => c.trim());
-      const tag = m.includes("---") ? "" : "<tr>" + cells.map((c) => {
-        const trimmed = c.trim();
-        return /^[-:]+$/.test(trimmed) ? "" : `<td>${trimmed}</td>`;
-      }).join("") + "</tr>";
-      return tag;
-    })
-    .replace(/(<tr>.*<\/tr>\n?)+/g, (m) => `<table>\n${m}</table>\n`)
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+  const renderLink = (text, target) => {
+    const trimmed = target.trim();
+    const localMarkdown = !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(trimmed) && /^.*\.md(?:#.*)?$/i.test(trimmed);
+    const href = localMarkdown
+      ? trimmed.replace(/^(?:.*\/)?([^/]+)\.md(#.*)?$/i, "$1.html$2")
+      : trimmed;
+    const allowed = /^(?:https?:|mailto:|#)/i.test(href) || (!/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith("//"));
+    return allowed ? `<a href="${escapeAttribute(href)}">${renderInline(text)}</a>` : renderInline(text);
+  };
+  const renderTable = (table) => {
+    const rows = table.trim().split("\n");
+    const cells = (row) => row.trim().replace(/^\||\|$/g, "").split("|").map((cell) => renderInline(cell.trim()));
+    const header = cells(rows[0]).map((cell) => `<th>${cell}</th>`).join("");
+    const body = rows.slice(2).map((row) => `<tr>${cells(row).map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("\n");
+    return `<table>\n<thead><tr>${header}</tr></thead>\n<tbody>\n${body}\n</tbody>\n</table>`;
+  };
 
-  return `<p>${html}</p>`;
+  let html = md
+    .replace(/```[^\n]*\n([\s\S]*?)```/g, (_, code) => addBlock(`<pre><code>${escapeHtml(code)}</code></pre>`))
+    .replace(/\[(.+?)\]\((.+?)\)/g, (_, text, target) => {
+      const placeholder = `@@AEP_LINK_${links.length}@@`;
+      links.push(renderLink(text, target));
+      return placeholder;
+    })
+    .replace(/(^|\n)(\|[^\n]+\|\n\|(?:\s*:?-+:?\s*\|)+\n(?:\|[^\n]+\|\n?)+)/g, (_, prefix, table) => `${prefix}${addBlock(renderTable(table))}\n`)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  html = html
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  const lines = html.split("\n");
+  const parts = [];
+  let para = [];
+
+  const flushPara = () => {
+    if (para.length) {
+      parts.push(`<p>${para.join(" ")}</p>`);
+      para = [];
+    }
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (/^@@AEP_BLOCK_\d+@@$/.test(trimmed)) {
+      flushPara();
+      parts.push(trimmed);
+      continue;
+    }
+
+    let m = trimmed.match(/^### (.+)$/);
+    if (m) { flushPara(); parts.push(`<h3>${m[1]}</h3>`); continue; }
+    m = trimmed.match(/^## (.+)$/);
+    if (m) { flushPara(); parts.push(`<h2>${m[1]}</h2>`); continue; }
+    m = trimmed.match(/^# (.+)$/);
+    if (m) { flushPara(); parts.push(`<h1>${m[1]}</h1>`); continue; }
+
+    m = trimmed.match(/^- (.+)$/);
+    if (m) {
+      flushPara();
+      parts.push(`<li>${m[1]}</li>`);
+      continue;
+    }
+
+    if (/^\s*$/.test(line)) {
+      flushPara();
+      continue;
+    }
+
+    para.push(line.trimRight());
+  }
+  flushPara();
+
+  const grouped = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].startsWith("<li>")) {
+      const group = [parts[i]];
+      while (i + 1 < parts.length && parts[i + 1].startsWith("<li>")) {
+        group.push(parts[++i]);
+      }
+      grouped.push(`<ul>\n${group.join("\n")}\n</ul>`);
+    } else {
+      grouped.push(parts[i]);
+    }
+  }
+
+  html = grouped.join("\n")
+    .replace(/@@AEP_LINK_(\d+)@@/g, (_, index) => links[index])
+    .replace(/@@AEP_BLOCK_(\d+)@@/g, (_, index) => blocks[index]);
+
+  return html;
 }
 
 function readAndConvert(filePath) {
@@ -91,13 +172,19 @@ for (const file of specFiles) {
   writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
 }
 
+// Generate design document pages
+for (const file of docFiles.filter((f) => existsSync(resolve(docsDir, f)))) {
+  const { title, html } = readAndConvert(resolve(docsDir, file));
+  writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
+}
+
 // Generate home page
 const homeContent = `<h1>AEP Specification</h1>
 <p>Agent Event Protocol (AEP) — an asynchronous event layer for agents, tools, memory systems, context providers, and multi-agent runtimes.</p>
 <h2>Specifications</h2>
 <ul>${specFiles.map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <h2>Design Documents</h2>
-<ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li>${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</li>`).join("")}</ul>
+<ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <p>Generated from <code>docs/specs/</code> and <code>docs/</code>.</p>`;
 
 writeFileSync(resolve(outDir, "index.html"), pageTemplate("AEP Specification", homeContent, navLinks));

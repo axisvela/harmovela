@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Roadmap</h1>
+<h1>AEP Roadmap</h1>
+<h2>Phase 0: Vision And Design ✅ Complete</h2>
+<p>Goal: define the project direction clearly enough for external review.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>Vision document</li>
+<li>Architecture document</li>
+<li>Protocol design draft</li>
+<li>MCP relationship document</li>
+<li>Initial terminology</li>
+</ul>
+<h2>Phase 1: Core Specification Draft ✅ Complete</h2>
+<p>Goal: produce a minimal implementable protocol specification.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>Event envelope JSON Schema (<code>schemas/aep-envelope.schema.json</code>)</li>
+<li>Standard event type registry (<code>reference/typescript/src/event-types.js</code>)</li>
+<li>Session and capability negotiation spec (<code>docs/specs/session.md</code>)</li>
+<li>Subscription spec (<code>docs/specs/subscription.md</code>)</li>
+<li>Task lifecycle spec (<code>docs/specs/task-lifecycle.md</code>)</li>
+<li>Error model (<code>docs/specs/error-model.md</code>)</li>
+<li>Versioning rules (<code>docs/specs/versioning.md</code>)</li>
+<li>Shared conformance fixtures for reference implementations (<code>conformance/fixtures/</code>)</li>
+</ul>
+<h2>Phase 2: Transport Bindings ✅ Complete</h2>
+<p>Goal: define how AEP runs over common transports.</p>
+<p>Initial bindings:</p>
+<ul>
+<li><code>stdio</code> for local process integration (<code>docs/specs/transport-stdio.md</code>, implemented in <code>reference/typescript/src/transport/stdio.js</code>)</li>
+<li><code>WebSocket</code> for bidirectional streams (<code>docs/specs/transport-websocket.md</code>, implemented in <code>reference/typescript/src/transport/websocket.js</code>)</li>
+<li><code>HTTP SSE</code> for server-to-client event streams (<code>docs/specs/transport-sse.md</code>, implemented in <code>reference/typescript/src/transport/sse.js</code>)</li>
+</ul>
+<p>Later bindings:</p>
+<ul>
+<li>gRPC streaming (<code>docs/specs/transport-grpc.md</code>, implemented in <code>reference/typescript/src/transport/grpc.js</code>)</li>
+<li>NATS</li>
+<li>Kafka</li>
+<li>Redis Streams</li>
+</ul>
+<h2>Phase 3: Reference Implementation ✅ Complete</h2>
+<p>Goal: prove the spec with a small, understandable implementation.</p>
+<p>Deliverables (all delivered across four languages):</p>
+<ul>
+<li>TypeScript reference server and client</li>
+<li>Python reference client</li>
+<li>JSON Schema validation</li>
+<li>Simple local router</li>
+<li>Example async tool (<code>reference/typescript/examples/async-tool-producer.js</code>)</li>
+<li>Example memory event producer (<code>reference/typescript/examples/memory-event-producer.js</code>)</li>
+<li>Example agent subscriber (<code>reference/typescript/examples/agent-subscriber.js</code>)</li>
+<li>Cross-language conformance tests using shared fixtures</li>
+</ul>
+<h2>Phase 4: MCP Bridge ✅ Complete</h2>
+<p>Goal: demonstrate clean interop with MCP.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>MCP tool call to AEP task bridge (<code>reference/typescript/src/bridge/mcp-bridge.js</code>)</li>
+<li>AEP task completion events from MCP tools</li>
+<li>Example MCP server emitting AEP events (<code>reference/typescript/examples/mcp-bridge/demo.js</code>)</li>
+<li>Example agent consuming both MCP and AEP (<code>reference/typescript/examples/mcp-aep-consumer.js</code>)</li>
+</ul>
+<h2>Phase 5: Reliability And Production Semantics ✅ Complete</h2>
+<p>Goal: support durable and distributed deployments.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>Replay cursors (<code>docs/specs/delivery.md</code>)</li>
+<li>Acknowledgement protocol (<code>docs/specs/delivery.md</code>)</li>
+<li>Dead-letter events (<code>docs/specs/reliability.md</code>, <code>reference/typescript/src/delivery.js</code>)</li>
+<li>Retry policy metadata (<code>docs/specs/reliability.md</code>, <code>reference/typescript/src/delivery.js</code>)</li>
+<li>Authorization model (<code>docs/specs/security.md</code>)</li>
+<li>Multi-tenant routing model (<code>docs/specs/security.md</code>)</li>
+</ul>
+<h2>Phase 6: Ecosystem And Governance ✅ Complete</h2>
+<p>Goal: make AEP usable as a general open protocol.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>Public specification site (<code>docs/site/</code>, generated by <code>tools/generate-spec-site.js</code>)</li>
+<li>Compatibility test suite (<code>tools/conformance-runner.js</code>)</li>
+<li>Conformance levels (<code>docs/specs/conformance.md</code>, <code>conformance/manifest.json</code>)</li>
+<li>Event registry governance (<code>docs/specs/event-registry-governance.md</code>)</li>
+<li>Contribution guide (<code>CONTRIBUTING.md</code>)</li>
+<li>Code of conduct (<code>CODE_OF_CONDUCT.md</code>)</li>
+<li>Security considerations (<code>docs/specs/security.md</code>)</li>
+</ul>
+<h2>Suggested First Milestone ✅ Achieved</h2>
+<p>The first milestone <strong>AEP 0.1 Draft</strong> has been delivered:</p>
+<ul>
+<li>One event envelope ✅</li>
+<li>One subscription model ✅</li>
+<li>One async task lifecycle ✅</li>
+<li>One context event family ✅</li>
+<li>One memory event family ✅</li>
+<li>Two transport bindings: stdio and WebSocket ✅</li>
+<li>One MCP bridge example ✅</li>
+</ul>
+<p>AEP has since expanded to include four transport bindings (stdio, WebSocket, SSE, gRPC), full delivery and reliability subsystems, SQLite-backed stores, four language references, cross-language conformance testing, and a published spec site.</p>
+<h2>Current Completion State</h2>
+<p>All six roadmap phases (Phase 0 through Phase 6) are fully delivered. The protocol is implemented in TypeScript, Python, Go, and Java with cross-language parity validated by a shared conformance suite. The spec site is published at https://axisrobo.github.io/aep/.</p>
+<p>Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production hardening of delivery/reliability subsystems, formal protocol versioning, and community governance structures.</p>
+</body>
+</html>
