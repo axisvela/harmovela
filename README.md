@@ -103,6 +103,14 @@ Run TypeScript conformance fixtures:
 cd reference/typescript && npm run conformance
 ```
 
+Run cross-language conformance:
+
+```sh
+node tools/conformance-runner.js
+```
+
+This runs shared fixtures across all four language references and prints a unified pass/fail matrix.
+
 Run the stdio harness:
 
 ```sh
