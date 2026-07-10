@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DeliveryTracker, retryDelay } from "../src/index.js";
+import { InMemoryDeliveryStore } from "../src/delivery-store-memory.js";
+import { DeliveryJournal } from "../src/delivery-journal.js";
 
 test("DeliveryTracker assigns monotonically increasing sequences", () => {
   const tracker = new DeliveryTracker({ streamId: "test" });
@@ -103,4 +105,24 @@ test("DeliveryTracker.stats reports comprehensive state", () => {
   assert.equal(stats.pending, 1);    // evt_stats_2
   assert.equal(stats.acknowledged, 1); // evt_stats_1
   assert.equal(stats.deadLettered, 1); // evt_stats_3
+});
+
+test("DeliveryTracker uses provided store and journal", () => {
+  const store = new InMemoryDeliveryStore();
+  const journal = new DeliveryJournal();
+  const tracker = new DeliveryTracker({ store, journal });
+
+  const seq = tracker.track("evt_store_001");
+  assert.equal(seq, 1);
+  assert.equal(store.isPending("evt_store_001"), true);
+
+  tracker.ack("evt_store_001");
+  assert.equal(store.isAcknowledged("evt_store_001"), true);
+
+  journal.append({ type: "task.submitted" });
+  assert.equal(journal.getStats().totalEvents, 1);
+
+  const stats = tracker.stats;
+  assert.equal(stats.pending, 0);
+  assert.equal(stats.acknowledged, 1);
 });

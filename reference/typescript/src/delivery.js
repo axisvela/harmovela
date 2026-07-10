@@ -1,3 +1,6 @@
+import { InMemoryDeliveryStore } from "./delivery-store-memory.js";
+import { DeliveryJournal } from "./delivery-journal.js";
+
 const DEFAULT_RETRY = {
   max_attempts: 3,
   backoff_ms: 1000,
@@ -15,122 +18,68 @@ export function retryDelay(attempt, policy = DEFAULT_RETRY) {
 
 export class DeliveryTracker {
   constructor(options = {}) {
-    this._sequence = options.startSequence ?? 0;
-    this._streamId = options.streamId ?? "stream_01";
-    this._pending = new Map();
-    this._acked = new Set();
-    this._deadLettered = new Map();
-    this._lastAckCursor = null;
+    this._store = options.store ?? new InMemoryDeliveryStore({ startSequence: options.startSequence, streamId: options.streamId });
+    this._journal = options.journal ?? new DeliveryJournal({ streamId: options.streamId });
   }
 
   nextSequence() {
-    return ++this._sequence;
+    return this._store._sequence !== undefined
+      ? ++this._store._sequence
+      : this._store.nextSequence();
   }
 
   get cursor() {
-    return `${this._streamId}:${this._sequence}`;
+    const streamId = this._store._streamId ?? "stream_01";
+    const seq = this._store._sequence ?? 0;
+    return `${streamId}:${seq}`;
   }
 
   get lastAcknowledgedCursor() {
-    return this._lastAckCursor ?? `${this._streamId}:0`;
+    const stats = this._store.getStats();
+    return stats.lastAckCursor ?? `${this._store._streamId ?? "stream_01"}:0`;
   }
 
   track(eventId, subscriptionId = "_default") {
-    const seq = this.nextSequence();
-    this._pending.set(eventId, {
-      eventId,
-      subscriptionId,
-      sequence: seq,
-      cursor: `${this._streamId}:${seq}`,
-      attempts: 1,
-      firstAttemptAt: new Date().toISOString(),
-      lastAttemptAt: new Date().toISOString(),
-      nextRetryAt: null
-    });
-    return seq;
+    return this._store.track(eventId, subscriptionId);
   }
 
   ack(eventId) {
-    const entry = this._pending.get(eventId);
-    if (!entry) return false;
-
-    this._pending.delete(eventId);
-    this._acked.add(eventId);
-    this._lastAckCursor = entry.cursor;
-    return true;
+    return this._store.ack(eventId);
   }
 
   nack(eventId) {
-    const entry = this._pending.get(eventId);
-    if (!entry) return false;
-    return this._retry(entry);
-  }
-
-  _retry(entry) {
-    entry.attempts++;
-    entry.lastAttemptAt = new Date().toISOString();
-    return entry.attempts;
+    return this._store.nack(eventId);
   }
 
   getPending() {
-    return [...this._pending.values()];
+    return this._store.getPending();
   }
 
   getPendingForSubscription(subscriptionId) {
-    return this.getPending().filter((e) => e.subscriptionId === subscriptionId);
+    return this._store.getPendingForSubscription(subscriptionId);
   }
 
   isAcknowledged(eventId) {
-    return this._acked.has(eventId);
+    return this._store.isAcknowledged(eventId);
   }
 
   isPending(eventId) {
-    return this._pending.has(eventId);
+    return this._store.isPending(eventId);
   }
 
   hasAttemptsRemaining(eventId, maxAttempts = DEFAULT_RETRY.max_attempts) {
-    const entry = this._pending.get(eventId);
-    if (!entry) return false;
-    return entry.attempts < maxAttempts;
+    return this._store.hasAttemptsRemaining(eventId, maxAttempts);
   }
 
   deadLetter(eventId, reason = {}) {
-    const entry = this._pending.get(eventId);
-    if (!entry) return null;
-
-    this._pending.delete(eventId);
-
-    const record = {
-      ...entry,
-      deadLetteredAt: new Date().toISOString(),
-      reason
-    };
-    this._deadLettered.set(eventId, record);
-
-    return {
-      type: "event.dead_lettered",
-      payload: {
-        original_event_id: eventId,
-        subscription_id: entry.subscriptionId,
-        cursor: entry.cursor,
-        attempts: entry.attempts,
-        last_attempt_at: entry.lastAttemptAt,
-        error: reason.error ?? null
-      }
-    };
+    return this._store.deadLetter(eventId, reason);
   }
 
   get deadLettered() {
-    return new Map(this._deadLettered);
+    return new Map(this._store._deadLettered ?? new Map());
   }
 
   get stats() {
-    return {
-      totalSequences: this._sequence,
-      pending: this._pending.size,
-      acknowledged: this._acked.size,
-      deadLettered: this._deadLettered.size,
-      lastAckCursor: this._lastAckCursor
-    };
+    return this._store.getStats();
   }
 }
