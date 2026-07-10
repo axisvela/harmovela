@@ -1,5 +1,6 @@
 package aep
 
+// Standard AEP error codes.
 const (
 	ErrorCodeProtocolError       = "protocol_error"
 	ErrorCodeInvalidEnvelope     = "invalid_envelope"
@@ -19,6 +20,7 @@ const (
 	ErrorCodeInternalError       = "internal_error"
 )
 
+// ErrorPayload produces the standard AEP error payload object.
 func ErrorPayload(code, message string, retryable bool) map[string]any {
 	return map[string]any{
 		"code":      code,

@@ -68,6 +68,7 @@ var standardEventTypes = map[string]bool{
 	"environment.error":           true,
 }
 
+// IsStandardEventType reports whether the given string is a recognized standard AEP event type.
 func IsStandardEventType(typ string) bool {
 	return standardEventTypes[typ]
 }

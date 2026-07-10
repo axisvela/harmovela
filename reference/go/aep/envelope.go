@@ -10,6 +10,8 @@ var deliveryModes = map[string]bool{
 	"replayable":    true,
 }
 
+// ValidateEnvelope validates an AEP event envelope map.
+// Returns a slice of error strings; empty slice means valid.
 func ValidateEnvelope(value map[string]any) []string {
 	var errors []string
 
