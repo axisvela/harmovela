@@ -10,6 +10,7 @@ from .schema_validator import validate_envelope_schema, validate_subscription_sc
 from .delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
 from .delivery_store import InMemoryDeliveryStore
 from .delivery_journal import DeliveryJournal
+from .sqlite_delivery_store import SqliteDeliveryStore
 
 __all__ = [
     "ErrorCode", "error_payload", "is_retryable",
@@ -23,5 +24,6 @@ __all__ = [
     "validate_envelope_schema", "validate_subscription_schema", "is_valid_by_schema",
     "DeliveryTracker", "retry_delay", "DEFAULT_RETRY",
     "InMemoryDeliveryStore",
+    "SqliteDeliveryStore",
     "DeliveryJournal",
 ]

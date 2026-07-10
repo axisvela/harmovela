@@ -48,7 +48,7 @@ Current scope:
 - Stdio newline-delimited JSON harness
 - WebSocket and HTTP SSE transport bindings
 - JSON Schema validation with shared schemas
-- Delivery tracking with ack/retry/dead-letter helpers, pluggable store, and event journal
+- Delivery tracking with ack/retry/dead-letter helpers, pluggable store (InMemory + SQLite), and event journal
 - MCP bridge, bridge demo, and MCP+AEP consumer demo
 - Async tool producer, memory event producer, and agent subscriber demos
 - Deterministic shared fixtures from `../../conformance/fixtures/`
