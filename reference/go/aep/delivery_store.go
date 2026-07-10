@@ -83,9 +83,14 @@ func (s *InMemoryDeliveryStore) Nack(eventID string) (int, bool) {
 	if !ok {
 		return 0, false
 	}
-	entry["attempts"] = entry["attempts"].(int) + 1
+	attempts := 1
+	if v, ok := entry["attempts"].(int); ok {
+		attempts = v
+	}
+	attempts++
+	entry["attempts"] = attempts
 	entry["lastAttemptAt"] = now()
-	return entry["attempts"].(int), true
+	return attempts, true
 }
 
 func (s *InMemoryDeliveryStore) DeadLetter(eventID string, reason map[string]any) map[string]any {
@@ -132,7 +137,11 @@ func (s *InMemoryDeliveryStore) DeadLetter(eventID string, reason map[string]any
 func (s *InMemoryDeliveryStore) GetPending() []map[string]any {
 	result := make([]map[string]any, 0, len(s.pending))
 	for _, v := range s.pending {
-		result = append(result, v)
+		cp := make(map[string]any, len(v))
+		for k, val := range v {
+			cp[k] = val
+		}
+		result = append(result, cp)
 	}
 	return result
 }
@@ -141,7 +150,11 @@ func (s *InMemoryDeliveryStore) GetPendingForSubscription(subscriptionID string)
 	result := make([]map[string]any, 0)
 	for _, v := range s.pending {
 		if v["subscriptionId"] == subscriptionID {
-			result = append(result, v)
+			cp := make(map[string]any, len(v))
+			for k, val := range v {
+				cp[k] = val
+			}
+			result = append(result, cp)
 		}
 	}
 	return result

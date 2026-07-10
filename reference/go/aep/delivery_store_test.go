@@ -148,7 +148,15 @@ func TestInMemoryDeliveryStore_GetPendingForSubscriptionFilters(t *testing.T) {
 	if len(filtered) != 2 {
 		t.Fatalf("expected 2 pending for sub_01, got %d", len(filtered))
 	}
-	if filtered[0]["eventId"] != "evt_a" || filtered[1]["eventId"] != "evt_c" {
-		t.Fatalf("expected [evt_a, evt_c], got %v and %v", filtered[0]["eventId"], filtered[1]["eventId"])
+
+	found := make(map[string]bool)
+	for _, e := range filtered {
+		found[e["eventId"].(string)] = true
+	}
+	if !found["evt_a"] || !found["evt_c"] {
+		t.Fatalf("expected evt_a and evt_c in filtered results, got %v", found)
+	}
+	if found["evt_b"] {
+		t.Fatal("expected evt_b not in filtered results")
 	}
 }
