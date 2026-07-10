@@ -38,17 +38,20 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `docs/specs/transport-stdio.md` | stdio transport specification |
 | `docs/specs/transport-websocket.md` | WebSocket transport specification |
 | `docs/specs/transport-sse.md` | HTTP SSE transport specification |
+| `docs/specs/transport-grpc.md` | gRPC streaming transport specification |
 | `docs/specs/delivery.md` | Delivery semantics, ack protocol, replay |
 | `docs/specs/reliability.md` | Retry policy, dead-letter, durability |
 | `docs/specs/security.md` | Identity, authorization, audit, tenant isolation |
+| `docs/specs/conformance.md` | Conformance levels and test manifest specification |
+| `docs/specs/event-registry-governance.md` | Event type registry governance and versioning |
 | `docs/superpowers/specs/` | Superpowers-backed design specs |
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
 | `reference/typescript/` | Primary runnable reference harness |
 | `reference/python/` | Second-priority Python reference implementation |
-| `reference/go/` | Planned Go reference implementation |
-| `reference/java/` | Planned Java reference implementation |
+| `reference/go/` | Go reference implementation with C0/C1 conformance |
+| `reference/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
 | `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
 
 ## Working Rules
