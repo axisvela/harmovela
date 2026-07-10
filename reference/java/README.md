@@ -27,4 +27,5 @@ mvn test
 - Task lifecycle tracking with valid state transitions
 - Subscription create and cancel
 - Manifest-driven C0 and C1 conformance tests
+- Delivery tracking with ack/retry/dead-letter helpers, pluggable store, and event journal
 - Shared fixture integration from `../../conformance/fixtures/`
