@@ -27,5 +27,6 @@ Conformance tests consume the shared manifest and fixtures from `../../../confor
 - Session lifecycle state machine (opened, ready, closed, error)
 - Task lifecycle tracking with valid state transitions
 - Subscription create and cancel
+- Delivery tracking (InMemory store and SQLite-backed SqliteDeliveryStore)
 - Manifest-driven C0 and C1 conformance tests
 - Shared fixture integration from `../../../conformance/fixtures/`
