@@ -34,6 +34,7 @@ npm run demo:memory
 npm run demo:agent
 npm run demo:mcp-bridge
 npm run demo:mcp-aep-consumer
+npm run demo:production-e2e
 ```
 
 Current scope:
