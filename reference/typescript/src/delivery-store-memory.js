@@ -12,7 +12,7 @@ export class InMemoryDeliveryStore {
     return ++this._sequence;
   }
 
-  track(eventId, subscriptionId, data = {}) {
+  track(eventId, subscriptionId, _data = {}) {
     const seq = this.nextSequence();
     this._pending.set(eventId, {
       eventId,
@@ -22,8 +22,7 @@ export class InMemoryDeliveryStore {
       attempts: 1,
       firstAttemptAt: new Date().toISOString(),
       lastAttemptAt: new Date().toISOString(),
-      nextRetryAt: null,
-      ...data
+      nextRetryAt: null
     });
     return seq;
   }
