@@ -11,7 +11,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const specsDir = resolve(root, "docs/specs");
 const docsDir = resolve(root, "docs");
-const outDir = resolve(root, "docs/site");
+const outDir = resolve(root, "docs");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
 const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md"];
