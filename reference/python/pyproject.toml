@@ -10,6 +10,9 @@ requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2",
     "jsonschema>=4",
+    "websockets>=14",
+    "grpcio>=1.60",
+    "grpcio-tools>=1.60",
 ]
 
 [project.optional-dependencies]
