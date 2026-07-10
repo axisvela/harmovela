@@ -4,7 +4,7 @@ Claude Code project rules file. OpenCode reads `AGENTS.md`. Keep both aligned.
 
 ## Harness
 
-Use Superpowers as the project development harness. Superpowers is enabled through `opencode.json`, and project work artifacts live under `docs/superpowers/`.
+Use Superpowers as the project development harness. Superpowers is enabled through `opencode.json`, and project work artifacts live under `.superpowers/`.
 
 ## Project Scope
 

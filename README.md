@@ -83,12 +83,12 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 
 ## Development Harness
 
-This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `docs/superpowers/`.
+This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `.superpowers/`.
 
 - `AGENTS.md` — OpenCode project rules
 - `CLAUDE.md` — Claude Code project rules
-- `docs/superpowers/specs/` — Superpowers-backed design specs
-- `docs/superpowers/plans/` — Superpowers-backed execution plans
+- `.superpowers/specs/` — Superpowers-backed design specs
+- `.superpowers/plans/` — Superpowers-backed execution plans
 
 ## AEP Harness
 

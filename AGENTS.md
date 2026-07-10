@@ -6,7 +6,7 @@ OpenCode project rules file. Claude Code reads `CLAUDE.md`. Keep both aligned.
 
 Use Superpowers as the project development harness.
 
-Superpowers is enabled through `opencode.json` and project work artifacts live under `docs/superpowers/`.
+Superpowers is enabled through `opencode.json` and project work artifacts live under `.superpowers/`.
 
 Use Superpowers workflows for planning, test-driven development, systematic debugging, verification, and code review.
 

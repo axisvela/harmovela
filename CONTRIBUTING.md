@@ -15,8 +15,8 @@ AEP is a draft open protocol. Contributions that refine the specification, impro
 | Directory | Purpose |
 |---|---|
 | `docs/specs/` | Protocol specifications by layer (session, subscription, task, error, delivery, etc.) |
-| `docs/superpowers/specs/` | Design specs for planned features |
-| `docs/superpowers/plans/` | Implementation plans |
+| `.superpowers/specs/` | Design specs for planned features |
+| `.superpowers/plans/` | Implementation plans |
 | `schemas/` | Shared JSON Schema assets |
 | `conformance/` | Shared conformance manifest and fixtures |
 | `reference/typescript/` | TypeScript reference (primary) |
