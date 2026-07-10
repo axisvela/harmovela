@@ -1,13 +1,30 @@
 # AEP Java Reference
 
-Java is planned after the TypeScript and Python references stabilize.
+Java reference implementation of the Agent Event Protocol draft.
 
-Planned scope:
+## Setup
 
-- Typed envelope model for JVM runtimes
-- Event registry validation
-- Subscription matcher
-- Stdio harness or test adapter
-- Conformance tests against shared fixtures
+Requirements: JDK 21, Maven 3.9+.
 
-No Java package is implemented yet.
+```sh
+cd reference/java
+mvn compile
+```
+
+## Run Tests
+
+```sh
+mvn test
+```
+
+## Current Scope
+
+- Typed envelope and field-level validation
+- Standard draft event type registry
+- Standard error model with typed error codes
+- Event router with pattern-matching dispatch
+- Session lifecycle state machine (opened, ready, closed, error)
+- Task lifecycle tracking with valid state transitions
+- Subscription create and cancel
+- Manifest-driven C0 and C1 conformance tests
+- Shared fixture integration from `../../conformance/fixtures/`
