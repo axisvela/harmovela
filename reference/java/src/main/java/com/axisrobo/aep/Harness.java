@@ -1,0 +1,274 @@
+package com.axisrobo.aep;
+
+import java.time.Instant;
+import java.util.*;
+
+public class Harness {
+
+    public enum TaskState { SUBMITTED, ACCEPTED, STARTED, PROGRESS, BLOCKED, OUTPUT, COMPLETED, FAILED, CANCELLED, TIMED_OUT }
+
+    private static final Map<String, TaskState> EVENT_TO_STATE = Map.ofEntries(
+        Map.entry("task.submitted", TaskState.SUBMITTED), Map.entry("task.accepted", TaskState.ACCEPTED),
+        Map.entry("task.started", TaskState.STARTED), Map.entry("task.progress", TaskState.PROGRESS),
+        Map.entry("task.blocked", TaskState.BLOCKED), Map.entry("task.output", TaskState.OUTPUT),
+        Map.entry("task.completed", TaskState.COMPLETED), Map.entry("task.failed", TaskState.FAILED),
+        Map.entry("task.cancelled", TaskState.CANCELLED), Map.entry("task.timed_out", TaskState.TIMED_OUT)
+    );
+
+    private static final Set<TaskState> TERMINAL = Set.of(TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT);
+
+    private static final Map<TaskState, Set<TaskState>> TRANSITIONS = Map.of(
+        TaskState.SUBMITTED, Set.of(TaskState.ACCEPTED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
+        TaskState.ACCEPTED, Set.of(TaskState.STARTED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
+        TaskState.STARTED, Set.of(TaskState.PROGRESS, TaskState.OUTPUT, TaskState.BLOCKED, TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
+        TaskState.BLOCKED, Set.of(TaskState.STARTED, TaskState.PROGRESS, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
+        TaskState.PROGRESS, Set.of(TaskState.PROGRESS, TaskState.OUTPUT, TaskState.BLOCKED, TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
+        TaskState.OUTPUT, Set.of(TaskState.PROGRESS, TaskState.OUTPUT, TaskState.BLOCKED, TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT)
+    );
+
+    static class TaskTracker {
+        private final String id;
+        private final String source;
+        private TaskState state = TaskState.SUBMITTED;
+        private int eventId;
+
+        TaskTracker(String id, String source) {
+            this.id = id;
+            this.source = source;
+        }
+
+        TaskState getState() { return state; }
+        boolean isTerminal() { return TERMINAL.contains(state); }
+
+        void accept() { transition("task.accepted", null); }
+
+        Map<String, Object> transition(String eventType, Map<String, Object> payload) {
+            var nextState = EVENT_TO_STATE.get(eventType);
+            if (nextState == null) return null;
+
+            if (nextState != state) {
+                var allowed = TRANSITIONS.get(state);
+                if (allowed == null || !allowed.contains(nextState)) return null;
+            }
+            state = nextState;
+
+            var result = new HashMap<String, Object>();
+            if (payload != null) result.putAll(payload);
+            result.put("task_id", id);
+            result.put("state", state.name().toLowerCase());
+
+            if (TERMINAL.contains(state) && !result.containsKey("result")) {
+                result.put("result", state.name().toLowerCase());
+            }
+
+            eventId++;
+            return Map.<String, Object>of(
+                "aep_version", "0.1",
+                "id", "evt_task_" + String.format("%06d", eventId),
+                "type", eventType,
+                "source", source,
+                "task_id", id,
+                "created_at", Instant.now().toString(),
+                "payload", result
+            );
+        }
+    }
+
+    private static final String SOURCE = "harness:aep";
+    private int sequence;
+    private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
+    private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
+    private final EventRouter router = new EventRouter();
+    private Session session;
+
+    public Harness() {
+        router
+            .on(e -> "capabilities.requested".equals(e.get("type")), this::handleCapabilities)
+            .on(e -> "subscription.requested".equals(e.get("type")), this::handleSubscriptionRequested)
+            .on(e -> "subscription.cancelled".equals(e.get("type")), this::handleSubscriptionCancelled)
+            .on(e -> "task.submitted".equals(e.get("type")), this::handleTaskSubmitted)
+            .on(e -> {
+                var t = (String) e.get("type");
+                return t != null && t.startsWith("task.") && !"task.submitted".equals(t);
+            }, this::handleTaskEvent)
+            .on(e -> "session.opened".equals(e.get("type")), this::handleSessionOpened)
+            .on(e -> "session.closed".equals(e.get("type")), this::handleSessionClosed);
+    }
+
+    public Session getSession() { return session; }
+    public Map<String, Map<String, Object>> getSubscriptions() { return subscriptions; }
+    public Map<String, TaskTracker> getTasks() { return tasks; }
+
+    public List<Map<String, Object>> handle(Map<String, Object> value) {
+        var errs = Envelope.validate(value);
+        if (!errs.isEmpty()) {
+            return List.of(newEvent("event.rejected", value, Map.of(
+                "errors", errs, "error", Errors.errorPayload(Errors.INVALID_ENVELOPE, errs.get(0), false)
+            )));
+        }
+
+        var type = (String) value.get("type");
+        if (!EventTypes.isStandardEventType(type) && (type == null || !type.startsWith("session."))) {
+            return List.of(newEvent("event.rejected", value, Map.of(
+                "errors", List.of("type not in standard draft registry: " + type),
+                "error", Errors.errorPayload(Errors.INVALID_EVENT_TYPE, "unknown event type: " + type, false)
+            )));
+        }
+
+        if (!"0.1".equals(value.get("aep_version"))) {
+            return List.of(newEvent("event.rejected", value, Map.of(
+                "errors", List.of("unsupported protocol version: " + value.get("aep_version")),
+                "error", Errors.errorPayload(Errors.UNSUPPORTED_VERSION, "unsupported version " + value.get("aep_version"), false)
+            )));
+        }
+
+        var routed = router.dispatch(value);
+        if (!routed.isEmpty()) return routed;
+
+        return List.of(newEvent("event.acknowledged", value, Map.of("acknowledged_event_id", value.get("id"))));
+    }
+
+    private Object handleCapabilities(Map<String, Object> event) {
+        return newEvent("capabilities.declared", event, Map.of(
+            "protocol", "aep", "aep_version", "0.1",
+            "transports", List.of("stdio"),
+            "delivery_modes", List.of("best_effort", "at_least_once", "replayable"),
+            "features", List.of("envelope_validation", "event_type_registry", "subscription_matching",
+                "session_lifecycle", "task_lifecycle", "error_model", "event_routing")
+        ));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleSubscriptionRequested(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.getOrDefault("payload", Map.of());
+        var subId = "sub_" + String.format("%04d", nextSeq());
+
+        var hasFilter = payload.containsKey("types") || payload.containsKey("source")
+            || payload.containsKey("target") || payload.containsKey("topic");
+        if (!hasFilter) {
+            return newEvent("subscription.rejected", event, Map.of(
+                "subscription_id", subId, "filter", payload,
+                "error", Errors.errorPayload(Errors.SUBSCRIPTION_REJECTED, "subscription must include at least one filter criterion", false)
+            ));
+        }
+
+        subscriptions.put(subId, Map.of("id", subId, "filter", payload, "created_at", Instant.now().toString()));
+        return newEvent("subscription.created", event, Map.of("subscription_id", subId, "filter", payload));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleSubscriptionCancelled(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.get("payload");
+        if (payload != null && payload.get("subscription_id") instanceof String subId) {
+            subscriptions.remove(subId);
+        }
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleTaskSubmitted(Map<String, Object> event) {
+        var taskId = (String) event.getOrDefault("task_id", null);
+        if (taskId == null && event.get("payload") instanceof Map<?, ?> p) {
+            taskId = (String) p.get("task_id");
+        }
+        if (taskId == null) taskId = "task_" + System.currentTimeMillis();
+
+        if (tasks.containsKey(taskId)) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "duplicate task id: " + taskId, false)
+            ));
+        }
+
+        var source = (String) event.getOrDefault("source", "unknown");
+        var tracker = new TaskTracker(taskId, source);
+        tracker.accept();
+        tasks.put(taskId, tracker);
+
+        return newEvent("task.accepted", event, Map.of("task_id", taskId, "status", "accepted"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleTaskEvent(Map<String, Object> event) {
+        var taskId = (String) event.getOrDefault("task_id", null);
+        if (taskId == null && event.get("payload") instanceof Map<?, ?> p) {
+            taskId = (String) p.get("task_id");
+        }
+        if (taskId == null) return null;
+
+        var tracker = tasks.get(taskId);
+        if (tracker == null) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "unknown task: " + taskId, false)
+            ));
+        }
+
+        var eventType = (String) event.get("type");
+        var payload = event.get("payload") instanceof Map<?, ?> p ? (Map<String, Object>) p : null;
+        var taskEvent = tracker.transition(eventType, payload);
+        if (taskEvent == null) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "illegal task transition: " + tracker.getState() + " for task " + taskId, false)
+            ));
+        }
+
+        var responses = new ArrayList<>(List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")))));
+        responses.add(taskEvent);
+
+        if (tracker.isTerminal()) tasks.remove(taskId);
+        return responses;
+    }
+
+    private Object handleSessionOpened(Map<String, Object> event) {
+        if (session != null && session.isActive()) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.SESSION_ERROR, "session already active", false)
+            ));
+        }
+        var sessionId = (String) event.getOrDefault("session_id", null);
+        session = new Session(sessionId, SOURCE, "0.1");
+        var opened = session.opened();
+
+        var ready = Map.<String, Object>of(
+            "aep_version", "0.1",
+            "id", "evt_sess_ready_" + System.currentTimeMillis(),
+            "type", "session.ready",
+            "source", SOURCE,
+            "session_id", session.getId(),
+            "created_at", Instant.now().toString(),
+            "payload", Map.of("session_id", session.getId(),
+                "capabilities", Map.of("protocol", "aep", "aep_version", "0.1",
+                    "transports", List.of("stdio"),
+                    "features", List.of("envelope", "subscription", "task_lifecycle", "error_model")))
+        );
+
+        return List.of(opened, ready);
+    }
+
+    private Object handleSessionClosed(Map<String, Object> event) {
+        var responses = new ArrayList<>(List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")))));
+        if (session != null && session.isOpen()) {
+            var closed = session.close();
+            if (closed != null) responses.add(closed);
+        }
+        return responses;
+    }
+
+    private int nextSeq() { return ++sequence; }
+
+    private Map<String, Object> newEvent(String type, Map<String, Object> input, Map<String, Object> payload) {
+        var seq = nextSeq();
+        var event = new LinkedHashMap<String, Object>();
+        event.put("aep_version", input.getOrDefault("aep_version", "0.1"));
+        event.put("id", "evt_harness_" + String.format("%06d", seq));
+        event.put("type", type);
+        event.put("source", SOURCE);
+        event.put("target", input.get("source"));
+        event.put("session_id", input.get("session_id"));
+        event.put("task_id", input.get("task_id"));
+        event.put("causation_id", input.get("id"));
+        event.put("created_at", Instant.now().toString());
+        event.put("delivery", Map.of("mode", "best_effort", "sequence", seq));
+        event.put("payload", payload);
+        return event;
+    }
+}
