@@ -39,7 +39,7 @@ Initial bindings:
 
 Later bindings:
 
-- gRPC streaming
+- gRPC streaming (`docs/specs/transport-grpc.md`, implemented in `reference/typescript/src/transport/grpc.js`)
 - NATS
 - Kafka
 - Redis Streams

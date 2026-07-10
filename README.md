@@ -59,6 +59,7 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `docs/specs/transport-stdio.md` — stdio transport specification
 - `docs/specs/transport-websocket.md` — WebSocket transport specification
 - `docs/specs/transport-sse.md` — HTTP SSE transport specification
+- `docs/specs/transport-grpc.md` — gRPC streaming transport specification
 - `docs/specs/delivery.md` — delivery semantics, acknowledgement, and replay specification
 - `docs/specs/reliability.md` — retry, durability, and dead-letter handling specification
 - `docs/specs/security.md` — identity, authorization, audit, and tenant isolation specification
