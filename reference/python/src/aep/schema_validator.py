@@ -10,6 +10,9 @@ with open(_SCHEMA_DIR / "aep-envelope.schema.json", encoding="utf-8") as f:
 with open(_SCHEMA_DIR / "subscription-filter.schema.json", encoding="utf-8") as f:
     SUBSCRIPTION_SCHEMA = json.load(f)
 
+with open(_SCHEMA_DIR / "aep-payloads.schema.json", encoding="utf-8") as f:
+    PAYLOADS_SCHEMA = json.load(f)
+
 
 def validate_envelope_schema(value: dict) -> list:
     try:
@@ -27,8 +30,21 @@ def validate_subscription_schema(value: dict) -> list:
         return [{"path": list(e.absolute_path), "message": e.message}]
 
 
+def validate_payloads_schema(value: dict) -> list:
+    try:
+        _validate(value, PAYLOADS_SCHEMA)
+        return []
+    except ValidationError as e:
+        return [{"path": list(e.absolute_path), "message": e.message}]
+
+
 def is_valid_by_schema(value: dict, kind: str = "envelope") -> bool:
-    schema = ENVELOPE_SCHEMA if kind == "envelope" else SUBSCRIPTION_SCHEMA
+    schemas = {
+        "envelope": ENVELOPE_SCHEMA,
+        "subscription": SUBSCRIPTION_SCHEMA,
+        "payloads": PAYLOADS_SCHEMA,
+    }
+    schema = schemas.get(kind, ENVELOPE_SCHEMA)
     try:
         _validate(value, schema)
         return True

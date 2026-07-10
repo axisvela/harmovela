@@ -10,6 +10,19 @@ from aep.schema_validator import is_valid_by_schema
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"
 LEVEL_ORDER = {"AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2}
 
+PAYLOAD_VALIDATED_TYPES = frozenset({
+    "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",
+    "memory.fact.invalidated", "memory.fact.added", "memory.fact.updated",
+    "belief.revised", "belief.conflict.detected",
+    "freshness.expired", "freshness.window.changed",
+    "delegation.requested", "delegation.accepted", "delegation.rejected",
+    "delegation.handoff.completed", "delegation.escalated",
+    "interruption.requested", "interruption.acknowledged", "interruption.saved",
+    "interruption.resumed", "interruption.cancelled",
+    "compensation.requested", "compensation.completed",
+    "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
+})
+
 
 def _read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -44,6 +57,9 @@ def test_conformance_fixture_validation(fixture: dict):
     for event in events:
         assert validate_envelope(event) == []
         assert is_valid_by_schema(event, "envelope") is True
+        if event["type"] in PAYLOAD_VALIDATED_TYPES:
+            assert is_valid_by_schema(event, "payloads") is True, \
+                f"payload schema validation failed for {event['type']}"
 
 
 @pytest.mark.parametrize(

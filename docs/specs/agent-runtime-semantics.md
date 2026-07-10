@@ -447,3 +447,24 @@ Emitted when a runtime detects that earlier links in an evidence chain are no lo
 | Provenance | `evidence_chain`, `source_trust`, `attestation_count`, `data_provenance` |
 
 All fields are optional envelope properties. All event types follow the `domain.object.action` naming convention. No existing required fields or event types change.
+
+## Payload Schemas
+
+Structured payload validation is defined in the shared payloads schema:
+
+`schemas/aep-payloads.schema.json` (`https://schemas.axisrobo.com/aep-payloads.v0.1.schema.json`)
+
+The schema uses `if`/`then` discriminator blocks keyed on the envelope `type` field to validate payloads for the following event types:
+
+| Family | Validated types |
+|---|---|
+| Context | `context.invalidated`, `context.updated`, `context.snapshot.requested`, `context.snapshot.ready` |
+| Memory | `memory.fact.invalidated`, `memory.fact.added`, `memory.fact.updated` |
+| Belief | `belief.revised`, `belief.conflict.detected` |
+| Freshness | `freshness.expired`, `freshness.window.changed` |
+| Delegation | `delegation.requested`, `.accepted`, `.rejected`, `.handoff.completed`, `.escalated` |
+| Interruption | `interruption.requested`, `.acknowledged`, `.saved`, `.resumed`, `.cancelled` |
+| Compensation | `compensation.requested`, `.completed` |
+| Provenance | `provenance.attestation.added`, `.revoked`, `.chain.truncated` |
+
+Conformance tests in TypeScript and Python validate payloads against this schema.

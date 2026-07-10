@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/aep-payloads.v0.1.schema.json",
+  "title": "AEP Standard Event Payloads",
+  "description": "Payload validation schema for standard AEP event types. Validate by passing the full envelope; the schema uses if/then discriminator by event type to validate the payload field.",
+  "type": "object",
+  "required": ["type", "payload"],
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "context.invalidated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["context_key"],
+            "properties": {
+              "context_key": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string" },
+              "scope": { "enum": ["full", "partial", "unknown"] },
+              "previous_snapshot_id": { "type": "string" },
+              "affected_keys": { "type": "array", "items": { "type": "string" } },
+              "correction": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "context.updated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["context_key"],
+            "properties": {
+              "context_key": { "type": "string", "minLength": 1 },
+              "change_type": { "enum": ["added", "modified", "removed", "replaced"] },
+              "previous_snapshot_id": { "type": "string" },
+              "new_value": {},
+              "diff": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "context.snapshot.requested" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "context_key": { "type": "string" },
+              "format": { "enum": ["json", "text", "binary"] },
+              "filters": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "context.snapshot.ready" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["snapshot_id"],
+            "properties": {
+              "snapshot_id": { "type": "string", "minLength": 1 },
+              "context_key": { "type": "string" },
+              "format": { "enum": ["json", "text", "binary"] },
+              "data": {},
+              "size_bytes": { "type": "integer", "minimum": 0 },
+              "fingerprint": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "memory.fact.invalidated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["fact_id"],
+            "properties": {
+              "fact_id": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string" },
+              "replaced_by": { "type": "string" },
+              "previous_value": {},
+              "corrected_value": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "memory.fact.added" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["fact_id", "value"],
+            "properties": {
+              "fact_id": { "type": "string", "minLength": 1 },
+              "value": {},
+              "source": { "type": "string" },
+              "tags": { "type": "array", "items": { "type": "string" } },
+              "expires_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "memory.fact.updated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["fact_id"],
+            "properties": {
+              "fact_id": { "type": "string", "minLength": 1 },
+              "previous_value": {},
+              "new_value": {},
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "belief.revised" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["previous", "corrected"],
+            "properties": {
+              "previous": { "type": "string", "minLength": 1 },
+              "corrected": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string" },
+              "domains_affected": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "belief.conflict.detected" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["subject", "claims"],
+            "properties": {
+              "subject": { "type": "string", "minLength": 1 },
+              "claims": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "object",
+                  "required": ["source", "value"],
+                  "properties": {
+                    "source": { "type": "string" },
+                    "value": {},
+                    "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+                  }
+                }
+              },
+              "resolution_hint": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "freshness.expired" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["resource"],
+            "properties": {
+              "resource": { "type": "string", "minLength": 1 },
+              "cached_at": { "type": "string", "format": "date-time" },
+              "valid_until": { "type": "string", "format": "date-time" },
+              "detected_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "freshness.window.changed" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["resource"],
+            "properties": {
+              "resource": { "type": "string", "minLength": 1 },
+              "previous_valid_until": { "type": "string", "format": "date-time" },
+              "new_valid_until": { "type": "string", "format": "date-time" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delegation.requested" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "work_description": { "type": "string" },
+              "deadline": { "type": "string", "format": "date-time" },
+              "priority": { "enum": ["low", "normal", "high", "critical"] },
+              "context": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delegation.accepted" } } },
+      "then": { "properties": { "payload": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delegation.rejected" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason"],
+            "properties": {
+              "reason": { "type": "string", "minLength": 1 },
+              "retry_after": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delegation.handoff.completed" } } },
+      "then": { "properties": { "payload": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delegation.escalated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason"],
+            "properties": {
+              "reason": { "type": "string", "minLength": 1 },
+              "progress_so_far": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "interruption.requested" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "reason": { "type": "string" },
+              "grace_period_ms": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "interruption.acknowledged" } } },
+      "then": { "properties": { "payload": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "interruption.saved" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "bytes_saved": { "type": "integer", "minimum": 0 },
+              "location": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "interruption.resumed" } } },
+      "then": { "properties": { "payload": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "interruption.cancelled" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason"],
+            "properties": {
+              "reason": { "type": "string", "minLength": 1 },
+              "checkpoint_id": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "compensation.requested" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason", "description"],
+            "properties": {
+              "original_task": { "type": "string" },
+              "reason": { "type": "string", "minLength": 1 },
+              "description": { "type": "string", "minLength": 1 },
+              "deadline": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "compensation.completed" } } },
+      "then": { "properties": { "payload": { "type": "object" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "provenance.attestation.added" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["attestor", "method"],
+            "properties": {
+              "attestor": { "type": "string", "minLength": 1 },
+              "method": { "type": "string", "minLength": 1 },
+              "result": { "type": "string" },
+              "evidence": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "provenance.attestation.revoked" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["reason"],
+            "properties": {
+              "attestor": { "type": "string" },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "provenance.chain.truncated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["earliest_available", "reason"],
+            "properties": {
+              "earliest_available": { "type": "string", "minLength": 1 },
+              "missing_from": { "type": "string" },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

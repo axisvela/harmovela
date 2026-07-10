@@ -4,6 +4,20 @@ import { dirname, resolve } from "node:path";
 import { validateEnvelope } from "./validate.js";
 import { isValidBySchema } from "./schema.js";
 import { AepHarness } from "./harness.js";
+import { STANDARD_EVENT_TYPES } from "./event-types.js";
+
+const PAYLOAD_VALIDATED_TYPES = new Set([
+  "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",
+  "memory.fact.invalidated", "memory.fact.added", "memory.fact.updated",
+  "belief.revised", "belief.conflict.detected",
+  "freshness.expired", "freshness.window.changed",
+  "delegation.requested", "delegation.accepted", "delegation.rejected",
+  "delegation.handoff.completed", "delegation.escalated",
+  "interruption.requested", "interruption.acknowledged", "interruption.saved",
+  "interruption.resumed", "interruption.cancelled",
+  "compensation.requested", "compensation.completed",
+  "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated"
+]);
 
 const LEVEL_ORDER = new Map([
   ["AEP-C0", 0],
@@ -70,6 +84,9 @@ export function verifyFixture(fixture, events) {
     }
     if (!isValidBySchema(event, "envelope")) {
       failures.push(`event ${index} schema validation failed`);
+    }
+    if (PAYLOAD_VALIDATED_TYPES.has(event.type) && !isValidBySchema(event, "payloads")) {
+      failures.push(`event ${index} payload schema validation failed for type ${event.type}`);
     }
   });
 
