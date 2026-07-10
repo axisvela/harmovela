@@ -15,7 +15,7 @@ const levels = Object.fromEntries(
   manifest.fixtures.map((f) => [f.path, f.level])
 );
 const targetLevel = manifest.default_target_level || "AEP-C1";
-const LEVEL_ORDER = { "AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2 };
+const LEVEL_ORDER = { "AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2, "AEP-C3": 3 };
 
 function isAboveTarget(fixturePath) {
   return (

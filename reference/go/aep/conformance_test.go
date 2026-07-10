@@ -10,6 +10,7 @@ var levelOrder = map[string]int{
 	"AEP-C0": 0,
 	"AEP-C1": 1,
 	"AEP-C2": 2,
+	"AEP-C3": 3,
 }
 
 func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
@@ -17,7 +18,7 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
 	}
-	expectedLevels := []string{"AEP-C0", "AEP-C1", "AEP-C2"}
+	expectedLevels := []string{"AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"}
 	if !reflect.DeepEqual(manifest.Levels, expectedLevels) {
 		t.Fatalf("expected levels %v, got %v", expectedLevels, manifest.Levels)
 	}

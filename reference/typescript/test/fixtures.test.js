@@ -11,7 +11,7 @@ const conformanceDir = resolve(here, "../../../conformance");
 const manifest = JSON.parse(readFileSync(resolve(conformanceDir, "manifest.json"), "utf8"));
 
 test("conformance manifest declares known draft levels", () => {
-  assert.deepEqual(manifest.levels, ["AEP-C0", "AEP-C1", "AEP-C2"]);
+  assert.deepEqual(manifest.levels, ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"]);
   assert.equal(manifest.default_target_level, "AEP-C2");
 });
 

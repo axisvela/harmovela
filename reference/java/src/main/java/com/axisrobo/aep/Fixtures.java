@@ -1,5 +1,6 @@
 package com.axisrobo.aep;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 public final class Fixtures {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ManifestFixture(String path, String level, String description,
                                   String expectation, List<String> tags,
                                   @JsonProperty("expected_types") List<String> expectedTypes) {}

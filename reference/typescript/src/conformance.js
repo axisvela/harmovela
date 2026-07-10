@@ -22,7 +22,8 @@ const PAYLOAD_VALIDATED_TYPES = new Set([
 const LEVEL_ORDER = new Map([
   ["AEP-C0", 0],
   ["AEP-C1", 1],
-  ["AEP-C2", 2]
+  ["AEP-C2", 2],
+  ["AEP-C3", 3]
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -101,7 +102,27 @@ export function verifyFixture(fixture, events) {
     });
   }
 
-  if (!["accept_all", "stateful_flow"].includes(fixture.expectation)) {
+  if (fixture.expectation === "delivery_e2e") {
+    const harness = new AepHarness({ useSchemaValidation: true });
+    events.forEach((event, index) => {
+      const responses = harness.handle(event) ?? [];
+      const rejected = responses.find((response) => response.type === "event.rejected");
+      if (rejected) {
+        failures.push(`event ${index} rejected: ${rejected.payload?.error?.message ?? "unknown error"}`);
+      }
+    });
+    if (fixture.expected_stats) {
+      const stats = harness.delivery.stats;
+      const expected = fixture.expected_stats;
+      for (const [key, value] of Object.entries(expected)) {
+        if (stats[key] !== value) {
+          failures.push(`delivery stat ${key}: expected ${value}, got ${stats[key]}`);
+        }
+      }
+    }
+  }
+
+  if (!["accept_all", "stateful_flow", "delivery_e2e"].includes(fixture.expectation)) {
     failures.push(`unsupported expectation: ${fixture.expectation}`);
   }
 

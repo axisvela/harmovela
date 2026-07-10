@@ -1,7 +1,7 @@
 {
   "aep_version": "0.1",
   "default_target_level": "AEP-C2",
-  "levels": ["AEP-C0", "AEP-C1", "AEP-C2"],
+  "levels": ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"],
   "fixtures": [
     {
       "path": "fixtures/task-lifecycle.ndjson",
@@ -50,6 +50,19 @@
       "expectation": "stateful_flow",
       "tags": ["delivery", "task", "ack", "reliability"],
       "expected_types": ["task.submitted", "task.started", "task.progress", "task.completed", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
+    },
+    {
+      "path": "fixtures/delivery-e2e.ndjson",
+      "level": "AEP-C3",
+      "description": "End-to-end delivery tracking: track → ack, track → nack, track → dead-letter, with DeliveryTracker stats verification.",
+      "expectation": "delivery_e2e",
+      "tags": ["delivery", "e2e", "ack", "reliability"],
+      "expected_types": ["task.submitted", "task.started", "task.progress", "event.acknowledged", "event.redelivered", "event.dead_lettered"],
+      "expected_stats": {
+        "pending": 1,
+        "acknowledged": 1,
+        "deadLettered": 1
+      }
     }
   ]
 }

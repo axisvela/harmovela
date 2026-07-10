@@ -20,6 +20,7 @@ export class AepHarness {
     this.delivery = new DeliveryTracker(options.delivery);
 
     this._setupRouter();
+    this._setupDeliveryRouter();
   }
 
   get session() { return this._session; }
@@ -35,6 +36,13 @@ export class AepHarness {
       .on((event) => event.type.startsWith("task.") && event.type !== "task.submitted", (event) => this._handleTaskEvent(event))
       .on("session.opened", (event) => this._handleSessionOpened(event))
       .on("session.closed", (event) => this._handleSessionClosed(event));
+  }
+
+  _setupDeliveryRouter() {
+    this._router
+      .on("event.acknowledged", (event) => this._handleInboundAck(event))
+      .on("event.redelivered", (event) => this._handleInboundRedeliver(event))
+      .on("event.dead_lettered", (event) => this._handleInboundDeadLetter(event));
   }
 
   handle(value) {
@@ -67,11 +75,41 @@ export class AepHarness {
       })];
     }
 
+    if (value.delivery?.mode) {
+      this.delivery.track(value.id, value.session_id ?? "_default");
+    }
+
     const routed = this._router.dispatch(value);
     if (routed.length > 0) return routed;
 
     return [this._event("event.acknowledged", value, {
       acknowledged_event_id: value.id
+    })];
+  }
+
+  _handleInboundAck(event) {
+    const eventId = event.payload?.acknowledged_event_id;
+    if (eventId) this.delivery.ack(eventId);
+    return [this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
+    })];
+  }
+
+  _handleInboundRedeliver(event) {
+    const eventId = event.payload?.original_event_id;
+    if (eventId) this.delivery.nack(eventId);
+    return [this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
+    })];
+  }
+
+  _handleInboundDeadLetter(event) {
+    const eventId = event.payload?.original_event_id;
+    if (eventId) {
+      this.delivery.deadLetter(eventId, event.payload?.error ?? { code: "unknown" });
+    }
+    return [this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
     })];
   }
 

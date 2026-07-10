@@ -8,7 +8,7 @@ from aep.harness import AepHarness
 from aep.schema_validator import is_valid_by_schema
 
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"
-LEVEL_ORDER = {"AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2}
+LEVEL_ORDER = {"AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2, "AEP-C3": 3}
 
 PAYLOAD_VALIDATED_TYPES = frozenset({
     "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",
@@ -45,7 +45,7 @@ def _target_fixtures() -> list[dict]:
 
 
 def test_conformance_manifest_declares_known_draft_levels():
-    assert MANIFEST["levels"] == ["AEP-C0", "AEP-C1", "AEP-C2"]
+    assert MANIFEST["levels"] == ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"]
     assert MANIFEST["default_target_level"] == "AEP-C2"
 
 
