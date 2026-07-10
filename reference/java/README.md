@@ -28,4 +28,5 @@ mvn test
 - Subscription create and cancel
 - Manifest-driven C0 and C1 conformance tests
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store, and event journal
+- Transport bindings: stdio, WebSocket, SSE, gRPC
 - Shared fixture integration from `../../conformance/fixtures/`
