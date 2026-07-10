@@ -54,7 +54,7 @@ class InMemoryDeliveryStore:
             return None
         if reason is None:
             reason = {}
-        record = {**entry, "deadLetteredAt": _now(), "reason": reason}
+        record = {**entry, "deadLetteredAt": _now(), "reason": dict(reason)}
         self._dead_lettered[event_id] = record
         return {
             "type": "event.dead_lettered",
@@ -69,10 +69,10 @@ class InMemoryDeliveryStore:
         }
 
     def get_pending(self) -> list[dict]:
-        return list(self._pending.values())
+        return [{**v} for v in self._pending.values()]
 
     def get_pending_for_subscription(self, subscription_id: str) -> list[dict]:
-        return [e for e in self._pending.values() if e["subscriptionId"] == subscription_id]
+        return [{**e} for e in self._pending.values() if e["subscriptionId"] == subscription_id]
 
     def is_acknowledged(self, event_id: str) -> bool:
         return event_id in self._acked
