@@ -63,7 +63,26 @@ export const STANDARD_EVENT_TYPES = new Set([
   "environment.observed",
   "environment.changed",
   "environment.alerted",
-  "environment.error"
+  "environment.error",
+  "belief.revised",
+  "belief.conflict.detected",
+  "freshness.expired",
+  "freshness.window.changed",
+  "delegation.requested",
+  "delegation.accepted",
+  "delegation.rejected",
+  "delegation.handoff.completed",
+  "delegation.escalated",
+  "interruption.requested",
+  "interruption.acknowledged",
+  "interruption.saved",
+  "interruption.resumed",
+  "interruption.cancelled",
+  "compensation.requested",
+  "compensation.completed",
+  "provenance.attestation.added",
+  "provenance.attestation.revoked",
+  "provenance.chain.truncated"
 ]);
 
 export function isStandardEventType(type) {

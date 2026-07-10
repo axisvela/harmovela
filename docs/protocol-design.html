@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Protocol Design</h1>
 <h1>AEP Protocol Design Draft</h1>
 <h2>Protocol Name</h2>
@@ -189,6 +189,43 @@
 <li><code>environment.changed</code></li>
 <li><code>environment.alerted</code></li>
 <li><code>environment.error</code></li>
+</ul>
+<h3>Belief Events</h3>
+<ul>
+<li><code>belief.revised</code></li>
+<li><code>belief.conflict.detected</code></li>
+</ul>
+<h3>Freshness Events</h3>
+<ul>
+<li><code>freshness.expired</code></li>
+<li><code>freshness.window.changed</code></li>
+</ul>
+<h3>Delegation Events</h3>
+<ul>
+<li><code>delegation.requested</code></li>
+<li><code>delegation.accepted</code></li>
+<li><code>delegation.rejected</code></li>
+<li><code>delegation.handoff.completed</code></li>
+<li><code>delegation.escalated</code></li>
+</ul>
+<h3>Interruption Events</h3>
+<ul>
+<li><code>interruption.requested</code></li>
+<li><code>interruption.acknowledged</code></li>
+<li><code>interruption.saved</code></li>
+<li><code>interruption.resumed</code></li>
+<li><code>interruption.cancelled</code></li>
+</ul>
+<h3>Compensation Events</h3>
+<ul>
+<li><code>compensation.requested</code></li>
+<li><code>compensation.completed</code></li>
+</ul>
+<h3>Provenance Events</h3>
+<ul>
+<li><code>provenance.attestation.added</code></li>
+<li><code>provenance.attestation.revoked</code></li>
+<li><code>provenance.chain.truncated</code></li>
 </ul>
 <h2>Async Tool Lifecycle</h2>
 <p>An async tool call is a task-like stream.</p>

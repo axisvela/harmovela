@@ -177,6 +177,43 @@ Examples:
 - `environment.alerted`
 - `environment.error`
 
+### Belief Events
+
+- `belief.revised`
+- `belief.conflict.detected`
+
+### Freshness Events
+
+- `freshness.expired`
+- `freshness.window.changed`
+
+### Delegation Events
+
+- `delegation.requested`
+- `delegation.accepted`
+- `delegation.rejected`
+- `delegation.handoff.completed`
+- `delegation.escalated`
+
+### Interruption Events
+
+- `interruption.requested`
+- `interruption.acknowledged`
+- `interruption.saved`
+- `interruption.resumed`
+- `interruption.cancelled`
+
+### Compensation Events
+
+- `compensation.requested`
+- `compensation.completed`
+
+### Provenance Events
+
+- `provenance.attestation.added`
+- `provenance.attestation.revoked`
+- `provenance.chain.truncated`
+
 ## Async Tool Lifecycle
 
 An async tool call is a task-like stream.

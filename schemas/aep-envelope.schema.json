@@ -71,6 +71,80 @@
       "type": "string",
       "format": "uri"
     },
+    "belief_status": {
+      "enum": ["asserted", "retracted", "revised", "contradicted", "unknown"]
+    },
+    "belief_scope": {
+      "enum": ["fact", "inference", "observation", "preference", "hypothesis"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stale_after": {
+      "type": "string",
+      "minLength": 1
+    },
+    "refresh_hint": {
+      "type": "string",
+      "format": "uri"
+    },
+    "delegated_by": {
+      "type": "string"
+    },
+    "delegated_to": {
+      "type": "string"
+    },
+    "parent_task_id": {
+      "type": "string"
+    },
+    "handoff_token": {
+      "type": "string"
+    },
+    "checkpoint_id": {
+      "type": "string"
+    },
+    "checkpoint_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "interruption_policy": {
+      "enum": ["save_and_stop", "drain_then_stop", "force_stop"]
+    },
+    "compensation_id": {
+      "type": "string"
+    },
+    "evidence_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string" },
+          "id": { "type": "string" }
+        },
+        "required": ["source", "id"]
+      }
+    },
+    "source_trust": {
+      "enum": ["verified", "attested", "unverified", "signed"]
+    },
+    "attestation_count": {
+      "type": "number",
+      "minimum": 0
+    },
+    "data_provenance": {
+      "type": "string",
+      "format": "uri"
+    },
     "payload": true
   }
 }
