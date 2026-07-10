@@ -7,6 +7,9 @@ from .task import TaskTracker, TaskState
 from .router import EventRouter
 from .harness import AepHarness
 from .schema_validator import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
+from .delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
+from .delivery_store import InMemoryDeliveryStore
+from .delivery_journal import DeliveryJournal
 
 __all__ = [
     "ErrorCode", "error_payload", "is_retryable",
@@ -18,4 +21,7 @@ __all__ = [
     "EventRouter",
     "AepHarness",
     "validate_envelope_schema", "validate_subscription_schema", "is_valid_by_schema",
+    "DeliveryTracker", "retry_delay", "DEFAULT_RETRY",
+    "InMemoryDeliveryStore",
+    "DeliveryJournal",
 ]
