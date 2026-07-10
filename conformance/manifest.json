@@ -42,6 +42,14 @@
       "expectation": "accept_all",
       "tags": ["delivery", "ack", "reliability"],
       "expected_types": ["task.submitted", "task.progress", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
+    },
+    {
+      "path": "fixtures/delivery-stateful.ndjson",
+      "level": "AEP-C2",
+      "description": "Full task lifecycle with delivery events exercised through harness stateful flow.",
+      "expectation": "stateful_flow",
+      "tags": ["delivery", "task", "ack", "reliability"],
+      "expected_types": ["task.submitted", "task.started", "task.progress", "task.completed", "event.acknowledged", "event.redelivered", "event.dead_lettered"]
     }
   ]
 }
