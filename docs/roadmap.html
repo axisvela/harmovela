@@ -120,8 +120,19 @@
 <li>One MCP bridge example ✅</li>
 </ul>
 <p>AEP has since expanded to include four transport bindings (stdio, WebSocket, SSE, gRPC), full delivery and reliability subsystems, SQLite-backed stores, four language references, cross-language conformance testing, and a published spec site.</p>
+<h2>Phase 7: Agent Semantics And Positioning ✅ Complete</h2>
+<p>Goal: distinguish AEP from existing event systems and define agent-runtime metadata.</p>
+<p>Deliverables (all delivered):</p>
+<ul>
+<li>Differentiation and positioning document (<code>docs/differentiation.md</code>)</li>
+<li>Agent-runtime-semantics specification (<code>docs/specs/agent-runtime-semantics.md</code>)</li>
+<li>Extended event envelope schema with 15 optional agent-runtime metadata fields (<code>schemas/aep-envelope.schema.json</code>)</li>
+<li>Six new standard event families: belief, freshness, delegation, interruption, compensation, provenance</li>
+<li>All 4 language event registries updated with 18 new event types</li>
+<li>Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)</li>
+</ul>
 <h2>Current Completion State</h2>
-<p>All six roadmap phases (Phase 0 through Phase 6) are fully delivered. The protocol is implemented in TypeScript, Python, Go, and Java with cross-language parity validated by a shared conformance suite. The spec site is published at https://axisrobo.github.io/aep/.</p>
+<p>All seven roadmap phases (Phase 0 through Phase 7) are fully delivered. The protocol covers 17 specifications, 4 transport bindings, ~340 tests across four languages, cross-language conformance with 5 passing fixtures, and a published spec site at https://axisrobo.github.io/aep/. Agent-runtime semantics now cover belief revision, freshness/validity, delegation/handoff, interruption/cancellation safety, and provenance/trust.</p>
 <p>Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production hardening of delivery/reliability subsystems, formal protocol versioning, and community governance structures.</p>
 </body>
 </html>

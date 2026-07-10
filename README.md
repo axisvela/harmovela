@@ -8,7 +8,7 @@ AEP is designed as the asynchronous counterpart to MCP. MCP is good at synchrono
 
 AEP 0.1 draft is a multi-language protocol repository with:
 
-- **16 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
+- **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
 - **4 reference implementations** (TypeScript, Python, Go, Java) with cross-language conformance verified against shared fixtures
 - **4 transport bindings** (stdio, WebSocket, SSE, gRPC) implemented across all languages
 - **SQLite-backed delivery stores** with retry, dead-letter, and replay support in every language

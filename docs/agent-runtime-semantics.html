@@ -31,14 +31,7 @@
 <p>All additions are optional. No existing required fields change. All fields fall under the envelope <code>additionalProperties: true</code> policy.</p>
 <h2>Epistemic Metadata</h2>
 <h3>Fields</h3>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Values</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>belief_status</code></td><td>string</td><td><code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code></td><td>Epistemic relationship of this event to prior knowledge</td></tr>
-<tr><td><code>belief_scope</code></td><td>string</td><td><code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code></td><td>Category of the assertion</td></tr>
-<tr><td><code>confidence</code></td><td>number</td><td>0.0 – 1.0</td><td>Optional producer-assigned confidence</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Values | Description | |---|---|---|---| | <code>belief_status</code> | string | <code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code> | Epistemic relationship of this event to prior knowledge | | <code>belief_scope</code> | string | <code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code> | Category of the assertion | | <code>confidence</code> | number | 0.0 – 1.0 | Optional producer-assigned confidence |</p>
 <h3>Events</h3>
 <p>#### <code>belief.revised</code></p>
 <p>Emitted when an agent discovers an earlier belief was incorrect and publishes the corrected state.</p>
@@ -79,15 +72,7 @@
 <h2>Freshness And Validity</h2>
 <h3>Fields</h3>
 <p>Distinct from <code>expires_at</code> (which governs event delivery lifetime). These fields describe when the *asserted content* becomes stale.</p>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>valid_from</code></td><td>RFC 3339</td><td>The point in time from which the assertion is considered valid</td></tr>
-<tr><td><code>valid_until</code></td><td>RFC 3339</td><td>The point in time after which the assertion should be considered stale</td></tr>
-<tr><td><code>stale_after</code></td><td>ISO 8601 duration</td><td>Relative staleness duration from <code>created_at</code> (alternative to <code>valid_until</code>)</td></tr>
-<tr><td><code>refresh_hint</code></td><td>URI</td><td>Where to obtain a more current version of this assertion</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Description | |---|---|---| | <code>valid_from</code> | RFC 3339 | The point in time from which the assertion is considered valid | | <code>valid_until</code> | RFC 3339 | The point in time after which the assertion should be considered stale | | <code>stale_after</code> | ISO 8601 duration | Relative staleness duration from <code>created_at</code> (alternative to <code>valid_until</code>) | | <code>refresh_hint</code> | URI | Where to obtain a more current version of this assertion |</p>
 <h3>Events</h3>
 <p>#### <code>freshness.expired</code></p>
 <p>Emitted by a runtime or observer when it detects cached state has exceeded its validity window.</p>
@@ -122,15 +107,7 @@
 </ul>
 <h2>Delegation And Handoff</h2>
 <h3>Fields</h3>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>delegated_by</code></td><td>string</td><td>Identifier of the delegating agent or runtime</td></tr>
-<tr><td><code>delegated_to</code></td><td>string</td><td>Identifier of the accepting agent or runtime</td></tr>
-<tr><td><code>parent_task_id</code></td><td>string</td><td>The delegating task; establishes parent-child relationship</td></tr>
-<tr><td><code>handoff_token</code></td><td>string</td><td>Opaque token proving ownership transfer</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Description | |---|---|---| | <code>delegated_by</code> | string | Identifier of the delegating agent or runtime | | <code>delegated_to</code> | string | Identifier of the accepting agent or runtime | | <code>parent_task_id</code> | string | The delegating task; establishes parent-child relationship | | <code>handoff_token</code> | string | Opaque token proving ownership transfer |</p>
 <h3>Events</h3>
 <p>#### <code>delegation.requested</code></p>
 <pre><code>{
@@ -202,15 +179,7 @@
 </ul>
 <h2>Interruption And Cancellation Safety</h2>
 <h3>Fields</h3>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>checkpoint_id</code></td><td>string</td><td>Identifier for saved execution state</td></tr>
-<tr><td><code>checkpoint_at</code></td><td>RFC 3339</td><td>Timestamp when the checkpoint was saved</td></tr>
-<tr><td><code>interruption_policy</code></td><td>string</td><td><code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code></td></tr>
-<tr><td><code>compensation_id</code></td><td>string</td><td>Links a compensation task to the task it compensates for</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Description | |---|---|---| | <code>checkpoint_id</code> | string | Identifier for saved execution state | | <code>checkpoint_at</code> | RFC 3339 | Timestamp when the checkpoint was saved | | <code>interruption_policy</code> | string | <code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code> | | <code>compensation_id</code> | string | Links a compensation task to the task it compensates for |</p>
 <h3>Events</h3>
 <p>#### Interruption Lifecycle</p>
 <pre><code>interruption.requested
@@ -307,15 +276,7 @@ interruption.acknowledged
 </ul>
 <h2>Provenance</h2>
 <h3>Fields</h3>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>evidence_chain</code></td><td>array of objects with <code>source</code> (string) and <code>id</code> (string)</td><td>Ordered list of events and sources that contributed to this assertion, from origin to immediate predecessor</td></tr>
-<tr><td><code>source_trust</code></td><td>string</td><td><code>"verified"</code>, <code>"attested"</code>, <code>"unverified"</code>, <code>"signed"</code></td></tr>
-<tr><td><code>attestation_count</code></td><td>number</td><td>Number of independent verifications of this assertion</td></tr>
-<tr><td><code>data_provenance</code></td><td>URI</td><td>Link to a machine-readable provenance document</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Description | |---|---|---| | <code>evidence_chain</code> | array of objects with <code>source</code> (string) and <code>id</code> (string) | Ordered list of events and sources that contributed to this assertion, from origin to immediate predecessor | | <code>source_trust</code> | string | <code>"verified"</code>, <code>"attested"</code>, <code>"unverified"</code>, <code>"signed"</code> | | <code>attestation_count</code> | number | Number of independent verifications of this assertion | | <code>data_provenance</code> | URI | Link to a machine-readable provenance document |</p>
 <p>The <code>evidence_chain</code> field extends <code>causation_id</code> (which identifies only the single immediately preceding event) into a multi-hop lineage:</p>
 <pre><code>{
   "evidence_chain": [
@@ -369,28 +330,9 @@ interruption.acknowledged
 <li><code>attestation_count</code> increments with each <code>provenance.attestation.added</code> and effectively decrements with each <code>provenance.attestation.revoked</code>. Consumers should not use it as a sole trust signal without considering attestor identity.</li>
 </ul>
 <h2>Relationship To Other Specs</h2>
-<table>
-<thead><tr><th>Spec</th><th>Relationship</th></tr></thead>
-<tbody>
-<tr><td><code>task-lifecycle.md</code></td><td>Delegation, interruption, and compensation events compose with the task state machine</td></tr>
-<tr><td><code>session.md</code></td><td>Session close should trigger interruption with policy <code>save_and_stop</code> for all active tasks</td></tr>
-<tr><td><code>subscription.md</code></td><td>Consumers can subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code></td></tr>
-<tr><td><code>delivery.md</code></td><td>Checkpoint events should use <code>at_least_once</code> delivery</td></tr>
-<tr><td><code>security.md</code></td><td><code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation may require identity/auth metadata</td></tr>
-<tr><td><code>error-model.md</code></td><td>Use standard error payloads for delegation rejection, interruption failure, and provenance verification failure</td></tr>
-</tbody>
-</table>
+<p>| Spec | Relationship | |---|---| | <code>task-lifecycle.md</code> | Delegation, interruption, and compensation events compose with the task state machine | | <code>session.md</code> | Session close should trigger interruption with policy <code>save_and_stop</code> for all active tasks | | <code>subscription.md</code> | Consumers can subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code> | | <code>delivery.md</code> | Checkpoint events should use <code>at_least_once</code> delivery | | <code>security.md</code> | <code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation may require identity/auth metadata | | <code>error-model.md</code> | Use standard error payloads for delegation rejection, interruption failure, and provenance verification failure |</p>
 <h2>Field Summary</h2>
-<table>
-<thead><tr><th>Domain</th><th>Fields Added</th></tr></thead>
-<tbody>
-<tr><td>Epistemic</td><td><code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code></td></tr>
-<tr><td>Freshness</td><td><code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code></td></tr>
-<tr><td>Delegation</td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code></td></tr>
-<tr><td>Interruption</td><td><code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code></td></tr>
-<tr><td>Provenance</td><td><code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code></td></tr>
-</tbody>
-</table>
+<p>| Domain | Fields Added | |---|---| | Epistemic | <code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code> | | Freshness | <code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code> | | Delegation | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code> | | Interruption | <code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code> | | Provenance | <code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code> |</p>
 <p>All fields are optional envelope properties. All event types follow the <code>domain.object.action</code> naming convention. No existing required fields or event types change.</p>
 </body>
 </html>

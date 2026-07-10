@@ -111,8 +111,21 @@ The first milestone **AEP 0.1 Draft** has been delivered:
 
 AEP has since expanded to include four transport bindings (stdio, WebSocket, SSE, gRPC), full delivery and reliability subsystems, SQLite-backed stores, four language references, cross-language conformance testing, and a published spec site.
 
+## Phase 7: Agent Semantics And Positioning ✅ Complete
+
+Goal: distinguish AEP from existing event systems and define agent-runtime metadata.
+
+Deliverables (all delivered):
+
+- Differentiation and positioning document (`docs/differentiation.md`)
+- Agent-runtime-semantics specification (`docs/specs/agent-runtime-semantics.md`)
+- Extended event envelope schema with 15 optional agent-runtime metadata fields (`schemas/aep-envelope.schema.json`)
+- Six new standard event families: belief, freshness, delegation, interruption, compensation, provenance
+- All 4 language event registries updated with 18 new event types
+- Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)
+
 ## Current Completion State
 
-All six roadmap phases (Phase 0 through Phase 6) are fully delivered. The protocol is implemented in TypeScript, Python, Go, and Java with cross-language parity validated by a shared conformance suite. The spec site is published at https://axisrobo.github.io/aep/.
+All seven roadmap phases (Phase 0 through Phase 7) are fully delivered. The protocol covers 17 specifications, 4 transport bindings, ~340 tests across four languages, cross-language conformance with 5 passing fixtures, and a published spec site at https://axisrobo.github.io/aep/. Agent-runtime semantics now cover belief revision, freshness/validity, delegation/handoff, interruption/cancellation safety, and provenance/trust.
 
 Future roadmap work should focus on: additional transport bindings (NATS, Kafka, Redis Streams), production hardening of delivery/reliability subsystems, formal protocol versioning, and community governance structures.
