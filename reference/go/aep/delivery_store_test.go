@@ -160,3 +160,16 @@ func TestInMemoryDeliveryStore_GetPendingForSubscriptionFilters(t *testing.T) {
 		t.Fatal("expected evt_b not in filtered results")
 	}
 }
+
+func TestInMemoryGetDeadLettered(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+	store.Track("evt_1", "sub_01")
+	store.DeadLetter("evt_1", map[string]any{"error": map[string]any{"code": "timeout"}})
+	records := store.GetDeadLettered()
+	if len(records) != 1 {
+		t.Fatalf("expected 1 record, got %d", len(records))
+	}
+	if records[0]["eventId"] != "evt_1" {
+		t.Fatalf("expected evt_1, got %v", records[0]["eventId"])
+	}
+}

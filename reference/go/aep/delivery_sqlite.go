@@ -256,6 +256,29 @@ func (s *SqliteDeliveryStore) GetPendingForSubscription(subscriptionID string) [
 	return result
 }
 
+func (s *SqliteDeliveryStore) GetDeadLettered() []map[string]any {
+	rows, err := s.db.Query(`SELECT event_id, subscription_id, reason FROM delivery_dead_lettered ORDER BY sequence`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	result := make([]map[string]any, 0)
+	for rows.Next() {
+		var eventID, subscriptionID, reasonStr string
+		if err := rows.Scan(&eventID, &subscriptionID, &reasonStr); err != nil {
+			continue
+		}
+		var reason map[string]any
+		json.Unmarshal([]byte(reasonStr), &reason)
+		result = append(result, map[string]any{
+			"eventId":        eventID,
+			"subscriptionId": subscriptionID,
+			"reason":         reason,
+		})
+	}
+	return result
+}
+
 func (s *SqliteDeliveryStore) IsAcknowledged(eventID string) bool {
 	row := s.db.QueryRow(`SELECT 1 FROM delivery_acked WHERE event_id = ?`, eventID)
 	var val int

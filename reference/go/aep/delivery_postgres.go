@@ -218,6 +218,30 @@ func (s *PostgresDeliveryStore) GetPendingForSubscription(subscriptionID string)
 		s.t("pending")), subscriptionID)
 }
 
+func (s *PostgresDeliveryStore) GetDeadLettered() []map[string]any {
+	rows, err := s.db.Query(fmt.Sprintf(`SELECT event_id, subscription_id, reason FROM %s ORDER BY seq`, s.t("dead_lettered")))
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	result := make([]map[string]any, 0)
+	for rows.Next() {
+		var eventID, subscriptionID string
+		var reasonBytes []byte
+		if err := rows.Scan(&eventID, &subscriptionID, &reasonBytes); err != nil {
+			continue
+		}
+		var reason map[string]any
+		json.Unmarshal(reasonBytes, &reason)
+		result = append(result, map[string]any{
+			"eventId":        eventID,
+			"subscriptionId": subscriptionID,
+			"reason":         reason,
+		})
+	}
+	return result
+}
+
 func (s *PostgresDeliveryStore) IsAcknowledged(eventID string) bool {
 	row := s.db.QueryRow(fmt.Sprintf(`SELECT 1 FROM %s WHERE event_id = $1`, s.t("acked")), eventID)
 	var val int

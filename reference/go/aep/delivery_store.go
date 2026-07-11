@@ -16,6 +16,7 @@ type DeliveryStore interface {
 	IsPending(eventID string) bool
 	HasAttemptsRemaining(eventID string, maxAttempts int) bool
 	GetStats() map[string]any
+	GetDeadLettered() []map[string]any
 	NextSequence() int
 }
 
@@ -162,6 +163,18 @@ func (s *InMemoryDeliveryStore) GetPendingForSubscription(subscriptionID string)
 
 func (s *InMemoryDeliveryStore) IsAcknowledged(eventID string) bool {
 	return s.acked[eventID]
+}
+
+func (s *InMemoryDeliveryStore) GetDeadLettered() []map[string]any {
+	result := make([]map[string]any, 0, len(s.deadLettered))
+	for _, v := range s.deadLettered {
+		result = append(result, map[string]any{
+			"eventId":        v["eventId"],
+			"subscriptionId": v["subscriptionId"],
+			"reason":         v["reason"],
+		})
+	}
+	return result
 }
 
 func (s *InMemoryDeliveryStore) IsPending(eventID string) bool {
