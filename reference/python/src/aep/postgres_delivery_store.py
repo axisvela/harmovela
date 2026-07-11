@@ -170,6 +170,21 @@ class PostgresDeliveryStore:
             )
             return self._rows_to_pending(cur.fetchall())
 
+    def get_dead_lettered(self) -> list[dict]:
+        with self._conn.cursor() as cur:
+            cur.execute(
+                f"SELECT event_id, subscription_id, reason FROM {self._t('dead_lettered')} ORDER BY seq"
+            )
+            rows = cur.fetchall()
+        return [
+            {
+                "eventId": r[0],
+                "subscriptionId": r[1],
+                "reason": r[2] if isinstance(r[2], dict) else json.loads(r[2]),
+            }
+            for r in rows
+        ]
+
     def is_acknowledged(self, event_id: str) -> bool:
         with self._conn.cursor() as cur:
             cur.execute(f"SELECT 1 FROM {self._t('acked')} WHERE event_id = %s", (event_id,))

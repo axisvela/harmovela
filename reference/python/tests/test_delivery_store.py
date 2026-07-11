@@ -74,3 +74,13 @@ def test_get_pending_for_subscription_filters():
     filtered = store.get_pending_for_subscription("sub_01")
     assert len(filtered) == 2
     assert [e["eventId"] for e in filtered] == ["evt_a", "evt_c"]
+
+
+def test_lists_dead_lettered_records():
+    store = InMemoryDeliveryStore()
+    store.track("evt_1", "sub_01")
+    store.dead_letter("evt_1", {"error": {"code": "timeout"}})
+    records = store.get_dead_lettered()
+    assert len(records) == 1
+    assert records[0]["eventId"] == "evt_1"
+    assert records[0]["reason"]["error"]["code"] == "timeout"

@@ -74,6 +74,16 @@ class InMemoryDeliveryStore:
     def get_pending_for_subscription(self, subscription_id: str) -> list[dict]:
         return [{**e} for e in self._pending.values() if e["subscriptionId"] == subscription_id]
 
+    def get_dead_lettered(self) -> list[dict]:
+        return [
+            {
+                "eventId": event_id,
+                "subscriptionId": rec.get("subscriptionId"),
+                "reason": rec.get("reason", {}),
+            }
+            for event_id, rec in self._dead_lettered.items()
+        ]
+
     def is_acknowledged(self, event_id: str) -> bool:
         return event_id in self._acked
 

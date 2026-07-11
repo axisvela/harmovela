@@ -74,3 +74,14 @@ def test_has_attempts_remaining_checks_max(store):
     store.nack("evt_001")
     store.nack("evt_001")
     assert store.has_attempts_remaining("evt_001", 3) is False
+
+
+def test_lists_dead_lettered_records():
+    store = SqliteDeliveryStore(":memory:")
+    store.track("evt_1", "sub_01")
+    store.dead_letter("evt_1", {"error": {"code": "timeout"}})
+    records = store.get_dead_lettered()
+    assert len(records) == 1
+    assert records[0]["eventId"] == "evt_1"
+    assert records[0]["reason"]["error"]["code"] == "timeout"
+    store.close()

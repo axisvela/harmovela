@@ -1,3 +1,4 @@
+import json
 import sqlite3
 from datetime import datetime, timezone
 
@@ -93,7 +94,7 @@ class SqliteDeliveryStore:
         self._db.execute(
             "INSERT INTO delivery_dead_lettered (event_id, subscription_id, seq, cursor, attempts, last_attempt_at, reason, dead_lettered_at) VALUES (?,?,?,?,?,?,?,?)",
             (event_id, row["subscription_id"], row["seq"], row["cursor"], row["attempts"],
-             row["last_attempt_at"], str(reason), _now()),
+             row["last_attempt_at"], json.dumps(reason), _now()),
         )
         self._db.commit()
         return {
@@ -117,6 +118,19 @@ class SqliteDeliveryStore:
             "SELECT * FROM delivery_pending WHERE subscription_id = ? ORDER BY seq", (subscription_id,)
         ).fetchall()
         return [self._row_to_pending(r) for r in rows]
+
+    def get_dead_lettered(self) -> list[dict]:
+        rows = self._db.execute(
+            "SELECT event_id, subscription_id, reason FROM delivery_dead_lettered ORDER BY seq"
+        ).fetchall()
+        return [
+            {
+                "eventId": r["event_id"],
+                "subscriptionId": r["subscription_id"],
+                "reason": json.loads(r["reason"]),
+            }
+            for r in rows
+        ]
 
     def is_acknowledged(self, event_id: str) -> bool:
         return self._db.execute("SELECT 1 FROM delivery_acked WHERE event_id = ?", (event_id,)).fetchone() is not None
