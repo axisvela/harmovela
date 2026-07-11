@@ -166,3 +166,27 @@ test("api unknown route returns 404", async () => {
   assert.equal(res.status, 404);
   await service.stop();
 });
+
+test("service registry buffers matching events and drains them", async () => {
+  const config = apiConfig();
+  const service = new AepRuntimeService(config);
+  await service.start();
+  const record = await service.createSubscription({ types: "task.*" });
+  service.publish(event({ id: "evt_match", type: "task.submitted" }));
+  service.publish(event({ id: "evt_skip", type: "session.opened" }));
+  const drained = service.takeEvents(record.id, 100);
+  assert.equal(drained.length, 1);
+  assert.equal(drained[0].id, "evt_match");
+  assert.equal(service.takeEvents(record.id, 100).length, 0);
+  await service.stop();
+});
+
+test("service loads persisted subscriptions on start", async () => {
+  const config = apiConfig();
+  const service = new AepRuntimeService(config);
+  await service.start();
+  await service.createSubscription({ types: "task.*" });
+  const list = service.listSubscriptions();
+  assert.equal(list.length, 1);
+  await service.stop();
+});

@@ -1,5 +1,7 @@
 import { EventRouter } from "../router.js";
+import { randomUUID } from "node:crypto";
 import { validateEnvelope } from "../validate.js";
+import { subscriptionMatches } from "../subscription.js";
 import { WsServerTransport } from "../transport/websocket.js";
 import { SseServerTransport } from "../transport/sse.js";
 import { createDeliveryStore } from "./config.js";
@@ -11,6 +13,8 @@ export class AepRuntimeService {
     this.router = options.router ?? new EventRouter();
     this.store = options.store ?? createDeliveryStore(config);
     this.transports = {};
+    this.subscriptions = new Map();
+    this.maxBuffer = 1000;
     this.started = false;
   }
 
@@ -28,6 +32,13 @@ export class AepRuntimeService {
     this.router.dispatch(event);
     for (const transport of Object.values(this.transports)) {
       transport.send?.(event);
+    }
+    for (const entry of this.subscriptions.values()) {
+      if (subscriptionMatches({ payload: entry.record.filter }, event)) {
+        entry.buffer.push(event);
+        if (entry.buffer.length > this.maxBuffer) entry.buffer.shift();
+        for (const sink of entry.sinks) sink(event);
+      }
     }
     return event;
   }
@@ -52,6 +63,10 @@ export class AepRuntimeService {
     if (api?.enabled) {
       this.transports.api = await startApiServer(this, api);
     }
+    const persisted = await this.store.listSubscriptions?.() ?? [];
+    for (const record of persisted) {
+      this.subscriptions.set(record.id, { record, buffer: [], sinks: new Set() });
+    }
     this.started = true;
   }
 
@@ -73,6 +88,40 @@ export class AepRuntimeService {
 
   getDeadLettered() {
     return this.store.getDeadLettered?.() ?? [];
+  }
+
+  async createSubscription(filter) {
+    const record = { id: `sub_${randomUUID()}`, filter: filter ?? {}, created_at: new Date().toISOString() };
+    await this.store.createSubscription?.(record);
+    this.subscriptions.set(record.id, { record, buffer: [], sinks: new Set() });
+    return record;
+  }
+
+  listSubscriptions() {
+    return [...this.subscriptions.values()].map((e) => e.record);
+  }
+
+  getSubscription(id) {
+    return this.subscriptions.get(id)?.record ?? null;
+  }
+
+  async deleteSubscription(id) {
+    const existed = this.subscriptions.delete(id);
+    await this.store.deleteSubscription?.(id);
+    return existed;
+  }
+
+  takeEvents(id, max) {
+    const entry = this.subscriptions.get(id);
+    if (!entry) return [];
+    return entry.buffer.splice(0, max);
+  }
+
+  attachStream(id, sink) {
+    const entry = this.subscriptions.get(id);
+    if (!entry) return null;
+    entry.sinks.add(sink);
+    return () => entry.sinks.delete(sink);
   }
 }
 

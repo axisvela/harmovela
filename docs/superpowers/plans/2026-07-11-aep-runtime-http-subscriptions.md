@@ -328,7 +328,7 @@ test("service registry buffers matching events and drains them", async () => {
   await service.start();
   const record = await service.createSubscription({ types: "task.*" });
   service.publish(event({ id: "evt_match", type: "task.submitted" }));
-  service.publish(event({ id: "evt_skip", type: "memory.updated" }));
+  service.publish(event({ id: "evt_skip", type: "session.opened" }));
   const drained = service.takeEvents(record.id, 100);
   assert.equal(drained.length, 1);
   assert.equal(drained[0].id, "evt_match");
@@ -347,7 +347,7 @@ test("service loads persisted subscriptions on start", async () => {
 });
 ```
 
-Note: `memory.updated` is a standard event type in the registry, so it validates but does not match `task.*`.
+Note: `session.opened` is a standard event type in the registry, so it validates but does not match `task.*`.
 
 - [ ] **Step 2: Run test to verify it fails**
 
