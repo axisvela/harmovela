@@ -40,6 +40,18 @@ test("InMemoryDeliveryStore dead-letters exhausted events", () => {
   assert.equal(store.isPending("evt_001"), false);
 });
 
+test("InMemoryDeliveryStore lists dead-lettered records", () => {
+  const store = new InMemoryDeliveryStore();
+  store.track("evt_001", "sub_01", {});
+  store.deadLetter("evt_001", { error: { code: "timeout" } });
+
+  const records = store.getDeadLettered();
+  assert.equal(records.length, 1);
+  assert.equal(records[0].eventId, "evt_001");
+  assert.equal(records[0].subscriptionId, "sub_01");
+  assert.equal(records[0].reason.error.code, "timeout");
+});
+
 test("InMemoryDeliveryStore provides stats", () => {
   const store = new InMemoryDeliveryStore();
   store.track("evt_a", "sub_01", {});

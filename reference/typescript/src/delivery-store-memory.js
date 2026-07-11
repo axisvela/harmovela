@@ -75,6 +75,10 @@ export class InMemoryDeliveryStore {
     return this.getPending().filter((e) => e.subscriptionId === subscriptionId);
   }
 
+  getDeadLettered() {
+    return [...this._deadLettered.values()];
+  }
+
   isAcknowledged(eventId) {
     return this._acked.has(eventId);
   }

@@ -44,6 +44,19 @@ test("PostgresDeliveryStore dead-letters events", async () => {
   await store.close();
 });
 
+test("PostgresDeliveryStore lists dead-lettered records", async () => {
+  const store = await newStore();
+  await store.track("evt_001", "sub_01");
+  await store.deadLetter("evt_001", { error: { code: "timeout" } });
+
+  const records = await store.getDeadLettered();
+  assert.equal(records.length, 1);
+  assert.equal(records[0].eventId, "evt_001");
+  assert.equal(records[0].subscriptionId, "sub_01");
+  assert.equal(records[0].reason.error.code, "timeout");
+  await store.close();
+});
+
 test("PostgresDeliveryStore provides stats", async () => {
   const store = await newStore();
   await store.track("evt_a", "sub_01");

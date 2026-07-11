@@ -6,9 +6,11 @@ export async function dlqCommand(args) {
   const configPath = valueAfter(args, "--config") ?? process.env.AEP_CONFIG ?? "aep.config.json";
   const config = await loadConfig(configPath);
   const store = createDeliveryStore(config);
-  const stats = store.getStats?.() ?? {};
-  console.log(JSON.stringify({ deadLettered: stats.deadLettered ?? 0 }));
-  store.close?.();
+  await store.init?.();
+  const stats = await store.getStats?.() ?? {};
+  const records = await store.getDeadLettered?.() ?? [];
+  console.log(JSON.stringify({ deadLettered: stats.deadLettered ?? records.length, records }));
+  await store.close?.();
 }
 
 function valueAfter(args, name) {

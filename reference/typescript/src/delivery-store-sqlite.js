@@ -106,6 +106,10 @@ export class SqliteDeliveryStore {
       .all(subscriptionId).map(rowToPending);
   }
 
+  getDeadLettered() {
+    return this._db.prepare("SELECT * FROM delivery_dead_lettered ORDER BY seq").all().map(rowToDeadLettered);
+  }
+
   isAcknowledged(eventId) {
     return !!this._db.prepare("SELECT 1 FROM delivery_acked WHERE event_id = ?").get(eventId);
   }
@@ -147,5 +151,18 @@ function rowToPending(row) {
     attempts: row.attempts,
     firstAttemptAt: row.first_attempt_at,
     lastAttemptAt: row.last_attempt_at
+  };
+}
+
+function rowToDeadLettered(row) {
+  return {
+    eventId: row.event_id,
+    subscriptionId: row.subscription_id,
+    sequence: row.seq,
+    cursor: row.cursor,
+    attempts: row.attempts,
+    lastAttemptAt: row.last_attempt_at,
+    deadLetteredAt: row.dead_lettered_at,
+    reason: JSON.parse(row.reason)
   };
 }

@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { defaultConfig } from "../src/runtime/config.js";
+import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
 
 const cli = path.resolve("src/cli/aep.js");
 
@@ -45,4 +47,26 @@ test("aep conformance runs conformance command", async () => {
   const result = await run(["conformance", "--level=AEP-C0"]);
   assert.equal(result.code, 0);
   assert.match(result.stdout, /AEP conformance target/);
+});
+
+test("aep dlq list outputs dead-lettered records", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "aep-cli-dlq-"));
+  const dbPath = path.join(dir, "aep.sqlite");
+  const configPath = path.join(dir, "aep.config.json");
+  const store = new SqliteDeliveryStore(dbPath);
+  store.track("evt_dlq", "sub_01");
+  store.deadLetter("evt_dlq", { error: { code: "timeout" } });
+  store.close();
+  const config = defaultConfig();
+  config.delivery.store = "sqlite";
+  config.delivery.sqlite.path = dbPath;
+  await writeFile(configPath, JSON.stringify(config), "utf8");
+
+  const result = await run(["dlq", "list", "--config", configPath]);
+  assert.equal(result.code, 0, result.stderr);
+  const output = JSON.parse(result.stdout);
+  assert.equal(output.deadLettered, 1);
+  assert.equal(output.records[0].eventId, "evt_dlq");
+  assert.equal(output.records[0].reason.error.code, "timeout");
+  await rm(dir, { recursive: true, force: true });
 });

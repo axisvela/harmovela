@@ -147,6 +147,13 @@ export class PostgresDeliveryStore {
     return res.rows.map(rowToPending);
   }
 
+  async getDeadLettered() {
+    const res = await this._client.query(
+      `SELECT event_id, subscription_id, seq, cursor, attempts, last_attempt_at, dead_lettered_at, reason
+       FROM ${this._t("dead_lettered")} ORDER BY seq`);
+    return res.rows.map(rowToDeadLettered);
+  }
+
   async isAcknowledged(eventId) {
     const res = await this._client.query(
       `SELECT 1 FROM ${this._t("acked")} WHERE event_id = $1`, [eventId]);
@@ -205,5 +212,18 @@ function rowToPending(row) {
     attempts: row.attempts,
     firstAttemptAt: row.first_attempt_at,
     lastAttemptAt: row.last_attempt_at
+  };
+}
+
+function rowToDeadLettered(row) {
+  return {
+    eventId: row.event_id,
+    subscriptionId: row.subscription_id,
+    sequence: Number(row.seq),
+    cursor: row.cursor,
+    attempts: row.attempts,
+    lastAttemptAt: row.last_attempt_at,
+    deadLetteredAt: row.dead_lettered_at,
+    reason: typeof row.reason === "string" ? JSON.parse(row.reason) : row.reason
   };
 }
