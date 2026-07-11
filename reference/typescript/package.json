@@ -5,9 +5,13 @@
   "type": "module",
   "description": "Draft Agent Event Protocol TypeScript reference harness.",
   "bin": {
-    "aep-harness": "./src/stdio.js"
+    "aep-harness": "./src/stdio.js",
+    "aep": "./src/cli/aep.js",
+    "aepd": "./src/runtime/server.js"
   },
   "scripts": {
+    "aep": "node ./src/cli/aep.js",
+    "aepd": "node ./src/runtime/server.js",
     "harness": "node ./src/stdio.js",
     "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
     "demo:mcp-aep-consumer": "node ./examples/mcp-aep-consumer.js",
