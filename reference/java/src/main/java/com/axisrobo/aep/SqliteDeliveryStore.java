@@ -61,6 +61,13 @@ public class SqliteDeliveryStore implements DeliveryStore {
                     value TEXT NOT NULL
                 )
                 """);
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS delivery_subscriptions (
+                    id TEXT PRIMARY KEY,
+                    filter TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )
+                """);
         }
     }
 
@@ -317,6 +324,61 @@ public class SqliteDeliveryStore implements DeliveryStore {
             try (var rs = stmt.executeQuery()) {
                 return rs.next() ? rs.getString("value") : null;
             }
+        }
+    }
+
+    public Map<String, Object> createSubscription(Map<String, Object> record) {
+        try (var stmt = conn.prepareStatement(
+                "INSERT OR REPLACE INTO delivery_subscriptions (id, filter, created_at) VALUES (?,?,?)")) {
+            stmt.setString(1, (String) record.get("id"));
+            stmt.setString(2, MAPPER.writeValueAsString(record.get("filter")));
+            stmt.setString(3, (String) record.get("created_at"));
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("createSubscription failed", e);
+        }
+        return record;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getSubscription(String id) {
+        try (var stmt = conn.prepareStatement("SELECT id, filter, created_at FROM delivery_subscriptions WHERE id = ?")) {
+            stmt.setString(1, id);
+            try (var rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+                return Map.of(
+                    "id", rs.getString("id"),
+                    "filter", MAPPER.readValue(rs.getString("filter"), Map.class),
+                    "created_at", rs.getString("created_at"));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("getSubscription failed", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> listSubscriptions() {
+        var result = new ArrayList<Map<String, Object>>();
+        try (var stmt = conn.prepareStatement("SELECT id, filter, created_at FROM delivery_subscriptions ORDER BY created_at");
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                result.add(Map.of(
+                    "id", rs.getString("id"),
+                    "filter", MAPPER.readValue(rs.getString("filter"), Map.class),
+                    "created_at", rs.getString("created_at")));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("listSubscriptions failed", e);
+        }
+        return result;
+    }
+
+    public boolean deleteSubscription(String id) {
+        try (var stmt = conn.prepareStatement("DELETE FROM delivery_subscriptions WHERE id = ?")) {
+            stmt.setString(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            throw new RuntimeException("deleteSubscription failed", e);
         }
     }
 }

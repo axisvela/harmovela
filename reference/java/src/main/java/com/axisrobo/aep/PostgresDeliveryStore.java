@@ -43,6 +43,8 @@ public class PostgresDeliveryStore implements DeliveryStore {
                 + "event_id TEXT PRIMARY KEY, subscription_id TEXT NOT NULL, seq BIGINT NOT NULL, "
                 + "cursor TEXT NOT NULL, attempts INT NOT NULL, last_attempt_at TEXT NOT NULL, "
                 + "reason JSONB NOT NULL DEFAULT '{}', dead_lettered_at TEXT NOT NULL)");
+            stmt.execute("CREATE TABLE IF NOT EXISTS " + t("subscriptions") + " ("
+                + "id TEXT PRIMARY KEY, filter JSONB NOT NULL, created_at TEXT NOT NULL)");
         }
     }
 
@@ -243,7 +245,7 @@ public class PostgresDeliveryStore implements DeliveryStore {
         if (dropOnClose) {
             try (var stmt = conn.createStatement()) {
                 stmt.execute("DROP TABLE IF EXISTS " + t("meta") + ", " + t("pending") + ", "
-                    + t("acked") + ", " + t("dead_lettered"));
+                    + t("acked") + ", " + t("dead_lettered") + ", " + t("subscriptions"));
             }
         }
         conn.close();
@@ -297,5 +299,61 @@ public class PostgresDeliveryStore implements DeliveryStore {
         map.put("firstAttemptAt", rs.getString("first_attempt_at"));
         map.put("lastAttemptAt", rs.getString("last_attempt_at"));
         return map;
+    }
+
+    public Map<String, Object> createSubscription(Map<String, Object> record) {
+        try (var stmt = conn.prepareStatement(
+                "INSERT INTO " + t("subscriptions") + " (id, filter, created_at) VALUES (?,?::jsonb,?) "
+                + "ON CONFLICT (id) DO UPDATE SET filter=EXCLUDED.filter, created_at=EXCLUDED.created_at")) {
+            stmt.setString(1, (String) record.get("id"));
+            stmt.setString(2, MAPPER.writeValueAsString(record.get("filter")));
+            stmt.setString(3, (String) record.get("created_at"));
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("createSubscription failed", e);
+        }
+        return record;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getSubscription(String id) {
+        try (var stmt = conn.prepareStatement("SELECT id, filter, created_at FROM " + t("subscriptions") + " WHERE id = ?")) {
+            stmt.setString(1, id);
+            try (var rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+                return Map.of(
+                    "id", rs.getString("id"),
+                    "filter", MAPPER.readValue(rs.getString("filter"), Map.class),
+                    "created_at", rs.getString("created_at"));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("getSubscription failed", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> listSubscriptions() {
+        var result = new ArrayList<Map<String, Object>>();
+        try (var stmt = conn.prepareStatement("SELECT id, filter, created_at FROM " + t("subscriptions") + " ORDER BY created_at");
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                result.add(Map.of(
+                    "id", rs.getString("id"),
+                    "filter", MAPPER.readValue(rs.getString("filter"), Map.class),
+                    "created_at", rs.getString("created_at")));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("listSubscriptions failed", e);
+        }
+        return result;
+    }
+
+    public boolean deleteSubscription(String id) {
+        try (var stmt = conn.prepareStatement("DELETE FROM " + t("subscriptions") + " WHERE id = ?")) {
+            stmt.setString(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            throw new RuntimeException("deleteSubscription failed", e);
+        }
     }
 }

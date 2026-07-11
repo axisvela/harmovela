@@ -9,6 +9,7 @@ public class InMemoryDeliveryStore implements DeliveryStore {
     private final Map<String, Map<String, Object>> pending = new LinkedHashMap<>();
     private final Set<String> acked = new HashSet<>();
     private final Map<String, Map<String, Object>> deadLettered = new LinkedHashMap<>();
+    private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
     private String lastAckCursor;
 
     public InMemoryDeliveryStore() {
@@ -107,6 +108,23 @@ public class InMemoryDeliveryStore implements DeliveryStore {
     }
 
     public boolean isAcknowledged(String eventId) { return acked.contains(eventId); }
+
+    public Map<String, Object> createSubscription(Map<String, Object> record) {
+        subscriptions.put((String) record.get("id"), record);
+        return record;
+    }
+
+    public Map<String, Object> getSubscription(String id) {
+        return subscriptions.get(id);
+    }
+
+    public List<Map<String, Object>> listSubscriptions() {
+        return new ArrayList<>(subscriptions.values());
+    }
+
+    public boolean deleteSubscription(String id) {
+        return subscriptions.remove(id) != null;
+    }
     public boolean isPending(String eventId) { return pending.containsKey(eventId); }
 
     public boolean hasAttemptsRemaining(String eventId, int maxAttempts) {

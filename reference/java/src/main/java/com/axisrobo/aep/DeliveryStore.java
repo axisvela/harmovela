@@ -16,4 +16,8 @@ public interface DeliveryStore {
     boolean hasAttemptsRemaining(String eventId, int maxAttempts);
     Map<String, Object> getStats();
     List<Map<String, Object>> getDeadLettered();
+    Map<String, Object> createSubscription(Map<String, Object> record);
+    Map<String, Object> getSubscription(String id);
+    List<Map<String, Object>> listSubscriptions();
+    boolean deleteSubscription(String id);
 }

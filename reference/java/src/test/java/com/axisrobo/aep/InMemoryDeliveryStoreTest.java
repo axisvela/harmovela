@@ -98,4 +98,15 @@ class InMemoryDeliveryStoreTest {
         assertEquals(1, records.size());
         assertEquals("evt_1", records.get(0).get("eventId"));
     }
+
+    @Test
+    void subscriptionCrud() {
+        var store = new InMemoryDeliveryStore();
+        store.createSubscription(Map.of("id", "sub_1", "filter", Map.of("types", "task.*"), "created_at", "2026-07-11T10:00:00Z"));
+        assertNotNull(store.getSubscription("sub_1"));
+        assertEquals(1, store.listSubscriptions().size());
+        assertTrue(store.deleteSubscription("sub_1"));
+        assertNull(store.getSubscription("sub_1"));
+        assertFalse(store.deleteSubscription("sub_1"));
+    }
 }
