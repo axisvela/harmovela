@@ -27,7 +27,7 @@ export class AepRuntimeService {
     this.store.track?.(event.id, event.subscription_id ?? "_runtime");
     this.router.dispatch(event);
     for (const transport of Object.values(this.transports)) {
-      transport.send(event);
+      transport.send?.(event);
     }
     return event;
   }
