@@ -1,10 +1,13 @@
 package com.axisrobo.aep;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.*;
 import java.time.Instant;
 import java.util.*;
 
 public class SqliteDeliveryStore implements DeliveryStore {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final String streamId;
     private final Connection conn;
@@ -145,12 +148,14 @@ public class SqliteDeliveryStore implements DeliveryStore {
                 stmt.setString(4, entry.get("cursor"));
                 stmt.setInt(5, Integer.parseInt(entry.get("attempts")));
                 stmt.setString(6, entry.get("last_attempt_at"));
-                stmt.setString(7, reason.toString());
+                stmt.setString(7, MAPPER.writeValueAsString(reason));
                 stmt.setString(8, now);
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
             throw new RuntimeException("deadLetter failed", e);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new RuntimeException("deadLetter reason serialize failed", e);
         }
         var payload = new LinkedHashMap<String, Object>();
         payload.put("original_event_id", eventId);
@@ -190,6 +195,25 @@ public class SqliteDeliveryStore implements DeliveryStore {
             }
         } catch (SQLException e) {
             throw new RuntimeException("getPendingForSubscription failed", e);
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getDeadLettered() {
+        var result = new ArrayList<Map<String, Object>>();
+        try (var stmt = conn.prepareStatement(
+                "SELECT event_id, subscription_id, reason FROM delivery_dead_lettered ORDER BY seq");
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                var record = new LinkedHashMap<String, Object>();
+                record.put("eventId", rs.getString("event_id"));
+                record.put("subscriptionId", rs.getString("subscription_id"));
+                record.put("reason", MAPPER.readValue(rs.getString("reason"), Map.class));
+                result.add(record);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("getDeadLettered failed", e);
         }
         return result;
     }

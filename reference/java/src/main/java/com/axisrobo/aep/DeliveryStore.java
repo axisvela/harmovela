@@ -3,7 +3,7 @@ package com.axisrobo.aep;
 import java.util.List;
 import java.util.Map;
 
-interface DeliveryStore {
+public interface DeliveryStore {
     int nextSequence();
     int track(String eventId, String subscriptionId);
     boolean ack(String eventId);
@@ -15,4 +15,5 @@ interface DeliveryStore {
     boolean isPending(String eventId);
     boolean hasAttemptsRemaining(String eventId, int maxAttempts);
     Map<String, Object> getStats();
+    List<Map<String, Object>> getDeadLettered();
 }

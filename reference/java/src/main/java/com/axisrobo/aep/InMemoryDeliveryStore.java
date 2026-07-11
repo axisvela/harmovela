@@ -94,6 +94,18 @@ public class InMemoryDeliveryStore implements DeliveryStore {
         return result;
     }
 
+    public List<Map<String, Object>> getDeadLettered() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (var entry : deadLettered.values()) {
+            var record = new LinkedHashMap<String, Object>();
+            record.put("eventId", entry.get("eventId"));
+            record.put("subscriptionId", entry.get("subscriptionId"));
+            record.put("reason", entry.get("reason"));
+            result.add(record);
+        }
+        return result;
+    }
+
     public boolean isAcknowledged(String eventId) { return acked.contains(eventId); }
     public boolean isPending(String eventId) { return pending.containsKey(eventId); }
 

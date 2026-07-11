@@ -88,4 +88,14 @@ class InMemoryDeliveryStoreTest {
         assertEquals("evt_a", filtered.get(0).get("eventId"));
         assertEquals("evt_c", filtered.get(1).get("eventId"));
     }
+
+    @Test
+    void listsDeadLetteredRecords() {
+        var store = new InMemoryDeliveryStore();
+        store.track("evt_1", "sub_01");
+        store.deadLetter("evt_1", Map.of("error", Map.of("code", "timeout")));
+        var records = store.getDeadLettered();
+        assertEquals(1, records.size());
+        assertEquals("evt_1", records.get(0).get("eventId"));
+    }
 }

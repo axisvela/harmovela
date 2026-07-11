@@ -187,6 +187,25 @@ public class PostgresDeliveryStore implements DeliveryStore {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getDeadLettered() {
+        var result = new ArrayList<Map<String, Object>>();
+        try (var stmt = conn.prepareStatement(
+                "SELECT event_id, subscription_id, reason FROM " + t("dead_lettered") + " ORDER BY seq");
+             var rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                var record = new LinkedHashMap<String, Object>();
+                record.put("eventId", rs.getString("event_id"));
+                record.put("subscriptionId", rs.getString("subscription_id"));
+                record.put("reason", MAPPER.readValue(rs.getString("reason"), Map.class));
+                result.add(record);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("getDeadLettered failed", e);
+        }
+        return result;
+    }
+
     public boolean isAcknowledged(String eventId) {
         return exists(t("acked"), eventId);
     }
