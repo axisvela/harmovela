@@ -1,5 +1,8 @@
 package com.axisrobo.aep;
 
+import java.util.List;
+import java.util.Map;
+
 public final class Subscriptions {
     private Subscriptions() {}
 
@@ -17,5 +20,39 @@ public final class Subscriptions {
             }
         }
         return true;
+    }
+
+    public static boolean matches(Map<String, Object> filter, Map<String, Object> event) {
+        var types = filter.get("types");
+        if (types != null) {
+            var type = event.get("type") instanceof String s ? s : "";
+            if (!matchesTypeValue(types, type)) return false;
+        }
+        for (var field : new String[]{"source", "target", "topic", "session_id", "conversation_id", "task_id"}) {
+            var expected = filter.get(field);
+            if (expected == null) continue;
+            if (!matchesValue(expected, event.get(field))) return false;
+        }
+        return true;
+    }
+
+    private static boolean matchesTypeValue(Object patterns, String value) {
+        if (patterns instanceof String s) return matchesType(s, value);
+        if (patterns instanceof List<?> list) {
+            for (var item : list) {
+                if (item instanceof String s && matchesType(s, value)) return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean matchesValue(Object expected, Object actual) {
+        if (expected instanceof List<?> list) {
+            for (var item : list) {
+                if (item.equals(actual)) return true;
+            }
+            return false;
+        }
+        return expected.equals(actual);
     }
 }

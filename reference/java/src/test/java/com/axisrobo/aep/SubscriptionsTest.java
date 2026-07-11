@@ -14,4 +14,14 @@ class SubscriptionsTest {
         assertTrue(Subscriptions.matchesType("task.*.done", "task.build.done"));
         assertFalse(Subscriptions.matchesType("task.*.done", "task.build.failed"));
     }
+
+    @Test
+    void matchesFilter() {
+        var event = java.util.Map.<String, Object>of("type", "task.submitted", "source", "agent:x");
+        assertTrue(Subscriptions.matches(java.util.Map.of("types", "task.*"), event));
+        assertFalse(Subscriptions.matches(java.util.Map.of("types", "memory.*"), event));
+        assertTrue(Subscriptions.matches(java.util.Map.of("types", "task.*", "source", "agent:x"), event));
+        assertFalse(Subscriptions.matches(java.util.Map.of("source", "agent:y"), event));
+        assertTrue(Subscriptions.matches(java.util.Map.of(), event));
+    }
 }
