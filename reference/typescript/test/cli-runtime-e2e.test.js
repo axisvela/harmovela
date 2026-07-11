@@ -63,6 +63,54 @@ test("aep emit delivers event through running aepd websocket runtime", async () 
   }
 });
 
+test("aep subscribe receives events emitted through running aepd", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "aep-e2e-"));
+  const configPath = path.join(dir, "aep.config.json");
+  const config = defaultConfig();
+  config.delivery.store = "memory";
+  config.transports.websocket.port = 18989;
+  config.transports.sse.enabled = false;
+  await writeFile(configPath, JSON.stringify(config), "utf8");
+
+  const daemon = spawn(process.execPath, [aepd], {
+    cwd: path.resolve("."),
+    env: { ...process.env, AEP_CONFIG: configPath }
+  });
+  let subscriber;
+
+  try {
+    await waitForOutput(daemon.stdout, /aepd started/);
+    subscriber = spawn(process.execPath, [
+      cli,
+      "subscribe",
+      "--url",
+      "ws://127.0.0.1:18989/aep",
+      "--type",
+      "task.*"
+    ], { cwd: path.resolve(".") });
+    await waitForWebSocketConnection(18989);
+    const received = waitForJsonLine(subscriber.stdout, "evt_cli_subscribe_e2e");
+    const emitted = await runCli([
+      "emit",
+      "task.submitted",
+      "--url",
+      "ws://127.0.0.1:18989/aep",
+      "--id",
+      "evt_cli_subscribe_e2e",
+      "--payload",
+      "{\"task_id\":\"task_02\"}"
+    ]);
+    assert.equal(emitted.code, 0, emitted.stderr);
+    const event = await received;
+    assert.equal(event.id, "evt_cli_subscribe_e2e");
+    assert.equal(event.payload.task_id, "task_02");
+  } finally {
+    subscriber?.kill("SIGINT");
+    daemon.kill("SIGINT");
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 function waitForOutput(stream, pattern) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error(`timed out waiting for ${pattern}`)), 5000);
@@ -73,4 +121,30 @@ function waitForOutput(stream, pattern) {
       }
     });
   });
+}
+
+function waitForJsonLine(stream, expectedId) {
+  return new Promise((resolve, reject) => {
+    let buffer = "";
+    const timer = setTimeout(() => reject(new Error(`timed out waiting for ${expectedId}`)), 5000);
+    stream.on("data", (chunk) => {
+      buffer += chunk.toString();
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const event = JSON.parse(line);
+        if (event.id === expectedId) {
+          clearTimeout(timer);
+          resolve(event);
+        }
+      }
+    });
+  });
+}
+
+async function waitForWebSocketConnection(port) {
+  const ws = new WebSocket(`ws://127.0.0.1:${port}/aep`, ["aep-0.1"]);
+  await once(ws, "open");
+  ws.close();
 }
