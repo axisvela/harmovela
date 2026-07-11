@@ -95,3 +95,14 @@ test("SqliteDeliveryStore hasAttemptsRemaining checks max", () => {
   assert.equal(store.hasAttemptsRemaining("evt_001", 3), false);
   store.close();
 });
+
+test("SqliteDeliveryStore persists subscriptions", () => {
+  const store = new SqliteDeliveryStore(":memory:");
+  store.createSubscription({ id: "sub_1", filter: { types: "task.*" }, created_at: "2026-07-11T10:00:00Z" });
+  assert.equal(store.getSubscription("sub_1").filter.types, "task.*");
+  assert.equal(store.listSubscriptions().length, 1);
+  assert.equal(store.deleteSubscription("sub_1"), true);
+  assert.equal(store.getSubscription("sub_1"), null);
+  assert.equal(store.deleteSubscription("sub_1"), false);
+  store.close();
+});

@@ -39,6 +39,11 @@ export class SqliteDeliveryStore {
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS delivery_subscriptions (
+        id TEXT PRIMARY KEY,
+        filter TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
     `);
   }
 
@@ -140,6 +145,26 @@ export class SqliteDeliveryStore {
   close() {
     this._db.close();
   }
+
+  createSubscription(record) {
+    this._db.prepare("INSERT OR REPLACE INTO delivery_subscriptions (id, filter, created_at) VALUES (?,?,?)")
+      .run(record.id, JSON.stringify(record.filter ?? {}), record.created_at);
+    return record;
+  }
+
+  getSubscription(id) {
+    const row = this._db.prepare("SELECT * FROM delivery_subscriptions WHERE id = ?").get(id);
+    return row ? rowToSubscription(row) : null;
+  }
+
+  listSubscriptions() {
+    return this._db.prepare("SELECT * FROM delivery_subscriptions ORDER BY created_at").all().map(rowToSubscription);
+  }
+
+  deleteSubscription(id) {
+    const result = this._db.prepare("DELETE FROM delivery_subscriptions WHERE id = ?").run(id);
+    return result.changes > 0;
+  }
 }
 
 function rowToPending(row) {
@@ -164,5 +189,13 @@ function rowToDeadLettered(row) {
     lastAttemptAt: row.last_attempt_at,
     deadLetteredAt: row.dead_lettered_at,
     reason: JSON.parse(row.reason)
+  };
+}
+
+function rowToSubscription(row) {
+  return {
+    id: row.id,
+    filter: JSON.parse(row.filter),
+    created_at: row.created_at
   };
 }
