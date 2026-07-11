@@ -41,7 +41,7 @@ Later bindings:
 
 - gRPC streaming (`docs/specs/transport-grpc.md`, implemented in `reference/typescript/src/transport/grpc.js`)
 - NATS (`docs/specs/transport-nats.md`, implemented in `reference/go/aep/transport_nats.go`)
-- Kafka
+- Kafka (`docs/specs/transport-kafka.md`, implemented in all 4 languages)
 - Redis Streams
 
 ## Phase 3: Reference Implementation ✅ Complete

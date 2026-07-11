@@ -22,6 +22,9 @@ test = [
 nats = [
     "nats-py>=0.8",
 ]
+kafka = [
+    "confluent-kafka>=2",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
