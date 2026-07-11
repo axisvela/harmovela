@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepHarness, MockStdioTransport, AepSession } from "../src/index.js";
+import { AepHarness, MockStdioTransport, AepSession } from "@axisrobo/aep";
 
 console.log("=== Agent Subscriber Demo ===\n");
 

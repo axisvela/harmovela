@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "../src/index.js";
+import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "@axisrobo/aep";
 
 console.log("=== Memory Event Producer Demo ===\n");
 

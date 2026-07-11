@@ -20,8 +20,6 @@
     "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
     "demo:mcp-aep-consumer": "node ./examples/mcp-aep-consumer.js",
     "demo:async-tool": "node ./examples/async-tool-producer.js",
-    "demo:memory": "node ./examples/memory-event-producer.js",
-    "demo:agent": "node ./examples/agent-subscriber.js",
     "demo:production-e2e": "node ./examples/production-e2e.js",
     "test": "node --test",
     "conformance": "node ./src/conformance-cli.js"
