@@ -6,6 +6,7 @@ export class InMemoryDeliveryStore {
     this._acked = new Set();
     this._deadLettered = new Map();
     this._lastAckCursor = null;
+    this._subscriptions = new Map();
   }
 
   nextSequence() {
@@ -77,6 +78,23 @@ export class InMemoryDeliveryStore {
 
   getDeadLettered() {
     return [...this._deadLettered.values()];
+  }
+
+  createSubscription(record) {
+    this._subscriptions.set(record.id, record);
+    return record;
+  }
+
+  getSubscription(id) {
+    return this._subscriptions.get(id) ?? null;
+  }
+
+  listSubscriptions() {
+    return [...this._subscriptions.values()];
+  }
+
+  deleteSubscription(id) {
+    return this._subscriptions.delete(id);
   }
 
   isAcknowledged(eventId) {

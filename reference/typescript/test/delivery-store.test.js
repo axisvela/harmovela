@@ -96,3 +96,14 @@ test("InMemoryDeliveryStore getPendingForSubscription filters correctly", () => 
   assert.equal(filtered.length, 2);
   assert.deepEqual(filtered.map((e) => e.eventId), ["evt_a", "evt_c"]);
 });
+
+test("InMemoryDeliveryStore persists subscriptions", () => {
+  const store = new InMemoryDeliveryStore();
+  const record = store.createSubscription({ id: "sub_1", filter: { types: "task.*" }, created_at: "2026-07-11T10:00:00Z" });
+  assert.equal(record.id, "sub_1");
+  assert.equal(store.getSubscription("sub_1").filter.types, "task.*");
+  assert.equal(store.listSubscriptions().length, 1);
+  assert.equal(store.deleteSubscription("sub_1"), true);
+  assert.equal(store.getSubscription("sub_1"), null);
+  assert.equal(store.deleteSubscription("sub_1"), false);
+});
