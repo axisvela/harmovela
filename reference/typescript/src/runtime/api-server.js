@@ -48,6 +48,34 @@ async function handle(service, base, req, res) {
     return sendJson(res, 200, await service.getStats());
   }
 
+  if (route === "/subscriptions" && req.method === "POST") {
+    return handleCreateSubscription(service, req, res);
+  }
+
+  if (route === "/subscriptions" && req.method === "GET") {
+    return sendJson(res, 200, { subscriptions: service.listSubscriptions() });
+  }
+
+  const subMatch = route && route.match(/^\/subscriptions\/([^/]+)(\/events|\/stream)?$/);
+  if (subMatch) {
+    const id = decodeURIComponent(subMatch[1]);
+    const suffix = subMatch[2];
+    if (!suffix && req.method === "GET") {
+      const record = service.getSubscription(id);
+      return record ? sendJson(res, 200, record) : sendJson(res, 404, { error: "not found" });
+    }
+    if (!suffix && req.method === "DELETE") {
+      const deleted = await service.deleteSubscription(id);
+      return deleted ? sendJson(res, 200, { deleted: true }) : sendJson(res, 404, { error: "not found" });
+    }
+    if (suffix === "/events" && req.method === "GET") {
+      return handleLongPoll(service, id, res);
+    }
+    if (suffix === "/stream" && req.method === "GET") {
+      return handleStream(service, id, req, res);
+    }
+  }
+
   return sendJson(res, 404, { error: "not found" });
 }
 
@@ -75,4 +103,40 @@ async function handleIngest(service, req, res) {
 function sendJson(res, status, body) {
   res.writeHead(status, { "Content-Type": "application/json" });
   res.end(JSON.stringify(body));
+}
+
+async function handleCreateSubscription(service, req, res) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  const raw = Buffer.concat(chunks).toString("utf8");
+  let body;
+  try {
+    body = raw.length > 0 ? JSON.parse(raw) : {};
+  } catch {
+    return sendJson(res, 400, { error: "invalid JSON body" });
+  }
+  const filter = body.filter ?? body;
+  const record = await service.createSubscription(filter);
+  return sendJson(res, 201, record);
+}
+
+function handleLongPoll(service, id, res) {
+  if (!service.getSubscription(id)) return sendJson(res, 404, { error: "not found" });
+  const events = service.takeEvents(id, 100);
+  return sendJson(res, 200, { events });
+}
+
+function handleStream(service, id, req, res) {
+  if (!service.getSubscription(id)) return sendJson(res, 404, { error: "not found" });
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive"
+  });
+  const buffered = service.takeEvents(id, 1000);
+  for (const evt of buffered) res.write(`data: ${JSON.stringify(evt)}\n\n`);
+  const detach = service.attachStream(id, (evt) => {
+    res.write(`data: ${JSON.stringify(evt)}\n\n`);
+  });
+  req.on("close", () => { if (detach) detach(); });
 }

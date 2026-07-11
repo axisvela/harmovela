@@ -190,3 +190,48 @@ test("service loads persisted subscriptions on start", async () => {
   assert.equal(list.length, 1);
   await service.stop();
 });
+
+test("api creates, lists, gets, and deletes subscriptions", async () => {
+  const { service, base } = await startApiService(apiConfig());
+  const createRes = await fetch(`${base}/subscriptions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filter: { types: "task.*" } })
+  });
+  assert.equal(createRes.status, 201);
+  const created = await createRes.json();
+  assert.match(created.id, /^sub_/);
+
+  const listRes = await fetch(`${base}/subscriptions`);
+  const list = await listRes.json();
+  assert.equal(list.subscriptions.length, 1);
+
+  const getRes = await fetch(`${base}/subscriptions/${created.id}`);
+  assert.equal(getRes.status, 200);
+
+  const delRes = await fetch(`${base}/subscriptions/${created.id}`, { method: "DELETE" });
+  assert.equal(delRes.status, 200);
+  const delBody = await delRes.json();
+  assert.equal(delBody.deleted, true);
+
+  const missingRes = await fetch(`${base}/subscriptions/${created.id}`);
+  assert.equal(missingRes.status, 404);
+  await service.stop();
+});
+
+test("api long-poll returns buffered matching events", async () => {
+  const { service, base } = await startApiService(apiConfig());
+  const createRes = await fetch(`${base}/subscriptions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filter: { types: "task.*" } })
+  });
+  const { id } = await createRes.json();
+  service.publish(event({ id: "evt_lp", type: "task.submitted" }));
+  const eventsRes = await fetch(`${base}/subscriptions/${id}/events`);
+  assert.equal(eventsRes.status, 200);
+  const body = await eventsRes.json();
+  assert.equal(body.events.length, 1);
+  assert.equal(body.events[0].id, "evt_lp");
+  await service.stop();
+});
