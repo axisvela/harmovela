@@ -6,6 +6,7 @@ import { emitCommand } from "./commands/emit.js";
 import { subscribeCommand } from "./commands/subscribe.js";
 import { conformanceCommand } from "./commands/conformance.js";
 import { dlqCommand } from "./commands/dlq.js";
+import { statusCommand } from "./commands/status.js";
 
 const program = new Command();
 
@@ -27,9 +28,7 @@ program.command("start")
 program.command("status")
   .description("Query an aepd health endpoint")
   .option("--url <url>", "health endpoint URL", "http://127.0.0.1:8789/healthz")
-  .action(() => run(async () => {
-    throw new Error("status command not implemented");
-  }));
+  .action((options) => run(() => statusCommand(options)));
 
 program.command("emit")
   .description("Emit one AEP event through WebSocket")

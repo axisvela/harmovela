@@ -83,3 +83,30 @@ test("aep dlq list outputs dead-lettered records", async () => {
   assert.equal(output.records[0].reason.error.code, "timeout");
   await rm(dir, { recursive: true, force: true });
 });
+
+test("aep status prints daemon health JSON", async () => {
+  const server = await createJsonServer({ status: "ok", runtime: { id: "test-runtime" }, delivery: { pending: 0 } });
+  try {
+    const result = await run(["status", "--url", server.url]);
+    assert.equal(result.code, 0, result.stderr);
+    const body = JSON.parse(result.stdout);
+    assert.equal(body.status, "ok");
+    assert.equal(body.runtime.id, "test-runtime");
+  } finally {
+    await server.close();
+  }
+});
+
+async function createJsonServer(body) {
+  const http = await import("node:http");
+  const server = http.createServer((_req, res) => {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(body));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = server.address().port;
+  return {
+    url: `http://127.0.0.1:${port}/healthz`,
+    close: () => new Promise((resolve) => server.close(resolve))
+  };
+}
