@@ -17,6 +17,10 @@ type DeliveryStore interface {
 	HasAttemptsRemaining(eventID string, maxAttempts int) bool
 	GetStats() map[string]any
 	GetDeadLettered() []map[string]any
+	CreateSubscription(record map[string]any) map[string]any
+	GetSubscription(id string) map[string]any
+	ListSubscriptions() []map[string]any
+	DeleteSubscription(id string) bool
 	NextSequence() int
 }
 
@@ -26,6 +30,7 @@ type InMemoryDeliveryStore struct {
 	pending       map[string]map[string]any
 	acked         map[string]bool
 	deadLettered  map[string]map[string]any
+	subscriptions map[string]map[string]any
 	lastAckCursor string
 }
 
@@ -34,11 +39,12 @@ func NewInMemoryDeliveryStore(startSequence int, streamID string) *InMemoryDeliv
 		streamID = "stream_01"
 	}
 	return &InMemoryDeliveryStore{
-		sequence:     startSequence,
-		streamID:     streamID,
-		pending:      make(map[string]map[string]any),
-		acked:        make(map[string]bool),
-		deadLettered: make(map[string]map[string]any),
+		sequence:      startSequence,
+		streamID:      streamID,
+		pending:       make(map[string]map[string]any),
+		acked:         make(map[string]bool),
+		deadLettered:  make(map[string]map[string]any),
+		subscriptions: make(map[string]map[string]any),
 	}
 }
 
@@ -163,6 +169,32 @@ func (s *InMemoryDeliveryStore) GetPendingForSubscription(subscriptionID string)
 
 func (s *InMemoryDeliveryStore) IsAcknowledged(eventID string) bool {
 	return s.acked[eventID]
+}
+
+func (s *InMemoryDeliveryStore) CreateSubscription(record map[string]any) map[string]any {
+	id, _ := record["id"].(string)
+	s.subscriptions[id] = record
+	return record
+}
+
+func (s *InMemoryDeliveryStore) GetSubscription(id string) map[string]any {
+	return s.subscriptions[id]
+}
+
+func (s *InMemoryDeliveryStore) ListSubscriptions() []map[string]any {
+	result := make([]map[string]any, 0, len(s.subscriptions))
+	for _, v := range s.subscriptions {
+		result = append(result, v)
+	}
+	return result
+}
+
+func (s *InMemoryDeliveryStore) DeleteSubscription(id string) bool {
+	if _, ok := s.subscriptions[id]; !ok {
+		return false
+	}
+	delete(s.subscriptions, id)
+	return true
 }
 
 func (s *InMemoryDeliveryStore) GetDeadLettered() []map[string]any {

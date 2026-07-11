@@ -79,6 +79,12 @@ func (s *SqliteDeliveryStore) migrate() error {
 		dead_lettered_at TEXT NOT NULL,
 		reason TEXT NOT NULL
 	);
+
+	CREATE TABLE IF NOT EXISTS delivery_subscriptions (
+		id TEXT PRIMARY KEY,
+		filter TEXT NOT NULL,
+		created_at TEXT NOT NULL
+	);
 	`
 	_, err := s.db.Exec(schema)
 	return err
@@ -323,4 +329,52 @@ func (s *SqliteDeliveryStore) GetStats() map[string]any {
 
 func init() {
 	_ = time.Now
+}
+
+func (s *SqliteDeliveryStore) CreateSubscription(record map[string]any) map[string]any {
+	id, _ := record["id"].(string)
+	createdAt, _ := record["created_at"].(string)
+	filterJSON, _ := json.Marshal(record["filter"])
+	s.db.Exec(`INSERT OR REPLACE INTO delivery_subscriptions (id, filter, created_at) VALUES (?, ?, ?)`,
+		id, string(filterJSON), createdAt)
+	return record
+}
+
+func (s *SqliteDeliveryStore) GetSubscription(id string) map[string]any {
+	row := s.db.QueryRow(`SELECT id, filter, created_at FROM delivery_subscriptions WHERE id = ?`, id)
+	return scanSubscription(row.Scan)
+}
+
+func (s *SqliteDeliveryStore) ListSubscriptions() []map[string]any {
+	rows, err := s.db.Query(`SELECT id, filter, created_at FROM delivery_subscriptions ORDER BY created_at`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	result := make([]map[string]any, 0)
+	for rows.Next() {
+		if sub := scanSubscription(rows.Scan); sub != nil {
+			result = append(result, sub)
+		}
+	}
+	return result
+}
+
+func (s *SqliteDeliveryStore) DeleteSubscription(id string) bool {
+	res, err := s.db.Exec(`DELETE FROM delivery_subscriptions WHERE id = ?`, id)
+	if err != nil {
+		return false
+	}
+	n, _ := res.RowsAffected()
+	return n > 0
+}
+
+func scanSubscription(scan func(dest ...any) error) map[string]any {
+	var id, filterStr, createdAt string
+	if err := scan(&id, &filterStr, &createdAt); err != nil {
+		return nil
+	}
+	var filter map[string]any
+	json.Unmarshal([]byte(filterStr), &filter)
+	return map[string]any{"id": id, "filter": filter, "created_at": createdAt}
 }

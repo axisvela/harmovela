@@ -173,3 +173,23 @@ func TestInMemoryGetDeadLettered(t *testing.T) {
 		t.Fatalf("expected evt_1, got %v", records[0]["eventId"])
 	}
 }
+
+func TestInMemorySubscriptionCRUD(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+	store.CreateSubscription(map[string]any{"id": "sub_1", "filter": map[string]any{"types": "task.*"}, "created_at": "2026-07-11T10:00:00Z"})
+	if store.GetSubscription("sub_1") == nil {
+		t.Fatal("expected subscription")
+	}
+	if len(store.ListSubscriptions()) != 1 {
+		t.Fatalf("expected 1, got %d", len(store.ListSubscriptions()))
+	}
+	if !store.DeleteSubscription("sub_1") {
+		t.Fatal("expected delete true")
+	}
+	if store.GetSubscription("sub_1") != nil {
+		t.Fatal("expected nil after delete")
+	}
+	if store.DeleteSubscription("sub_1") {
+		t.Fatal("expected delete false")
+	}
+}

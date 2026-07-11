@@ -84,16 +84,21 @@ func (s *PostgresDeliveryStore) migrate() error {
 		last_attempt_at TEXT NOT NULL,
 		reason JSONB NOT NULL DEFAULT '{}',
 		dead_lettered_at TEXT NOT NULL
+	);
+	CREATE TABLE IF NOT EXISTS %s (
+		id TEXT PRIMARY KEY,
+		filter JSONB NOT NULL,
+		created_at TEXT NOT NULL
 	);`,
-		s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"))
+		s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions"))
 	_, err := s.db.Exec(schema)
 	return err
 }
 
 func (s *PostgresDeliveryStore) Close() error {
 	if s.dropOnClose {
-		s.db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s, %s, %s, %s",
-			s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered")))
+		s.db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s, %s, %s, %s, %s",
+			s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions")))
 	}
 	return s.db.Close()
 }
@@ -279,4 +284,55 @@ func (s *PostgresDeliveryStore) GetStats() map[string]any {
 		"deadLettered":   deadLettered,
 		"lastAckCursor":  lastAck,
 	}
+}
+
+func (s *PostgresDeliveryStore) CreateSubscription(record map[string]any) map[string]any {
+	id, _ := record["id"].(string)
+	createdAt, _ := record["created_at"].(string)
+	filterJSON, _ := json.Marshal(record["filter"])
+	s.db.Exec(fmt.Sprintf(
+		`INSERT INTO %s (id, filter, created_at) VALUES ($1,$2,$3)
+		 ON CONFLICT (id) DO UPDATE SET filter=EXCLUDED.filter, created_at=EXCLUDED.created_at`,
+		s.t("subscriptions")), id, string(filterJSON), createdAt)
+	return record
+}
+
+func (s *PostgresDeliveryStore) GetSubscription(id string) map[string]any {
+	row := s.db.QueryRow(fmt.Sprintf(`SELECT id, filter, created_at FROM %s WHERE id = $1`, s.t("subscriptions")), id)
+	return scanPgSubscription(row.Scan)
+}
+
+func (s *PostgresDeliveryStore) ListSubscriptions() []map[string]any {
+	rows, err := s.db.Query(fmt.Sprintf(`SELECT id, filter, created_at FROM %s ORDER BY created_at`, s.t("subscriptions")))
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	result := make([]map[string]any, 0)
+	for rows.Next() {
+		if sub := scanPgSubscription(rows.Scan); sub != nil {
+			result = append(result, sub)
+		}
+	}
+	return result
+}
+
+func (s *PostgresDeliveryStore) DeleteSubscription(id string) bool {
+	res, err := s.db.Exec(fmt.Sprintf(`DELETE FROM %s WHERE id = $1`, s.t("subscriptions")), id)
+	if err != nil {
+		return false
+	}
+	n, _ := res.RowsAffected()
+	return n > 0
+}
+
+func scanPgSubscription(scan func(dest ...any) error) map[string]any {
+	var id, createdAt string
+	var filterBytes []byte
+	if err := scan(&id, &filterBytes, &createdAt); err != nil {
+		return nil
+	}
+	var filter map[string]any
+	json.Unmarshal(filterBytes, &filter)
+	return map[string]any{"id": id, "filter": filter, "created_at": createdAt}
 }
