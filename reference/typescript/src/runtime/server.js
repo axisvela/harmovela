@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.js";
 import { AepRuntimeService } from "./service.js";
 
@@ -16,7 +17,7 @@ export async function startDaemon({ configPath } = {}) {
   return service;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   startDaemon({ configPath: process.env.AEP_CONFIG }).catch((err) => {
     console.error(`aepd: ${err.message}`);
     process.exitCode = 1;
