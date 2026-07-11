@@ -9,6 +9,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
+
+	"github.com/google/uuid"
 )
 
 type TransportConfig struct {
@@ -134,19 +137,28 @@ type subEntry struct {
 	handler func(event map[string]any)
 }
 
+type registryEntry struct {
+	record map[string]any
+	buffer []map[string]any
+	sinks  map[chan map[string]any]bool
+}
+
 type RuntimeService struct {
-	Config  RuntimeConfig
-	store   DeliveryStore
-	subs    []subEntry
-	ws      *WsBroadcastServer
-	api     *http.Server
-	apiPort int
-	started bool
+	Config        RuntimeConfig
+	store         DeliveryStore
+	subs          []subEntry
+	subscriptions map[string]*registryEntry
+	maxBuffer     int
+	ws            *WsBroadcastServer
+	api           *http.Server
+	apiPort       int
+	mu            sync.Mutex
+	started       bool
 }
 
 func NewRuntimeService(c RuntimeConfig) *RuntimeService {
 	store, _ := CreateDeliveryStore(c)
-	return &RuntimeService{Config: c, store: store}
+	return &RuntimeService{Config: c, store: store, subscriptions: make(map[string]*registryEntry), maxBuffer: 1000}
 }
 
 func (s *RuntimeService) Subscribe(pattern string, handler func(event map[string]any)) {
@@ -175,6 +187,23 @@ func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
 	if s.ws != nil {
 		s.ws.Broadcast(event)
 	}
+	s.mu.Lock()
+	for _, entry := range s.subscriptions {
+		filter, _ := entry.record["filter"].(map[string]any)
+		if SubscriptionMatches(filter, event) {
+			entry.buffer = append(entry.buffer, event)
+			if len(entry.buffer) > s.maxBuffer {
+				entry.buffer = entry.buffer[1:]
+			}
+			for sink := range entry.sinks {
+				select {
+				case sink <- event:
+				default:
+				}
+			}
+		}
+	}
+	s.mu.Unlock()
 	return event, nil
 }
 
@@ -193,6 +222,10 @@ func (s *RuntimeService) Start() error {
 		if err := s.startAPI(); err != nil {
 			return err
 		}
+	}
+	for _, record := range s.store.ListSubscriptions() {
+		id, _ := record["id"].(string)
+		s.subscriptions[id] = &registryEntry{record: record, sinks: make(map[chan map[string]any]bool)}
 	}
 	s.started = true
 	return nil
@@ -256,6 +289,12 @@ func (s *RuntimeService) handleAPI(route string, w http.ResponseWriter, r *http.
 		sendJSON(w, 200, map[string]any{"pending": len(records), "records": records})
 	case route == "/stats" && r.Method == http.MethodGet:
 		sendJSON(w, 200, s.store.GetStats())
+	case route == "/subscriptions" && r.Method == http.MethodPost:
+		s.handleCreateSubscription(w, r)
+	case route == "/subscriptions" && r.Method == http.MethodGet:
+		sendJSON(w, 200, map[string]any{"subscriptions": s.ListSubscriptions()})
+	case strings.HasPrefix(route, "/subscriptions/"):
+		s.handleSubscriptionItem(route, w, r)
 	default:
 		sendJSON(w, 404, map[string]any{"error": "not found"})
 	}
@@ -280,6 +319,183 @@ func sendJSON(w http.ResponseWriter, status int, body map[string]any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(body)
+}
+
+func (s *RuntimeService) CreateSubscription(filter map[string]any) map[string]any {
+	if filter == nil {
+		filter = map[string]any{}
+	}
+	record := map[string]any{
+		"id":         "sub_" + uuid.NewString(),
+		"filter":     filter,
+		"created_at": now(),
+	}
+	s.store.CreateSubscription(record)
+	s.mu.Lock()
+	s.subscriptions[record["id"].(string)] = &registryEntry{record: record, sinks: make(map[chan map[string]any]bool)}
+	s.mu.Unlock()
+	return record
+}
+
+func (s *RuntimeService) ListSubscriptions() []map[string]any {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	result := make([]map[string]any, 0, len(s.subscriptions))
+	for _, entry := range s.subscriptions {
+		result = append(result, entry.record)
+	}
+	return result
+}
+
+func (s *RuntimeService) GetSubscription(id string) map[string]any {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if entry, ok := s.subscriptions[id]; ok {
+		return entry.record
+	}
+	return nil
+}
+
+func (s *RuntimeService) DeleteSubscription(id string) bool {
+	s.mu.Lock()
+	_, existed := s.subscriptions[id]
+	delete(s.subscriptions, id)
+	s.mu.Unlock()
+	s.store.DeleteSubscription(id)
+	return existed
+}
+
+func (s *RuntimeService) TakeEvents(id string, max int) []map[string]any {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	entry, ok := s.subscriptions[id]
+	if !ok {
+		return []map[string]any{}
+	}
+	n := max
+	if n > len(entry.buffer) {
+		n = len(entry.buffer)
+	}
+	taken := entry.buffer[:n]
+	entry.buffer = entry.buffer[n:]
+	return taken
+}
+
+func (s *RuntimeService) AttachStream(id string) (chan map[string]any, func()) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	entry, ok := s.subscriptions[id]
+	if !ok {
+		return nil, nil
+	}
+	ch := make(chan map[string]any, 64)
+	entry.sinks[ch] = true
+	detach := func() {
+		s.mu.Lock()
+		delete(entry.sinks, ch)
+		s.mu.Unlock()
+	}
+	return ch, detach
+}
+
+func (s *RuntimeService) handleCreateSubscription(w http.ResponseWriter, r *http.Request) {
+	raw, _ := io.ReadAll(r.Body)
+	var body map[string]any
+	if len(raw) > 0 {
+		if err := json.Unmarshal(raw, &body); err != nil {
+			sendJSON(w, 400, map[string]any{"error": "invalid JSON body"})
+			return
+		}
+	} else {
+		body = map[string]any{}
+	}
+	var filter map[string]any
+	if f, ok := body["filter"].(map[string]any); ok {
+		filter = f
+	} else {
+		filter = body
+	}
+	record := s.CreateSubscription(filter)
+	sendJSON(w, 201, record)
+}
+
+func (s *RuntimeService) handleSubscriptionItem(route string, w http.ResponseWriter, r *http.Request) {
+	rest := strings.TrimPrefix(route, "/subscriptions/")
+	if strings.HasSuffix(rest, "/events") && r.Method == http.MethodGet {
+		id := strings.TrimSuffix(rest, "/events")
+		if s.GetSubscription(id) == nil {
+			sendJSON(w, 404, map[string]any{"error": "not found"})
+			return
+		}
+		sendJSON(w, 200, map[string]any{"events": s.TakeEvents(id, 100)})
+		return
+	}
+	if strings.HasSuffix(rest, "/stream") && r.Method == http.MethodGet {
+		id := strings.TrimSuffix(rest, "/stream")
+		s.handleStream(id, w, r)
+		return
+	}
+	if strings.Contains(rest, "/") {
+		sendJSON(w, 404, map[string]any{"error": "not found"})
+		return
+	}
+	switch r.Method {
+	case http.MethodGet:
+		record := s.GetSubscription(rest)
+		if record == nil {
+			sendJSON(w, 404, map[string]any{"error": "not found"})
+			return
+		}
+		sendJSON(w, 200, record)
+	case http.MethodDelete:
+		if s.DeleteSubscription(rest) {
+			sendJSON(w, 200, map[string]any{"deleted": true})
+		} else {
+			sendJSON(w, 404, map[string]any{"error": "not found"})
+		}
+	default:
+		sendJSON(w, 404, map[string]any{"error": "not found"})
+	}
+}
+
+func (s *RuntimeService) handleStream(id string, w http.ResponseWriter, r *http.Request) {
+	if s.GetSubscription(id) == nil {
+		sendJSON(w, 404, map[string]any{"error": "not found"})
+		return
+	}
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		sendJSON(w, 500, map[string]any{"error": "streaming unsupported"})
+		return
+	}
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.WriteHeader(200)
+	fmt.Fprint(w, ": ok\n\n")
+	flusher.Flush()
+
+	for _, evt := range s.TakeEvents(id, 1000) {
+		writeSSE(w, flusher, evt)
+	}
+	ch, detach := s.AttachStream(id)
+	if ch == nil {
+		return
+	}
+	defer detach()
+	for {
+		select {
+		case evt := <-ch:
+			writeSSE(w, flusher, evt)
+		case <-r.Context().Done():
+			return
+		}
+	}
+}
+
+func writeSSE(w http.ResponseWriter, flusher http.Flusher, evt map[string]any) {
+	data, _ := json.Marshal(evt)
+	fmt.Fprintf(w, "data: %s\n\n", data)
+	flusher.Flush()
 }
 
 type boundListener struct {
