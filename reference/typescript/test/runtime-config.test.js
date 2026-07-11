@@ -20,9 +20,9 @@ test("defaultConfig returns local sqlite runtime config", () => {
   assert.equal(config.delivery.store, "sqlite");
   assert.equal(config.transports.websocket.port, 8787);
   assert.equal(config.transports.sse.port, 8788);
-  assert.equal(config.transports.status.enabled, true);
-  assert.equal(config.transports.status.port, 8789);
-  assert.equal(config.transports.status.path, "/healthz");
+  assert.equal(config.transports.api.enabled, true);
+  assert.equal(config.transports.api.port, 8790);
+  assert.equal(config.transports.api.path, "/aep/api");
 });
 
 test("writeDefaultConfig creates JSON file", async () => {
@@ -48,6 +48,9 @@ test("loadConfig reads JSON and applies env overrides", async () => {
   assert.equal(config.transports.websocket.port, 9001);
   assert.equal(config.transports.sse.port, 9002);
   assert.equal(config.delivery.postgres.url, "postgres://example/db");
+
+  const apiConfig = await loadConfig(file, { AEPD_API_PORT: "9003" });
+  assert.equal(apiConfig.transports.api.port, 9003);
   await rm(dir, { recursive: true, force: true });
 });
 

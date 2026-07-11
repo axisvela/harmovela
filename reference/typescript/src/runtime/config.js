@@ -11,7 +11,7 @@ export function defaultConfig() {
     transports: {
       websocket: { enabled: true, host: "127.0.0.1", port: 8787, path: "/aep" },
       sse: { enabled: true, host: "127.0.0.1", port: 8788, path: "/aep/events" },
-      status: { enabled: true, host: "127.0.0.1", port: 8789, path: "/healthz" },
+      api: { enabled: true, host: "127.0.0.1", port: 8790, path: "/aep/api" },
       stdio: { enabled: false }
     },
     delivery: {
@@ -43,6 +43,7 @@ export function applyEnvOverrides(config, env = process.env) {
   }
   if (env.AEPD_WS_PORT) next.transports.websocket.port = Number(env.AEPD_WS_PORT);
   if (env.AEPD_SSE_PORT) next.transports.sse.port = Number(env.AEPD_SSE_PORT);
+  if (env.AEPD_API_PORT) next.transports.api.port = Number(env.AEPD_API_PORT);
   if (env.AEP_POSTGRES_URL) next.delivery.postgres.url = env.AEP_POSTGRES_URL;
   return next;
 }

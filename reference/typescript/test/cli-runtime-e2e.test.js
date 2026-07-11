@@ -29,7 +29,7 @@ test("aep emit delivers event through running aepd websocket runtime", async () 
   config.delivery.store = "memory";
   config.transports.websocket.port = 18987;
   config.transports.sse.enabled = false;
-  config.transports.status.enabled = false;
+  config.transports.api.enabled = false;
   await writeFile(configPath, JSON.stringify(config), "utf8");
 
   const daemon = spawn(process.execPath, [aepd], {
@@ -71,7 +71,7 @@ test("aep subscribe receives events emitted through running aepd", async () => {
   config.delivery.store = "memory";
   config.transports.websocket.port = 18989;
   config.transports.sse.enabled = false;
-  config.transports.status.enabled = false;
+  config.transports.api.enabled = false;
   await writeFile(configPath, JSON.stringify(config), "utf8");
 
   const daemon = spawn(process.execPath, [aepd], {
