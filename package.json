@@ -1,6 +1,7 @@
 {
   "name": "aep-workspace",
   "private": true,
+  "type": "module",
   "workspaces": ["reference/typescript"],
   "scripts": {
     "test": "npm test --workspace @axisrobo/aep",
