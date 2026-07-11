@@ -3,6 +3,8 @@ import { initCommand } from "./commands/init.js";
 import { startCommand } from "./commands/start.js";
 import { emitCommand } from "./commands/emit.js";
 import { subscribeCommand } from "./commands/subscribe.js";
+import { conformanceCommand } from "./commands/conformance.js";
+import { dlqCommand } from "./commands/dlq.js";
 
 const [command, ...args] = process.argv.slice(2);
 
@@ -11,6 +13,8 @@ try {
   else if (command === "start") await startCommand(args);
   else if (command === "emit") await emitCommand(args);
   else if (command === "subscribe") await subscribeCommand(args);
+  else if (command === "conformance") await conformanceCommand(args);
+  else if (command === "dlq") await dlqCommand(args);
   else if (command === "help" || !command) printHelp();
   else {
     console.error(`unknown command: ${command}`);
@@ -22,5 +26,5 @@ try {
 }
 
 function printHelp() {
-  console.log(`Usage: aep <command>\n\nCommands:\n  init\n  start\n  emit\n  subscribe\n`);
+  console.log(`Usage: aep <command>\n\nCommands:\n  init\n  start\n  emit\n  subscribe\n  dlq\n  conformance\n`);
 }

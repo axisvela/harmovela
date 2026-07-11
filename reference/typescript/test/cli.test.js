@@ -40,3 +40,9 @@ test("aep emit rejects invalid JSON payload", async () => {
   assert.equal(result.code, 1);
   assert.match(result.stderr, /invalid JSON payload/);
 });
+
+test("aep conformance runs conformance command", async () => {
+  const result = await run(["conformance", "--level=AEP-C0"]);
+  assert.equal(result.code, 0);
+  assert.match(result.stdout, /AEP conformance target/);
+});
