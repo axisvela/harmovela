@@ -22,3 +22,22 @@ func TestMatchesType(t *testing.T) {
 		}
 	}
 }
+
+func TestSubscriptionMatches(t *testing.T) {
+	event := map[string]any{"type": "task.submitted", "source": "agent:x"}
+	if !SubscriptionMatches(map[string]any{"types": "task.*"}, event) {
+		t.Fatal("expected type match")
+	}
+	if SubscriptionMatches(map[string]any{"types": "memory.*"}, event) {
+		t.Fatal("expected type mismatch")
+	}
+	if !SubscriptionMatches(map[string]any{"types": "task.*", "source": "agent:x"}, event) {
+		t.Fatal("expected source match")
+	}
+	if SubscriptionMatches(map[string]any{"source": "agent:y"}, event) {
+		t.Fatal("expected source mismatch")
+	}
+	if !SubscriptionMatches(map[string]any{}, event) {
+		t.Fatal("empty filter should match")
+	}
+}
