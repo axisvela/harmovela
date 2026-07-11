@@ -1,9 +1,7 @@
 import { runConformance } from "../../conformance.js";
 
-export async function conformanceCommand(args) {
-  const targetArg = args.find((arg) => arg.startsWith("--level="));
-  const targetLevel = targetArg ? targetArg.slice("--level=".length) : undefined;
-  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel });
+export async function conformanceCommand(options = {}) {
+  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel: options.level });
   console.log(`AEP conformance target: ${resolvedTarget}`);
   let failed = false;
   for (const result of results) {

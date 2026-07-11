@@ -1,22 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { WebSocket } from "ws";
 
-export async function emitCommand(args) {
-  const type = args[0];
+export async function emitCommand(type, options = {}) {
   if (!type) throw new Error("emit requires an event type");
-  const payloadText = valueAfter(args, "--payload") ?? "{}";
   let payload;
-  try { payload = JSON.parse(payloadText); } catch { throw new Error("invalid JSON payload"); }
-  const url = valueAfter(args, "--url") ?? "ws://127.0.0.1:8787/aep";
+  try { payload = JSON.parse(options.payload ?? "{}"); } catch { throw new Error("invalid JSON payload"); }
   const event = {
     aep_version: "0.1",
-    id: valueAfter(args, "--id") ?? randomUUID(),
+    id: options.id ?? randomUUID(),
     type,
-    source: valueAfter(args, "--source") ?? "cli:aep",
+    source: options.source ?? "cli:aep",
     created_at: new Date().toISOString(),
     payload
   };
-  await sendWs(url, event);
+  await sendWs(options.url ?? "ws://127.0.0.1:8787/aep", event);
   console.log(JSON.stringify(event));
 }
 
@@ -26,9 +23,4 @@ function sendWs(url, event) {
     ws.on("open", () => { ws.send(JSON.stringify(event)); ws.close(); resolve(); });
     ws.on("error", reject);
   });
-}
-
-function valueAfter(args, name) {
-  const index = args.indexOf(name);
-  return index >= 0 ? args[index + 1] : undefined;
 }

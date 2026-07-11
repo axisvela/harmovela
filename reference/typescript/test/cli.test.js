@@ -31,6 +31,19 @@ test("aep init writes config", async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
+test("aep --help lists core commands", async () => {
+  const result = await run(["--help"]);
+  assert.equal(result.code, 0);
+  assert.match(result.stdout, /Usage:/);
+  assert.match(result.stdout, /init/);
+  assert.match(result.stdout, /start/);
+  assert.match(result.stdout, /status/);
+  assert.match(result.stdout, /emit/);
+  assert.match(result.stdout, /subscribe/);
+  assert.match(result.stdout, /dlq/);
+  assert.match(result.stdout, /conformance/);
+});
+
 test("aep unknown command exits non-zero", async () => {
   const result = await run(["unknown"]);
   assert.equal(result.code, 1);
