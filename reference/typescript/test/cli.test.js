@@ -34,3 +34,9 @@ test("aep unknown command exits non-zero", async () => {
   assert.equal(result.code, 1);
   assert.match(result.stderr, /unknown command/);
 });
+
+test("aep emit rejects invalid JSON payload", async () => {
+  const result = await run(["emit", "task.submitted", "--payload", "{"]);
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /invalid JSON payload/);
+});
