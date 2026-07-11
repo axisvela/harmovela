@@ -110,3 +110,14 @@ async function createJsonServer(body) {
     close: () => new Promise((resolve) => server.close(resolve))
   };
 }
+
+test("aep init writes config containing api transport", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "aep-cli-api-"));
+  const file = path.join(dir, "aep.config.json");
+  const result = await run(["init", "--config", file]);
+  assert.equal(result.code, 0);
+  const config = JSON.parse(await readFile(file, "utf8"));
+  assert.equal(config.transports.api.enabled, true);
+  assert.equal(config.transports.api.port, 8790);
+  await rm(dir, { recursive: true, force: true });
+});

@@ -27,7 +27,7 @@ program.command("start")
 
 program.command("status")
   .description("Query an aepd health endpoint")
-  .option("--url <url>", "health endpoint URL", "http://127.0.0.1:8789/healthz")
+  .option("--url <url>", "health endpoint URL", "http://127.0.0.1:8790/aep/api/healthz")
   .action((options) => run(() => statusCommand(options)));
 
 program.command("emit")
