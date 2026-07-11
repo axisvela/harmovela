@@ -12,7 +12,10 @@ export function startApiServer(service, options) {
       const addr = server.address();
       resolve({
         port: addr.port,
-        stop: () => new Promise((done) => server.close(done))
+        stop: () => new Promise((done) => {
+          server.closeAllConnections?.();
+          server.close(() => done());
+        })
       });
     });
   });
@@ -133,6 +136,7 @@ function handleStream(service, id, req, res) {
     "Cache-Control": "no-cache",
     Connection: "keep-alive"
   });
+  res.write(": ok\n\n");
   const buffered = service.takeEvents(id, 1000);
   for (const evt of buffered) res.write(`data: ${JSON.stringify(evt)}\n\n`);
   const detach = service.attachStream(id, (evt) => {

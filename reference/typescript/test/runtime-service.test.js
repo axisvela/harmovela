@@ -235,3 +235,33 @@ test("api long-poll returns buffered matching events", async () => {
   assert.equal(body.events[0].id, "evt_lp");
   await service.stop();
 });
+
+test("api SSE stream receives matching events", async () => {
+  const { service, base } = await startApiService(apiConfig());
+  const createRes = await fetch(`${base}/subscriptions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filter: { types: "task.*" } })
+  });
+  const { id } = await createRes.json();
+
+  const controller = new AbortController();
+  const streamRes = await fetch(`${base}/subscriptions/${id}/stream`, {
+    headers: { Accept: "text/event-stream" },
+    signal: controller.signal
+  });
+  const reader = streamRes.body.getReader();
+  const decoder = new TextDecoder();
+
+  service.publish(event({ id: "evt_sse", type: "task.submitted" }));
+
+  let received = "";
+  while (!received.includes("evt_sse")) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    received += decoder.decode(value, { stream: true });
+  }
+  assert.match(received, /evt_sse/);
+  controller.abort();
+  await service.stop();
+});
