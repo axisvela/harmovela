@@ -1,4 +1,5 @@
 import { EventRouter } from "../router.js";
+import http from "node:http";
 import { validateEnvelope } from "../validate.js";
 import { WsServerTransport } from "../transport/websocket.js";
 import { SseServerTransport } from "../transport/sse.js";
@@ -47,6 +48,10 @@ export class AepRuntimeService {
       await transport.start();
       this.transports.sse = transport;
     }
+    const status = this.config.transports?.status;
+    if (status?.enabled) {
+      this.transports.status = await startStatusServer(this, status);
+    }
     this.started = true;
   }
 
@@ -70,4 +75,31 @@ export class AepRuntimeService {
 function stripPrivateFields(event) {
   const { _ws, ...publicEvent } = event;
   return publicEvent;
+}
+
+function startStatusServer(service, options) {
+  const path = options.path ?? "/healthz";
+  const server = http.createServer((req, res) => {
+    if (req.method !== "GET" || new URL(req.url, `http://${req.headers.host}`).pathname !== path) {
+      res.writeHead(404);
+      res.end("not found");
+      return;
+    }
+    const body = JSON.stringify({
+      status: "ok",
+      runtime: service.config.runtime,
+      delivery: service.getStats()
+    });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(body);
+  });
+  return new Promise((resolve) => {
+    server.listen(options.port ?? 0, options.host ?? "127.0.0.1", () => {
+      const addr = server.address();
+      resolve({
+        port: addr.port,
+        stop: () => new Promise((done) => server.close(done))
+      });
+    });
+  });
 }

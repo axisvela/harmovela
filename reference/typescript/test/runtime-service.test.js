@@ -61,3 +61,21 @@ test("AepRuntimeService starts websocket transport and broadcasts events", async
   ws.close();
   await service.stop();
 });
+
+test("AepRuntimeService exposes HTTP health status endpoint", async () => {
+  const config = defaultConfig();
+  config.delivery.store = "memory";
+  config.transports.websocket.enabled = false;
+  config.transports.sse.enabled = false;
+  config.transports.status = { enabled: true, host: "127.0.0.1", port: 0, path: "/healthz" };
+  const service = new AepRuntimeService(config);
+  await service.start();
+  const port = service.transports.status.port;
+  const response = await fetch(`http://127.0.0.1:${port}/healthz`);
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.status, "ok");
+  assert.equal(body.runtime.id, "aepd-local");
+  assert.equal(body.delivery.pending, 0);
+  await service.stop();
+});
