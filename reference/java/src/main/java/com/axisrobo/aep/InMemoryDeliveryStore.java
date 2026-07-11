@@ -116,12 +116,12 @@ public class InMemoryDeliveryStore implements DeliveryStore {
     }
 
     public Map<String, Object> getStats() {
-        return Map.of(
-            "totalSequences", sequence,
-            "pending", pending.size(),
-            "acknowledged", acked.size(),
-            "deadLettered", deadLettered.size(),
-            "lastAckCursor", lastAckCursor
-        );
+        var stats = new LinkedHashMap<String, Object>();
+        stats.put("totalSequences", sequence);
+        stats.put("pending", pending.size());
+        stats.put("acknowledged", acked.size());
+        stats.put("deadLettered", deadLettered.size());
+        stats.put("lastAckCursor", lastAckCursor);
+        return stats;
     }
 }
