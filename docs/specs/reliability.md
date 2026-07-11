@@ -137,6 +137,6 @@ When a consumer acknowledges `evt_01` and `evt_02`, they are removed from pendin
 
 - Retry policy metadata on events is advisory. Producers may override with their own policies.
 - Dead-letter events should use a standard error payload following the [error model](./error-model.md).
-- The durability model is best-effort for in-process implementations. Production deployments should persist events in a durable store.
+- The durability model is best-effort for in-process implementations. Production deployments should persist events in a durable store. Reference implementations ship three delivery-store backends per language: an in-memory store, an embedded SQLite store, and a networked `PostgresDeliveryStore` for shared, multi-process production deployments.
 - Cursor format is opaque. Consumers should treat cursors as strings and not parse or interpret them.
 - Authorization, identity verification, and multi-tenant isolation are defined in the [security model](./security.md).

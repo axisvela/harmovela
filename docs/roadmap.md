@@ -140,4 +140,4 @@ Deliverables (all delivered):
 
 All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.
 
-Future roadmap work should focus on: production delivery-store backends, formal protocol versioning, and community governance structures.
+Future roadmap work should focus on: formal protocol versioning and community governance structures. A networked PostgreSQL delivery-store backend now ships in all four languages alongside the in-memory and SQLite backends.
