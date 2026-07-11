@@ -45,6 +45,11 @@ class SqliteDeliveryStore:
                 key TEXT PRIMARY KEY,
                 value TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS delivery_subscriptions (
+                id TEXT PRIMARY KEY,
+                filter TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
         """)
 
     def next_sequence(self) -> int:
@@ -159,6 +164,35 @@ class SqliteDeliveryStore:
 
     def close(self):
         self._db.close()
+
+    def create_subscription(self, record: dict) -> dict:
+        self._db.execute(
+            "INSERT OR REPLACE INTO delivery_subscriptions (id, filter, created_at) VALUES (?,?,?)",
+            (record["id"], json.dumps(record.get("filter", {})), record["created_at"]),
+        )
+        self._db.commit()
+        return record
+
+    def get_subscription(self, subscription_id: str) -> dict | None:
+        row = self._db.execute(
+            "SELECT id, filter, created_at FROM delivery_subscriptions WHERE id = ?", (subscription_id,)
+        ).fetchone()
+        return self._row_to_subscription(row) if row else None
+
+    def list_subscriptions(self) -> list[dict]:
+        rows = self._db.execute(
+            "SELECT id, filter, created_at FROM delivery_subscriptions ORDER BY created_at"
+        ).fetchall()
+        return [self._row_to_subscription(r) for r in rows]
+
+    def delete_subscription(self, subscription_id: str) -> bool:
+        cur = self._db.execute("DELETE FROM delivery_subscriptions WHERE id = ?", (subscription_id,))
+        self._db.commit()
+        return cur.rowcount > 0
+
+    @staticmethod
+    def _row_to_subscription(row) -> dict:
+        return {"id": row["id"], "filter": json.loads(row["filter"]), "created_at": row["created_at"]}
 
     @staticmethod
     def _row_to_pending(row) -> dict:

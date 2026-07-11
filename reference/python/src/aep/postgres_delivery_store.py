@@ -52,6 +52,11 @@ class PostgresDeliveryStore:
                     reason JSONB NOT NULL DEFAULT '{{}}',
                     dead_lettered_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS {self._t('subscriptions')} (
+                    id TEXT PRIMARY KEY,
+                    filter JSONB NOT NULL,
+                    created_at TEXT NOT NULL
+                );
             """)
 
     def next_sequence(self) -> int:
@@ -185,6 +190,39 @@ class PostgresDeliveryStore:
             for r in rows
         ]
 
+    def create_subscription(self, record: dict) -> dict:
+        with self._conn.cursor() as cur:
+            cur.execute(
+                f"""INSERT INTO {self._t('subscriptions')} (id, filter, created_at) VALUES (%s,%s,%s)
+                    ON CONFLICT (id) DO UPDATE SET filter=EXCLUDED.filter, created_at=EXCLUDED.created_at""",
+                (record["id"], json.dumps(record.get("filter", {})), record["created_at"]),
+            )
+        return record
+
+    def get_subscription(self, subscription_id: str) -> dict | None:
+        with self._conn.cursor() as cur:
+            cur.execute(
+                f"SELECT id, filter, created_at FROM {self._t('subscriptions')} WHERE id = %s", (subscription_id,)
+            )
+            row = cur.fetchone()
+        return self._row_to_subscription(row) if row else None
+
+    def list_subscriptions(self) -> list[dict]:
+        with self._conn.cursor() as cur:
+            cur.execute(f"SELECT id, filter, created_at FROM {self._t('subscriptions')} ORDER BY created_at")
+            rows = cur.fetchall()
+        return [self._row_to_subscription(r) for r in rows]
+
+    def delete_subscription(self, subscription_id: str) -> bool:
+        with self._conn.cursor() as cur:
+            cur.execute(f"DELETE FROM {self._t('subscriptions')} WHERE id = %s", (subscription_id,))
+            return cur.rowcount > 0
+
+    @staticmethod
+    def _row_to_subscription(row) -> dict:
+        filter_val = row[1] if isinstance(row[1], dict) else json.loads(row[1])
+        return {"id": row[0], "filter": filter_val, "created_at": row[2]}
+
     def is_acknowledged(self, event_id: str) -> bool:
         with self._conn.cursor() as cur:
             cur.execute(f"SELECT 1 FROM {self._t('acked')} WHERE event_id = %s", (event_id,))
@@ -226,6 +264,6 @@ class PostgresDeliveryStore:
             with self._conn.cursor() as cur:
                 cur.execute(
                     f"DROP TABLE IF EXISTS {self._t('meta')}, {self._t('pending')}, "
-                    f"{self._t('acked')}, {self._t('dead_lettered')}"
+                    f"{self._t('acked')}, {self._t('dead_lettered')}, {self._t('subscriptions')}"
                 )
         self._conn.close()

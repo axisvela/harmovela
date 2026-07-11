@@ -13,6 +13,7 @@ class InMemoryDeliveryStore:
         self._acked: set[str] = set()
         self._dead_lettered: dict[str, dict] = {}
         self._last_ack_cursor: str | None = None
+        self._subscriptions: dict[str, dict] = {}
 
     def next_sequence(self) -> int:
         self._sequence += 1
@@ -83,6 +84,19 @@ class InMemoryDeliveryStore:
             }
             for event_id, rec in self._dead_lettered.items()
         ]
+
+    def create_subscription(self, record: dict) -> dict:
+        self._subscriptions[record["id"]] = record
+        return record
+
+    def get_subscription(self, subscription_id: str) -> dict | None:
+        return self._subscriptions.get(subscription_id)
+
+    def list_subscriptions(self) -> list[dict]:
+        return list(self._subscriptions.values())
+
+    def delete_subscription(self, subscription_id: str) -> bool:
+        return self._subscriptions.pop(subscription_id, None) is not None
 
     def is_acknowledged(self, event_id: str) -> bool:
         return event_id in self._acked

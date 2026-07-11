@@ -85,3 +85,14 @@ def test_lists_dead_lettered_records():
     assert records[0]["eventId"] == "evt_1"
     assert records[0]["reason"]["error"]["code"] == "timeout"
     store.close()
+
+
+def test_subscription_crud():
+    store = SqliteDeliveryStore(":memory:")
+    store.create_subscription({"id": "sub_1", "filter": {"types": "task.*"}, "created_at": "2026-07-11T10:00:00Z"})
+    assert store.get_subscription("sub_1")["filter"]["types"] == "task.*"
+    assert len(store.list_subscriptions()) == 1
+    assert store.delete_subscription("sub_1") is True
+    assert store.get_subscription("sub_1") is None
+    assert store.delete_subscription("sub_1") is False
+    store.close()
