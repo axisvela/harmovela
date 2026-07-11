@@ -42,7 +42,7 @@ Later bindings:
 - gRPC streaming (`docs/specs/transport-grpc.md`, implemented in `reference/typescript/src/transport/grpc.js`)
 - NATS (`docs/specs/transport-nats.md`, implemented in `reference/go/aep/transport_nats.go`)
 - Kafka (`docs/specs/transport-kafka.md`, implemented in all 4 languages)
-- Redis Streams
+- Redis Streams (`docs/specs/transport-redis-streams.md`, implemented in all 4 languages)
 
 ## Phase 3: Reference Implementation ✅ Complete
 
@@ -140,4 +140,4 @@ Deliverables (all delivered):
 
 All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.
 
-Future roadmap work should focus on: additional transport bindings (Kafka, Redis Streams), production delivery-store backends, formal protocol versioning, and community governance structures.
+Future roadmap work should focus on: production delivery-store backends, formal protocol versioning, and community governance structures.

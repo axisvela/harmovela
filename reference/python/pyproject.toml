@@ -25,6 +25,9 @@ nats = [
 kafka = [
     "confluent-kafka>=2",
 ]
+redis = [
+    "redis>=5",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
