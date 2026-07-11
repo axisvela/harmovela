@@ -1,0 +1,146 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/axisrobo/aep/aep"
+	"github.com/gorilla/websocket"
+	"github.com/spf13/cobra"
+)
+
+func main() {
+	root := &cobra.Command{Use: "aep", Short: "Agent Event Protocol CLI"}
+
+	var initConfig string
+	initCmd := &cobra.Command{Use: "init", Short: "Create an AEP runtime config file", RunE: func(_ *cobra.Command, _ []string) error {
+		if err := aep.WriteDefaultConfig(initConfig); err != nil {
+			return err
+		}
+		fmt.Printf("created %s\n", initConfig)
+		return nil
+	}}
+	initCmd.Flags().StringVar(&initConfig, "config", "aep.config.json", "config file path")
+
+	var startConfig string
+	startCmd := &cobra.Command{Use: "start", Short: "Start the local aepd runtime daemon", RunE: func(_ *cobra.Command, _ []string) error {
+		config, err := aep.LoadConfig(startConfig, nil)
+		if err != nil {
+			return err
+		}
+		svc := aep.NewRuntimeService(config)
+		if err := svc.Start(); err != nil {
+			return err
+		}
+		fmt.Printf("aepd started api=%d\n", svc.APIPort())
+		select {}
+	}}
+	startCmd.Flags().StringVar(&startConfig, "config", "aep.config.json", "config file path")
+
+	var statusURL string
+	statusCmd := &cobra.Command{Use: "status", Short: "Query an aepd health endpoint", RunE: func(_ *cobra.Command, _ []string) error {
+		resp, err := http.Get(statusURL)
+		if err != nil {
+			return fmt.Errorf("status request failed: %w", err)
+		}
+		defer resp.Body.Close()
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Println(string(body))
+		return nil
+	}}
+	statusCmd.Flags().StringVar(&statusURL, "url", "http://127.0.0.1:8790/aep/api/healthz", "health endpoint URL")
+
+	var emitPayload, emitURL, emitID, emitSource string
+	emitCmd := &cobra.Command{Use: "emit <type>", Short: "Emit one AEP event over WebSocket", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
+		var payload map[string]any
+		if err := json.Unmarshal([]byte(emitPayload), &payload); err != nil {
+			return fmt.Errorf("invalid JSON payload")
+		}
+		id := emitID
+		if id == "" {
+			id = fmt.Sprintf("evt_%d", time.Now().UnixNano())
+		}
+		event := map[string]any{
+			"aep_version": "0.1", "id": id, "type": args[0], "source": emitSource,
+			"created_at": time.Now().UTC().Format(time.RFC3339), "payload": payload,
+		}
+		conn, _, err := websocket.DefaultDialer.Dial(emitURL, nil)
+		if err != nil {
+			return fmt.Errorf("emit: %w. Is aepd running?", err)
+		}
+		defer conn.Close()
+		data, _ := json.Marshal(event)
+		if err := conn.WriteMessage(websocket.TextMessage, data); err != nil {
+			return err
+		}
+		fmt.Println(string(data))
+		return nil
+	}}
+	emitCmd.Flags().StringVar(&emitPayload, "payload", "{}", "event payload JSON")
+	emitCmd.Flags().StringVar(&emitURL, "url", "ws://127.0.0.1:8787/aep", "WebSocket URL")
+	emitCmd.Flags().StringVar(&emitID, "id", "", "event id")
+	emitCmd.Flags().StringVar(&emitSource, "source", "cli:aep", "event source")
+
+	var subType, subURL string
+	subscribeCmd := &cobra.Command{Use: "subscribe", Short: "Subscribe to AEP events over WebSocket", RunE: func(_ *cobra.Command, _ []string) error {
+		conn, _, err := websocket.DefaultDialer.Dial(subURL, nil)
+		if err != nil {
+			return fmt.Errorf("subscribe: %w. Is aepd running?", err)
+		}
+		defer conn.Close()
+		for {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				return nil
+			}
+			var event map[string]any
+			if json.Unmarshal(message, &event) != nil {
+				continue
+			}
+			typ, _ := event["type"].(string)
+			if aep.MatchesType(subType, typ) {
+				fmt.Println(string(message))
+			}
+		}
+	}}
+	subscribeCmd.Flags().StringVar(&subType, "type", "*", "event type pattern")
+	subscribeCmd.Flags().StringVar(&subURL, "url", "ws://127.0.0.1:8787/aep", "WebSocket URL")
+
+	var dlqConfig string
+	dlqCmd := &cobra.Command{Use: "dlq [subcommand]", Short: "Inspect dead-lettered events", RunE: func(_ *cobra.Command, args []string) error {
+		sub := "list"
+		if len(args) > 0 {
+			sub = args[0]
+		}
+		if sub != "list" {
+			return fmt.Errorf("unsupported dlq command: %s", sub)
+		}
+		config, err := aep.LoadConfig(dlqConfig, nil)
+		if err != nil {
+			return err
+		}
+		store, err := aep.CreateDeliveryStore(config)
+		if err != nil {
+			return err
+		}
+		records := store.GetDeadLettered()
+		stats := store.GetStats()
+		out, _ := json.Marshal(map[string]any{"deadLettered": stats["deadLettered"], "records": records})
+		fmt.Println(string(out))
+		if closer, ok := store.(interface{ Close() error }); ok {
+			closer.Close()
+		}
+		return nil
+	}}
+	dlqCmd.Flags().StringVar(&dlqConfig, "config", "aep.config.json", "config file path")
+
+	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd)
+	if err := root.Execute(); err != nil {
+		fmt.Fprintf(os.Stderr, "aep: %v\n", err)
+		os.Exit(1)
+	}
+}

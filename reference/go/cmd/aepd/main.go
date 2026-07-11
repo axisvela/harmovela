@@ -1,0 +1,29 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/axisrobo/aep/aep"
+)
+
+func main() {
+	config, err := aep.LoadConfig(os.Getenv("AEP_CONFIG"), nil)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "aepd: %v\n", err)
+		os.Exit(1)
+	}
+	svc := aep.NewRuntimeService(config)
+	if err := svc.Start(); err != nil {
+		fmt.Fprintf(os.Stderr, "aepd: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("aepd started api=%d\n", svc.APIPort())
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+	<-sig
+	svc.Stop()
+}
