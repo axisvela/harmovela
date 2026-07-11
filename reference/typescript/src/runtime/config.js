@@ -11,6 +11,7 @@ export function defaultConfig() {
     transports: {
       websocket: { enabled: true, host: "127.0.0.1", port: 8787, path: "/aep" },
       sse: { enabled: true, host: "127.0.0.1", port: 8788, path: "/aep/events" },
+      status: { enabled: true, host: "127.0.0.1", port: 8789, path: "/healthz" },
       stdio: { enabled: false }
     },
     delivery: {

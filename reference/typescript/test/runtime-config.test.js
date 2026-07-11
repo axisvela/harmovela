@@ -20,6 +20,9 @@ test("defaultConfig returns local sqlite runtime config", () => {
   assert.equal(config.delivery.store, "sqlite");
   assert.equal(config.transports.websocket.port, 8787);
   assert.equal(config.transports.sse.port, 8788);
+  assert.equal(config.transports.status.enabled, true);
+  assert.equal(config.transports.status.port, 8789);
+  assert.equal(config.transports.status.path, "/healthz");
 });
 
 test("writeDefaultConfig creates JSON file", async () => {
