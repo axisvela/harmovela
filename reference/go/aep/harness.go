@@ -70,6 +70,28 @@ func (tk *TaskTracker) Accept() map[string]any {
 	return tk.transition("task.accepted", nil)
 }
 
+func (tk *TaskTracker) Accepted() map[string]any {
+	return tk.transition("task.accepted", nil)
+}
+
+func (tk *TaskTracker) Started() map[string]any {
+	return tk.transition("task.started", nil)
+}
+
+func (tk *TaskTracker) Progress(payload map[string]any) map[string]any {
+	return tk.transition("task.progress", payload)
+}
+
+func (tk *TaskTracker) Completed(result map[string]any) map[string]any {
+	return tk.transition("task.completed", result)
+}
+
+func (tk *TaskTracker) Failed(code, message string) map[string]any {
+	return tk.transition("task.failed", map[string]any{
+		"error": ErrorPayload(code, message, false),
+	})
+}
+
 func (tk *TaskTracker) IsTerminal() bool {
 	return terminalTaskStates[tk.State]
 }
