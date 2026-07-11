@@ -28,6 +28,9 @@ kafka = [
 redis = [
     "redis>=5",
 ]
+postgres = [
+    "psycopg>=3",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
