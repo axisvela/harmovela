@@ -91,3 +91,16 @@ test("PostgresDeliveryStore hasAttemptsRemaining checks max", async () => {
   assert.equal(await store.hasAttemptsRemaining("evt_001", 3), false);
   await store.close();
 });
+
+test("PostgresDeliveryStore persists subscriptions", async () => {
+  const store = await newStore();
+  await store.createSubscription({ id: "sub_1", filter: { types: "task.*" }, created_at: "2026-07-11T10:00:00Z" });
+  const got = await store.getSubscription("sub_1");
+  assert.equal(got.filter.types, "task.*");
+  const list = await store.listSubscriptions();
+  assert.equal(list.length, 1);
+  assert.equal(await store.deleteSubscription("sub_1"), true);
+  assert.equal(await store.getSubscription("sub_1"), null);
+  assert.equal(await store.deleteSubscription("sub_1"), false);
+  await store.close();
+});

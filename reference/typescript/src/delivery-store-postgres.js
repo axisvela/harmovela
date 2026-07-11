@@ -50,6 +50,11 @@ export class PostgresDeliveryStore {
         reason JSONB NOT NULL DEFAULT '{}',
         dead_lettered_at TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS ${this._t("subscriptions")} (
+        id TEXT PRIMARY KEY,
+        filter JSONB NOT NULL,
+        created_at TEXT NOT NULL
+      );
     `);
   }
 
@@ -193,11 +198,39 @@ export class PostgresDeliveryStore {
     return res.rows[0].c;
   }
 
+  async createSubscription(record) {
+    await this._client.query(
+      `INSERT INTO ${this._t("subscriptions")} (id, filter, created_at) VALUES ($1,$2,$3)
+       ON CONFLICT (id) DO UPDATE SET filter=EXCLUDED.filter, created_at=EXCLUDED.created_at`,
+      [record.id, JSON.stringify(record.filter ?? {}), record.created_at]
+    );
+    return record;
+  }
+
+  async getSubscription(id) {
+    const res = await this._client.query(
+      `SELECT id, filter, created_at FROM ${this._t("subscriptions")} WHERE id = $1`, [id]);
+    if (res.rowCount === 0) return null;
+    return rowToSubscription(res.rows[0]);
+  }
+
+  async listSubscriptions() {
+    const res = await this._client.query(
+      `SELECT id, filter, created_at FROM ${this._t("subscriptions")} ORDER BY created_at`);
+    return res.rows.map(rowToSubscription);
+  }
+
+  async deleteSubscription(id) {
+    const res = await this._client.query(
+      `DELETE FROM ${this._t("subscriptions")} WHERE id = $1`, [id]);
+    return res.rowCount > 0;
+  }
+
   async close() {
     if (this._dropOnClose) {
       await this._client.query(
         `DROP TABLE IF EXISTS ${this._t("meta")}, ${this._t("pending")}, ` +
-        `${this._t("acked")}, ${this._t("dead_lettered")}`);
+        `${this._t("acked")}, ${this._t("dead_lettered")}, ${this._t("subscriptions")}`);
     }
     await this._client.end();
   }
@@ -225,5 +258,13 @@ function rowToDeadLettered(row) {
     lastAttemptAt: row.last_attempt_at,
     deadLetteredAt: row.dead_lettered_at,
     reason: typeof row.reason === "string" ? JSON.parse(row.reason) : row.reason
+  };
+}
+
+function rowToSubscription(row) {
+  return {
+    id: row.id,
+    filter: typeof row.filter === "string" ? JSON.parse(row.filter) : row.filter,
+    created_at: row.created_at
   };
 }
