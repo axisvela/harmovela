@@ -8,7 +8,7 @@ import { defaultConfig } from "../src/runtime/config.js";
 import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
 import { AepRuntimeService } from "../src/runtime/service.js";
 
-const cli = path.resolve("src/cli/aep.js");
+const cli = path.resolve("src/cli/harmovela.js");
 
 function run(args, options = {}) {
   return new Promise((resolve) => {
@@ -21,18 +21,18 @@ function run(args, options = {}) {
   });
 }
 
-test("aep init writes config", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "aep-cli-"));
-  const file = path.join(dir, "aep.config.json");
+test("harmovela init writes config", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "harmovela-cli-"));
+  const file = path.join(dir, "harmovela.config.json");
   const result = await run(["init", "--config", file]);
   assert.equal(result.code, 0);
   assert.match(result.stdout, /created/);
   const config = JSON.parse(await readFile(file, "utf8"));
-  assert.equal(config.runtime.id, "aepd-local");
+  assert.equal(config.runtime.id, "harmovelad-local");
   await rm(dir, { recursive: true, force: true });
 });
 
-test("aep --help lists core commands", async () => {
+test("harmovela --help lists core commands", async () => {
   const result = await run(["--help"]);
   assert.equal(result.code, 0);
   assert.match(result.stdout, /Usage:/);
