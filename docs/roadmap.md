@@ -165,16 +165,24 @@ Goal: separate the stable core from independently adoptable coordination capabil
 
 Profiles include runtime semantics, durable delivery, security, and transport-specific capabilities. A profile must define its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.
 
-### 0.5 Beta
+### 0.4 Beta
 
-Goal: prove stable interoperability beyond the founding implementation set.
+Goal: release a stable, well-documented coordination core to attract independent implementations and community feedback.
 
 Entry criteria:
 
-- A frozen beta core with a published compatibility policy.
-- Passing cross-language conformance results.
+- 0.3 profiles complete with profile conformance declarations and `--profile` filtering.
+- Frozen core with published compatibility policy.
+- Passing cross-language conformance (TypeScript, Go).
+- Three documented integration scenarios: async task orchestration, context/memory coordination, MCP bridge with async feedback.
+- Public conformance matrix (CONFORMANCE.md).
+- Governance, release, trademark, and license documentation published.
+
+Exit criteria:
+
 - At least two independently maintained interoperable implementations.
-- At least three documented integration scenarios covering asynchronous task work, state or context updates, and delegated coordination.
+- No unremediated core conformance regressions.
+- Community governance proposal published.
 
 ### 0.9 Release Candidate
 

@@ -1,6 +1,6 @@
 # Harmovela Protocol Releases
 
-> Current version: **0.2 draft** (post-migration core stabilization)
+> Current version: **0.4.0-beta**
 
 ## Release Phases
 
@@ -20,7 +20,7 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 
 | Attribute | Detail |
 |---|---|
-| **Status** | In progress |
+| **Status** | Delivered |
 | **Goal** | Establish the Harmovela protocol identity and freeze the minimum interoperable coordination core |
 | **Entry criteria** | 0.1 draft complete with passing cross-language conformance |
 | **Exit criteria** | Protocol identity consistently documented; legacy technical identifiers have explicit compatibility policy; envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and delivery semantics frozen; internally consistent conformance levels |
@@ -30,21 +30,20 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Planned |
-| **Goal** | Separate the stable core from independently adoptable coordination capabilities |
+| **Status** | Delivered |
 | **Entry criteria** | 0.2 core stabilization complete |
 | **Exit criteria** | Profile model defined with identifier, dependencies, capability negotiation, versioning, and conformance fixture requirements; at least one optional profile fully specified with fixtures |
 | **Scope** | Runtime semantics profile, durable delivery profile, security profile, transport-specific capability profiles |
 
-### 0.5 — Beta
+### 0.4 — Beta
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Planned |
-| **Goal** | Prove stable interoperability beyond the founding implementation set |
-| **Entry criteria** | Frozen beta core with published compatibility policy; passing cross-language conformance results; at least two independently maintained interoperable implementations; at least three documented integration scenarios covering asynchronous task work, state/context updates, and delegated coordination |
-| **Exit criteria** | Beta core stable for at least one release cycle; no unremediated conformance regressions; public governance model proposed |
-| **Scope** | Community governance proposal; external implementation support; integration scenario expansion |
+| **Status** | Current |
+| **Goal** | Attract independent implementations and community feedback with a stable, well-documented coordination core |
+| **Entry criteria** | 0.3 profiles complete; frozen core with published compatibility policy; passing cross-language conformance (TypeScript, Go); three documented integration scenarios (async task, context/memory, MCP bridge); public conformance matrix; governance, release, trademark, and license documentation |
+| **Exit criteria** | At least two independently maintained interoperable implementations; no unremediated core conformance regressions; community governance proposal published |
+| **Scope** | External implementation support; community governance; scenario expansion |
 
 ### 0.9 — Release Candidate
 
