@@ -7,6 +7,7 @@ import { subscribeCommand } from "./commands/subscribe.js";
 import { conformanceCommand } from "./commands/conformance.js";
 import { dlqCommand } from "./commands/dlq.js";
 import { statusCommand } from "./commands/status.js";
+import { subscriptionsCommand } from "./commands/subscriptions.js";
 
 const program = new Command();
 
@@ -55,6 +56,14 @@ program.command("conformance")
   .description("Run AEP conformance fixtures")
   .option("--level <level>", "target conformance level")
   .action((options) => run(() => conformanceCommand(options)));
+
+program.command("subscriptions")
+  .description("Manage runtime subscriptions over HTTP")
+  .argument("<subcommand>", "create | list | delete | stream")
+  .argument("[id]", "subscription id for delete/stream")
+  .option("--filter <json>", "subscription filter JSON", "{}")
+  .option("--base <url>", "runtime API base URL", "http://127.0.0.1:8790/aep/api")
+  .action((subcommand, id, options) => run(() => subscriptionsCommand(subcommand, id, options)));
 
 program.parseAsync(process.argv);
 

@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { defaultConfig } from "../src/runtime/config.js";
 import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
+import { AepRuntimeService } from "../src/runtime/service.js";
 
 const cli = path.resolve("src/cli/aep.js");
 
@@ -120,4 +121,44 @@ test("aep init writes config containing api transport", async () => {
   assert.equal(config.transports.api.enabled, true);
   assert.equal(config.transports.api.port, 8790);
   await rm(dir, { recursive: true, force: true });
+});
+
+function subApiConfig(port) {
+  const config = defaultConfig();
+  config.delivery.store = "memory";
+  config.transports.websocket.enabled = false;
+  config.transports.sse.enabled = false;
+  config.transports.api = { enabled: true, host: "127.0.0.1", port, path: "/aep/api" };
+  return config;
+}
+
+test("aep subscriptions create/list/delete round-trip", async () => {
+  const service = new AepRuntimeService(subApiConfig(18901));
+  await service.start();
+  const base = "http://127.0.0.1:18901/aep/api";
+  try {
+    const created = await run(["subscriptions", "create", "--filter", "{\"types\":\"task.*\"}", "--base", base]);
+    assert.equal(created.code, 0, created.stderr);
+    const record = JSON.parse(created.stdout);
+    assert.match(record.id, /^sub_/);
+
+    const listed = await run(["subscriptions", "list", "--base", base]);
+    assert.equal(listed.code, 0, listed.stderr);
+    assert.match(listed.stdout, new RegExp(record.id));
+
+    const deleted = await run(["subscriptions", "delete", record.id, "--base", base]);
+    assert.equal(deleted.code, 0, deleted.stderr);
+    assert.match(deleted.stdout, /"deleted":true/);
+
+    const missing = await run(["subscriptions", "delete", record.id, "--base", base]);
+    assert.equal(missing.code, 1);
+  } finally {
+    await service.stop();
+  }
+});
+
+test("aep subscriptions create rejects invalid filter JSON", async () => {
+  const result = await run(["subscriptions", "create", "--filter", "{"]);
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /invalid JSON filter/);
 });
