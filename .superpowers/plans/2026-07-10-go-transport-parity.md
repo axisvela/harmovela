@@ -14,7 +14,7 @@
 
 - [ ] TDD: 3-4 tests (parse NDJSON, capture sent, empty lines, malformed JSON)
 - [ ] Implement `StdioTransport` with `Start()/Stop()/Send()/Read()` using `bufio.Scanner`
-- [ ] `go test ./aep/ -run TestStdio -v` â†’ PASS, full suite ~53 pass
+- [ ] `go test ./aep/ -run TestStdio -v` â†?PASS, full suite ~53 pass
 - [ ] Commit: `feat: add Go stdio transport`
 
 ### Task 2: SSE Transport
@@ -23,7 +23,7 @@
 
 - [ ] TDD: 3 tests (serves text/event-stream, POST ingest, rejects bad JSON)
 - [ ] Implement `SseServer` using `net/http` + `http.Handler`
-- [ ] `go test ./aep/ -run TestSse -v` â†’ PASS, full suite ~56 pass
+- [ ] `go test ./aep/ -run TestSse -v` â†?PASS, full suite ~56 pass
 - [ ] Commit: `feat: add Go SSE transport`
 
 ### Task 3: WebSocket Transport
@@ -33,11 +33,11 @@
 - [ ] `go get github.com/gorilla/websocket`
 - [ ] TDD: 4 tests (server start, exchange, bidirectional, shutdown)
 - [ ] Implement `WsServer` + `WsClient` with `Start/Stop/Send/Read`
-- [ ] `go test ./aep/ -run TestWs -v` â†’ PASS, full suite ~60 pass
+- [ ] `go test ./aep/ -run TestWs -v` â†?PASS, full suite ~60 pass
 - [ ] Commit: `feat: add Go WebSocket transport`
 
 ### Task 4: Docs, Verify, Push
 
-- [ ] Update `reference/go/README.md` scope â€” list all 4 transports
+- [ ] Update `implementations/go/README.md` scope â€?list all 4 transports
 - [ ] Full verify: `go test ./aep/ -v` (~60 tests), `node tools/conformance-runner.js`
 - [ ] Push

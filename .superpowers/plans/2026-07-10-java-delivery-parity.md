@@ -12,25 +12,25 @@
 
 ## File Structure
 
-- Create: `reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
-- Modify: `reference/java/README.md`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
+- Modify: `implementations/java/README.md`
 
 ---
 
 ### Task 1: InMemoryDeliveryStore
 
 **Files:**
-- Create: `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -129,14 +129,14 @@ class InMemoryDeliveryStoreTest {
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=InMemoryDeliveryStoreTest -q
+cd implementations/java && mvn test -pl . -Dtest=InMemoryDeliveryStoreTest -q
 ```
 
 Expected: FAIL (compilation error).
 
 - [ ] **Step 3: Implement**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -261,7 +261,7 @@ public class InMemoryDeliveryStore {
 - [ ] **Step 4: Run tests**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=InMemoryDeliveryStoreTest -q
+cd implementations/java && mvn test -pl . -Dtest=InMemoryDeliveryStoreTest -q
 ```
 
 Expected: 8 passed.
@@ -269,7 +269,7 @@ Expected: 8 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
 git commit -m "feat: add Java InMemoryDeliveryStore with tests"
 ```
 
@@ -278,12 +278,12 @@ git commit -m "feat: add Java InMemoryDeliveryStore with tests"
 ### Task 2: DeliveryJournal
 
 **Files:**
-- Create: `reference/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -362,14 +362,14 @@ class DeliveryJournalTest {
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=DeliveryJournalTest -q
+cd implementations/java && mvn test -pl . -Dtest=DeliveryJournalTest -q
 ```
 
 Expected: FAIL.
 
 - [ ] **Step 3: Implement**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -443,7 +443,7 @@ public class DeliveryJournal {
 - [ ] **Step 4: Run tests**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=DeliveryJournalTest -q
+cd implementations/java && mvn test -pl . -Dtest=DeliveryJournalTest -q
 ```
 
 Expected: 6 passed.
@@ -451,7 +451,7 @@ Expected: 6 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java reference/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java
 git commit -m "feat: add Java DeliveryJournal with tests"
 ```
 
@@ -460,12 +460,12 @@ git commit -m "feat: add Java DeliveryJournal with tests"
 ### Task 3: DeliveryTracker
 
 **Files:**
-- Create: `reference/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -564,14 +564,14 @@ class DeliveryTrackerTest {
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=DeliveryTrackerTest -q
+cd implementations/java && mvn test -pl . -Dtest=DeliveryTrackerTest -q
 ```
 
 Expected: FAIL.
 
 - [ ] **Step 3: Implement**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -666,7 +666,7 @@ public class DeliveryTracker {
 - [ ] **Step 4: Run tests**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=DeliveryTrackerTest -q
+cd implementations/java && mvn test -pl . -Dtest=DeliveryTrackerTest -q
 ```
 
 Expected: 9 passed.
@@ -674,7 +674,7 @@ Expected: 9 passed.
 - [ ] **Step 5: Run all Java tests**
 
 ```bash
-cd reference/java && mvn test -q
+cd implementations/java && mvn test -q
 ```
 
 Expected: ~40 tests pass (17 existing + 23 new).
@@ -682,7 +682,7 @@ Expected: ~40 tests pass (17 existing + 23 new).
 - [ ] **Step 6: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java reference/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java
 git commit -m "feat: add Java DeliveryTracker with store and journal"
 ```
 
@@ -691,11 +691,11 @@ git commit -m "feat: add Java DeliveryTracker with store and journal"
 ### Task 4: Documentation, Verification, And Push
 
 **Files:**
-- Modify: `reference/java/README.md`
+- Modify: `implementations/java/README.md`
 
 - [ ] **Step 1: Update Java README scope**
 
-In `reference/java/README.md`, add after the conformance line:
+In `implementations/java/README.md`, add after the conformance line:
 ```markdown
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store, and event journal
 ```
@@ -703,16 +703,16 @@ In `reference/java/README.md`, add after the conformance line:
 - [ ] **Step 2: Full verification**
 
 ```bash
-cd reference/java && mvn test -q
-cd reference/typescript && npm test && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
-cd reference/go && go test ./aep/ -v
+cd implementations/java && mvn test -q
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./aep/ -v
 ```
 
 - [ ] **Step 3: Commit and push**
 
 ```bash
-git add reference/java/README.md
+git add implementations/java/README.md
 git commit -m "docs: update Java delivery scope"
 git status --short
 git push

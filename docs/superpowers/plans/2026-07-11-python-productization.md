@@ -14,30 +14,30 @@
 
 ## File Structure
 
-- Modify `reference/python/src/aep/delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py`: add `get_dead_lettered`.
-- Create `reference/python/src/aep/runtime/__init__.py`.
-- Create `reference/python/src/aep/runtime/config.py`.
-- Create `reference/python/src/aep/runtime/service.py`.
-- Create `reference/python/src/aep/runtime/api_server.py`.
-- Create `reference/python/src/aep/runtime/server.py` (daemon).
-- Create `reference/python/src/aep/cli/__init__.py`.
-- Create `reference/python/src/aep/cli/main.py` (click group).
-- Modify `reference/python/pyproject.toml`: add `click`, add `[project.scripts]`.
-- Create tests under `reference/python/tests/`.
+- Modify `implementations/python/src/aep/delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py`: add `get_dead_lettered`.
+- Create `implementations/python/src/aep/runtime/__init__.py`.
+- Create `implementations/python/src/aep/runtime/config.py`.
+- Create `implementations/python/src/aep/runtime/service.py`.
+- Create `implementations/python/src/aep/runtime/api_server.py`.
+- Create `implementations/python/src/aep/runtime/server.py` (daemon).
+- Create `implementations/python/src/aep/cli/__init__.py`.
+- Create `implementations/python/src/aep/cli/main.py` (click group).
+- Modify `implementations/python/pyproject.toml`: add `click`, add `[project.scripts]`.
+- Create tests under `implementations/python/tests/`.
 
 ---
 
 ## Task 1: Delivery stores get_dead_lettered
 
 **Files:**
-- Modify: `reference/python/src/aep/delivery_store.py`
-- Modify: `reference/python/src/aep/sqlite_delivery_store.py`
-- Modify: `reference/python/src/aep/postgres_delivery_store.py`
-- Test: `reference/python/tests/test_delivery_store.py`, `tests/test_sqlite_delivery_store.py`, `tests/test_postgres_delivery_store.py`
+- Modify: `implementations/python/src/aep/delivery_store.py`
+- Modify: `implementations/python/src/aep/sqlite_delivery_store.py`
+- Modify: `implementations/python/src/aep/postgres_delivery_store.py`
+- Test: `implementations/python/tests/test_delivery_store.py`, `tests/test_sqlite_delivery_store.py`, `tests/test_postgres_delivery_store.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Append to `reference/python/tests/test_delivery_store.py`:
+Append to `implementations/python/tests/test_delivery_store.py`:
 
 ```python
 def test_lists_dead_lettered_records():
@@ -50,7 +50,7 @@ def test_lists_dead_lettered_records():
     assert records[0]["reason"]["error"]["code"] == "timeout"
 ```
 
-Append to `reference/python/tests/test_sqlite_delivery_store.py`:
+Append to `implementations/python/tests/test_sqlite_delivery_store.py`:
 
 ```python
 def test_lists_dead_lettered_records():
@@ -64,7 +64,7 @@ def test_lists_dead_lettered_records():
     store.close()
 ```
 
-Append to `reference/python/tests/test_postgres_delivery_store.py`:
+Append to `implementations/python/tests/test_postgres_delivery_store.py`:
 
 ```python
 def test_lists_dead_lettered_records(store):
@@ -78,12 +78,12 @@ def test_lists_dead_lettered_records(store):
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd reference/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py -q`
 Expected: FAIL with `AttributeError: 'InMemoryDeliveryStore' object has no attribute 'get_dead_lettered'`.
 
 - [ ] **Step 3: Implement in-memory get_dead_lettered**
 
-In `reference/python/src/aep/delivery_store.py`, the `_dead_lettered` dict stores records keyed by event id. Inspect its stored record shape and add a method to the class (after `get_pending_for_subscription`):
+In `implementations/python/src/aep/delivery_store.py`, the `_dead_lettered` dict stores records keyed by event id. Inspect its stored record shape and add a method to the class (after `get_pending_for_subscription`):
 
 ```python
     def get_dead_lettered(self) -> list[dict]:
@@ -101,7 +101,7 @@ If the stored record does not already carry `subscriptionId` and `reason`, updat
 
 - [ ] **Step 4: Implement sqlite get_dead_lettered**
 
-In `reference/python/src/aep/sqlite_delivery_store.py`, add after `get_pending_for_subscription`:
+In `implementations/python/src/aep/sqlite_delivery_store.py`, add after `get_pending_for_subscription`:
 
 ```python
     def get_dead_lettered(self) -> list[dict]:
@@ -122,7 +122,7 @@ Ensure `import json` exists at the top of the file; add it if missing.
 
 - [ ] **Step 5: Implement postgres get_dead_lettered**
 
-In `reference/python/src/aep/postgres_delivery_store.py`, add after `get_pending_for_subscription`:
+In `implementations/python/src/aep/postgres_delivery_store.py`, add after `get_pending_for_subscription`:
 
 ```python
     def get_dead_lettered(self) -> list[dict]:
@@ -145,13 +145,13 @@ Ensure `import json` exists at the top; add it if missing.
 
 - [ ] **Step 6: Run tests to verify they pass**
 
-Run: `cd reference/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py tests/test_postgres_delivery_store.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py tests/test_postgres_delivery_store.py -q`
 Expected: PASS.
 
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add reference/python/src/aep/delivery_store.py reference/python/src/aep/sqlite_delivery_store.py reference/python/src/aep/postgres_delivery_store.py reference/python/tests/test_delivery_store.py reference/python/tests/test_sqlite_delivery_store.py reference/python/tests/test_postgres_delivery_store.py
+git add implementations/python/src/aep/delivery_store.py implementations/python/src/aep/sqlite_delivery_store.py implementations/python/src/aep/postgres_delivery_store.py implementations/python/tests/test_delivery_store.py implementations/python/tests/test_sqlite_delivery_store.py implementations/python/tests/test_postgres_delivery_store.py
 git commit -m "feat(python): add get_dead_lettered to delivery stores"
 git push origin master
 ```
@@ -161,13 +161,13 @@ git push origin master
 ## Task 2: Runtime config
 
 **Files:**
-- Create: `reference/python/src/aep/runtime/__init__.py`
-- Create: `reference/python/src/aep/runtime/config.py`
-- Test: `reference/python/tests/test_runtime_config.py`
+- Create: `implementations/python/src/aep/runtime/__init__.py`
+- Create: `implementations/python/src/aep/runtime/config.py`
+- Test: `implementations/python/tests/test_runtime_config.py`
 
 - [ ] **Step 1: Write failing config tests**
 
-Create `reference/python/tests/test_runtime_config.py`:
+Create `implementations/python/tests/test_runtime_config.py`:
 
 ```python
 import json
@@ -218,12 +218,12 @@ def test_create_delivery_store():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_config.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_config.py -q`
 Expected: FAIL with `ModuleNotFoundError: No module named 'aep.runtime'`.
 
 - [ ] **Step 3: Create runtime package init**
 
-Create `reference/python/src/aep/runtime/__init__.py`:
+Create `implementations/python/src/aep/runtime/__init__.py`:
 
 ```python
 ```
@@ -232,7 +232,7 @@ Create `reference/python/src/aep/runtime/__init__.py`:
 
 - [ ] **Step 4: Implement config module**
 
-Create `reference/python/src/aep/runtime/config.py`:
+Create `implementations/python/src/aep/runtime/config.py`:
 
 ```python
 import copy
@@ -316,13 +316,13 @@ def create_delivery_store(config: dict):
 
 - [ ] **Step 5: Run config tests**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_config.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_config.py -q`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/__init__.py reference/python/src/aep/runtime/config.py reference/python/tests/test_runtime_config.py
+git add implementations/python/src/aep/runtime/__init__.py implementations/python/src/aep/runtime/config.py implementations/python/tests/test_runtime_config.py
 git commit -m "feat(python): add runtime config loader"
 git push origin master
 ```
@@ -332,12 +332,12 @@ git push origin master
 ## Task 3: Runtime service
 
 **Files:**
-- Create: `reference/python/src/aep/runtime/service.py`
-- Test: `reference/python/tests/test_runtime_service.py`
+- Create: `implementations/python/src/aep/runtime/service.py`
+- Test: `implementations/python/tests/test_runtime_service.py`
 
 - [ ] **Step 1: Write failing service tests**
 
-Create `reference/python/tests/test_runtime_service.py`:
+Create `implementations/python/tests/test_runtime_service.py`:
 
 ```python
 from aep.runtime.config import default_config
@@ -390,12 +390,12 @@ def test_rejects_invalid_event():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_service.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_service.py -q`
 Expected: FAIL with `ModuleNotFoundError: No module named 'aep.runtime.service'`.
 
 - [ ] **Step 3: Implement runtime service**
 
-Create `reference/python/src/aep/runtime/service.py`:
+Create `implementations/python/src/aep/runtime/service.py`:
 
 ```python
 from ..router import EventRouter
@@ -473,7 +473,7 @@ class AepRuntimeService:
 
 Note: `api_server.start_api_server` is created in Task 4. This import will fail until Task 4 is done, so runtime service tests that disable the api transport still import the module. To keep Task 3 self-contained, create a minimal `api_server.py` stub now:
 
-Create `reference/python/src/aep/runtime/api_server.py`:
+Create `implementations/python/src/aep/runtime/api_server.py`:
 
 ```python
 def start_api_server(service, options):
@@ -482,17 +482,17 @@ def start_api_server(service, options):
 
 The service tests disable the api transport, so the stub is never called.
 
-Also confirm the WebSocket transport exposes `on_message`. If the base `Transport` uses a different registration method, read `reference/python/src/aep/transport/base.py` and use the correct method name; adjust the `transport.on_message(...)` call accordingly.
+Also confirm the WebSocket transport exposes `on_message`. If the base `Transport` uses a different registration method, read `implementations/python/src/aep/transport/base.py` and use the correct method name; adjust the `transport.on_message(...)` call accordingly.
 
 - [ ] **Step 4: Run service tests**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_service.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_service.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/service.py reference/python/src/aep/runtime/api_server.py reference/python/tests/test_runtime_service.py
+git add implementations/python/src/aep/runtime/service.py implementations/python/src/aep/runtime/api_server.py implementations/python/tests/test_runtime_service.py
 git commit -m "feat(python): add runtime service"
 git push origin master
 ```
@@ -502,12 +502,12 @@ git push origin master
 ## Task 4: HTTP API server
 
 **Files:**
-- Modify: `reference/python/src/aep/runtime/api_server.py`
-- Test: `reference/python/tests/test_runtime_api.py`
+- Modify: `implementations/python/src/aep/runtime/api_server.py`
+- Test: `implementations/python/tests/test_runtime_api.py`
 
 - [ ] **Step 1: Write failing api tests**
 
-Create `reference/python/tests/test_runtime_api.py`:
+Create `implementations/python/tests/test_runtime_api.py`:
 
 ```python
 import json
@@ -598,12 +598,12 @@ def test_stats_pending_dlq():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_api.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_api.py -q`
 Expected: FAIL with `NotImplementedError` from the stub.
 
 - [ ] **Step 3: Implement api server**
 
-Replace `reference/python/src/aep/runtime/api_server.py` with:
+Replace `implementations/python/src/aep/runtime/api_server.py` with:
 
 ```python
 import json
@@ -682,13 +682,13 @@ Note: `service.publish` is called inside `do_POST` after validation. Because the
 
 - [ ] **Step 4: Run api tests**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_api.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_api.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/api_server.py reference/python/tests/test_runtime_api.py
+git add implementations/python/src/aep/runtime/api_server.py implementations/python/tests/test_runtime_api.py
 git commit -m "feat(python): add runtime HTTP api server"
 git push origin master
 ```
@@ -698,12 +698,12 @@ git push origin master
 ## Task 5: Daemon entrypoint
 
 **Files:**
-- Create: `reference/python/src/aep/runtime/server.py`
-- Test: `reference/python/tests/test_runtime_daemon.py`
+- Create: `implementations/python/src/aep/runtime/server.py`
+- Test: `implementations/python/tests/test_runtime_daemon.py`
 
 - [ ] **Step 1: Write failing daemon test**
 
-Create `reference/python/tests/test_runtime_daemon.py`:
+Create `implementations/python/tests/test_runtime_daemon.py`:
 
 ```python
 from aep.runtime.config import default_config
@@ -724,12 +724,12 @@ def test_start_daemon_returns_service():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_daemon.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_daemon.py -q`
 Expected: FAIL with `ModuleNotFoundError: No module named 'aep.runtime.server'`.
 
 - [ ] **Step 3: Implement daemon**
 
-Create `reference/python/src/aep/runtime/server.py`:
+Create `implementations/python/src/aep/runtime/server.py`:
 
 ```python
 import signal
@@ -781,13 +781,13 @@ Note: `signal.pause` is not available on Windows. The fallback loop keeps the pr
 
 - [ ] **Step 4: Run daemon test**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_daemon.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_daemon.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/server.py reference/python/tests/test_runtime_daemon.py
+git add implementations/python/src/aep/runtime/server.py implementations/python/tests/test_runtime_daemon.py
 git commit -m "feat(python): add aepd daemon entrypoint"
 git push origin master
 ```
@@ -797,14 +797,14 @@ git push origin master
 ## Task 6: CLI
 
 **Files:**
-- Modify: `reference/python/pyproject.toml`
-- Create: `reference/python/src/aep/cli/__init__.py`
-- Create: `reference/python/src/aep/cli/main.py`
-- Test: `reference/python/tests/test_cli.py`
+- Modify: `implementations/python/pyproject.toml`
+- Create: `implementations/python/src/aep/cli/__init__.py`
+- Create: `implementations/python/src/aep/cli/main.py`
+- Test: `implementations/python/tests/test_cli.py`
 
 - [ ] **Step 1: Add click dependency and scripts**
 
-In `reference/python/pyproject.toml`, add `"click>=8"` to `dependencies`, and add a scripts section after `[project]` dependencies:
+In `implementations/python/pyproject.toml`, add `"click>=8"` to `dependencies`, and add a scripts section after `[project]` dependencies:
 
 ```toml
 [project.scripts]
@@ -814,12 +814,12 @@ aepd = "aep.runtime.server:main"
 
 - [ ] **Step 2: Install click**
 
-Run: `cd reference/python && pip install "click>=8"`
+Run: `cd implementations/python && pip install "click>=8"`
 Expected: click installs.
 
 - [ ] **Step 3: Write failing CLI tests**
 
-Create `reference/python/tests/test_cli.py`:
+Create `implementations/python/tests/test_cli.py`:
 
 ```python
 import json
@@ -857,12 +857,12 @@ def test_conformance_runs():
 
 - [ ] **Step 4: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_cli.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli.py -q`
 Expected: FAIL because `aep.cli.main` does not exist.
 
 - [ ] **Step 5: Create cli package init**
 
-Create `reference/python/src/aep/cli/__init__.py`:
+Create `implementations/python/src/aep/cli/__init__.py`:
 
 ```python
 ```
@@ -871,7 +871,7 @@ Create `reference/python/src/aep/cli/__init__.py`:
 
 - [ ] **Step 6: Implement the CLI**
 
-Create `reference/python/src/aep/cli/main.py`:
+Create `implementations/python/src/aep/cli/main.py`:
 
 ```python
 import asyncio
@@ -1005,17 +1005,17 @@ if __name__ == "__main__":
     cli()
 ```
 
-Note: `aep conformance` shells out to pytest against the existing conformance test. This keeps a single conformance source of truth. If `tests/test_conformance.py` requires the package installed, run the CLI from `reference/python`.
+Note: `aep conformance` shells out to pytest against the existing conformance test. This keeps a single conformance source of truth. If `tests/test_conformance.py` requires the package installed, run the CLI from `implementations/python`.
 
 - [ ] **Step 7: Run CLI tests**
 
-Run: `cd reference/python && python -m pytest tests/test_cli.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli.py -q`
 Expected: PASS.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/python/pyproject.toml reference/python/src/aep/cli/__init__.py reference/python/src/aep/cli/main.py reference/python/tests/test_cli.py
+git add implementations/python/pyproject.toml implementations/python/src/aep/cli/__init__.py implementations/python/src/aep/cli/main.py implementations/python/tests/test_cli.py
 git commit -m "feat(python): add aep CLI with click"
 git push origin master
 ```
@@ -1025,11 +1025,11 @@ git push origin master
 ## Task 7: CLI daemon round-trip and final verification
 
 **Files:**
-- Test: `reference/python/tests/test_cli_daemon_e2e.py`
+- Test: `implementations/python/tests/test_cli_daemon_e2e.py`
 
 - [ ] **Step 1: Write failing e2e test**
 
-Create `reference/python/tests/test_cli_daemon_e2e.py`:
+Create `implementations/python/tests/test_cli_daemon_e2e.py`:
 
 ```python
 import json
@@ -1088,18 +1088,18 @@ def _wait_for_line(stream, needle, timeout=5):
 
 - [ ] **Step 2: Run test to verify it passes**
 
-Run: `cd reference/python && python -m pytest tests/test_cli_daemon_e2e.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli_daemon_e2e.py -q`
 Expected: PASS. This exercises the daemon and HTTP api end to end.
 
 - [ ] **Step 3: Run the full Python suite**
 
-Run: `cd reference/python && python -m pytest`
+Run: `cd implementations/python && python -m pytest`
 Expected: all tests pass.
 
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/python/tests/test_cli_daemon_e2e.py
+git add implementations/python/tests/test_cli_daemon_e2e.py
 git commit -m "test(python): add daemon HTTP api round-trip e2e"
 git push origin master
 ```
@@ -1110,7 +1110,7 @@ git push origin master
 
 - [ ] **Run full Python suite**
 
-Run: `cd reference/python && python -m pytest`
+Run: `cd implementations/python && python -m pytest`
 Expected: all tests pass.
 
 - [ ] **Verify git sync**

@@ -14,24 +14,24 @@
 
 ## File Structure
 
-- Modify `reference/python/src/aep/delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py`: subscription CRUD.
-- Modify `reference/python/src/aep/runtime/service.py`: subscription registry + fanout.
-- Modify `reference/python/src/aep/runtime/api_server.py`: subscription routes, long-poll, SSE.
-- Add tests under `reference/python/tests/`.
+- Modify `implementations/python/src/aep/delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py`: subscription CRUD.
+- Modify `implementations/python/src/aep/runtime/service.py`: subscription registry + fanout.
+- Modify `implementations/python/src/aep/runtime/api_server.py`: subscription routes, long-poll, SSE.
+- Add tests under `implementations/python/tests/`.
 
 ---
 
 ## Task 1: Delivery store subscription CRUD
 
 **Files:**
-- Modify: `reference/python/src/aep/delivery_store.py`
-- Modify: `reference/python/src/aep/sqlite_delivery_store.py`
-- Modify: `reference/python/src/aep/postgres_delivery_store.py`
-- Test: `reference/python/tests/test_delivery_store.py`, `tests/test_sqlite_delivery_store.py`, `tests/test_postgres_delivery_store.py`
+- Modify: `implementations/python/src/aep/delivery_store.py`
+- Modify: `implementations/python/src/aep/sqlite_delivery_store.py`
+- Modify: `implementations/python/src/aep/postgres_delivery_store.py`
+- Test: `implementations/python/tests/test_delivery_store.py`, `tests/test_sqlite_delivery_store.py`, `tests/test_postgres_delivery_store.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Append to `reference/python/tests/test_delivery_store.py`:
+Append to `implementations/python/tests/test_delivery_store.py`:
 
 ```python
 def test_subscription_crud():
@@ -44,7 +44,7 @@ def test_subscription_crud():
     assert store.delete_subscription("sub_1") is False
 ```
 
-Append to `reference/python/tests/test_sqlite_delivery_store.py`:
+Append to `implementations/python/tests/test_sqlite_delivery_store.py`:
 
 ```python
 def test_subscription_crud():
@@ -58,7 +58,7 @@ def test_subscription_crud():
     store.close()
 ```
 
-Append to `reference/python/tests/test_postgres_delivery_store.py`:
+Append to `implementations/python/tests/test_postgres_delivery_store.py`:
 
 ```python
 def test_subscription_crud(store):
@@ -72,12 +72,12 @@ def test_subscription_crud(store):
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run: `cd reference/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py -q`
 Expected: FAIL with `AttributeError: ... has no attribute 'create_subscription'`.
 
 - [ ] **Step 3: Implement in-memory subscription CRUD**
 
-In `reference/python/src/aep/delivery_store.py`, add to `__init__` after `self._dead_lettered`:
+In `implementations/python/src/aep/delivery_store.py`, add to `__init__` after `self._dead_lettered`:
 
 ```python
         self._subscriptions: dict[str, dict] = {}
@@ -102,7 +102,7 @@ Add methods to the class (after `get_dead_lettered`):
 
 - [ ] **Step 4: Implement sqlite subscription CRUD**
 
-In `reference/python/src/aep/sqlite_delivery_store.py` `_init_schema`, add a table inside the `executescript` block:
+In `implementations/python/src/aep/sqlite_delivery_store.py` `_init_schema`, add a table inside the `executescript` block:
 
 ```python
             CREATE TABLE IF NOT EXISTS delivery_subscriptions (
@@ -149,7 +149,7 @@ Add methods (after `get_dead_lettered`):
 
 - [ ] **Step 5: Implement postgres subscription CRUD**
 
-In `reference/python/src/aep/postgres_delivery_store.py` `_init_schema`, add a table to the `CREATE TABLE` statements:
+In `implementations/python/src/aep/postgres_delivery_store.py` `_init_schema`, add a table to the `CREATE TABLE` statements:
 
 ```python
                 CREATE TABLE IF NOT EXISTS {self._t('subscriptions')} (
@@ -202,13 +202,13 @@ Also update the `close` drop path if `drop_on_close` drops tables. Read the `clo
 
 - [ ] **Step 6: Run store tests**
 
-Run: `cd reference/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py tests/test_postgres_delivery_store.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_delivery_store.py tests/test_sqlite_delivery_store.py tests/test_postgres_delivery_store.py -q`
 Expected: PASS.
 
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add reference/python/src/aep/delivery_store.py reference/python/src/aep/sqlite_delivery_store.py reference/python/src/aep/postgres_delivery_store.py reference/python/tests/test_delivery_store.py reference/python/tests/test_sqlite_delivery_store.py reference/python/tests/test_postgres_delivery_store.py
+git add implementations/python/src/aep/delivery_store.py implementations/python/src/aep/sqlite_delivery_store.py implementations/python/src/aep/postgres_delivery_store.py implementations/python/tests/test_delivery_store.py implementations/python/tests/test_sqlite_delivery_store.py implementations/python/tests/test_postgres_delivery_store.py
 git commit -m "feat(python): add subscription CRUD to delivery stores"
 git push origin master
 ```
@@ -218,12 +218,12 @@ git push origin master
 ## Task 2: Runtime subscription registry
 
 **Files:**
-- Modify: `reference/python/src/aep/runtime/service.py`
-- Test: `reference/python/tests/test_runtime_subscriptions.py`
+- Modify: `implementations/python/src/aep/runtime/service.py`
+- Test: `implementations/python/tests/test_runtime_subscriptions.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/python/tests/test_runtime_subscriptions.py`:
+Create `implementations/python/tests/test_runtime_subscriptions.py`:
 
 ```python
 from aep.runtime.config import default_config
@@ -276,12 +276,12 @@ Note: `session.opened` is a standard event type, so it validates but does not ma
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_subscriptions.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_subscriptions.py -q`
 Expected: FAIL with `AttributeError: 'AepRuntimeService' object has no attribute 'create_subscription'`.
 
 - [ ] **Step 3: Implement the registry**
 
-In `reference/python/src/aep/runtime/service.py`, update imports and add registry logic.
+In `implementations/python/src/aep/runtime/service.py`, update imports and add registry logic.
 
 Change the imports at the top to add subscription matching and uuid/time:
 
@@ -376,13 +376,13 @@ Add registry methods to the class (after `get_dead_lettered`):
 
 - [ ] **Step 4: Run registry test**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_subscriptions.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_subscriptions.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/service.py reference/python/tests/test_runtime_subscriptions.py
+git add implementations/python/src/aep/runtime/service.py implementations/python/tests/test_runtime_subscriptions.py
 git commit -m "feat(python): add runtime subscription registry with fanout"
 git push origin master
 ```
@@ -392,12 +392,12 @@ git push origin master
 ## Task 3: Subscription CRUD and long-poll endpoints
 
 **Files:**
-- Modify: `reference/python/src/aep/runtime/api_server.py`
-- Test: `reference/python/tests/test_runtime_subscriptions_api.py`
+- Modify: `implementations/python/src/aep/runtime/api_server.py`
+- Test: `implementations/python/tests/test_runtime_subscriptions_api.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/python/tests/test_runtime_subscriptions_api.py`:
+Create `implementations/python/tests/test_runtime_subscriptions_api.py`:
 
 ```python
 import json
@@ -472,12 +472,12 @@ def test_long_poll_returns_matching_events():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_subscriptions_api.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_subscriptions_api.py -q`
 Expected: FAIL because subscription routes return 404.
 
 - [ ] **Step 3: Implement subscription routes**
 
-Rewrite `reference/python/src/aep/runtime/api_server.py` to handle subscription routes. Replace the `do_GET`, `do_POST`, and add `do_DELETE`, plus a route parser for `/subscriptions/:id[/events|/stream]`.
+Rewrite `implementations/python/src/aep/runtime/api_server.py` to handle subscription routes. Replace the `do_GET`, `do_POST`, and add `do_DELETE`, plus a route parser for `/subscriptions/:id[/events|/stream]`.
 
 Replace the `Handler` class body's `do_GET` and `do_POST` with:
 
@@ -596,13 +596,13 @@ def _parse_subscription_route(route):
 
 - [ ] **Step 4: Run subscription api tests**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_subscriptions_api.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_subscriptions_api.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/runtime/api_server.py reference/python/tests/test_runtime_subscriptions_api.py
+git add implementations/python/src/aep/runtime/api_server.py implementations/python/tests/test_runtime_subscriptions_api.py
 git commit -m "feat(python): add HTTP subscription CRUD and long-poll endpoints"
 git push origin master
 ```
@@ -612,11 +612,11 @@ git push origin master
 ## Task 4: SSE stream endpoint test
 
 **Files:**
-- Test: `reference/python/tests/test_runtime_subscriptions_sse.py`
+- Test: `implementations/python/tests/test_runtime_subscriptions_sse.py`
 
 - [ ] **Step 1: Write SSE test**
 
-Create `reference/python/tests/test_runtime_subscriptions_sse.py`:
+Create `implementations/python/tests/test_runtime_subscriptions_sse.py`:
 
 ```python
 import json
@@ -672,13 +672,13 @@ def test_sse_stream_receives_matching_event():
 
 - [ ] **Step 2: Run SSE test**
 
-Run: `cd reference/python && python -m pytest tests/test_runtime_subscriptions_sse.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_runtime_subscriptions_sse.py -q`
 Expected: PASS. The initial `: ok` flush ensures `urlopen` returns before the first event.
 
 - [ ] **Step 3: Commit and push**
 
 ```bash
-git add reference/python/tests/test_runtime_subscriptions_sse.py
+git add implementations/python/tests/test_runtime_subscriptions_sse.py
 git commit -m "test(python): cover SSE subscription stream"
 git push origin master
 ```
@@ -689,7 +689,7 @@ git push origin master
 
 - [ ] **Step 1: Run full Python suite**
 
-Run: `cd reference/python && python -m pytest`
+Run: `cd implementations/python && python -m pytest`
 Expected: all tests pass.
 
 - [ ] **Step 2: Verify git sync**

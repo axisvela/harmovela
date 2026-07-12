@@ -4,7 +4,7 @@ Date: 2026-07-10
 
 ## Goal
 
-Add a minimal Java reference implementation under `reference/java/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
+Add a minimal Java reference implementation under `implementations/java/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
 This gives the project a fourth language pillar and validates protocol neutrality across typed/VM languages.
 
@@ -22,10 +22,10 @@ Same minimal pattern as the Go reference: typed classes, validation, fixture rea
 
 ## Tech Stack
 
-- **JDK 21** â€” modern Java with records, switch expressions, text blocks
-- **Maven** â€” build tool, no wrapper needed
-- **JUnit 5** â€” `@Test`, `@ParameterizedTest`, assertions
-- **Jackson Databind** â€” JSON parsing (single dependency, standard)
+- **JDK 21** â€?modern Java with records, switch expressions, text blocks
+- **Maven** â€?build tool, no wrapper needed
+- **JUnit 5** â€?`@Test`, `@ParameterizedTest`, assertions
+- **Jackson Databind** â€?JSON parsing (single dependency, standard)
 - **GroupId**: `com.axisrobo`, **ArtifactId**: `aep-reference-java`
 
 ## Components
@@ -42,13 +42,13 @@ All sources under `com.axisrobo.aep`:
 
 ```
 src/main/java/com/axisrobo/aep/
-  Envelope.java      â€” validate(Map<String,Object>) returns List<String>
-  EventTypes.java    â€” static Set<String> STANDARD_TYPES + isStandardEventType()
-  Errors.java        â€” static error code constants + errorPayload()
-  EventRouter.java   â€” handler registration + dispatch
-  Session.java       â€” session state machine
-  Harness.java       â€” Harness + TaskTracker, C1 behavior
-  Fixtures.java      â€” manifest + NDJSON loader
+  Envelope.java      â€?validate(Map<String,Object>) returns List<String>
+  EventTypes.java    â€?static Set<String> STANDARD_TYPES + isStandardEventType()
+  Errors.java        â€?static error code constants + errorPayload()
+  EventRouter.java   â€?handler registration + dispatch
+  Session.java       â€?session state machine
+  Harness.java       â€?Harness + TaskTracker, C1 behavior
+  Fixtures.java      â€?manifest + NDJSON loader
 src/test/java/com/axisrobo/aep/
   EnvelopeTest.java
   EventRouterTest.java
@@ -58,7 +58,7 @@ src/test/java/com/axisrobo/aep/
 
 ### Envelope Validation
 
-`Validate(Map<String,Object>) -> List<String>` â€” mirrors Go `ValidateEnvelope`:
+`Validate(Map<String,Object>) -> List<String>` â€?mirrors Go `ValidateEnvelope`:
 - Required string fields: aep_version, id, type, source, created_at
 - Payload presence
 - Type against standard registry
@@ -76,7 +76,7 @@ src/test/java/com/axisrobo/aep/
 ### Harness
 
 - `Harness` with `handle(Map<String,Object>) -> List<Map<String,Object>>`.
-- `TaskTracker` inner class with state machine (submitted â†’ accepted â†’ started â†’ progress/blocked/output â†’ completed/failed/cancelled/timed_out).
+- `TaskTracker` inner class with state machine (submitted â†?accepted â†?started â†?progress/blocked/output â†?completed/failed/cancelled/timed_out).
 - Handles: capabilities, subscriptions, sessions, task lifecycle.
 - Matches TypeScript `AepHarness` behavior exactly.
 
@@ -91,15 +91,15 @@ src/test/java/com/axisrobo/aep/
 ## Testing
 
 ```sh
-cd reference/java && mvn test
+cd implementations/java && mvn test
 ```
 
 Verification:
 ```sh
-cd reference/java && mvn test
-cd reference/typescript && npm test && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
-cd reference/go && go test ./aep/ -v
+cd implementations/java && mvn test
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./aep/ -v
 ```
 
 ## Open Decisions Resolved

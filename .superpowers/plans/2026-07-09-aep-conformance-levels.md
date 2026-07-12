@@ -12,16 +12,16 @@
 
 ## File Structure
 
-- Create: `docs/specs/conformance.md` â€” protocol-facing conformance level specification.
-- Create: `conformance/manifest.json` â€” shared source of truth mapping fixtures to levels, expectations, and tags.
-- Create: `reference/typescript/src/conformance.js` â€” TypeScript manifest loader and fixture verifier.
-- Create: `reference/typescript/src/conformance-cli.js` â€” command-line wrapper for `npm run conformance`.
-- Modify: `reference/typescript/package.json` â€” add `conformance` script.
-- Modify: `reference/typescript/test/fixtures.test.js` â€” replace hard-coded fixture list with manifest-driven assertions.
-- Modify: `reference/python/tests/test_fixtures.py` â€” replace hard-coded fixture list with manifest-driven pytest parametrization.
-- Modify: `README.md` â€” add conformance spec link and command.
-- Modify: `docs/roadmap.md` â€” mark Phase 6 conformance levels with concrete files.
-- Modify: `reference/typescript/README.md` â€” document `npm run conformance`.
+- Create: `docs/specs/conformance.md` â€?protocol-facing conformance level specification.
+- Create: `conformance/manifest.json` â€?shared source of truth mapping fixtures to levels, expectations, and tags.
+- Create: `implementations/typescript/src/conformance.js` â€?TypeScript manifest loader and fixture verifier.
+- Create: `implementations/typescript/src/conformance-cli.js` â€?command-line wrapper for `npm run conformance`.
+- Modify: `implementations/typescript/package.json` â€?add `conformance` script.
+- Modify: `implementations/typescript/test/fixtures.test.js` â€?replace hard-coded fixture list with manifest-driven assertions.
+- Modify: `implementations/python/tests/test_fixtures.py` â€?replace hard-coded fixture list with manifest-driven pytest parametrization.
+- Modify: `README.md` â€?add conformance spec link and command.
+- Modify: `docs/roadmap.md` â€?mark Phase 6 conformance levels with concrete files.
+- Modify: `implementations/typescript/README.md` â€?document `npm run conformance`.
 
 ## Manifest Shape
 
@@ -185,7 +185,7 @@ Create `conformance/manifest.json` with this content:
 In `README.md`, add this line after the transport spec links:
 
 ```markdown
-- `docs/specs/conformance.md` â€” draft conformance levels and shared fixture manifest rules
+- `docs/specs/conformance.md` â€?draft conformance levels and shared fixture manifest rules
 ```
 
 Add this command block after the TypeScript test command:
@@ -194,7 +194,7 @@ Add this command block after the TypeScript test command:
 Run TypeScript conformance fixtures:
 
 ```sh
-cd reference/typescript && npm run conformance
+cd implementations/typescript && npm run conformance
 ```
 ```
 
@@ -228,11 +228,11 @@ Expected: commit succeeds with the new spec, manifest, and docs updates.
 ### Task 2: Add TypeScript Manifest-Driven Tests
 
 **Files:**
-- Modify: `reference/typescript/test/fixtures.test.js`
+- Modify: `implementations/typescript/test/fixtures.test.js`
 
 - [ ] **Step 1: Replace hard-coded fixture tests with manifest-driven tests**
 
-Replace `reference/typescript/test/fixtures.test.js` with:
+Replace `implementations/typescript/test/fixtures.test.js` with:
 
 ```js
 import assert from "node:assert/strict";
@@ -276,7 +276,7 @@ function readNdjson(path) {
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/fixtures.test.js
 ```
 
@@ -287,7 +287,7 @@ Expected: the fixture test passes. AJV may print warnings about unknown `date-ti
 Run:
 
 ```bash
-git add reference/typescript/test/fixtures.test.js
+git add implementations/typescript/test/fixtures.test.js
 git commit -m "test: drive TypeScript fixtures from conformance manifest"
 ```
 
@@ -298,17 +298,17 @@ Expected: commit succeeds.
 ### Task 3: Add TypeScript Conformance Runner
 
 **Files:**
-- Create: `reference/typescript/src/conformance.js`
-- Create: `reference/typescript/src/conformance-cli.js`
-- Modify: `reference/typescript/package.json`
-- Modify: `reference/typescript/README.md`
+- Create: `implementations/typescript/src/conformance.js`
+- Create: `implementations/typescript/src/conformance-cli.js`
+- Modify: `implementations/typescript/package.json`
+- Modify: `implementations/typescript/README.md`
 
 - [ ] **Step 1: Add a failing runner test via CLI command**
 
 Before implementation, run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run conformance
 ```
 
@@ -316,7 +316,7 @@ Expected: FAIL because the `conformance` script does not exist.
 
 - [ ] **Step 2: Add the conformance module**
 
-Create `reference/typescript/src/conformance.js` with:
+Create `implementations/typescript/src/conformance.js` with:
 
 ```js
 import { readFileSync } from "node:fs";
@@ -419,7 +419,7 @@ export function verifyFixture(fixture, events) {
 
 - [ ] **Step 3: Add the CLI wrapper**
 
-Create `reference/typescript/src/conformance-cli.js` with:
+Create `implementations/typescript/src/conformance-cli.js` with:
 
 ```js
 #!/usr/bin/env node
@@ -456,7 +456,7 @@ if (failed) {
 
 - [ ] **Step 4: Add the npm script**
 
-In `reference/typescript/package.json`, update `scripts` to include:
+In `implementations/typescript/package.json`, update `scripts` to include:
 
 ```json
 "conformance": "node ./src/conformance-cli.js"
@@ -466,7 +466,7 @@ Keep the existing scripts unchanged.
 
 - [ ] **Step 5: Document the TypeScript command**
 
-In `reference/typescript/README.md`, add after the test command:
+In `implementations/typescript/README.md`, add after the test command:
 
 ```markdown
 Run conformance fixtures:
@@ -481,7 +481,7 @@ npm run conformance
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run conformance
 ```
 
@@ -492,7 +492,7 @@ Expected: PASS for `task-lifecycle.ndjson`, `memory-context-ack.ndjson`, and `se
 Run:
 
 ```bash
-git add reference/typescript/src/conformance.js reference/typescript/src/conformance-cli.js reference/typescript/package.json reference/typescript/README.md
+git add implementations/typescript/src/conformance.js implementations/typescript/src/conformance-cli.js implementations/typescript/package.json implementations/typescript/README.md
 git commit -m "feat: add TypeScript conformance runner"
 ```
 
@@ -503,11 +503,11 @@ Expected: commit succeeds.
 ### Task 4: Add Python Manifest-Driven Fixture Tests
 
 **Files:**
-- Modify: `reference/python/tests/test_fixtures.py`
+- Modify: `implementations/python/tests/test_fixtures.py`
 
 - [ ] **Step 1: Replace hard-coded Python fixture tests**
 
-Replace `reference/python/tests/test_fixtures.py` with:
+Replace `implementations/python/tests/test_fixtures.py` with:
 
 ```python
 import json
@@ -578,7 +578,7 @@ def test_conformance_stateful_flows_are_accepted(fixture: dict):
 Run:
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_fixtures.py -q
 ```
 
@@ -589,7 +589,7 @@ Expected: manifest tests pass for AEP-C0 and AEP-C1 fixtures. `delivery.ndjson` 
 Run:
 
 ```bash
-git add reference/python/tests/test_fixtures.py
+git add implementations/python/tests/test_fixtures.py
 git commit -m "test: drive Python fixtures from conformance manifest"
 ```
 
@@ -600,14 +600,14 @@ Expected: commit succeeds.
 ### Task 5: Full Verification And Documentation Polish
 
 **Files:**
-- Modify only if verification exposes missing docs or command text: `README.md`, `reference/typescript/README.md`, `docs/roadmap.md`
+- Modify only if verification exposes missing docs or command text: `README.md`, `implementations/typescript/README.md`, `docs/roadmap.md`
 
 - [ ] **Step 1: Run TypeScript tests**
 
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test
 ```
 
@@ -618,7 +618,7 @@ Expected: all tests pass.
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run conformance
 ```
 
@@ -637,7 +637,7 @@ SKIP AEP-C2 fixtures/delivery.ndjson (above target AEP-C1)
 Run:
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest --tb=short -q
 ```
 
@@ -648,7 +648,7 @@ Expected: all tests pass.
 If documentation was adjusted after verification, run:
 
 ```bash
-git add README.md reference/typescript/README.md docs/roadmap.md
+git add README.md implementations/typescript/README.md docs/roadmap.md
 git commit -m "docs: document conformance verification commands"
 ```
 

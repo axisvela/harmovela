@@ -12,21 +12,21 @@
 
 ## File Structure
 
-- Modify: `reference/java/pom.xml` â€” add sqlite-jdbc dependency
-- Create: `reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
+- Modify: `implementations/java/pom.xml` â€?add sqlite-jdbc dependency
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
 
 ---
 
 ### Task 1: SQLite Store Implementation
 
 **Files:**
-- Modify: `reference/java/pom.xml`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
+- Modify: `implementations/java/pom.xml`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
 
 - [ ] **Step 1: Add sqlite-jdbc to pom.xml**
 
-Add this dependency inside `<dependencies>` in `reference/java/pom.xml`:
+Add this dependency inside `<dependencies>` in `implementations/java/pom.xml`:
 
 ```xml
 <dependency>
@@ -39,14 +39,14 @@ Add this dependency inside `<dependencies>` in `reference/java/pom.xml`:
 - [ ] **Step 2: Run Maven to verify dependency resolves**
 
 ```bash
-cd reference/java && mvn compile -q
+cd implementations/java && mvn compile -q
 ```
 
 Expected: BUILD SUCCESS.
 
 - [ ] **Step 3: Implement SqliteDeliveryStore**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -352,7 +352,7 @@ public class SqliteDeliveryStore {
 - [ ] **Step 4: Commit**
 
 ```bash
-git add reference/java/pom.xml reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java
 git commit -m "feat: add Java SqliteDeliveryStore"
 ```
 
@@ -361,11 +361,11 @@ git commit -m "feat: add Java SqliteDeliveryStore"
 ### Task 2: SQLite Store Tests
 
 **Files:**
-- Create: `reference/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -465,7 +465,7 @@ class SqliteDeliveryStoreTest {
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=SqliteDeliveryStoreTest -q
+cd implementations/java && mvn test -pl . -Dtest=SqliteDeliveryStoreTest -q
 ```
 
 Expected: FAIL.
@@ -473,7 +473,7 @@ Expected: FAIL.
 - [ ] **Step 3: Run tests after implementation already exists**
 
 ```bash
-cd reference/java && mvn test -pl . -Dtest=SqliteDeliveryStoreTest -q
+cd implementations/java && mvn test -pl . -Dtest=SqliteDeliveryStoreTest -q
 ```
 
 Expected: 7 passed.
@@ -481,7 +481,7 @@ Expected: 7 passed.
 - [ ] **Step 4: Run all Java tests**
 
 ```bash
-cd reference/java && mvn test -q
+cd implementations/java && mvn test -q
 ```
 
 Expected: all pass (~47 tests).
@@ -489,7 +489,7 @@ Expected: all pass (~47 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java
+git add implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java
 git commit -m "test: add Java SqliteDeliveryStore tests"
 ```
 
@@ -500,10 +500,10 @@ git commit -m "test: add Java SqliteDeliveryStore tests"
 - [ ] **Step 1: Full cross-language verification**
 
 ```bash
-cd reference/java && mvn test -q
-cd reference/typescript && npm test && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
-cd reference/go && go test ./aep/ -v
+cd implementations/java && mvn test -q
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./aep/ -v
 ```
 
 - [ ] **Step 2: Push**

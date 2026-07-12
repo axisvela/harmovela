@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a minimal Go reference implementation under `reference/go/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
+**Goal:** Add a minimal Go reference implementation under `implementations/go/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
 **Architecture:** One Go module (`github.com/axisrobo/aep`) with zero external dependencies. Six source files mirror the TypeScript reference structure: event types, errors, envelope validation, router, session, harness, and fixtures. Table-driven `go test` runs the shared conformance manifest.
 
@@ -12,34 +12,34 @@
 
 ## File Structure
 
-- Create: `reference/go/go.mod` â€” module path `github.com/axisrobo/aep`, Go 1.21.
-- Create: `reference/go/aep/event_types.go` â€” standard event type registry.
-- Create: `reference/go/aep/errors.go` â€” error code constants and payload builder.
-- Create: `reference/go/aep/envelope.go` â€” Validates raw envelope maps.
-- Create: `reference/go/aep/envelope_test.go` â€” unit tests for validation.
-- Create: `reference/go/aep/router.go` â€” event router with pattern matching.
-- Create: `reference/go/aep/router_test.go` â€” unit tests for dispatch.
-- Create: `reference/go/aep/session.go` â€” session state machine.
-- Create: `reference/go/aep/harness.go` â€” harness + task tracker, implements C1 behavior.
-- Create: `reference/go/aep/harness_test.go` â€” unit tests for harness (sub, task, session).
-- Create: `reference/go/aep/fixtures.go` â€” manifest and NDJSON loader.
-- Create: `reference/go/aep/conformance_test.go` â€” manifest-driven conformance tests.
-- Modify: `reference/go/README.md` â€” setup/test scope.
-- Modify: `README.md` â€” Go reference status.
-- Modify: `docs/roadmap.md` â€” optional Phase 3 note.
+- Create: `implementations/go/go.mod` â€?module path `github.com/axisrobo/aep`, Go 1.21.
+- Create: `implementations/go/aep/event_types.go` â€?standard event type registry.
+- Create: `implementations/go/aep/errors.go` â€?error code constants and payload builder.
+- Create: `implementations/go/aep/envelope.go` â€?Validates raw envelope maps.
+- Create: `implementations/go/aep/envelope_test.go` â€?unit tests for validation.
+- Create: `implementations/go/aep/router.go` â€?event router with pattern matching.
+- Create: `implementations/go/aep/router_test.go` â€?unit tests for dispatch.
+- Create: `implementations/go/aep/session.go` â€?session state machine.
+- Create: `implementations/go/aep/harness.go` â€?harness + task tracker, implements C1 behavior.
+- Create: `implementations/go/aep/harness_test.go` â€?unit tests for harness (sub, task, session).
+- Create: `implementations/go/aep/fixtures.go` â€?manifest and NDJSON loader.
+- Create: `implementations/go/aep/conformance_test.go` â€?manifest-driven conformance tests.
+- Modify: `implementations/go/README.md` â€?setup/test scope.
+- Modify: `README.md` â€?Go reference status.
+- Modify: `docs/roadmap.md` â€?optional Phase 3 note.
 
 ---
 
 ### Task 1: Module Setup, Event Types, And Error Model
 
 **Files:**
-- Create: `reference/go/go.mod`
-- Create: `reference/go/aep/event_types.go`
-- Create: `reference/go/aep/errors.go`
+- Create: `implementations/go/go.mod`
+- Create: `implementations/go/aep/event_types.go`
+- Create: `implementations/go/aep/errors.go`
 
 - [ ] **Step 1: Initialize Go module**
 
-Create `reference/go/go.mod`:
+Create `implementations/go/go.mod`:
 
 ```
 module github.com/axisrobo/aep
@@ -49,7 +49,7 @@ go 1.21
 
 - [ ] **Step 2: Add event type registry**
 
-Create `reference/go/aep/event_types.go`:
+Create `implementations/go/aep/event_types.go`:
 
 ```go
 package aep
@@ -129,7 +129,7 @@ func IsStandardEventType(typ string) bool {
 
 - [ ] **Step 3: Add error model**
 
-Create `reference/go/aep/errors.go`:
+Create `implementations/go/aep/errors.go`:
 
 ```go
 package aep
@@ -166,7 +166,7 @@ func ErrorPayload(code, message string, retryable bool) map[string]any {
 - [ ] **Step 4: Commit**
 
 ```bash
-cd reference/go
+cd implementations/go
 git add go.mod aep/event_types.go aep/errors.go
 git commit -m "feat: add Go module with event types and error model"
 ```
@@ -178,12 +178,12 @@ Expected: commit succeeds.
 ### Task 2: Envelope Validation
 
 **Files:**
-- Create: `reference/go/aep/envelope.go`
-- Create: `reference/go/aep/envelope_test.go`
+- Create: `implementations/go/aep/envelope.go`
+- Create: `implementations/go/aep/envelope_test.go`
 
 - [ ] **Step 1: Write failing envelope tests**
 
-Create `reference/go/aep/envelope_test.go`:
+Create `implementations/go/aep/envelope_test.go`:
 
 ```go
 package aep
@@ -258,7 +258,7 @@ Note: if `slices.ContainsFunc` is not available in Go 1.21, use a manual loop in
 - [ ] **Step 2: Run test to verify it fails**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestValidateEnvelope -v
 ```
 
@@ -266,7 +266,7 @@ Expected: FAIL with undefined `ValidateEnvelope`.
 
 - [ ] **Step 3: Add envelope validation**
 
-Create `reference/go/aep/envelope.go`:
+Create `implementations/go/aep/envelope.go`:
 
 ```go
 package aep
@@ -375,7 +375,7 @@ func isStringOrSlice(v any) bool {
 - [ ] **Step 4: Run the envelope tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestValidateEnvelope -v
 ```
 
@@ -384,7 +384,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/go/aep/envelope.go reference/go/aep/envelope_test.go
+git add implementations/go/aep/envelope.go implementations/go/aep/envelope_test.go
 git commit -m "feat: add Go envelope validation"
 ```
 
@@ -395,12 +395,12 @@ Expected: commit succeeds.
 ### Task 3: Event Router
 
 **Files:**
-- Create: `reference/go/aep/router.go`
-- Create: `reference/go/aep/router_test.go`
+- Create: `implementations/go/aep/router.go`
+- Create: `implementations/go/aep/router_test.go`
 
 - [ ] **Step 1: Write failing router tests**
 
-Create `reference/go/aep/router_test.go`:
+Create `implementations/go/aep/router_test.go`:
 
 ```go
 package aep
@@ -477,7 +477,7 @@ func TestRouterNoMatchReturnsEmpty(t *testing.T) {
 - [ ] **Step 2: Run router tests to verify they fail**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestRouter -v
 ```
 
@@ -485,7 +485,7 @@ Expected: FAIL with undefined `NewEventRouter`.
 
 - [ ] **Step 3: Add router implementation**
 
-Create `reference/go/aep/router.go`:
+Create `implementations/go/aep/router.go`:
 
 ```go
 package aep
@@ -548,7 +548,7 @@ func (r *EventRouter) Dispatch(event map[string]any) []map[string]any {
 - [ ] **Step 4: Run router tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestRouter -v
 ```
 
@@ -557,7 +557,7 @@ Expected: PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/go/aep/router.go reference/go/aep/router_test.go
+git add implementations/go/aep/router.go implementations/go/aep/router_test.go
 git commit -m "feat: add Go event router"
 ```
 
@@ -568,13 +568,13 @@ Expected: commit succeeds.
 ### Task 4: Session And Harness
 
 **Files:**
-- Create: `reference/go/aep/session.go`
-- Create: `reference/go/aep/harness.go`
-- Create: `reference/go/aep/harness_test.go`
+- Create: `implementations/go/aep/session.go`
+- Create: `implementations/go/aep/harness.go`
+- Create: `implementations/go/aep/harness_test.go`
 
 - [ ] **Step 1: Write failing harness test for capabilities**
 
-Create `reference/go/aep/harness_test.go`:
+Create `implementations/go/aep/harness_test.go`:
 
 ```go
 package aep
@@ -787,7 +787,7 @@ func TestHarnessTaskRejectsUnknownTask(t *testing.T) {
 - [ ] **Step 2: Run harness tests to verify they fail**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestHarness -v
 ```
 
@@ -795,7 +795,7 @@ Expected: FAIL with undefined `NewHarness`.
 
 - [ ] **Step 3: Add session implementation**
 
-Create `reference/go/aep/session.go`:
+Create `implementations/go/aep/session.go`:
 
 ```go
 package aep
@@ -942,7 +942,7 @@ Note: the `padInt` helper is a simple left-padding function. If Go 1.21 lacks `f
 
 - [ ] **Step 4: Add harness implementation**
 
-Create `reference/go/aep/harness.go`:
+Create `implementations/go/aep/harness.go`:
 
 ```go
 package aep
@@ -1347,7 +1347,7 @@ func (h *Harness) newEvent(typ string, input map[string]any, payload map[string]
 - [ ] **Step 5: Run harness tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestHarness -v
 ```
 
@@ -1356,7 +1356,7 @@ Expected: PASS, all 6 harness tests pass.
 - [ ] **Step 6: Run all Go tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -v
 ```
 
@@ -1365,7 +1365,7 @@ Expected: PASS for all test files.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add reference/go/aep/session.go reference/go/aep/harness.go reference/go/aep/harness_test.go
+git add implementations/go/aep/session.go implementations/go/aep/harness.go implementations/go/aep/harness_test.go
 git commit -m "feat: add Go session and harness"
 ```
 
@@ -1376,12 +1376,12 @@ Expected: commit succeeds.
 ### Task 5: Fixture Loading And Conformance Tests
 
 **Files:**
-- Create: `reference/go/aep/fixtures.go`
-- Create: `reference/go/aep/conformance_test.go`
+- Create: `implementations/go/aep/fixtures.go`
+- Create: `implementations/go/aep/conformance_test.go`
 
 - [ ] **Step 1: Add fixture loading module**
 
-Create `reference/go/aep/fixtures.go`:
+Create `implementations/go/aep/fixtures.go`:
 
 ```go
 package aep
@@ -1443,7 +1443,7 @@ func LoadFixture(path string) ([]map[string]any, error) {
 
 - [ ] **Step 2: Add conformance test**
 
-Create `reference/go/aep/conformance_test.go`:
+Create `implementations/go/aep/conformance_test.go`:
 
 ```go
 package aep
@@ -1539,7 +1539,7 @@ func TestConformanceFixtures(t *testing.T) {
 - [ ] **Step 3: Run conformance tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -run TestConformance -v
 ```
 
@@ -1548,7 +1548,7 @@ Expected: PASS for manifest declaration, C0/C1 fixtures PASS, C2 delivery fixtur
 - [ ] **Step 4: Run all Go tests**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -v
 ```
 
@@ -1557,7 +1557,7 @@ Expected: all tests pass (envelope, router, harness, conformance).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/go/aep/fixtures.go reference/go/aep/conformance_test.go
+git add implementations/go/aep/fixtures.go implementations/go/aep/conformance_test.go
 git commit -m "feat: add Go conformance tests"
 ```
 
@@ -1568,12 +1568,12 @@ Expected: commit succeeds.
 ### Task 6: Documentation, Verification, And Push
 
 **Files:**
-- Modify: `reference/go/README.md`
+- Modify: `implementations/go/README.md`
 - Modify: `README.md`
 
 - [ ] **Step 1: Update Go README**
 
-Replace `reference/go/README.md` with:
+Replace `implementations/go/README.md` with:
 
 ```markdown
 # AEP Go Reference
@@ -1583,7 +1583,7 @@ Go reference implementation of the Agent Event Protocol draft.
 ## Setup
 
 ```sh
-cd reference/go
+cd implementations/go
 ```
 
 No external dependencies. Requires Go 1.21+.
@@ -1614,22 +1614,22 @@ Conformance tests consume the shared manifest and fixtures from `../../conforman
 In `README.md`, replace the Go line under Repository Layout:
 
 ```markdown
-- `reference/go/` â€” planned infrastructure-oriented reference implementation
+- `implementations/go/` â€?planned infrastructure-oriented reference implementation
 ```
 
 with:
 
 ```markdown
-- `reference/go/` â€” draft reference implementation with C0/C1 conformance
+- `implementations/go/` â€?draft reference implementation with C0/C1 conformance
 ```
 
 - [ ] **Step 3: Run full TypeScript and Python verification alongside Go**
 
 ```bash
-cd reference/go && go test ./aep/ -v
-cd reference/typescript && npm test
-cd reference/typescript && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./aep/ -v
+cd implementations/typescript && npm test
+cd implementations/typescript && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
 ```
 
 Expected: all pass. Go: conformance tests pass. TypeScript: 80 tests, conformance C1 pass. Python: 48 tests.
@@ -1637,7 +1637,7 @@ Expected: all pass. Go: conformance tests pass. TypeScript: 80 tests, conformanc
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/go/README.md README.md
+git add implementations/go/README.md README.md
 git commit -m "docs: update Go reference status"
 git status --short
 git log --oneline -5

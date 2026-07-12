@@ -14,26 +14,26 @@
 
 ## File Structure
 
-- Modify `reference/typescript/package.json` and `package-lock.json`: add `commander` dependency.
-- Modify `reference/typescript/src/runtime/config.js`: include default `transports.status`.
-- Modify `reference/typescript/src/cli/aep.js`: commander program setup.
-- Modify command modules under `reference/typescript/src/cli/commands/`: accept structured options.
-- Create `reference/typescript/src/cli/commands/status.js`: query health endpoint.
-- Modify `reference/typescript/test/cli.test.js`: CLI framework/help/status/config tests.
+- Modify `implementations/typescript/package.json` and `package-lock.json`: add `commander` dependency.
+- Modify `implementations/typescript/src/runtime/config.js`: include default `transports.status`.
+- Modify `implementations/typescript/src/cli/aep.js`: commander program setup.
+- Modify command modules under `implementations/typescript/src/cli/commands/`: accept structured options.
+- Create `implementations/typescript/src/cli/commands/status.js`: query health endpoint.
+- Modify `implementations/typescript/test/cli.test.js`: CLI framework/help/status/config tests.
 
 ---
 
 ## Task 1: Add Commander Dependency And Default Status Config
 
 **Files:**
-- Modify: `reference/typescript/package.json`
-- Modify: `reference/typescript/package-lock.json`
-- Modify: `reference/typescript/src/runtime/config.js`
-- Test: `reference/typescript/test/runtime-config.test.js`
+- Modify: `implementations/typescript/package.json`
+- Modify: `implementations/typescript/package-lock.json`
+- Modify: `implementations/typescript/src/runtime/config.js`
+- Test: `implementations/typescript/test/runtime-config.test.js`
 
 - [ ] **Step 1: Write failing config test**
 
-Modify `reference/typescript/test/runtime-config.test.js`, in `defaultConfig returns local sqlite runtime config`, add:
+Modify `implementations/typescript/test/runtime-config.test.js`, in `defaultConfig returns local sqlite runtime config`, add:
 
 ```javascript
   assert.equal(config.transports.status.enabled, true);
@@ -43,19 +43,19 @@ Modify `reference/typescript/test/runtime-config.test.js`, in `defaultConfig ret
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: FAIL because `config.transports.status` is undefined.
 
 - [ ] **Step 3: Add commander dependency**
 
-Run: `cd reference/typescript && npm install commander`
+Run: `cd implementations/typescript && npm install commander`
 
 Expected: `commander` added to `dependencies` in `package.json` and `package-lock.json` updated.
 
 - [ ] **Step 4: Implement default status config**
 
-Modify `reference/typescript/src/runtime/config.js`, inside `transports` returned by `defaultConfig()`:
+Modify `implementations/typescript/src/runtime/config.js`, inside `transports` returned by `defaultConfig()`:
 
 ```javascript
       status: { enabled: true, host: "127.0.0.1", port: 8789, path: "/healthz" }
@@ -63,14 +63,14 @@ Modify `reference/typescript/src/runtime/config.js`, inside `transports` returne
 
 - [ ] **Step 5: Run config tests**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/typescript/package.json reference/typescript/package-lock.json reference/typescript/src/runtime/config.js reference/typescript/test/runtime-config.test.js
+git add implementations/typescript/package.json implementations/typescript/package-lock.json implementations/typescript/src/runtime/config.js implementations/typescript/test/runtime-config.test.js
 git commit -m "feat: add commander dependency and default AEP status config"
 git push origin master
 ```
@@ -80,12 +80,12 @@ git push origin master
 ## Task 2: Commander Program And Help Output
 
 **Files:**
-- Modify: `reference/typescript/src/cli/aep.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Write failing help test**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep --help lists core commands", async () => {
@@ -104,13 +104,13 @@ test("aep --help lists core commands", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because `status` is not listed and output is not commander help.
 
 - [ ] **Step 3: Refactor CLI entrypoint to commander**
 
-Replace `reference/typescript/src/cli/aep.js` with:
+Replace `implementations/typescript/src/cli/aep.js` with:
 
 ```javascript
 #!/usr/bin/env node
@@ -186,7 +186,7 @@ async function run(fn) {
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: tests may still fail because command modules still expect raw args. Proceed to Task 3.
 
@@ -195,7 +195,7 @@ Expected: tests may still fail because command modules still expect raw args. Pr
 If tests pass:
 
 ```bash
-git add reference/typescript/src/cli/aep.js reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli/aep.js implementations/typescript/test/cli.test.js
 git commit -m "feat: migrate aep CLI entrypoint to commander"
 git push origin master
 ```
@@ -207,23 +207,23 @@ If tests fail due to raw args mismatch, do not commit; continue Task 3 and commi
 ## Task 3: Convert Existing Command Modules To Structured Options
 
 **Files:**
-- Modify: `reference/typescript/src/cli/commands/init.js`
-- Modify: `reference/typescript/src/cli/commands/start.js`
-- Modify: `reference/typescript/src/cli/commands/emit.js`
-- Modify: `reference/typescript/src/cli/commands/subscribe.js`
-- Modify: `reference/typescript/src/cli/commands/dlq.js`
-- Modify: `reference/typescript/src/cli/commands/conformance.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Modify: `implementations/typescript/src/cli/commands/init.js`
+- Modify: `implementations/typescript/src/cli/commands/start.js`
+- Modify: `implementations/typescript/src/cli/commands/emit.js`
+- Modify: `implementations/typescript/src/cli/commands/subscribe.js`
+- Modify: `implementations/typescript/src/cli/commands/dlq.js`
+- Modify: `implementations/typescript/src/cli/commands/conformance.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Ensure current CLI tests fail for option mismatch**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because command modules still parse arrays but commander passes objects.
 
 - [ ] **Step 2: Replace init command**
 
-Replace `reference/typescript/src/cli/commands/init.js` with:
+Replace `implementations/typescript/src/cli/commands/init.js` with:
 
 ```javascript
 import { writeDefaultConfig } from "../../runtime/config.js";
@@ -237,7 +237,7 @@ export async function initCommand(options = {}) {
 
 - [ ] **Step 3: Replace start command**
 
-Replace `reference/typescript/src/cli/commands/start.js` with:
+Replace `implementations/typescript/src/cli/commands/start.js` with:
 
 ```javascript
 import { startDaemon } from "../../runtime/server.js";
@@ -250,7 +250,7 @@ export async function startCommand(options = {}) {
 
 - [ ] **Step 4: Replace emit command**
 
-Replace `reference/typescript/src/cli/commands/emit.js` with:
+Replace `implementations/typescript/src/cli/commands/emit.js` with:
 
 ```javascript
 import { randomUUID } from "node:crypto";
@@ -283,7 +283,7 @@ function sendWs(url, event) {
 
 - [ ] **Step 5: Replace subscribe command**
 
-Replace `reference/typescript/src/cli/commands/subscribe.js` with:
+Replace `implementations/typescript/src/cli/commands/subscribe.js` with:
 
 ```javascript
 import { WebSocket } from "ws";
@@ -304,7 +304,7 @@ export async function subscribeCommand(options = {}) {
 
 - [ ] **Step 6: Replace dlq command**
 
-Replace `reference/typescript/src/cli/commands/dlq.js` with:
+Replace `implementations/typescript/src/cli/commands/dlq.js` with:
 
 ```javascript
 import { loadConfig, createDeliveryStore } from "../../runtime/config.js";
@@ -324,7 +324,7 @@ export async function dlqCommand(subcommand = "list", options = {}) {
 
 - [ ] **Step 7: Replace conformance command**
 
-Replace `reference/typescript/src/cli/commands/conformance.js` with:
+Replace `implementations/typescript/src/cli/commands/conformance.js` with:
 
 ```javascript
 import { runConformance } from "../../conformance.js";
@@ -345,20 +345,20 @@ export async function conformanceCommand(options = {}) {
 
 - [ ] **Step 8: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS except `status` still fails until Task 4 if status tests have already been added.
 
 - [ ] **Step 9: Run CLI runtime e2e tests**
 
-Run: `cd reference/typescript && node --test test/cli-runtime-e2e.test.js`
+Run: `cd implementations/typescript && node --test test/cli-runtime-e2e.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 10: Commit and push**
 
 ```bash
-git add reference/typescript/src/cli reference/typescript/test/cli.test.js reference/typescript/test/cli-runtime-e2e.test.js
+git add implementations/typescript/src/cli implementations/typescript/test/cli.test.js implementations/typescript/test/cli-runtime-e2e.test.js
 git commit -m "feat: convert aep CLI commands to commander options"
 git push origin master
 ```
@@ -368,13 +368,13 @@ git push origin master
 ## Task 4: Add Status Command
 
 **Files:**
-- Create: `reference/typescript/src/cli/commands/status.js`
-- Modify: `reference/typescript/src/cli/aep.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Create: `implementations/typescript/src/cli/commands/status.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Write failing status test**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep status prints daemon health JSON", async () => {
@@ -407,13 +407,13 @@ async function createJsonServer(body) {
 
 - [ ] **Step 2: Run test to verify failure**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because `status command not implemented`.
 
 - [ ] **Step 3: Implement status command**
 
-Create `reference/typescript/src/cli/commands/status.js`:
+Create `implementations/typescript/src/cli/commands/status.js`:
 
 ```javascript
 export async function statusCommand(options = {}) {
@@ -430,7 +430,7 @@ export async function statusCommand(options = {}) {
 }
 ```
 
-Modify `reference/typescript/src/cli/aep.js`:
+Modify `implementations/typescript/src/cli/aep.js`:
 
 ```javascript
 import { statusCommand } from "./commands/status.js";
@@ -444,14 +444,14 @@ Replace the temporary status action with:
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/cli reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli implementations/typescript/test/cli.test.js
 git commit -m "feat: add aep status command"
 git push origin master
 ```
@@ -465,7 +465,7 @@ git push origin master
 
 - [ ] **Step 1: Run full TypeScript suite**
 
-Run: `cd reference/typescript && npm test`
+Run: `cd implementations/typescript && npm test`
 
 Expected: all tests pass.
 

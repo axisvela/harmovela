@@ -11,9 +11,9 @@ Bring Python, Go, and Java runtimes to parity with the TypeScript HTTP subscript
 
 TypeScript already implements this. The reference behavior lives in:
 
-- `reference/typescript/src/delivery-store-*.js` (subscription CRUD)
-- `reference/typescript/src/runtime/service.js` (registry, buffer, fanout, `takeEvents`, `attachStream`)
-- `reference/typescript/src/runtime/api-server.js` (subscription routes, long-poll, SSE)
+- `implementations/typescript/src/delivery-store-*.js` (subscription CRUD)
+- `implementations/typescript/src/runtime/service.js` (registry, buffer, fanout, `takeEvents`, `attachStream`)
+- `implementations/typescript/src/runtime/api-server.js` (subscription routes, long-poll, SSE)
 
 Python, Go, and Java already have the core runtime (config, service, `aepd`, CLI, HTTP read+ingest API) and a `matchesType` / `subscription_matches` helper.
 
@@ -29,12 +29,12 @@ Python, Go, and Java already have the core runtime (config, service, `aepd`, CLI
    - On publish, fan out matching events into a per-subscription in-memory buffer (bounded at 1000, drop oldest).
    - `createSubscription(filter)`, `listSubscriptions()`, `getSubscription(id)`, `deleteSubscription(id)`, `takeEvents(id, max)`, `attachStream(id, sink)`.
 3. HTTP subscription endpoints on the existing api server:
-   - `POST {base}/subscriptions` â€” create, 201 with record.
-   - `GET {base}/subscriptions` â€” list, `{ "subscriptions": [...] }`.
-   - `GET {base}/subscriptions/:id` â€” get, 404 if unknown.
-   - `DELETE {base}/subscriptions/:id` â€” delete, `{ "deleted": true }`, 404 if unknown.
-   - `GET {base}/subscriptions/:id/events` â€” long-poll, `{ "events": [...] }`, 404 if unknown.
-   - `GET {base}/subscriptions/:id/stream` â€” SSE stream of matching events, 404 if unknown.
+   - `POST {base}/subscriptions` â€?create, 201 with record.
+   - `GET {base}/subscriptions` â€?list, `{ "subscriptions": [...] }`.
+   - `GET {base}/subscriptions/:id` â€?get, 404 if unknown.
+   - `DELETE {base}/subscriptions/:id` â€?delete, `{ "deleted": true }`, 404 if unknown.
+   - `GET {base}/subscriptions/:id/events` â€?long-poll, `{ "events": [...] }`, 404 if unknown.
+   - `GET {base}/subscriptions/:id/stream` â€?SSE stream of matching events, 404 if unknown.
 
 ### Out Of Scope
 
@@ -100,21 +100,21 @@ In-memory: a map from id to record.
 
 ## Per-Language Notes
 
-### Python (`reference/python`)
+### Python (`implementations/python`)
 
 - Stores: add methods to `delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py`.
 - Registry: extend `aep/runtime/service.py`.
 - Endpoints: extend `aep/runtime/api_server.py` (stdlib `http.server`). SSE uses a long-lived `do_GET` writing to `wfile`; the threading server already handles concurrent requests.
 - SSE disconnect detection: writes raise on a closed socket; catch and detach.
 
-### Go (`reference/go`)
+### Go (`implementations/go`)
 
 - Stores: add to `delivery_store.go` (+ interface), `delivery_sqlite.go`, `delivery_postgres.go`.
 - Registry: extend `RuntimeService` in `runtime.go`.
 - Endpoints: extend the api mux handler. SSE uses `http.Flusher`; long-poll returns immediately.
 - Concurrency: guard the registry with a mutex; the broadcast server and api server run in separate goroutines.
 
-### Java (`reference/java`)
+### Java (`implementations/java`)
 
 - Stores: add to `DeliveryStore` interface, `InMemoryDeliveryStore`, `SqliteDeliveryStore`, `PostgresDeliveryStore`.
 - Registry: extend `AepRuntimeService`.

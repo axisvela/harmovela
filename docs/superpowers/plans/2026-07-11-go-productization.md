@@ -14,13 +14,13 @@
 
 ## File Structure
 
-- Create `reference/go/aep/subscription.go`: `MatchesType(pattern, value)`.
-- Modify `reference/go/aep/delivery_store.go`, `delivery_sqlite.go`, `delivery_postgres.go`: add `GetDeadLettered` and interface method.
-- Create `reference/go/aep/transport_ws_broadcast.go`: broadcast WebSocket server.
-- Create `reference/go/aep/runtime.go`: config, `RuntimeService`, HTTP api server, daemon start.
-- Create `reference/go/cmd/aepd/main.go`: daemon binary.
-- Create `reference/go/cmd/aep/main.go`: CLI binary (cobra).
-- Modify `reference/go/go.mod`: add cobra.
+- Create `implementations/go/aep/subscription.go`: `MatchesType(pattern, value)`.
+- Modify `implementations/go/aep/delivery_store.go`, `delivery_sqlite.go`, `delivery_postgres.go`: add `GetDeadLettered` and interface method.
+- Create `implementations/go/aep/transport_ws_broadcast.go`: broadcast WebSocket server.
+- Create `implementations/go/aep/runtime.go`: config, `RuntimeService`, HTTP api server, daemon start.
+- Create `implementations/go/cmd/aepd/main.go`: daemon binary.
+- Create `implementations/go/cmd/aep/main.go`: CLI binary (cobra).
+- Modify `implementations/go/go.mod`: add cobra.
 - Create tests alongside.
 
 ---
@@ -28,12 +28,12 @@
 ## Task 1: MatchesType helper
 
 **Files:**
-- Create: `reference/go/aep/subscription.go`
-- Test: `reference/go/aep/subscription_test.go`
+- Create: `implementations/go/aep/subscription.go`
+- Test: `implementations/go/aep/subscription_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/go/aep/subscription_test.go`:
+Create `implementations/go/aep/subscription_test.go`:
 
 ```go
 package aep
@@ -64,12 +64,12 @@ func TestMatchesType(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestMatchesType`
+Run: `cd implementations/go && go test ./aep/ -run TestMatchesType`
 Expected: build failure, `MatchesType` undefined.
 
 - [ ] **Step 3: Implement MatchesType**
 
-Create `reference/go/aep/subscription.go`:
+Create `implementations/go/aep/subscription.go`:
 
 ```go
 package aep
@@ -102,13 +102,13 @@ func MatchesType(pattern, value string) bool {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/go && go test ./aep/ -run TestMatchesType`
+Run: `cd implementations/go && go test ./aep/ -run TestMatchesType`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/aep/subscription.go reference/go/aep/subscription_test.go
+git add implementations/go/aep/subscription.go implementations/go/aep/subscription_test.go
 git commit -m "feat(go): add MatchesType subscription helper"
 git push origin master
 ```
@@ -118,14 +118,14 @@ git push origin master
 ## Task 2: Delivery stores GetDeadLettered
 
 **Files:**
-- Modify: `reference/go/aep/delivery_store.go`
-- Modify: `reference/go/aep/delivery_sqlite.go`
-- Modify: `reference/go/aep/delivery_postgres.go`
-- Test: `reference/go/aep/delivery_store_test.go`
+- Modify: `implementations/go/aep/delivery_store.go`
+- Modify: `implementations/go/aep/delivery_sqlite.go`
+- Modify: `implementations/go/aep/delivery_postgres.go`
+- Test: `implementations/go/aep/delivery_store_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/go/aep/delivery_store_test.go`:
+Append to `implementations/go/aep/delivery_store_test.go`:
 
 ```go
 func TestInMemoryGetDeadLettered(t *testing.T) {
@@ -144,12 +144,12 @@ func TestInMemoryGetDeadLettered(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestInMemoryGetDeadLettered`
+Run: `cd implementations/go && go test ./aep/ -run TestInMemoryGetDeadLettered`
 Expected: build failure, `GetDeadLettered` undefined.
 
 - [ ] **Step 3: Add to the interface**
 
-In `reference/go/aep/delivery_store.go`, add to the `DeliveryStore` interface after `GetStats`:
+In `implementations/go/aep/delivery_store.go`, add to the `DeliveryStore` interface after `GetStats`:
 
 ```go
 	GetDeadLettered() []map[string]any
@@ -157,7 +157,7 @@ In `reference/go/aep/delivery_store.go`, add to the `DeliveryStore` interface af
 
 - [ ] **Step 4: Implement in-memory GetDeadLettered**
 
-In `reference/go/aep/delivery_store.go`, add after `GetPendingForSubscription`:
+In `implementations/go/aep/delivery_store.go`, add after `GetPendingForSubscription`:
 
 ```go
 func (s *InMemoryDeliveryStore) GetDeadLettered() []map[string]any {
@@ -175,7 +175,7 @@ func (s *InMemoryDeliveryStore) GetDeadLettered() []map[string]any {
 
 - [ ] **Step 5: Implement sqlite GetDeadLettered**
 
-In `reference/go/aep/delivery_sqlite.go`, add a method (near `GetPending`). Confirm the dead-letter table column names by reading the file first; the schema uses `event_id`, `subscription_id`, `reason`:
+In `implementations/go/aep/delivery_sqlite.go`, add a method (near `GetPending`). Confirm the dead-letter table column names by reading the file first; the schema uses `event_id`, `subscription_id`, `reason`:
 
 ```go
 func (s *SqliteDeliveryStore) GetDeadLettered() []map[string]any {
@@ -206,7 +206,7 @@ Ensure `encoding/json` is imported in `delivery_sqlite.go`; add it if missing. I
 
 - [ ] **Step 6: Implement postgres GetDeadLettered**
 
-In `reference/go/aep/delivery_postgres.go`, add:
+In `implementations/go/aep/delivery_postgres.go`, add:
 
 ```go
 func (s *PostgresDeliveryStore) GetDeadLettered() []map[string]any {
@@ -238,13 +238,13 @@ Ensure `encoding/json` and `fmt` are imported in `delivery_postgres.go`. Confirm
 
 - [ ] **Step 7: Run tests to verify they pass**
 
-Run: `cd reference/go && go test ./aep/ -run "DeadLettered|Postgres"`
+Run: `cd implementations/go && go test ./aep/ -run "DeadLettered|Postgres"`
 Expected: PASS.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/go/aep/delivery_store.go reference/go/aep/delivery_sqlite.go reference/go/aep/delivery_postgres.go reference/go/aep/delivery_store_test.go
+git add implementations/go/aep/delivery_store.go implementations/go/aep/delivery_sqlite.go implementations/go/aep/delivery_postgres.go implementations/go/aep/delivery_store_test.go
 git commit -m "feat(go): add GetDeadLettered to delivery stores"
 git push origin master
 ```
@@ -254,12 +254,12 @@ git push origin master
 ## Task 3: Broadcast WebSocket server
 
 **Files:**
-- Create: `reference/go/aep/transport_ws_broadcast.go`
-- Test: `reference/go/aep/transport_ws_broadcast_test.go`
+- Create: `implementations/go/aep/transport_ws_broadcast.go`
+- Test: `implementations/go/aep/transport_ws_broadcast_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/go/aep/transport_ws_broadcast_test.go`:
+Create `implementations/go/aep/transport_ws_broadcast_test.go`:
 
 ```go
 package aep
@@ -348,12 +348,12 @@ func TestWsBroadcastReceivesFromClient(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestWsBroadcast`
+Run: `cd implementations/go && go test ./aep/ -run TestWsBroadcast`
 Expected: build failure, `NewWsBroadcastServer` undefined.
 
 - [ ] **Step 3: Implement the broadcast server**
 
-Create `reference/go/aep/transport_ws_broadcast.go`:
+Create `implementations/go/aep/transport_ws_broadcast.go`:
 
 ```go
 package aep
@@ -468,13 +468,13 @@ The existing `upgrader` var is defined in `transport_ws.go` in the same package 
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd reference/go && go test ./aep/ -run TestWsBroadcast`
+Run: `cd implementations/go && go test ./aep/ -run TestWsBroadcast`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/aep/transport_ws_broadcast.go reference/go/aep/transport_ws_broadcast_test.go
+git add implementations/go/aep/transport_ws_broadcast.go implementations/go/aep/transport_ws_broadcast_test.go
 git commit -m "feat(go): add broadcast WebSocket server"
 git push origin master
 ```
@@ -484,12 +484,12 @@ git push origin master
 ## Task 4: Runtime config, service, and HTTP api
 
 **Files:**
-- Create: `reference/go/aep/runtime.go`
-- Test: `reference/go/aep/runtime_test.go`
+- Create: `implementations/go/aep/runtime.go`
+- Test: `implementations/go/aep/runtime_test.go`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/go/aep/runtime_test.go`:
+Create `implementations/go/aep/runtime_test.go`:
 
 ```go
 package aep
@@ -619,12 +619,12 @@ func TestRuntimeAPIEndpoints(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run "TestDefaultConfig|TestRuntime"`
+Run: `cd implementations/go && go test ./aep/ -run "TestDefaultConfig|TestRuntime"`
 Expected: build failure, `DefaultConfig`/`NewRuntimeService` undefined.
 
 - [ ] **Step 3: Implement runtime.go**
 
-Create `reference/go/aep/runtime.go`:
+Create `implementations/go/aep/runtime.go`:
 
 ```go
 package aep
@@ -954,18 +954,18 @@ func envOr(env map[string]string, key, fallback string) string {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd reference/go && go test ./aep/ -run "TestDefaultConfig|TestRuntime"`
+Run: `cd implementations/go && go test ./aep/ -run "TestDefaultConfig|TestRuntime"`
 Expected: PASS.
 
 - [ ] **Step 5: Run the full aep package tests**
 
-Run: `cd reference/go && go test ./aep/`
+Run: `cd implementations/go && go test ./aep/`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/go/aep/runtime.go reference/go/aep/runtime_test.go
+git add implementations/go/aep/runtime.go implementations/go/aep/runtime_test.go
 git commit -m "feat(go): add runtime config, service, and HTTP api"
 git push origin master
 ```
@@ -975,19 +975,19 @@ git push origin master
 ## Task 5: Daemon and CLI binaries
 
 **Files:**
-- Modify: `reference/go/go.mod` (add cobra)
-- Create: `reference/go/cmd/aepd/main.go`
-- Create: `reference/go/cmd/aep/main.go`
-- Test: `reference/go/aep/cmd_e2e_test.go`
+- Modify: `implementations/go/go.mod` (add cobra)
+- Create: `implementations/go/cmd/aepd/main.go`
+- Create: `implementations/go/cmd/aep/main.go`
+- Test: `implementations/go/aep/cmd_e2e_test.go`
 
 - [ ] **Step 1: Add cobra dependency**
 
-Run: `cd reference/go && go get github.com/spf13/cobra@latest`
+Run: `cd implementations/go && go get github.com/spf13/cobra@latest`
 Expected: `go.mod` gains cobra.
 
 - [ ] **Step 2: Write failing e2e test**
 
-Create `reference/go/aep/cmd_e2e_test.go`:
+Create `implementations/go/aep/cmd_e2e_test.go`:
 
 ```go
 package aep
@@ -1041,12 +1041,12 @@ func TestDaemonServiceHTTPRoundTrip(t *testing.T) {
 
 - [ ] **Step 3: Run test to verify it passes at the service level**
 
-Run: `cd reference/go && go test ./aep/ -run TestDaemonServiceHTTPRoundTrip`
+Run: `cd implementations/go && go test ./aep/ -run TestDaemonServiceHTTPRoundTrip`
 Expected: PASS. This validates the daemon composition path before wiring binaries.
 
 - [ ] **Step 4: Implement the daemon binary**
 
-Create `reference/go/cmd/aepd/main.go`:
+Create `implementations/go/cmd/aepd/main.go`:
 
 ```go
 package main
@@ -1082,7 +1082,7 @@ func main() {
 
 - [ ] **Step 5: Implement the CLI binary**
 
-Create `reference/go/cmd/aep/main.go`:
+Create `implementations/go/cmd/aep/main.go`:
 
 ```go
 package main
@@ -1240,16 +1240,16 @@ Note: `aep conformance` in Go is provided by `go test ./aep/ -run Conformance`, 
 
 - [ ] **Step 6: Build binaries and run e2e**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: builds `cmd/aep` and `cmd/aepd` without errors.
 
-Run: `cd reference/go && go test ./aep/ -run TestDaemonServiceHTTPRoundTrip`
+Run: `cd implementations/go && go test ./aep/ -run TestDaemonServiceHTTPRoundTrip`
 Expected: PASS.
 
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add reference/go/go.mod reference/go/go.sum reference/go/cmd/aepd/main.go reference/go/cmd/aep/main.go reference/go/aep/cmd_e2e_test.go
+git add implementations/go/go.mod implementations/go/go.sum implementations/go/cmd/aepd/main.go implementations/go/cmd/aep/main.go implementations/go/aep/cmd_e2e_test.go
 git commit -m "feat(go): add aepd daemon and aep cobra CLI"
 git push origin master
 ```
@@ -1260,12 +1260,12 @@ git push origin master
 
 - [ ] **Step 1: Run full Go suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 Expected: all packages pass.
 
 - [ ] **Step 2: Build all binaries**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: no errors.
 
 - [ ] **Step 3: Verify git sync**

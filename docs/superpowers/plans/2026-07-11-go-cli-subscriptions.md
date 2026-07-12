@@ -13,12 +13,12 @@
 ## Task 1: subscriptions create/list/delete/stream
 
 **Files:**
-- Modify: `reference/go/cmd/aep/main.go`
-- Test: `reference/go/aep/cli_subscriptions_test.go`
+- Modify: `implementations/go/cmd/aep/main.go`
+- Test: `implementations/go/aep/cli_subscriptions_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/go/aep/cli_subscriptions_test.go`:
+Create `implementations/go/aep/cli_subscriptions_test.go`:
 
 ```go
 package aep
@@ -108,12 +108,12 @@ func runAep(args ...string) (int, string, string) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestCliSubscriptions`
+Run: `cd implementations/go && go test ./aep/ -run TestCliSubscriptions`
 Expected: FAIL because the `subscriptions` command does not exist.
 
 - [ ] **Step 3: Implement the subscriptions command group**
 
-In `reference/go/cmd/aep/main.go`, above `root.AddCommand(...)`, add:
+In `implementations/go/cmd/aep/main.go`, above `root.AddCommand(...)`, add:
 
 ```go
 	subscriptionsCmd := newSubscriptionsCmd()
@@ -210,18 +210,18 @@ Add `"bufio"`, `"io"`, and `"strings"` to the imports if missing. `"encoding/jso
 
 - [ ] **Step 4: Run the CLI test**
 
-Run: `cd reference/go && go test ./aep/ -run TestCliSubscriptions`
+Run: `cd implementations/go && go test ./aep/ -run TestCliSubscriptions`
 Expected: PASS.
 
 - [ ] **Step 5: Build and verify**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: no errors.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/go/cmd/aep/main.go reference/go/aep/cli_subscriptions_test.go
+git add implementations/go/cmd/aep/main.go implementations/go/aep/cli_subscriptions_test.go
 git commit -m "feat(go): add aep subscriptions CLI command group"
 git push origin master
 ```
@@ -232,12 +232,12 @@ git push origin master
 
 - [ ] **Step 1: Run full Go suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 Expected: all packages pass.
 
 - [ ] **Step 2: Build all binaries**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: no errors.
 
 - [ ] **Step 3: Verify git sync**

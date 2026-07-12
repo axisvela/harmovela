@@ -14,11 +14,11 @@
 
 ## File Structure
 
-- Modify `reference/typescript/src/runtime/config.js`: replace `transports.status` with `transports.api`, add `AEPD_API_PORT` override.
-- Create `reference/typescript/src/runtime/api-server.js`: HTTP api server.
-- Modify `reference/typescript/src/runtime/service.js`: start api server, add `getDeadLettered()` delegation, remove status branch.
-- Modify `reference/typescript/src/cli/aep.js`: update `aep status` default URL.
-- Modify `reference/typescript/src/index.js`: export nothing new required, but keep consistent (no change needed unless tests require).
+- Modify `implementations/typescript/src/runtime/config.js`: replace `transports.status` with `transports.api`, add `AEPD_API_PORT` override.
+- Create `implementations/typescript/src/runtime/api-server.js`: HTTP api server.
+- Modify `implementations/typescript/src/runtime/service.js`: start api server, add `getDeadLettered()` delegation, remove status branch.
+- Modify `implementations/typescript/src/cli/aep.js`: update `aep status` default URL.
+- Modify `implementations/typescript/src/index.js`: export nothing new required, but keep consistent (no change needed unless tests require).
 - Modify tests: `test/runtime-config.test.js`, `test/runtime-service.test.js`, `test/cli.test.js`, `test/cli-runtime-e2e.test.js`.
 
 ---
@@ -26,12 +26,12 @@
 ## Task 1: Replace status config with api config
 
 **Files:**
-- Modify: `reference/typescript/src/runtime/config.js`
-- Test: `reference/typescript/test/runtime-config.test.js`
+- Modify: `implementations/typescript/src/runtime/config.js`
+- Test: `implementations/typescript/test/runtime-config.test.js`
 
 - [ ] **Step 1: Update failing config test**
 
-In `reference/typescript/test/runtime-config.test.js`, replace the three status assertions in `defaultConfig returns local sqlite runtime config`:
+In `implementations/typescript/test/runtime-config.test.js`, replace the three status assertions in `defaultConfig returns local sqlite runtime config`:
 
 ```javascript
   assert.equal(config.transports.api.enabled, true);
@@ -48,13 +48,13 @@ Add an env override assertion to `loadConfig reads JSON and applies env override
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: FAIL because `config.transports.api` is undefined.
 
 - [ ] **Step 3: Implement api config**
 
-In `reference/typescript/src/runtime/config.js`, replace the status transport line in `defaultConfig()`:
+In `implementations/typescript/src/runtime/config.js`, replace the status transport line in `defaultConfig()`:
 
 ```javascript
       api: { enabled: true, host: "127.0.0.1", port: 8790, path: "/aep/api" },
@@ -68,14 +68,14 @@ In `applyEnvOverrides`, add before the return:
 
 - [ ] **Step 4: Run config tests**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/runtime/config.js reference/typescript/test/runtime-config.test.js
+git add implementations/typescript/src/runtime/config.js implementations/typescript/test/runtime-config.test.js
 git commit -m "feat: replace runtime status config with api transport config"
 git push origin master
 ```
@@ -85,13 +85,13 @@ git push origin master
 ## Task 2: Implement api HTTP server module
 
 **Files:**
-- Create: `reference/typescript/src/runtime/api-server.js`
-- Modify: `reference/typescript/src/runtime/service.js`
-- Test: `reference/typescript/test/runtime-service.test.js`
+- Create: `implementations/typescript/src/runtime/api-server.js`
+- Modify: `implementations/typescript/src/runtime/service.js`
+- Test: `implementations/typescript/test/runtime-service.test.js`
 
 - [ ] **Step 1: Write failing api server tests**
 
-Append to `reference/typescript/test/runtime-service.test.js`:
+Append to `implementations/typescript/test/runtime-service.test.js`:
 
 ```javascript
 function apiConfig() {
@@ -199,13 +199,13 @@ test("api unknown route returns 404", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: FAIL because `service.transports.api` is undefined.
 
 - [ ] **Step 3: Implement api server module**
 
-Create `reference/typescript/src/runtime/api-server.js`:
+Create `implementations/typescript/src/runtime/api-server.js`:
 
 ```javascript
 import http from "node:http";
@@ -290,7 +290,7 @@ function sendJson(res, status, body) {
 
 - [ ] **Step 4: Wire api server into the runtime service**
 
-In `reference/typescript/src/runtime/service.js`:
+In `implementations/typescript/src/runtime/service.js`:
 
 Replace the import of `http` and the `startStatusServer` usage. First add the api import near the top:
 
@@ -319,24 +319,24 @@ Remove the now-unused `startStatusServer` function and the `import http from "no
 
 - [ ] **Step 5: Run runtime service tests**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS, including the existing health status test replaced by api tests. If the old `AepRuntimeService exposes HTTP health status endpoint` test still references `transports.status`, update it to use the api config path or remove it since api healthz now covers it.
 
 - [ ] **Step 6: Remove obsolete status endpoint test**
 
-In `reference/typescript/test/runtime-service.test.js`, delete the old test `AepRuntimeService exposes HTTP health status endpoint` because the api healthz test replaces it.
+In `implementations/typescript/test/runtime-service.test.js`, delete the old test `AepRuntimeService exposes HTTP health status endpoint` because the api healthz test replaces it.
 
 - [ ] **Step 7: Run runtime service tests again**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/typescript/src/runtime/api-server.js reference/typescript/src/runtime/service.js reference/typescript/test/runtime-service.test.js
+git add implementations/typescript/src/runtime/api-server.js implementations/typescript/src/runtime/service.js implementations/typescript/test/runtime-service.test.js
 git commit -m "feat: add runtime HTTP api server with events, dlq, pending, stats"
 git push origin master
 ```
@@ -346,12 +346,12 @@ git push origin master
 ## Task 3: Update CLI status default and config expectations
 
 **Files:**
-- Modify: `reference/typescript/src/cli/aep.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Write failing CLI init api config test**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep init writes config containing api transport", async () => {
@@ -368,13 +368,13 @@ test("aep init writes config containing api transport", async () => {
 
 - [ ] **Step 2: Run test to verify current state**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS for this new test because Task 1 already added api config. If it fails, Task 1 was not completed.
 
 - [ ] **Step 3: Update status default URL**
 
-In `reference/typescript/src/cli/aep.js`, change the status command default URL:
+In `implementations/typescript/src/cli/aep.js`, change the status command default URL:
 
 ```javascript
   .option("--url <url>", "health endpoint URL", "http://127.0.0.1:8790/aep/api/healthz")
@@ -382,14 +382,14 @@ In `reference/typescript/src/cli/aep.js`, change the status command default URL:
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS. The existing `aep status prints daemon health JSON` test passes an explicit `--url`, so it is unaffected.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/cli/aep.js reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli/aep.js implementations/typescript/test/cli.test.js
 git commit -m "feat: point aep status default at runtime api health endpoint"
 git push origin master
 ```
@@ -399,17 +399,17 @@ git push origin master
 ## Task 4: Update runtime e2e config references
 
 **Files:**
-- Modify: `reference/typescript/test/cli-runtime-e2e.test.js`
+- Modify: `implementations/typescript/test/cli-runtime-e2e.test.js`
 
 - [ ] **Step 1: Check for status references**
 
-Run: `cd reference/typescript && node --test test/cli-runtime-e2e.test.js`
+Run: `cd implementations/typescript && node --test test/cli-runtime-e2e.test.js`
 
 Expected: PASS. The e2e tests set `config.transports.status.enabled = false`, but Task 1 removed `transports.status` from defaults. If `config.transports.status` is now undefined, setting `.enabled` on undefined throws.
 
 - [ ] **Step 2: Replace status disabling with api disabling**
 
-In `reference/typescript/test/cli-runtime-e2e.test.js`, replace each occurrence of:
+In `implementations/typescript/test/cli-runtime-e2e.test.js`, replace each occurrence of:
 
 ```javascript
   config.transports.status.enabled = false;
@@ -423,14 +423,14 @@ with:
 
 - [ ] **Step 3: Run e2e tests**
 
-Run: `cd reference/typescript && node --test test/cli-runtime-e2e.test.js`
+Run: `cd implementations/typescript && node --test test/cli-runtime-e2e.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/typescript/test/cli-runtime-e2e.test.js
+git add implementations/typescript/test/cli-runtime-e2e.test.js
 git commit -m "test: disable api transport in CLI runtime e2e configs"
 git push origin master
 ```
@@ -441,7 +441,7 @@ git push origin master
 
 - [ ] **Step 1: Run full TypeScript suite**
 
-Run: `cd reference/typescript && npm test`
+Run: `cd implementations/typescript && npm test`
 
 Expected: all tests pass.
 

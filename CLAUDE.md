@@ -40,12 +40,12 @@ AEP complements MCP. MCP is the synchronous call layer; AEP is the asynchronous 
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
-| `reference/typescript/` | Primary runnable reference harness |
-| `reference/python/` | Second-priority Python reference implementation |
-| `reference/go/` | Go reference implementation with C0/C1 conformance |
-| `reference/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
-| `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
+| `implementations/typescript/` | Primary runnable reference harness |
+| `implementations/python/` | Second-priority Python reference implementation |
+| `implementations/go/` | Go reference implementation with C0/C1 conformance |
+| `implementations/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
+| `implementations/typescript/src/bridge/` | MCP bridge and async tool handler |
 
 ## Verification
 
-For documentation-only changes, verify links and terminology consistency. For TypeScript reference changes, run `cd reference/typescript && npm test` and record verification in the related Superpowers plan.
+For documentation-only changes, verify links and terminology consistency. For TypeScript reference changes, run `cd implementations/typescript && npm test` and record verification in the related Superpowers plan.

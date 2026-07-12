@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.axisrobo.aep.PostgresDeliveryStoreTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.337 s -- in com.axisrobo.aep.PostgresDeliveryStoreTest

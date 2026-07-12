@@ -14,11 +14,11 @@
 
 ## File Structure
 
-- Modify `reference/typescript/src/delivery-store-memory.js`: subscription CRUD via Map.
-- Modify `reference/typescript/src/delivery-store-sqlite.js`: `delivery_subscriptions` table + CRUD.
-- Modify `reference/typescript/src/delivery-store-postgres.js`: `<prefix>_subscriptions` table + CRUD.
-- Modify `reference/typescript/src/runtime/service.js`: subscription registry, buffers, matching on publish, load on start.
-- Modify `reference/typescript/src/runtime/api-server.js`: subscription routes and SSE/long-poll.
+- Modify `implementations/typescript/src/delivery-store-memory.js`: subscription CRUD via Map.
+- Modify `implementations/typescript/src/delivery-store-sqlite.js`: `delivery_subscriptions` table + CRUD.
+- Modify `implementations/typescript/src/delivery-store-postgres.js`: `<prefix>_subscriptions` table + CRUD.
+- Modify `implementations/typescript/src/runtime/service.js`: subscription registry, buffers, matching on publish, load on start.
+- Modify `implementations/typescript/src/runtime/api-server.js`: subscription routes and SSE/long-poll.
 - Modify tests: `test/delivery-store.test.js`, `test/delivery-store-sqlite.test.js`, `test/delivery-store-postgres.test.js`, `test/runtime-service.test.js`.
 
 ---
@@ -26,12 +26,12 @@
 ## Task 1: In-memory store subscription CRUD
 
 **Files:**
-- Modify: `reference/typescript/src/delivery-store-memory.js`
-- Test: `reference/typescript/test/delivery-store.test.js`
+- Modify: `implementations/typescript/src/delivery-store-memory.js`
+- Test: `implementations/typescript/test/delivery-store.test.js`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/typescript/test/delivery-store.test.js`:
+Append to `implementations/typescript/test/delivery-store.test.js`:
 
 ```javascript
 test("InMemoryDeliveryStore persists subscriptions", () => {
@@ -48,13 +48,13 @@ test("InMemoryDeliveryStore persists subscriptions", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/delivery-store.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store.test.js`
 
 Expected: FAIL because `createSubscription` is not a function.
 
 - [ ] **Step 3: Implement subscription CRUD**
 
-In `reference/typescript/src/delivery-store-memory.js`, add to the constructor after `this._deadLettered = new Map();`:
+In `implementations/typescript/src/delivery-store-memory.js`, add to the constructor after `this._deadLettered = new Map();`:
 
 ```javascript
     this._subscriptions = new Map();
@@ -83,14 +83,14 @@ Add methods to the class before `getStats()`:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/delivery-store.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/delivery-store-memory.js reference/typescript/test/delivery-store.test.js
+git add implementations/typescript/src/delivery-store-memory.js implementations/typescript/test/delivery-store.test.js
 git commit -m "feat: add in-memory delivery store subscription CRUD"
 git push origin master
 ```
@@ -100,12 +100,12 @@ git push origin master
 ## Task 2: SQLite store subscription CRUD
 
 **Files:**
-- Modify: `reference/typescript/src/delivery-store-sqlite.js`
-- Test: `reference/typescript/test/delivery-store-sqlite.test.js`
+- Modify: `implementations/typescript/src/delivery-store-sqlite.js`
+- Test: `implementations/typescript/test/delivery-store-sqlite.test.js`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/typescript/test/delivery-store-sqlite.test.js`:
+Append to `implementations/typescript/test/delivery-store-sqlite.test.js`:
 
 ```javascript
 test("SqliteDeliveryStore persists subscriptions", () => {
@@ -122,13 +122,13 @@ test("SqliteDeliveryStore persists subscriptions", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/delivery-store-sqlite.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store-sqlite.test.js`
 
 Expected: FAIL because `createSubscription` is not a function.
 
 - [ ] **Step 3: Add subscriptions table**
 
-In `reference/typescript/src/delivery-store-sqlite.js` `_initSchema()`, add before the closing backtick of the `exec` template:
+In `implementations/typescript/src/delivery-store-sqlite.js` `_initSchema()`, add before the closing backtick of the `exec` template:
 
 ```javascript
       CREATE TABLE IF NOT EXISTS delivery_subscriptions (
@@ -178,14 +178,14 @@ function rowToSubscription(row) {
 
 - [ ] **Step 5: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/delivery-store-sqlite.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store-sqlite.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/typescript/src/delivery-store-sqlite.js reference/typescript/test/delivery-store-sqlite.test.js
+git add implementations/typescript/src/delivery-store-sqlite.js implementations/typescript/test/delivery-store-sqlite.test.js
 git commit -m "feat: add SQLite delivery store subscription CRUD"
 git push origin master
 ```
@@ -195,12 +195,12 @@ git push origin master
 ## Task 3: PostgreSQL store subscription CRUD
 
 **Files:**
-- Modify: `reference/typescript/src/delivery-store-postgres.js`
-- Test: `reference/typescript/test/delivery-store-postgres.test.js`
+- Modify: `implementations/typescript/src/delivery-store-postgres.js`
+- Test: `implementations/typescript/test/delivery-store-postgres.test.js`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/typescript/test/delivery-store-postgres.test.js`:
+Append to `implementations/typescript/test/delivery-store-postgres.test.js`:
 
 ```javascript
 test("PostgresDeliveryStore persists subscriptions", async () => {
@@ -219,13 +219,13 @@ test("PostgresDeliveryStore persists subscriptions", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/delivery-store-postgres.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store-postgres.test.js`
 
 Expected: FAIL because `createSubscription` is not a function.
 
 - [ ] **Step 3: Add subscriptions table to schema**
 
-In `reference/typescript/src/delivery-store-postgres.js` `init()`, add inside the `CREATE TABLE` query block before the closing backtick:
+In `implementations/typescript/src/delivery-store-postgres.js` `init()`, add inside the `CREATE TABLE` query block before the closing backtick:
 
 ```javascript
       CREATE TABLE IF NOT EXISTS ${this._t("subscriptions")} (
@@ -297,14 +297,14 @@ to:
 
 - [ ] **Step 5: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/delivery-store-postgres.test.js`
+Run: `cd implementations/typescript && node --test test/delivery-store-postgres.test.js`
 
 Expected: PASS against live PostgreSQL at `localhost:5433`.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/typescript/src/delivery-store-postgres.js reference/typescript/test/delivery-store-postgres.test.js
+git add implementations/typescript/src/delivery-store-postgres.js implementations/typescript/test/delivery-store-postgres.test.js
 git commit -m "feat: add PostgreSQL delivery store subscription CRUD"
 git push origin master
 ```
@@ -314,12 +314,12 @@ git push origin master
 ## Task 4: Runtime subscription registry
 
 **Files:**
-- Modify: `reference/typescript/src/runtime/service.js`
-- Test: `reference/typescript/test/runtime-service.test.js`
+- Modify: `implementations/typescript/src/runtime/service.js`
+- Test: `implementations/typescript/test/runtime-service.test.js`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/typescript/test/runtime-service.test.js`:
+Append to `implementations/typescript/test/runtime-service.test.js`:
 
 ```javascript
 test("service registry buffers matching events and drains them", async () => {
@@ -351,13 +351,13 @@ Note: `session.opened` is a standard event type in the registry, so it validates
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: FAIL because `service.createSubscription` is not a function.
 
 - [ ] **Step 3: Implement registry in the service**
 
-In `reference/typescript/src/runtime/service.js`, add to the constructor after `this.transports = {};`:
+In `implementations/typescript/src/runtime/service.js`, add to the constructor after `this.transports = {};`:
 
 ```javascript
     this.subscriptions = new Map();
@@ -437,14 +437,14 @@ Add registry methods to the class after `getDeadLettered()`:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/runtime/service.js reference/typescript/test/runtime-service.test.js
+git add implementations/typescript/src/runtime/service.js implementations/typescript/test/runtime-service.test.js
 git commit -m "feat: add runtime subscription registry with buffered fanout"
 git push origin master
 ```
@@ -454,12 +454,12 @@ git push origin master
 ## Task 5: Subscription CRUD endpoints
 
 **Files:**
-- Modify: `reference/typescript/src/runtime/api-server.js`
-- Test: `reference/typescript/test/runtime-service.test.js`
+- Modify: `implementations/typescript/src/runtime/api-server.js`
+- Test: `implementations/typescript/test/runtime-service.test.js`
 
 - [ ] **Step 1: Write failing tests**
 
-Append to `reference/typescript/test/runtime-service.test.js`:
+Append to `implementations/typescript/test/runtime-service.test.js`:
 
 ```javascript
 test("api creates, lists, gets, and deletes subscriptions", async () => {
@@ -510,13 +510,13 @@ test("api long-poll returns buffered matching events", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: FAIL because subscription routes return 404.
 
 - [ ] **Step 3: Implement subscription CRUD and long-poll routes**
 
-In `reference/typescript/src/runtime/api-server.js`, inside `handle()` before the final `return sendJson(res, 404, ...)`, add:
+In `implementations/typescript/src/runtime/api-server.js`, inside `handle()` before the final `return sendJson(res, 404, ...)`, add:
 
 ```javascript
   if (route === "/subscriptions" && req.method === "POST") {
@@ -590,14 +590,14 @@ function handleStream(service, id, req, res) {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/src/runtime/api-server.js reference/typescript/test/runtime-service.test.js
+git add implementations/typescript/src/runtime/api-server.js implementations/typescript/test/runtime-service.test.js
 git commit -m "feat: add api subscription CRUD and long-poll endpoints"
 git push origin master
 ```
@@ -607,11 +607,11 @@ git push origin master
 ## Task 6: SSE stream endpoint test
 
 **Files:**
-- Test: `reference/typescript/test/runtime-service.test.js`
+- Test: `implementations/typescript/test/runtime-service.test.js`
 
 - [ ] **Step 1: Write failing SSE stream test**
 
-Append to `reference/typescript/test/runtime-service.test.js`:
+Append to `implementations/typescript/test/runtime-service.test.js`:
 
 ```javascript
 test("api SSE stream receives matching events", async () => {
@@ -647,14 +647,14 @@ test("api SSE stream receives matching events", async () => {
 
 - [ ] **Step 2: Run test to verify it passes**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS because Task 5 implemented the stream route. This test locks in SSE behavior.
 
 - [ ] **Step 3: Commit and push**
 
 ```bash
-git add reference/typescript/test/runtime-service.test.js
+git add implementations/typescript/test/runtime-service.test.js
 git commit -m "test: cover api SSE subscription stream"
 git push origin master
 ```
@@ -665,7 +665,7 @@ git push origin master
 
 - [ ] **Step 1: Run full TypeScript suite**
 
-Run: `cd reference/typescript && npm test`
+Run: `cd implementations/typescript && npm test`
 
 Expected: all tests pass.
 

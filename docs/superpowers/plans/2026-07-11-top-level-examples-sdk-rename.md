@@ -4,7 +4,7 @@
 
 **Goal:** Rename the TypeScript reference package to `@axisrobo/aep`, add a top-level npm workspace, and create a top-level `examples/` directory with SDK-embed and service-client examples.
 
-**Architecture:** A root `package.json` declares a workspace over `reference/typescript`, so `@axisrobo/aep` resolves locally without publishing. Top-level `examples/sdk/` imports the package by name; `examples/service/` connects to a running `aepd` over WebSocket and HTTP API. A smoke test spawns one example of each kind.
+**Architecture:** A root `package.json` declares a workspace over `implementations/typescript`, so `@axisrobo/aep` resolves locally without publishing. Top-level `examples/sdk/` imports the package by name; `examples/service/` connects to a running `aepd` over WebSocket and HTTP API. A smoke test spawns one example of each kind.
 
 **Tech Stack:** Node.js >=20 ESM, npm workspaces, `node:test`, `ws`, `fetch`, existing runtime modules.
 
@@ -14,8 +14,8 @@
 
 ## File Structure
 
-- Modify `reference/typescript/package.json`: rename to `@axisrobo/aep`, drop moved demo scripts.
-- Modify `reference/typescript/package-lock.json`: update name fields.
+- Modify `implementations/typescript/package.json`: rename to `@axisrobo/aep`, drop moved demo scripts.
+- Modify `implementations/typescript/package-lock.json`: update name fields.
 - Create `package.json` (root): workspace config.
 - Modify `.gitignore`: ignore root `node_modules`.
 - Create `examples/README.md`.
@@ -24,22 +24,22 @@
 - Create `examples/sdk/memory-event-producer.js` (migrated).
 - Create `examples/service/emit-and-subscribe.js`.
 - Create `examples/service/http-api-client.js`.
-- Delete migrated files under `reference/typescript/examples/`.
-- Create `reference/typescript/test/examples-smoke.test.js`.
+- Delete migrated files under `implementations/typescript/examples/`.
+- Create `implementations/typescript/test/examples-smoke.test.js`.
 
 ---
 
 ## Task 1: Rename package and add workspace
 
 **Files:**
-- Modify: `reference/typescript/package.json`
-- Modify: `reference/typescript/package-lock.json`
+- Modify: `implementations/typescript/package.json`
+- Modify: `implementations/typescript/package-lock.json`
 - Create: `package.json` (root)
 - Modify: `.gitignore`
 
 - [ ] **Step 1: Rename the reference package**
 
-In `reference/typescript/package.json`, change line 2:
+In `implementations/typescript/package.json`, change line 2:
 
 ```json
   "name": "@axisrobo/aep",
@@ -47,7 +47,7 @@ In `reference/typescript/package.json`, change line 2:
 
 - [ ] **Step 2: Update lockfile name fields**
 
-In `reference/typescript/package-lock.json`, change the top-level `"name"` (line 2) and the root package `"name"` (line 8) from `@axisrobo/aep-reference-typescript` to `@axisrobo/aep`.
+In `implementations/typescript/package-lock.json`, change the top-level `"name"` (line 2) and the root package `"name"` (line 8) from `@axisrobo/aep-reference-typescript` to `@axisrobo/aep`.
 
 - [ ] **Step 3: Create root workspace package.json**
 
@@ -57,7 +57,7 @@ Create `package.json` at repo root:
 {
   "name": "aep-workspace",
   "private": true,
-  "workspaces": ["reference/typescript"],
+  "workspaces": ["implementations/typescript"],
   "scripts": {
     "test": "npm test --workspace @axisrobo/aep",
     "example:sdk": "node examples/sdk/runtime-embed.js"
@@ -76,7 +76,7 @@ Check `.gitignore` includes `node_modules`. If it does not include a root-level 
 - [ ] **Step 5: Install workspace links**
 
 Run: `npm install`
-Expected: creates root `node_modules` with `@axisrobo/aep` linked to `reference/typescript`.
+Expected: creates root `node_modules` with `@axisrobo/aep` linked to `implementations/typescript`.
 
 - [ ] **Step 6: Verify package resolves and tests pass**
 
@@ -89,7 +89,7 @@ Expected: full TypeScript suite passes.
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add package.json package-lock.json reference/typescript/package.json reference/typescript/package-lock.json .gitignore
+git add package.json package-lock.json implementations/typescript/package.json implementations/typescript/package-lock.json .gitignore
 git commit -m "feat: rename reference package to @axisrobo/aep and add npm workspace"
 git push origin master
 ```
@@ -101,11 +101,11 @@ git push origin master
 **Files:**
 - Create: `examples/sdk/runtime-embed.js`
 - Create: `examples/README.md`
-- Test: `reference/typescript/test/examples-smoke.test.js`
+- Test: `implementations/typescript/test/examples-smoke.test.js`
 
 - [ ] **Step 1: Write failing smoke test**
 
-Create `reference/typescript/test/examples-smoke.test.js`:
+Create `implementations/typescript/test/examples-smoke.test.js`:
 
 ```javascript
 import assert from "node:assert/strict";
@@ -135,7 +135,7 @@ test("sdk runtime-embed example publishes and receives an event", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/examples-smoke.test.js`
+Run: `cd implementations/typescript && node --test test/examples-smoke.test.js`
 Expected: FAIL because `examples/sdk/runtime-embed.js` does not exist.
 
 - [ ] **Step 3: Implement runtime-embed example**
@@ -209,13 +209,13 @@ Requires `npm install` at the repo root so the `@axisrobo/aep` workspace link ex
 
 - [ ] **Step 5: Run smoke test**
 
-Run: `cd reference/typescript && node --test test/examples-smoke.test.js`
+Run: `cd implementations/typescript && node --test test/examples-smoke.test.js`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add examples/sdk/runtime-embed.js examples/README.md reference/typescript/test/examples-smoke.test.js
+git add examples/sdk/runtime-embed.js examples/README.md implementations/typescript/test/examples-smoke.test.js
 git commit -m "feat: add SDK runtime-embed example and examples README"
 git push origin master
 ```
@@ -227,13 +227,13 @@ git push origin master
 **Files:**
 - Create: `examples/sdk/agent-subscriber.js`
 - Create: `examples/sdk/memory-event-producer.js`
-- Delete: `reference/typescript/examples/agent-subscriber.js`
-- Delete: `reference/typescript/examples/memory-event-producer.js`
-- Modify: `reference/typescript/package.json`
+- Delete: `implementations/typescript/examples/agent-subscriber.js`
+- Delete: `implementations/typescript/examples/memory-event-producer.js`
+- Modify: `implementations/typescript/package.json`
 
 - [ ] **Step 1: Create migrated agent-subscriber example**
 
-Create `examples/sdk/agent-subscriber.js` as a copy of `reference/typescript/examples/agent-subscriber.js` with the import line changed from:
+Create `examples/sdk/agent-subscriber.js` as a copy of `implementations/typescript/examples/agent-subscriber.js` with the import line changed from:
 
 ```javascript
 import { AepHarness, MockStdioTransport, AepSession } from "../src/index.js";
@@ -249,7 +249,7 @@ Keep the rest of the file identical.
 
 - [ ] **Step 2: Create migrated memory-event-producer example**
 
-Create `examples/sdk/memory-event-producer.js` as a copy of `reference/typescript/examples/memory-event-producer.js` with the import line changed from:
+Create `examples/sdk/memory-event-producer.js` as a copy of `implementations/typescript/examples/memory-event-producer.js` with the import line changed from:
 
 ```javascript
 import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "../src/index.js";
@@ -265,11 +265,11 @@ Keep the rest of the file identical.
 
 - [ ] **Step 3: Delete the original reference copies**
 
-Delete `reference/typescript/examples/agent-subscriber.js` and `reference/typescript/examples/memory-event-producer.js`.
+Delete `implementations/typescript/examples/agent-subscriber.js` and `implementations/typescript/examples/memory-event-producer.js`.
 
 - [ ] **Step 4: Update reference package scripts**
 
-In `reference/typescript/package.json`, remove the two scripts that point at the deleted files:
+In `implementations/typescript/package.json`, remove the two scripts that point at the deleted files:
 
 ```json
     "demo:memory": "node ./examples/memory-event-producer.js",
@@ -292,8 +292,8 @@ Expected: all tests pass.
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add examples/sdk/agent-subscriber.js examples/sdk/memory-event-producer.js reference/typescript/package.json
-git rm reference/typescript/examples/agent-subscriber.js reference/typescript/examples/memory-event-producer.js
+git add examples/sdk/agent-subscriber.js examples/sdk/memory-event-producer.js implementations/typescript/package.json
+git rm implementations/typescript/examples/agent-subscriber.js implementations/typescript/examples/memory-event-producer.js
 git commit -m "feat: migrate SDK examples to top-level examples/sdk"
 git push origin master
 ```
@@ -305,11 +305,11 @@ git push origin master
 **Files:**
 - Create: `examples/service/emit-and-subscribe.js`
 - Create: `examples/service/http-api-client.js`
-- Test: `reference/typescript/test/examples-smoke.test.js`
+- Test: `implementations/typescript/test/examples-smoke.test.js`
 
 - [ ] **Step 1: Write failing service smoke test**
 
-Append to `reference/typescript/test/examples-smoke.test.js`:
+Append to `implementations/typescript/test/examples-smoke.test.js`:
 
 ```javascript
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
@@ -351,7 +351,7 @@ function waitFor(stream, pattern) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/examples-smoke.test.js`
+Run: `cd implementations/typescript && node --test test/examples-smoke.test.js`
 Expected: FAIL because `examples/service/http-api-client.js` does not exist.
 
 - [ ] **Step 3: Implement http-api-client example**
@@ -445,13 +445,13 @@ subscriber.on("error", (err) => {
 
 - [ ] **Step 5: Run smoke test**
 
-Run: `cd reference/typescript && node --test test/examples-smoke.test.js`
+Run: `cd implementations/typescript && node --test test/examples-smoke.test.js`
 Expected: PASS for all example smoke tests.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add examples/service/emit-and-subscribe.js examples/service/http-api-client.js reference/typescript/test/examples-smoke.test.js
+git add examples/service/emit-and-subscribe.js examples/service/http-api-client.js implementations/typescript/test/examples-smoke.test.js
 git commit -m "feat: add service-client examples with smoke coverage"
 git push origin master
 ```

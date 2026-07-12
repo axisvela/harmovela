@@ -12,18 +12,18 @@
 
 ## File Structure
 
-- Modify: `reference/python/pyproject.toml` â€” add websockets, grpcio
-- Modify: `reference/python/src/aep/transport/__init__.py` â€” exports
-- Create: `reference/python/src/aep/transport/base.py` â€” Transport base class
-- Create: `reference/python/src/aep/transport/stdio.py` â€” StdioTransport
-- Create: `reference/python/src/aep/transport/websocket.py` â€” WsServer + WsClient
-- Create: `reference/python/src/aep/transport/sse.py` â€” SseServerTransport
-- Create: `reference/python/src/aep/transport/grpc.py` â€” GrpcServer + GrpcClient
-- Create: `reference/python/src/aep/transport/aep.proto` â€” same as TS
-- Create: `reference/python/tests/test_transport_stdio.py`
-- Create: `reference/python/tests/test_transport_ws.py`
-- Create: `reference/python/tests/test_transport_sse.py`
-- Create: `reference/python/tests/test_transport_grpc.py`
+- Modify: `implementations/python/pyproject.toml` â€?add websockets, grpcio
+- Modify: `implementations/python/src/aep/transport/__init__.py` â€?exports
+- Create: `implementations/python/src/aep/transport/base.py` â€?Transport base class
+- Create: `implementations/python/src/aep/transport/stdio.py` â€?StdioTransport
+- Create: `implementations/python/src/aep/transport/websocket.py` â€?WsServer + WsClient
+- Create: `implementations/python/src/aep/transport/sse.py` â€?SseServerTransport
+- Create: `implementations/python/src/aep/transport/grpc.py` â€?GrpcServer + GrpcClient
+- Create: `implementations/python/src/aep/transport/aep.proto` â€?same as TS
+- Create: `implementations/python/tests/test_transport_stdio.py`
+- Create: `implementations/python/tests/test_transport_ws.py`
+- Create: `implementations/python/tests/test_transport_sse.py`
+- Create: `implementations/python/tests/test_transport_grpc.py`
 
 ---
 
@@ -33,7 +33,7 @@
 
 - [ ] TDD: 3-4 stdio tests (parse NDJSON, capture sent data, ignore empty lines, malformed JSON)
 - [ ] Implement Transport base class + StdioTransport extending it
-- [ ] `python -m pytest tests/test_transport_stdio.py -q` â†’ PASS
+- [ ] `python -m pytest tests/test_transport_stdio.py -q` â†?PASS
 - [ ] Commit: `feat: add Python stdio transport`
 
 ### Task 2: WebSocket Transport
@@ -43,7 +43,7 @@
 - [ ] Add `websockets` to pyproject.toml dependencies
 - [ ] TDD: 4 tests (server start, client connect + exchange, bidirectional, shutdown)
 - [ ] Implement WsServerTransport + WsClientTransport extending base
-- [ ] `python -m pytest tests/test_transport_ws.py -q` â†’ PASS
+- [ ] `python -m pytest tests/test_transport_ws.py -q` â†?PASS
 - [ ] Commit: `feat: add Python WebSocket transport`
 
 ### Task 3: SSE Transport
@@ -52,7 +52,7 @@
 
 - [ ] TDD: 3 tests (server serves text/event-stream, ingest endpoint accepts POST, rejects invalid JSON)
 - [ ] Implement SseServerTransport using stdlib `http.server`
-- [ ] `python -m pytest tests/test_transport_sse.py -q` â†’ PASS
+- [ ] `python -m pytest tests/test_transport_sse.py -q` â†?PASS
 - [ ] Commit: `feat: add Python SSE transport`
 
 ### Task 4: gRPC Transport
@@ -63,13 +63,13 @@
 - [ ] Copy TS aep.proto or create identical one
 - [ ] TDD: 4 tests (server start, client connect + exchange, bidirectional, shutdown)
 - [ ] Implement GrpcServerTransport + GrpcClientTransport
-- [ ] `python -m pytest tests/test_transport_grpc.py -q` â†’ PASS
+- [ ] `python -m pytest tests/test_transport_grpc.py -q` â†?PASS
 - [ ] Commit: `feat: add Python gRPC transport`
 
 ### Task 5: Docs, Verification, Push
 
-- [ ] Update `reference/python/README.md` scope â€” add transport bindings
-- [ ] Update `reference/python/src/aep/transport/__init__.py` exports
+- [ ] Update `implementations/python/README.md` scope â€?add transport bindings
+- [ ] Update `implementations/python/src/aep/transport/__init__.py` exports
 - [ ] Full verification: `python -m pytest --tb=short -q` (~94 tests)
 - [ ] Cross-lang: `node tools/conformance-runner.js`
 - [ ] Push

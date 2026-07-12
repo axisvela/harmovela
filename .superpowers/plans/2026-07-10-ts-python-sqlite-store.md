@@ -12,29 +12,29 @@
 
 ## File Structure
 
-- Modify: `reference/typescript/package.json` â€” add better-sqlite3
-- Create: `reference/typescript/src/delivery-store-sqlite.js`
-- Create: `reference/typescript/test/delivery-store-sqlite.test.js`
-- Create: `reference/python/src/aep/sqlite_delivery_store.py`
-- Create: `reference/python/tests/test_sqlite_delivery_store.py`
+- Modify: `implementations/typescript/package.json` â€?add better-sqlite3
+- Create: `implementations/typescript/src/delivery-store-sqlite.js`
+- Create: `implementations/typescript/test/delivery-store-sqlite.test.js`
+- Create: `implementations/python/src/aep/sqlite_delivery_store.py`
+- Create: `implementations/python/tests/test_sqlite_delivery_store.py`
 
 ---
 
 ### Task 1: TypeScript SqliteDeliveryStore
 
 **Files:**
-- Modify: `reference/typescript/package.json`
-- Create: `reference/typescript/src/delivery-store-sqlite.js`
-- Create: `reference/typescript/test/delivery-store-sqlite.test.js`
+- Modify: `implementations/typescript/package.json`
+- Create: `implementations/typescript/src/delivery-store-sqlite.js`
+- Create: `implementations/typescript/test/delivery-store-sqlite.test.js`
 
 - [ ] **Step 1: Add better-sqlite3 dependency + write failing test**
 
-In `reference/typescript/package.json`, add to dependencies:
+In `implementations/typescript/package.json`, add to dependencies:
 ```json
 "better-sqlite3": "^11.0.0"
 ```
 
-Create `reference/typescript/test/delivery-store-sqlite.test.js`:
+Create `implementations/typescript/test/delivery-store-sqlite.test.js`:
 
 ```js
 import assert from "node:assert/strict";
@@ -126,7 +126,7 @@ test("SqliteDeliveryStore hasAttemptsRemaining checks max", () => {
 - [ ] **Step 2: Install dep and run test to verify failure**
 
 ```bash
-cd reference/typescript && npm install
+cd implementations/typescript && npm install
 npm test -- test/delivery-store-sqlite.test.js
 ```
 
@@ -134,7 +134,7 @@ Expected: FAIL with module not found.
 
 - [ ] **Step 3: Implement SqliteDeliveryStore**
 
-Create `reference/typescript/src/delivery-store-sqlite.js`:
+Create `implementations/typescript/src/delivery-store-sqlite.js`:
 
 ```js
 import Database from "better-sqlite3";
@@ -293,7 +293,7 @@ function rowToPending(row) {
 - [ ] **Step 4: Run tests**
 
 ```bash
-cd reference/typescript && npm test -- test/delivery-store-sqlite.test.js
+cd implementations/typescript && npm test -- test/delivery-store-sqlite.test.js
 ```
 
 Expected: 7 tests pass.
@@ -301,7 +301,7 @@ Expected: 7 tests pass.
 - [ ] **Step 5: Run all TS tests**
 
 ```bash
-cd reference/typescript && npm test
+cd implementations/typescript && npm test
 ```
 
 Expected: all pass.
@@ -309,7 +309,7 @@ Expected: all pass.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add reference/typescript/package.json reference/typescript/src/delivery-store-sqlite.js reference/typescript/test/delivery-store-sqlite.test.js
+git add implementations/typescript/package.json implementations/typescript/src/delivery-store-sqlite.js implementations/typescript/test/delivery-store-sqlite.test.js
 git commit -m "feat: add TypeScript SqliteDeliveryStore with tests"
 ```
 
@@ -318,12 +318,12 @@ git commit -m "feat: add TypeScript SqliteDeliveryStore with tests"
 ### Task 2: Python SqliteDeliveryStore
 
 **Files:**
-- Create: `reference/python/src/aep/sqlite_delivery_store.py`
-- Create: `reference/python/tests/test_sqlite_delivery_store.py`
+- Create: `implementations/python/src/aep/sqlite_delivery_store.py`
+- Create: `implementations/python/tests/test_sqlite_delivery_store.py`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/python/tests/test_sqlite_delivery_store.py`:
+Create `implementations/python/tests/test_sqlite_delivery_store.py`:
 
 ```python
 import pytest
@@ -407,14 +407,14 @@ def test_has_attempts_remaining_checks_max(store):
 - [ ] **Step 2: Run to verify failure**
 
 ```bash
-cd reference/python && python -m pytest tests/test_sqlite_delivery_store.py -q
+cd implementations/python && python -m pytest tests/test_sqlite_delivery_store.py -q
 ```
 
 Expected: FAIL with ModuleNotFoundError.
 
 - [ ] **Step 3: Implement**
 
-Create `reference/python/src/aep/sqlite_delivery_store.py`:
+Create `implementations/python/src/aep/sqlite_delivery_store.py`:
 
 ```python
 import sqlite3
@@ -581,7 +581,7 @@ class SqliteDeliveryStore:
 - [ ] **Step 4: Run tests**
 
 ```bash
-cd reference/python && python -m pytest tests/test_sqlite_delivery_store.py -q
+cd implementations/python && python -m pytest tests/test_sqlite_delivery_store.py -q
 ```
 
 Expected: 7 passed.
@@ -589,7 +589,7 @@ Expected: 7 passed.
 - [ ] **Step 5: Run all Python tests**
 
 ```bash
-cd reference/python && python -m pytest --tb=short -q
+cd implementations/python && python -m pytest --tb=short -q
 ```
 
 Expected: all pass (71 + 7 = 78).
@@ -597,7 +597,7 @@ Expected: all pass (71 + 7 = 78).
 - [ ] **Step 6: Commit**
 
 ```bash
-git add reference/python/src/aep/sqlite_delivery_store.py reference/python/tests/test_sqlite_delivery_store.py
+git add implementations/python/src/aep/sqlite_delivery_store.py implementations/python/tests/test_sqlite_delivery_store.py
 git commit -m "feat: add Python SqliteDeliveryStore with tests"
 ```
 
@@ -607,14 +607,14 @@ git commit -m "feat: add Python SqliteDeliveryStore with tests"
 
 - [ ] **Step 1: Update TypeScript README scope**
 
-In `reference/typescript/README.md`, modify the delivery line to:
+In `implementations/typescript/README.md`, modify the delivery line to:
 ```markdown
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store (InMemory + SQLite), and event journal
 ```
 
 - [ ] **Step 2: Update Python package exports**
 
-In `reference/python/src/aep/__init__.py`, add:
+In `implementations/python/src/aep/__init__.py`, add:
 ```python
 from .sqlite_delivery_store import SqliteDeliveryStore
 ```
@@ -623,16 +623,16 @@ And add `"SqliteDeliveryStore"` to `__all__`.
 - [ ] **Step 3: Full cross-language verification**
 
 ```bash
-cd reference/typescript && npm test && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
-cd reference/java && mvn test -q
-cd reference/go && go test ./aep/ -v
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
+cd implementations/java && mvn test -q
+cd implementations/go && go test ./aep/ -v
 ```
 
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/typescript/README.md reference/python/src/aep/__init__.py
+git add implementations/typescript/README.md implementations/python/src/aep/__init__.py
 git commit -m "docs: update scope for SQLite stores"
 git status --short
 git push

@@ -5,11 +5,11 @@ Status: approved for implementation planning
 
 ## Goal
 
-Promote examples from `reference/typescript/examples/` to a top-level `examples/` directory that consumes AEP as a real user would: some examples embed the SDK by package name, others act as clients of a running `aepd` service. Rename the TypeScript reference package to `@axisrobo/aep` and wire a top-level npm workspace so package-name imports resolve locally without publishing.
+Promote examples from `implementations/typescript/examples/` to a top-level `examples/` directory that consumes AEP as a real user would: some examples embed the SDK by package name, others act as clients of a running `aepd` service. Rename the TypeScript reference package to `@axisrobo/aep` and wire a top-level npm workspace so package-name imports resolve locally without publishing.
 
 ## Context
 
-Current examples live under `reference/typescript/examples/` and import internal source with relative paths such as `../src/index.js`. That reads like reference internals, not consumer usage. The productization track (SDK + `aepd` + CLI + HTTP API) now makes a consumer-facing examples layer meaningful.
+Current examples live under `implementations/typescript/examples/` and import internal source with relative paths such as `../src/index.js`. That reads like reference internals, not consumer usage. The productization track (SDK + `aepd` + CLI + HTTP API) now makes a consumer-facing examples layer meaningful.
 
 The reference package is currently `@axisrobo/aep-reference-typescript` with `private: true`. It is not published.
 
@@ -17,10 +17,10 @@ The reference package is currently `@axisrobo/aep-reference-typescript` with `pr
 
 - Rename the TypeScript reference package to `@axisrobo/aep`.
 - Keep `private: true`. Workspaces link locally; publishing stays disabled.
-- Add a top-level `package.json` declaring an npm workspace that includes `reference/typescript`.
+- Add a top-level `package.json` declaring an npm workspace that includes `implementations/typescript`.
 - Create a top-level `examples/` directory with two categories:
-  - `examples/sdk/` â€” embed the SDK via `import { ... } from "@axisrobo/aep"`.
-  - `examples/service/` â€” connect to a running `aepd` over WebSocket and the HTTP API.
+  - `examples/sdk/` â€?embed the SDK via `import { ... } from "@axisrobo/aep"`.
+  - `examples/service/` â€?connect to a running `aepd` over WebSocket and the HTTP API.
 - Migrate existing reference examples that demonstrate SDK embedding into `examples/sdk/`, updating imports to the package name.
 - Keep runnable reference-internal demos that are transport/harness specific where relative imports are clearer only if they do not fit the consumer model; otherwise migrate.
 
@@ -28,13 +28,13 @@ The reference package is currently `@axisrobo/aep-reference-typescript` with `pr
 
 ### In Scope
 
-- Rename package `name` to `@axisrobo/aep` in `reference/typescript/package.json` and update `package-lock.json` name fields.
-- Add top-level `package.json` with `workspaces: ["reference/typescript"]` and no dependencies of its own.
+- Rename package `name` to `@axisrobo/aep` in `implementations/typescript/package.json` and update `package-lock.json` name fields.
+- Add top-level `package.json` with `workspaces: ["implementations/typescript"]` and no dependencies of its own.
 - Add root `.gitignore` entry for root `node_modules` if not already ignored.
 - Create `examples/sdk/` with SDK-embedding examples importing `@axisrobo/aep`.
 - Create `examples/service/` with service-client examples using WebSocket and HTTP API.
-- Migrate existing SDK-style examples from `reference/typescript/examples/` to `examples/sdk/` with package-name imports.
-- Update `reference/typescript/package.json` demo scripts that referenced moved files, or remove scripts that no longer apply.
+- Migrate existing SDK-style examples from `implementations/typescript/examples/` to `examples/sdk/` with package-name imports.
+- Update `implementations/typescript/package.json` demo scripts that referenced moved files, or remove scripts that no longer apply.
 - Add `examples/README.md` describing both categories and how to run them.
 - A smoke test or npm script that runs at least one sdk example and one service example headlessly.
 
@@ -48,7 +48,7 @@ The reference package is currently `@axisrobo/aep-reference-typescript` with `pr
 
 ## Package Rename
 
-`reference/typescript/package.json`:
+`implementations/typescript/package.json`:
 
 ```json
 {
@@ -69,7 +69,7 @@ Top-level `package.json`:
 {
   "name": "aep-workspace",
   "private": true,
-  "workspaces": ["reference/typescript"]
+  "workspaces": ["implementations/typescript"]
 }
 ```
 
@@ -112,14 +112,14 @@ Service examples print clear instructions if the daemon is not reachable.
 
 ## Migration Of Existing Examples
 
-Existing files under `reference/typescript/examples/`:
+Existing files under `implementations/typescript/examples/`:
 
-- `agent-subscriber.js` â€” migrate to `examples/sdk/agent-subscriber.js`, import `@axisrobo/aep`.
-- `memory-event-producer.js` â€” migrate to `examples/sdk/memory-event-producer.js`, import `@axisrobo/aep`.
-- `async-tool-producer.js` â€” migrate to `examples/sdk/` if it only uses public exports; otherwise keep under reference and note as internal.
-- `mcp-aep-consumer.js` and `mcp-bridge/demo.js` â€” migrate to `examples/sdk/` if they use only public exports; otherwise keep as reference internals.
-- `production-e2e.js` â€” keep as a reference internal test harness; it is not a consumer example.
-- `runtime-service/README.md` â€” fold into `examples/README.md`.
+- `agent-subscriber.js` â€?migrate to `examples/sdk/agent-subscriber.js`, import `@axisrobo/aep`.
+- `memory-event-producer.js` â€?migrate to `examples/sdk/memory-event-producer.js`, import `@axisrobo/aep`.
+- `async-tool-producer.js` â€?migrate to `examples/sdk/` if it only uses public exports; otherwise keep under reference and note as internal.
+- `mcp-aep-consumer.js` and `mcp-bridge/demo.js` â€?migrate to `examples/sdk/` if they use only public exports; otherwise keep as reference internals.
+- `production-e2e.js` â€?keep as a reference internal test harness; it is not a consumer example.
+- `runtime-service/README.md` â€?fold into `examples/README.md`.
 
 Any export used by a migrated example that is not currently in `src/index.js` must be added to `src/index.js` so the public package surface is sufficient. The design assumes migrated examples rely only on public exports; missing ones are added to `index.js`.
 
@@ -147,7 +147,7 @@ Reference package scripts referencing moved example files are updated or removed
 ## Testing
 
 - After rename and workspace setup, `npm test --workspace @axisrobo/aep` runs the full TypeScript suite and stays green.
-- Add `test/examples-smoke.test.js` under `reference/typescript/test/` that spawns one SDK example and asserts expected stdout, and spawns `aepd` plus one service example and asserts an event round-trips.
+- Add `test/examples-smoke.test.js` under `implementations/typescript/test/` that spawns one SDK example and asserts expected stdout, and spawns `aepd` plus one service example and asserts an event round-trips.
 - The smoke test uses ephemeral ports and disables unused transports to avoid conflicts.
 
 ## Success Criteria

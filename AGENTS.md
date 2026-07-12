@@ -48,17 +48,17 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
-| `reference/typescript/` | Primary runnable reference harness |
-| `reference/python/` | Second-priority Python reference implementation |
-| `reference/go/` | Go reference implementation with C0/C1 conformance |
-| `reference/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
-| `reference/typescript/src/bridge/` | MCP bridge and async tool handler |
+| `implementations/typescript/` | Primary runnable reference harness |
+| `implementations/python/` | Second-priority Python reference implementation |
+| `implementations/go/` | Go reference implementation with C0/C1 conformance |
+| `implementations/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
+| `implementations/typescript/src/bridge/` | MCP bridge and async tool handler |
 
 ## Working Rules
 
 - Keep the protocol core small and implementation-neutral.
 - Prefer stable JSON envelope fields over transport-specific behavior.
-- Keep language implementations under `reference/<language>/`.
+- Keep language implementations under `implementations/<language>/`.
 - Keep shared schemas and conformance fixtures outside language-specific directories.
 - Prioritize TypeScript first, Python second, then Go and Java.
 - Do not introduce production guarantees beyond the documented delivery semantics.
@@ -68,4 +68,4 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 
 For documentation-only changes, verify by reviewing links and terminology consistency.
 
-For TypeScript reference changes, run `cd reference/typescript && npm test` and record verification in the related Superpowers plan.
+For TypeScript reference changes, run `cd implementations/typescript && npm test` and record verification in the related Superpowers plan.

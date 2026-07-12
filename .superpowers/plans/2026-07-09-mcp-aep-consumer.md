@@ -4,7 +4,7 @@
 
 **Goal:** Add a TypeScript example showing an agent invoking MCP tools synchronously while consuming correlated AEP task lifecycle events asynchronously.
 
-**Architecture:** Add a small internal helper under `reference/typescript/src/bridge/` that drives the existing `McpBridge` directly and groups emitted AEP events by `task_id`. Add one example script that prints the MCP immediate response and AEP lifecycle timeline, plus one focused Node test for deterministic behavior.
+**Architecture:** Add a small internal helper under `implementations/typescript/src/bridge/` that drives the existing `McpBridge` directly and groups emitted AEP events by `task_id`. Add one example script that prints the MCP immediate response and AEP lifecycle timeline, plus one focused Node test for deterministic behavior.
 
 **Tech Stack:** Node ESM, `node:test`, existing `McpBridge`, existing `asyncToolHandler`, existing `MockStdioTransport`, package npm scripts.
 
@@ -12,17 +12,17 @@
 
 ## File Structure
 
-- Create: `reference/typescript/src/bridge/mcp-aep-consumer.js` â€” internal helper for MCP calls plus AEP event correlation.
-- Create: `reference/typescript/examples/mcp-aep-consumer.js` â€” runnable demo transcript.
-- Create: `reference/typescript/test/mcp-aep-consumer.test.js` â€” focused behavior tests for the helper.
-- Modify: `reference/typescript/package.json` â€” add `demo:mcp-aep-consumer` script.
-- Modify: `README.md` â€” add root example command.
-- Modify: `reference/typescript/README.md` â€” add example command and scope line.
-- Modify: `docs/roadmap.md` â€” link Phase 4 deliverable to the new example.
+- Create: `implementations/typescript/src/bridge/mcp-aep-consumer.js` â€?internal helper for MCP calls plus AEP event correlation.
+- Create: `implementations/typescript/examples/mcp-aep-consumer.js` â€?runnable demo transcript.
+- Create: `implementations/typescript/test/mcp-aep-consumer.test.js` â€?focused behavior tests for the helper.
+- Modify: `implementations/typescript/package.json` â€?add `demo:mcp-aep-consumer` script.
+- Modify: `README.md` â€?add root example command.
+- Modify: `implementations/typescript/README.md` â€?add example command and scope line.
+- Modify: `docs/roadmap.md` â€?link Phase 4 deliverable to the new example.
 
 ## Helper Contract
 
-`reference/typescript/src/bridge/mcp-aep-consumer.js` exports:
+`implementations/typescript/src/bridge/mcp-aep-consumer.js` exports:
 
 - `createDemoBridge(options = {})`
 - `runMcpAepConsumerDemo(options = {})`
@@ -37,11 +37,11 @@ The helper is internal example support, not a stable public SDK.
 ### Task 1: Consumer Helper Tests
 
 **Files:**
-- Create: `reference/typescript/test/mcp-aep-consumer.test.js`
+- Create: `implementations/typescript/test/mcp-aep-consumer.test.js`
 
 - [ ] **Step 1: Write failing tests for helper behavior**
 
-Create `reference/typescript/test/mcp-aep-consumer.test.js` with:
+Create `implementations/typescript/test/mcp-aep-consumer.test.js` with:
 
 ```js
 import assert from "node:assert/strict";
@@ -117,7 +117,7 @@ test("createDemoBridge exposes the expected demo tools", async () => {
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/mcp-aep-consumer.test.js
 ```
 
@@ -128,7 +128,7 @@ Expected: FAIL with a module-not-found error for `../src/bridge/mcp-aep-consumer
 Run:
 
 ```bash
-git add reference/typescript/test/mcp-aep-consumer.test.js
+git add implementations/typescript/test/mcp-aep-consumer.test.js
 git commit -m "test: specify MCP and AEP consumer example"
 ```
 
@@ -139,11 +139,11 @@ Expected: commit succeeds with only the new test file.
 ### Task 2: Consumer Helper Implementation
 
 **Files:**
-- Create: `reference/typescript/src/bridge/mcp-aep-consumer.js`
+- Create: `implementations/typescript/src/bridge/mcp-aep-consumer.js`
 
 - [ ] **Step 1: Add the helper implementation**
 
-Create `reference/typescript/src/bridge/mcp-aep-consumer.js` with:
+Create `implementations/typescript/src/bridge/mcp-aep-consumer.js` with:
 
 ```js
 import { McpBridge, asyncToolHandler } from "./mcp-bridge.js";
@@ -310,7 +310,7 @@ function sleep(ms) {
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/mcp-aep-consumer.test.js
 ```
 
@@ -321,7 +321,7 @@ Expected: PASS, 5 tests pass.
 Run:
 
 ```bash
-git add reference/typescript/src/bridge/mcp-aep-consumer.js
+git add implementations/typescript/src/bridge/mcp-aep-consumer.js
 git commit -m "feat: add MCP and AEP consumer helper"
 ```
 
@@ -332,15 +332,15 @@ Expected: commit succeeds.
 ### Task 3: Demo Script And Package Command
 
 **Files:**
-- Create: `reference/typescript/examples/mcp-aep-consumer.js`
-- Modify: `reference/typescript/package.json`
+- Create: `implementations/typescript/examples/mcp-aep-consumer.js`
+- Modify: `implementations/typescript/package.json`
 
 - [ ] **Step 1: Verify demo command fails before adding script**
 
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run demo:mcp-aep-consumer
 ```
 
@@ -348,7 +348,7 @@ Expected: FAIL with missing script.
 
 - [ ] **Step 2: Add the demo script**
 
-Create `reference/typescript/examples/mcp-aep-consumer.js` with:
+Create `implementations/typescript/examples/mcp-aep-consumer.js` with:
 
 ```js
 #!/usr/bin/env node
@@ -382,7 +382,7 @@ for (const call of summary.calls) {
 
 - [ ] **Step 3: Add the npm script**
 
-In `reference/typescript/package.json`, add this script while preserving existing scripts:
+In `implementations/typescript/package.json`, add this script while preserving existing scripts:
 
 ```json
 "demo:mcp-aep-consumer": "node ./examples/mcp-aep-consumer.js"
@@ -393,7 +393,7 @@ In `reference/typescript/package.json`, add this script while preserving existin
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run demo:mcp-aep-consumer
 ```
 
@@ -404,7 +404,7 @@ Expected: output includes `Immediate MCP tool results`, `Correlated AEP timeline
 Run:
 
 ```bash
-git add reference/typescript/examples/mcp-aep-consumer.js reference/typescript/package.json
+git add implementations/typescript/examples/mcp-aep-consumer.js implementations/typescript/package.json
 git commit -m "feat: add MCP and AEP consumer demo"
 ```
 
@@ -416,7 +416,7 @@ Expected: commit succeeds.
 
 **Files:**
 - Modify: `README.md`
-- Modify: `reference/typescript/README.md`
+- Modify: `implementations/typescript/README.md`
 - Modify: `docs/roadmap.md`
 
 - [ ] **Step 1: Update root README example command list**
@@ -424,12 +424,12 @@ Expected: commit succeeds.
 In `README.md`, add this command to the existing examples block after `demo:mcp-bridge`:
 
 ```sh
-cd reference/typescript && npm run demo:mcp-aep-consumer
+cd implementations/typescript && npm run demo:mcp-aep-consumer
 ```
 
 - [ ] **Step 2: Update TypeScript README example command list and scope**
 
-In `reference/typescript/README.md`, add this command to the examples block after `demo:mcp-bridge`:
+In `implementations/typescript/README.md`, add this command to the examples block after `demo:mcp-bridge`:
 
 ```sh
 npm run demo:mcp-aep-consumer
@@ -458,7 +458,7 @@ In `docs/roadmap.md`, replace:
 with:
 
 ```markdown
-- Example agent consuming both MCP and AEP (`reference/typescript/examples/mcp-aep-consumer.js`)
+- Example agent consuming both MCP and AEP (`implementations/typescript/examples/mcp-aep-consumer.js`)
 ```
 
 - [ ] **Step 4: Commit**
@@ -466,7 +466,7 @@ with:
 Run:
 
 ```bash
-git add README.md reference/typescript/README.md docs/roadmap.md
+git add README.md implementations/typescript/README.md docs/roadmap.md
 git commit -m "docs: document MCP and AEP consumer demo"
 ```
 
@@ -484,7 +484,7 @@ Expected: commit succeeds.
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test
 ```
 
@@ -495,7 +495,7 @@ Expected: all tests pass.
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run demo:mcp-aep-consumer
 ```
 
@@ -506,7 +506,7 @@ Expected: demo prints immediate MCP task results and correlated AEP timelines fo
 Run:
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm run conformance
 ```
 
@@ -517,7 +517,7 @@ Expected: AEP-C1 conformance passes and AEP-C2 delivery fixture is skipped.
 Run:
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest --tb=short -q
 ```
 

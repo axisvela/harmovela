@@ -19,10 +19,10 @@ AEP is a draft open protocol. Contributions that refine the specification, impro
 | `.superpowers/plans/` | Implementation plans |
 | `schemas/` | Shared JSON Schema assets |
 | `conformance/` | Shared conformance manifest and fixtures |
-| `reference/typescript/` | TypeScript reference (primary) |
-| `reference/python/` | Python reference |
-| `reference/go/` | Go reference |
-| `reference/java/` | Java reference |
+| `implementations/typescript/` | TypeScript reference (primary) |
+| `implementations/python/` | Python reference |
+| `implementations/go/` | Go reference |
+| `implementations/java/` | Java reference |
 | `tools/` | Development tools |
 
 ## How to Contribute
@@ -38,7 +38,7 @@ AEP is a draft open protocol. Contributions that refine the specification, impro
 
 ### New Language Reference
 
-1. Create `reference/<language>/` with a `README.md`.
+1. Create `implementations/<language>/` with a `README.md`.
 2. Implement at minimum: envelope validation, event type registry, error model.
 3. Load and pass the shared `conformance/manifest.json` fixtures at AEP-C0 and AEP-C1.
 4. Follow the pattern established by the TypeScript reference.
@@ -53,16 +53,16 @@ AEP is a draft open protocol. Contributions that refine the specification, impro
 
 ```sh
 # TypeScript
-cd reference/typescript && npm test && npm run conformance
+cd implementations/typescript && npm test && npm run conformance
 
 # Python
-cd reference/python && python -m pytest --tb=short -q
+cd implementations/python && python -m pytest --tb=short -q
 
 # Go
-cd reference/go && go test ./aep/ -v
+cd implementations/go && go test ./aep/ -v
 
 # Java
-cd reference/java && mvn test -q
+cd implementations/java && mvn test -q
 
 # Cross-language
 node tools/conformance-runner.js

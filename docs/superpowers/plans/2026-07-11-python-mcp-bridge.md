@@ -14,22 +14,22 @@
 
 ## File Structure
 
-- Create `reference/python/src/aep/mcp_bridge.py`: `McpBridge` + `async_tool_handler`.
-- Modify `reference/python/src/aep/__init__.py`: export both.
-- Create `reference/python/tests/test_mcp_bridge.py`.
+- Create `implementations/python/src/aep/mcp_bridge.py`: `McpBridge` + `async_tool_handler`.
+- Modify `implementations/python/src/aep/__init__.py`: export both.
+- Create `implementations/python/tests/test_mcp_bridge.py`.
 
 ---
 
 ## Task 1: McpBridge JSON-RPC handler
 
 **Files:**
-- Create: `reference/python/src/aep/mcp_bridge.py`
-- Modify: `reference/python/src/aep/__init__.py`
-- Test: `reference/python/tests/test_mcp_bridge.py`
+- Create: `implementations/python/src/aep/mcp_bridge.py`
+- Modify: `implementations/python/src/aep/__init__.py`
+- Test: `implementations/python/tests/test_mcp_bridge.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/python/tests/test_mcp_bridge.py`:
+Create `implementations/python/tests/test_mcp_bridge.py`:
 
 ```python
 from aep.mcp_bridge import McpBridge
@@ -106,12 +106,12 @@ def test_handler_exception_returns_is_error():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_mcp_bridge.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_mcp_bridge.py -q`
 Expected: FAIL with `ModuleNotFoundError: No module named 'aep.mcp_bridge'`.
 
 - [ ] **Step 3: Implement McpBridge**
 
-Create `reference/python/src/aep/mcp_bridge.py`:
+Create `implementations/python/src/aep/mcp_bridge.py`:
 
 ```python
 import json
@@ -203,7 +203,7 @@ class McpBridge:
 
 - [ ] **Step 4: Export from the package**
 
-In `reference/python/src/aep/__init__.py`, add an import and `__all__` entries:
+In `implementations/python/src/aep/__init__.py`, add an import and `__all__` entries:
 
 ```python
 from .mcp_bridge import McpBridge, async_tool_handler
@@ -221,13 +221,13 @@ and add `"McpBridge"` to `__all__`. The `async_tool_handler` export is added in 
 
 - [ ] **Step 5: Run bridge tests**
 
-Run: `cd reference/python && python -m pytest tests/test_mcp_bridge.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_mcp_bridge.py -q`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/python/src/aep/mcp_bridge.py reference/python/src/aep/__init__.py reference/python/tests/test_mcp_bridge.py
+git add implementations/python/src/aep/mcp_bridge.py implementations/python/src/aep/__init__.py implementations/python/tests/test_mcp_bridge.py
 git commit -m "feat(python): add MCP bridge JSON-RPC handler"
 git push origin master
 ```
@@ -237,13 +237,13 @@ git push origin master
 ## Task 2: Async tool handler
 
 **Files:**
-- Modify: `reference/python/src/aep/mcp_bridge.py`
-- Modify: `reference/python/src/aep/__init__.py`
-- Test: `reference/python/tests/test_mcp_bridge.py`
+- Modify: `implementations/python/src/aep/mcp_bridge.py`
+- Modify: `implementations/python/src/aep/__init__.py`
+- Test: `implementations/python/tests/test_mcp_bridge.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Append to `reference/python/tests/test_mcp_bridge.py`:
+Append to `implementations/python/tests/test_mcp_bridge.py`:
 
 ```python
 import time
@@ -299,12 +299,12 @@ def test_async_tool_handler_emits_failed_on_error():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_mcp_bridge.py -q -k async_tool`
+Run: `cd implementations/python && python -m pytest tests/test_mcp_bridge.py -q -k async_tool`
 Expected: FAIL with `ImportError: cannot import name 'async_tool_handler'`.
 
 - [ ] **Step 3: Implement async_tool_handler**
 
-Append to `reference/python/src/aep/mcp_bridge.py`:
+Append to `implementations/python/src/aep/mcp_bridge.py`:
 
 ```python
 def async_tool_handler(name: str, options: dict):
@@ -353,7 +353,7 @@ def async_tool_handler(name: str, options: dict):
 
 - [ ] **Step 4: Update the package export**
 
-In `reference/python/src/aep/__init__.py`, change the import to include both and ensure `__all__` has both:
+In `implementations/python/src/aep/__init__.py`, change the import to include both and ensure `__all__` has both:
 
 ```python
 from .mcp_bridge import McpBridge, async_tool_handler
@@ -363,13 +363,13 @@ Add `"async_tool_handler"` to `__all__` if not already present.
 
 - [ ] **Step 5: Run bridge tests**
 
-Run: `cd reference/python && python -m pytest tests/test_mcp_bridge.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_mcp_bridge.py -q`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/python/src/aep/mcp_bridge.py reference/python/src/aep/__init__.py reference/python/tests/test_mcp_bridge.py
+git add implementations/python/src/aep/mcp_bridge.py implementations/python/src/aep/__init__.py implementations/python/tests/test_mcp_bridge.py
 git commit -m "feat(python): add async tool handler emitting task lifecycle"
 git push origin master
 ```
@@ -380,12 +380,12 @@ git push origin master
 
 - [ ] **Step 1: Run full Python suite**
 
-Run: `cd reference/python && python -m pytest`
+Run: `cd implementations/python && python -m pytest`
 Expected: all tests pass.
 
 - [ ] **Step 2: Verify import surface**
 
-Run: `cd reference/python && python -c "from aep import McpBridge, async_tool_handler; print('ok')"`
+Run: `cd implementations/python && python -c "from aep import McpBridge, async_tool_handler; print('ok')"`
 Expected: prints `ok`.
 
 - [ ] **Step 3: Verify git sync**

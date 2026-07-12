@@ -2,7 +2,7 @@
   "name": "aep-workspace",
   "private": true,
   "type": "module",
-  "workspaces": ["reference/typescript"],
+  "workspaces": ["implementations/typescript"],
   "scripts": {
     "test": "npm test --workspace @axisrobo/aep",
     "example:sdk": "node examples/sdk/runtime-embed.js"

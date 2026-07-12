@@ -3,15 +3,15 @@
 Date: 2026-07-12
 Status: approved for implementation planning
 
-## Part 1: Rename `reference/` â†’ `implementations/`
+## Part 1: Rename `implementations/` â†?`implementations/`
 
 ### Rationale
 
-Each language under `reference/` is now a fully productized implementation with runtime, daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores. "Reference" implies read-only example code; "implementations" accurately describes runnable, production-capable protocol implementations.
+Each language under `implementations/` is now a fully productized implementation with runtime, daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores. "Reference" implies read-only example code; "implementations" accurately describes runnable, production-capable protocol implementations.
 
 ### Scope
 
-- `git mv reference/ implementations/`
+- `git mv implementations/ implementations/`
 - Update all path references in:
   - `AGENTS.md`, `CLAUDE.md`
   - `README.md`, `README_zh.md`
@@ -21,16 +21,16 @@ Each language under `reference/` is now a fully productized implementation with 
   - `tools/conformance-runner.js`
   - `docs/site/` (if generated)
   - `opencode.json`
-- TypeScript npm workspace path in root `package.json` (`"workspaces": ["reference/typescript"]` â†’ `"implementations/typescript"]`)
+- TypeScript npm workspace path in root `package.json` (`"workspaces": ["implementations/typescript"]` â†?`"implementations/typescript"]`)
 - `CONTRIBUTING.md`
 
 ### Not Changed
 
-- Go module path (`github.com/axisrobo/aep`) stays â€” it's independent of the directory name.
+- Go module path (`github.com/axisrobo/aep`) stays â€?it's independent of the directory name.
 - TypeScript package name (`@axisrobo/aep`) stays.
-- Python package name (`aep-reference-python` in pyproject.toml) stays â€” internal package name unchanged.
+- Python package name (`aep-reference-python` in pyproject.toml) stays â€?internal package name unchanged.
 - Java Maven artifact name stays.
-- Internal source code does not reference `reference/` â€” only docs and config files reference it.
+- Internal source code does not reference `implementations/` â€?only docs and config files reference it.
 
 ---
 
@@ -76,37 +76,37 @@ examples/
 ### Future Scenarios
 
 `scenarios/` is designed to grow:
-- `scenarios/task-orchestration.js` â€” async task lifecycle across tool calls
-- `scenarios/langgraph-agent.js` â€” LangGraph integration
-- `scenarios/crewai-agent.py` â€” CrewAI Python integration
-- `scenarios/autogen-agent.py` â€” AutoGen integration
+- `scenarios/task-orchestration.js` â€?async task lifecycle across tool calls
+- `scenarios/langgraph-agent.js` â€?LangGraph integration
+- `scenarios/crewai-agent.py` â€?CrewAI Python integration
+- `scenarios/autogen-agent.py` â€?AutoGen integration
 
 Each scenario stays language-specific (one file = one language example). A scenario worth implementing in multiple languages gets suffixed files.
 
 ### File Naming
 
-- Suffix `.js` (TypeScript/Node), `.py` (Python), `.go` (Go reference), `.java` (Java reference; in reality the file is inside a Java package â€” use a `Scenarios.java` or similar class name).
+- Suffix `.js` (TypeScript/Node), `.py` (Python), `.go` (Go reference), `.java` (Java reference; in reality the file is inside a Java package â€?use a `Scenarios.java` or similar class name).
 - README.md in each scene directory describes the scene and lists per-language files.
 
 ### Migration Of Existing Examples
 
 ```
-examples/sdk/runtime-embed.js          â†’ examples/quickstart/runtime-embed.js
-examples/sdk/agent-subscriber.js       â†’ examples/scenarios/agent-subscriber.js
-examples/sdk/memory-event-producer.js  â†’ examples/scenarios/memory-producer.js
-examples/service/emit-and-subscribe.js â†’ examples/service-client/emit-subscribe.js
-examples/service/http-api-client.js    â†’ examples/service-client/http-subscribe.js (rename)
+examples/sdk/runtime-embed.js          â†?examples/quickstart/runtime-embed.js
+examples/sdk/agent-subscriber.js       â†?examples/scenarios/agent-subscriber.js
+examples/sdk/memory-event-producer.js  â†?examples/scenarios/memory-producer.js
+examples/service/emit-and-subscribe.js â†?examples/service-client/emit-subscribe.js
+examples/service/http-api-client.js    â†?examples/service-client/http-subscribe.js (rename)
 ```
 
 Existing `examples/README.md` and top-level references updated.
 
 ### New Examples To Create
 
-- `examples/quickstart/runtime-embed.py` â€” minimal AEP runtime in-process: create, subscribe, publish, receive.
-- `examples/quickstart/runtime-embed.go` â€” same in Go.
-- `examples/quickstart/runtime-embed.java` â€” same in Java.
-- `examples/service-client/http-subscribe.js` â€” HTTP create subscription, emit event, long-poll / SSE stream receive.
-- `examples/mcp-bridge/async-tool.js` â€” `McpBridge` + `asyncToolHandler`, call tool, await lifecycle.
+- `examples/quickstart/runtime-embed.py` â€?minimal AEP runtime in-process: create, subscribe, publish, receive.
+- `examples/quickstart/runtime-embed.go` â€?same in Go.
+- `examples/quickstart/runtime-embed.java` â€?same in Java.
+- `examples/service-client/http-subscribe.js` â€?HTTP create subscription, emit event, long-poll / SSE stream receive.
+- `examples/mcp-bridge/async-tool.js` â€?`McpBridge` + `asyncToolHandler`, call tool, await lifecycle.
 
 Other languages for service-client and mcp-bridge are left for later rounds.
 
@@ -118,7 +118,7 @@ Top-level `examples/README.md` rewritten to describe scenes and list per-languag
 
 ## Part 3: Implementation Sequence
 
-1. Rename `reference/` â†’ `implementations/` with path updates â†’ commit + push.
-2. Restructure `examples/` directories â†’ commit + push.
-3. Add new example files â†’ commit + push.
-4. Update top-level README with new paths â†’ commit + push.
+1. Rename `implementations/` â†?`implementations/` with path updates â†?commit + push.
+2. Restructure `examples/` directories â†?commit + push.
+3. Add new example files â†?commit + push.
+4. Update top-level README with new paths â†?commit + push.

@@ -14,9 +14,9 @@
 
 ## File Structure
 
-- Modify `reference/go/aep/subscription.go`: add `SubscriptionMatches`.
-- Modify `reference/go/aep/delivery_store.go` (interface + in-memory), `delivery_sqlite.go`, `delivery_postgres.go`: subscription CRUD.
-- Modify `reference/go/aep/runtime.go`: registry, fanout, endpoints, long-poll, SSE.
+- Modify `implementations/go/aep/subscription.go`: add `SubscriptionMatches`.
+- Modify `implementations/go/aep/delivery_store.go` (interface + in-memory), `delivery_sqlite.go`, `delivery_postgres.go`: subscription CRUD.
+- Modify `implementations/go/aep/runtime.go`: registry, fanout, endpoints, long-poll, SSE.
 - Add tests alongside.
 
 ---
@@ -24,12 +24,12 @@
 ## Task 1: SubscriptionMatches helper
 
 **Files:**
-- Modify: `reference/go/aep/subscription.go`
-- Test: `reference/go/aep/subscription_test.go`
+- Modify: `implementations/go/aep/subscription.go`
+- Test: `implementations/go/aep/subscription_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/go/aep/subscription_test.go`:
+Append to `implementations/go/aep/subscription_test.go`:
 
 ```go
 func TestSubscriptionMatches(t *testing.T) {
@@ -54,12 +54,12 @@ func TestSubscriptionMatches(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestSubscriptionMatches`
+Run: `cd implementations/go && go test ./aep/ -run TestSubscriptionMatches`
 Expected: build failure, `SubscriptionMatches` undefined.
 
 - [ ] **Step 3: Implement SubscriptionMatches**
 
-Append to `reference/go/aep/subscription.go`:
+Append to `implementations/go/aep/subscription.go`:
 
 ```go
 // SubscriptionMatches reports whether an event satisfies a subscription filter.
@@ -133,13 +133,13 @@ func matchesValue(expected any, actual any) bool {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/go && go test ./aep/ -run "TestSubscriptionMatches|TestMatchesType"`
+Run: `cd implementations/go && go test ./aep/ -run "TestSubscriptionMatches|TestMatchesType"`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/aep/subscription.go reference/go/aep/subscription_test.go
+git add implementations/go/aep/subscription.go implementations/go/aep/subscription_test.go
 git commit -m "feat(go): add SubscriptionMatches filter helper"
 git push origin master
 ```
@@ -149,14 +149,14 @@ git push origin master
 ## Task 2: Delivery store subscription CRUD
 
 **Files:**
-- Modify: `reference/go/aep/delivery_store.go`
-- Modify: `reference/go/aep/delivery_sqlite.go`
-- Modify: `reference/go/aep/delivery_postgres.go`
-- Test: `reference/go/aep/delivery_store_test.go`
+- Modify: `implementations/go/aep/delivery_store.go`
+- Modify: `implementations/go/aep/delivery_sqlite.go`
+- Modify: `implementations/go/aep/delivery_postgres.go`
+- Test: `implementations/go/aep/delivery_store_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/go/aep/delivery_store_test.go`:
+Append to `implementations/go/aep/delivery_store_test.go`:
 
 ```go
 func TestInMemorySubscriptionCRUD(t *testing.T) {
@@ -183,12 +183,12 @@ func TestInMemorySubscriptionCRUD(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestInMemorySubscriptionCRUD`
+Run: `cd implementations/go && go test ./aep/ -run TestInMemorySubscriptionCRUD`
 Expected: build failure, `CreateSubscription` undefined.
 
 - [ ] **Step 3: Extend the interface**
 
-In `reference/go/aep/delivery_store.go`, add to the `DeliveryStore` interface after `GetDeadLettered`:
+In `implementations/go/aep/delivery_store.go`, add to the `DeliveryStore` interface after `GetDeadLettered`:
 
 ```go
 	CreateSubscription(record map[string]any) map[string]any
@@ -199,7 +199,7 @@ In `reference/go/aep/delivery_store.go`, add to the `DeliveryStore` interface af
 
 - [ ] **Step 4: Implement in-memory subscription CRUD**
 
-In `reference/go/aep/delivery_store.go`, add a `subscriptions` field to the `InMemoryDeliveryStore` struct:
+In `implementations/go/aep/delivery_store.go`, add a `subscriptions` field to the `InMemoryDeliveryStore` struct:
 
 ```go
 	subscriptions map[string]map[string]any
@@ -243,7 +243,7 @@ func (s *InMemoryDeliveryStore) DeleteSubscription(id string) bool {
 
 - [ ] **Step 5: Implement sqlite subscription CRUD**
 
-In `reference/go/aep/delivery_sqlite.go` `migrate()`, add a table to the schema string:
+In `implementations/go/aep/delivery_sqlite.go` `migrate()`, add a table to the schema string:
 
 ```go
 	CREATE TABLE IF NOT EXISTS delivery_subscriptions (
@@ -309,7 +309,7 @@ func scanSubscription(scan func(dest ...any) error) map[string]any {
 
 - [ ] **Step 6: Implement postgres subscription CRUD**
 
-In `reference/go/aep/delivery_postgres.go` `migrate()`, add a table:
+In `implementations/go/aep/delivery_postgres.go` `migrate()`, add a table:
 
 ```go
 	CREATE TABLE IF NOT EXISTS %s (
@@ -380,13 +380,13 @@ If `Close` with `dropOnClose` drops tables, add `s.t("subscriptions")` to the DR
 
 - [ ] **Step 7: Run store tests**
 
-Run: `cd reference/go && go test ./aep/ -run "SubscriptionCRUD|Postgres"`
+Run: `cd implementations/go && go test ./aep/ -run "SubscriptionCRUD|Postgres"`
 Expected: PASS.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/go/aep/delivery_store.go reference/go/aep/delivery_sqlite.go reference/go/aep/delivery_postgres.go reference/go/aep/delivery_store_test.go
+git add implementations/go/aep/delivery_store.go implementations/go/aep/delivery_sqlite.go implementations/go/aep/delivery_postgres.go implementations/go/aep/delivery_store_test.go
 git commit -m "feat(go): add subscription CRUD to delivery stores"
 git push origin master
 ```
@@ -396,12 +396,12 @@ git push origin master
 ## Task 3: Runtime registry, endpoints, long-poll, SSE
 
 **Files:**
-- Modify: `reference/go/aep/runtime.go`
-- Test: `reference/go/aep/runtime_subscriptions_test.go`
+- Modify: `implementations/go/aep/runtime.go`
+- Test: `implementations/go/aep/runtime_subscriptions_test.go`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/go/aep/runtime_subscriptions_test.go`:
+Create `implementations/go/aep/runtime_subscriptions_test.go`:
 
 ```go
 package aep
@@ -549,12 +549,12 @@ func TestRuntimeSubscriptionSSE(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestRuntimeSubscription`
+Run: `cd implementations/go && go test ./aep/ -run TestRuntimeSubscription`
 Expected: build failure, `CreateSubscription`/`TakeEvents` undefined.
 
 - [ ] **Step 3: Add registry state to the service struct**
 
-In `reference/go/aep/runtime.go`, replace the `RuntimeService` struct and `subEntry` with registry support:
+In `implementations/go/aep/runtime.go`, replace the `RuntimeService` struct and `subEntry` with registry support:
 
 ```go
 type subEntry struct {
@@ -630,7 +630,7 @@ In `Start`, after the api branch and before `s.started = true`:
 
 - [ ] **Step 6: Add registry methods**
 
-Add to `reference/go/aep/runtime.go`:
+Add to `implementations/go/aep/runtime.go`:
 
 ```go
 func (s *RuntimeService) CreateSubscription(filter map[string]any) map[string]any {
@@ -830,20 +830,20 @@ func writeSSE(w http.ResponseWriter, flusher http.Flusher, evt map[string]any) {
 
 - [ ] **Step 8: Run subscription tests**
 
-Run: `cd reference/go && go test ./aep/ -run TestRuntimeSubscription`
+Run: `cd implementations/go && go test ./aep/ -run TestRuntimeSubscription`
 Expected: PASS.
 
 - [ ] **Step 9: Run full aep package**
 
-Run: `cd reference/go && go test ./aep/`
+Run: `cd implementations/go && go test ./aep/`
 Expected: PASS.
 
 - [ ] **Step 10: Tidy modules and commit and push**
 
-Run: `cd reference/go && go mod tidy` (promotes `github.com/google/uuid` from indirect to direct).
+Run: `cd implementations/go && go mod tidy` (promotes `github.com/google/uuid` from indirect to direct).
 
 ```bash
-git add reference/go/aep/runtime.go reference/go/aep/runtime_subscriptions_test.go reference/go/go.mod reference/go/go.sum
+git add implementations/go/aep/runtime.go implementations/go/aep/runtime_subscriptions_test.go implementations/go/go.mod implementations/go/go.sum
 git commit -m "feat(go): add HTTP subscription registry, CRUD, long-poll, and SSE"
 git push origin master
 ```
@@ -854,12 +854,12 @@ git push origin master
 
 - [ ] **Step 1: Run full Go suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 Expected: all packages pass.
 
 - [ ] **Step 2: Build all binaries**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: no errors.
 
 - [ ] **Step 3: Verify git sync**

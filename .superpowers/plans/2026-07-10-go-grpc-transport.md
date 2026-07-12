@@ -12,13 +12,13 @@
 
 ## File Structure
 
-- Create: `reference/go/aep/aep.proto` â€” copy of shared proto
-- Create: `reference/go/aep/aep.pb.go` â€” generated (or generate at build time)
-- Create: `reference/go/aep/aep_grpc.pb.go` â€” generated
-- Create: `reference/go/aep/transport_grpc.go` â€” GrpcServer + GrpcClient
-- Create: `reference/go/aep/transport_grpc_test.go` â€” integration tests
-- Modify: `reference/go/go.mod` â€” add grpc deps
-- Modify: `reference/go/README.md` â€” add gRPC to scope
+- Create: `implementations/go/aep/aep.proto` â€?copy of shared proto
+- Create: `implementations/go/aep/aep.pb.go` â€?generated (or generate at build time)
+- Create: `implementations/go/aep/aep_grpc.pb.go` â€?generated
+- Create: `implementations/go/aep/transport_grpc.go` â€?GrpcServer + GrpcClient
+- Create: `implementations/go/aep/transport_grpc_test.go` â€?integration tests
+- Modify: `implementations/go/go.mod` â€?add grpc deps
+- Modify: `implementations/go/README.md` â€?add gRPC to scope
 
 ---
 
@@ -27,15 +27,15 @@
 **Files:** proto, generated code, transport_grpc.go, transport_grpc_test.go, go.mod
 
 - [ ] Add `google.golang.org/grpc` to go.mod, run `go mod tidy`
-- [ ] Copy `aep.proto` from `reference/typescript/src/transport/` to `reference/go/aep/`
+- [ ] Copy `aep.proto` from `implementations/typescript/src/transport/` to `implementations/go/aep/`
 - [ ] Generate Go code: `protoc --go_out=. --go-grpc_out=. aep.proto` (or embed generated code)
 - [ ] TDD: Write 4 tests (server start, exchange, bidirectional, shutdown)
 - [ ] Implement `GrpcServer` + `GrpcClient` with `Start()/Stop()/Send()/Receive()` methods
-- [ ] Run `cd reference/go && go test ./aep/ -v` â€” 56 tests pass
+- [ ] Run `cd implementations/go && go test ./aep/ -v` â€?56 tests pass
 - [ ] Commit: `feat: add Go gRPC transport`
 
 ### Task 2: Docs, Verify, Push
 
-- [ ] Update `reference/go/README.md` â€” add gRPC transport to scope
+- [ ] Update `implementations/go/README.md` â€?add gRPC transport to scope
 - [ ] Run cross-language conformance: `node tools/conformance-runner.js`
 - [ ] Push

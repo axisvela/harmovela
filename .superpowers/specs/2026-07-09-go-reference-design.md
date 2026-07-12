@@ -4,7 +4,7 @@ Date: 2026-07-09
 
 ## Goal
 
-Add a minimal Go reference implementation under `reference/go/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
+Add a minimal Go reference implementation under `implementations/go/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
 This gives the project a third language pillar and validates that the protocol is implementation-neutral.
 
@@ -24,14 +24,14 @@ Follow the same minimal pattern as the first TypeScript and Python slices: typed
 
 ### Module Setup
 
-Create `reference/go/go.mod` with module path `github.com/axisrobo/aep` and Go 1.21 minimum. No external dependencies for this slice.
+Create `implementations/go/go.mod` with module path `github.com/axisrobo/aep` and Go 1.21 minimum. No external dependencies for this slice.
 
 ### Envelope
 
-`reference/go/aep/envelope.go`
+`implementations/go/aep/envelope.go`
 
 - `Envelope` struct with JSON tags for all standard envelope fields.
-- `ValidateEnvelope(value map[string]any) []string` â€” mirrors TS `validateEnvelope` and Python `validate_envelope`. Returns a slice of error strings; empty slice means valid.
+- `ValidateEnvelope(value map[string]any) []string` â€?mirrors TS `validateEnvelope` and Python `validate_envelope`. Returns a slice of error strings; empty slice means valid.
 - Checks required fields: `aep_version`, `id`, `type`, `source`, `created_at`, `payload`.
 - Validates `aep_version` is `"0.1"`.
 - Validates `type` against a known event type registry.
@@ -40,47 +40,47 @@ Create `reference/go/go.mod` with module path `github.com/axisrobo/aep` and Go 1
 
 ### Event Type Registry
 
-`reference/go/aep/event_types.go`
+`implementations/go/aep/event_types.go`
 
-- `IsStandardEventType(typ string) bool` â€” checks a known set of standard draft event types.
+- `IsStandardEventType(typ string) bool` â€?checks a known set of standard draft event types.
 
 ### Error Model
 
-`reference/go/aep/errors.go`
+`implementations/go/aep/errors.go`
 
 - Standard error code constants.
-- `ErrorPayload(code string, message string) map[string]any` â€” produces the standard error payload object.
+- `ErrorPayload(code string, message string) map[string]any` â€?produces the standard error payload object.
 
 ### Fixture Support
 
-`reference/go/aep/fixtures.go`
+`implementations/go/aep/fixtures.go`
 
-- `LoadManifest(path string) (Manifest, error)` â€” reads and parses `conformance/manifest.json`.
-- `LoadFixture(path string) ([]map[string]any, error)` â€” reads NDJSON fixture files.
+- `LoadManifest(path string) (Manifest, error)` â€?reads and parses `conformance/manifest.json`.
+- `LoadFixture(path string) ([]map[string]any, error)` â€?reads NDJSON fixture files.
 - `Manifest` struct matching the JSON shape.
 
 ### Harness
 
-`reference/go/aep/harness.go`
+`implementations/go/aep/harness.go`
 
 - `Harness` struct with maps for subscriptions and tasks, an event router, and a session.
-- `Handle(value map[string]any) []map[string]any` â€” validates, dispatches to router, returns response events.
+- `Handle(value map[string]any) []map[string]any` â€?validates, dispatches to router, returns response events.
 - Handles: `capabilities.requested`, `subscription.requested`, `subscription.cancelled`, `session.opened`, `session.closed`, `task.submitted`, and all other `task.*` events.
 - Follows the same state machine as TypeScript `AepHarness` and Python `AepHarness`.
 
 ### Router
 
-`reference/go/aep/router.go`
+`implementations/go/aep/router.go`
 
 - `EventRouter` with handler registration by type pattern and a catch-all.
-- `Dispatch(event map[string]any) []map[string]any` â€” matches handlers and collects responses.
+- `Dispatch(event map[string]any) []map[string]any` â€?matches handlers and collects responses.
 
 ### Tests
 
-`reference/go/aep/envelope_test.go` â€” unit tests for envelope validation.
-`reference/go/aep/harness_test.go` â€” unit tests for harness behavior (capabilities, subscriptions, sessions, tasks).
-`reference/go/aep/router_test.go` â€” unit tests for event routing.
-`reference/go/aep/conformance_test.go` â€” manifest-driven test that:
+`implementations/go/aep/envelope_test.go` â€?unit tests for envelope validation.
+`implementations/go/aep/harness_test.go` â€?unit tests for harness behavior (capabilities, subscriptions, sessions, tasks).
+`implementations/go/aep/router_test.go` â€?unit tests for event routing.
+`implementations/go/aep/conformance_test.go` â€?manifest-driven test that:
 
 - Reads `../../conformance/manifest.json`.
 - Filters fixtures to target level AEP-C1.
@@ -108,19 +108,19 @@ Create `reference/go/go.mod` with module path `github.com/axisrobo/aep` and Go 1
 Verification:
 
 ```sh
-cd reference/go && go test ./...
-cd reference/typescript && npm test
-cd reference/typescript && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./...
+cd implementations/typescript && npm test
+cd implementations/typescript && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
 ```
 
 ## Documentation Updates
 
 Update:
 
-- `reference/go/README.md` â€” replace placeholder text with setup commands, test commands, and current scope.
-- `README.md` â€” update Go status from "planned" to "draft reference with C1 conformance".
-- `docs/roadmap.md` â€” note Go reference progress if there is a relevant phase item.
+- `implementations/go/README.md` â€?replace placeholder text with setup commands, test commands, and current scope.
+- `README.md` â€?update Go status from "planned" to "draft reference with C1 conformance".
+- `docs/roadmap.md` â€?note Go reference progress if there is a relevant phase item.
 
 ## Open Decisions Resolved
 

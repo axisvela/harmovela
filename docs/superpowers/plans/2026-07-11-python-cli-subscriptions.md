@@ -14,20 +14,20 @@
 
 ## File Structure
 
-- Modify `reference/python/src/aep/cli/main.py`: add the `subscriptions` group.
-- Create `reference/python/tests/test_cli_subscriptions.py`.
+- Modify `implementations/python/src/aep/cli/main.py`: add the `subscriptions` group.
+- Create `implementations/python/tests/test_cli_subscriptions.py`.
 
 ---
 
 ## Task 1: subscriptions create/list/delete
 
 **Files:**
-- Modify: `reference/python/src/aep/cli/main.py`
-- Test: `reference/python/tests/test_cli_subscriptions.py`
+- Modify: `implementations/python/src/aep/cli/main.py`
+- Test: `implementations/python/tests/test_cli_subscriptions.py`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/python/tests/test_cli_subscriptions.py`:
+Create `implementations/python/tests/test_cli_subscriptions.py`:
 
 ```python
 import json
@@ -88,12 +88,12 @@ def test_subscriptions_create_rejects_invalid_filter():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/python && python -m pytest tests/test_cli_subscriptions.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli_subscriptions.py -q`
 Expected: FAIL because the `subscriptions` group does not exist (click reports no such command).
 
 - [ ] **Step 3: Implement the subscriptions group**
 
-In `reference/python/src/aep/cli/main.py`, add near the other imports (top of file):
+In `implementations/python/src/aep/cli/main.py`, add near the other imports (top of file):
 
 ```python
 import urllib.error
@@ -188,13 +188,13 @@ Confirm `import sys`, `import json`, and `import urllib.request` are present at 
 
 - [ ] **Step 4: Run tests**
 
-Run: `cd reference/python && python -m pytest tests/test_cli_subscriptions.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli_subscriptions.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/python/src/aep/cli/main.py reference/python/tests/test_cli_subscriptions.py
+git add implementations/python/src/aep/cli/main.py implementations/python/tests/test_cli_subscriptions.py
 git commit -m "feat(python): add aep subscriptions create/list/delete CLI commands"
 git push origin master
 ```
@@ -204,13 +204,13 @@ git push origin master
 ## Task 2: subscriptions stream e2e
 
 **Files:**
-- Test: `reference/python/tests/test_cli_subscriptions.py`
+- Test: `implementations/python/tests/test_cli_subscriptions.py`
 
 The `stream` subcommand is implemented in Task 1. This task adds an end-to-end stream test.
 
 - [ ] **Step 1: Write the stream test**
 
-Append to `reference/python/tests/test_cli_subscriptions.py`:
+Append to `implementations/python/tests/test_cli_subscriptions.py`:
 
 ```python
 import threading
@@ -254,13 +254,13 @@ def test_subscriptions_stream_receives_event():
 
 - [ ] **Step 2: Run the stream test**
 
-Run: `cd reference/python && python -m pytest tests/test_cli_subscriptions.py -q`
+Run: `cd implementations/python && python -m pytest tests/test_cli_subscriptions.py -q`
 Expected: PASS. The runtime SSE endpoint flushes an initial comment so the stream is established before publish.
 
 - [ ] **Step 3: Commit and push**
 
 ```bash
-git add reference/python/tests/test_cli_subscriptions.py
+git add implementations/python/tests/test_cli_subscriptions.py
 git commit -m "test(python): cover aep subscriptions stream end-to-end"
 git push origin master
 ```
@@ -271,7 +271,7 @@ git push origin master
 
 - [ ] **Step 1: Run full Python suite**
 
-Run: `cd reference/python && python -m pytest`
+Run: `cd implementations/python && python -m pytest`
 Expected: all tests pass.
 
 - [ ] **Step 2: Verify git sync**

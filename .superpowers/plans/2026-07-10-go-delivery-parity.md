@@ -12,27 +12,27 @@
 
 ## File Structure
 
-- Create: `reference/go/aep/delivery_store.go` â€” DeliveryStore interface + InMemoryDeliveryStore
-- Create: `reference/go/aep/delivery_journal.go` â€” DeliveryJournal
-- Create: `reference/go/aep/delivery.go` â€” DeliveryTracker + retryDelay
-- Create: `reference/go/aep/delivery_sqlite.go` â€” SqliteDeliveryStore
-- Create: `reference/go/aep/delivery_store_test.go` â€” 8 tests
-- Create: `reference/go/aep/delivery_journal_test.go` â€” 6 tests
-- Create: `reference/go/aep/delivery_test.go` â€” 9 tests
-- Create: `reference/go/aep/delivery_sqlite_test.go` â€” 7 tests
-- Modify: `reference/go/go.mod` â€” add modernc.org/sqlite if Task 4 runs
+- Create: `implementations/go/aep/delivery_store.go` â€?DeliveryStore interface + InMemoryDeliveryStore
+- Create: `implementations/go/aep/delivery_journal.go` â€?DeliveryJournal
+- Create: `implementations/go/aep/delivery.go` â€?DeliveryTracker + retryDelay
+- Create: `implementations/go/aep/delivery_sqlite.go` â€?SqliteDeliveryStore
+- Create: `implementations/go/aep/delivery_store_test.go` â€?8 tests
+- Create: `implementations/go/aep/delivery_journal_test.go` â€?6 tests
+- Create: `implementations/go/aep/delivery_test.go` â€?9 tests
+- Create: `implementations/go/aep/delivery_sqlite_test.go` â€?7 tests
+- Modify: `implementations/go/go.mod` â€?add modernc.org/sqlite if Task 4 runs
 
 ---
 
 ### Task 1: InMemoryDeliveryStore + Tests
 
 **Files:**
-- Create: `reference/go/aep/delivery_store.go`
-- Create: `reference/go/aep/delivery_store_test.go`
+- Create: `implementations/go/aep/delivery_store.go`
+- Create: `implementations/go/aep/delivery_store_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/go/aep/delivery_store_test.go`:
+Create `implementations/go/aep/delivery_store_test.go`:
 
 ```go
 package aep
@@ -75,21 +75,21 @@ func TestInMemoryDeliveryStoreDeadLetters(t *testing.T) {
 
 (Implementer: add all 8 tests matching other languages: track+ack, nack, deadLetter, stats, nack unknown, deadLetter unknown, hasAttemptsRemaining, getPendingForSubscription)
 
-- [ ] **Step 2: Run `go test ./aep/ -run TestInMemory -v` â€” expected FAIL**
+- [ ] **Step 2: Run `go test ./aep/ -run TestInMemory -v` â€?expected FAIL**
 
-- [ ] **Step 3: Implement** â€” DeliveryStore interface + InMemoryDeliveryStore in `delivery_store.go`
+- [ ] **Step 3: Implement** â€?DeliveryStore interface + InMemoryDeliveryStore in `delivery_store.go`
 
-- [ ] **Step 4: Run tests â€” 8 PASS. Run all Go tests â€” pass.**
+- [ ] **Step 4: Run tests â€?8 PASS. Run all Go tests â€?pass.**
 
-- [ ] **Step 5: Commit** `git add reference/go/aep/delivery_store.go reference/go/aep/delivery_store_test.go && git commit -m "feat: add Go InMemoryDeliveryStore with tests"`
+- [ ] **Step 5: Commit** `git add implementations/go/aep/delivery_store.go implementations/go/aep/delivery_store_test.go && git commit -m "feat: add Go InMemoryDeliveryStore with tests"`
 
 ---
 
 ### Task 2: DeliveryJournal + Tests
 
 **Files:**
-- Create: `reference/go/aep/delivery_journal.go`
-- Create: `reference/go/aep/delivery_journal_test.go`
+- Create: `implementations/go/aep/delivery_journal.go`
+- Create: `implementations/go/aep/delivery_journal_test.go`
 
 (Implementer: follow the same TDD pattern as Task 1. 6 tests: append, replay, replayAll, purge, stats, emptyStats. Implement DeliveryJournal with same API as TS/Python/Java.)
 
@@ -100,8 +100,8 @@ func TestInMemoryDeliveryStoreDeadLetters(t *testing.T) {
 ### Task 3: DeliveryTracker + Tests
 
 **Files:**
-- Create: `reference/go/aep/delivery.go`
-- Create: `reference/go/aep/delivery_test.go`
+- Create: `implementations/go/aep/delivery.go`
+- Create: `implementations/go/aep/delivery_test.go`
 
 (Implementer: TDD. 9 tests: retryDelay, tracker tracks+ack+nack+deadLetter+getPending+stats+store injection. DeliveryTracker accepts DeliveryStore interface + DeliveryJournal.)
 
@@ -112,10 +112,10 @@ func TestInMemoryDeliveryStoreDeadLetters(t *testing.T) {
 ### Task 4: SqliteDeliveryStore + Docs + Push
 
 **Files:**
-- Create: `reference/go/aep/delivery_sqlite.go`
-- Create: `reference/go/aep/delivery_sqlite_test.go`
-- Modify: `reference/go/go.mod`
-- Modify: `reference/go/README.md`
+- Create: `implementations/go/aep/delivery_sqlite.go`
+- Create: `implementations/go/aep/delivery_sqlite_test.go`
+- Modify: `implementations/go/go.mod`
+- Modify: `implementations/go/README.md`
 
 (Implementer: TDD. 7 tests using `:memory:` database. Add `modernc.org/sqlite` dep via `go get`. Same 4-table schema. Update README scope. Run full Go tests. Run cross-language verification. Push.)
 

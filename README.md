@@ -59,51 +59,51 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 
 ## Documents
 
-- `docs/vision.md` â€” project vision, goals, non-goals, and principles
-- `docs/architecture.md` â€” system architecture and major protocol layers
-- `docs/differentiation.md` â€” non-normative positioning and comparison material
-- `docs/protocol-design.md` â€” initial protocol model, envelope, events, and lifecycle
-- `docs/mcp-relationship.md` â€” detailed comparison and interop model with MCP
-- `docs/roadmap.md` â€” proposed phases toward a usable open protocol
-- `docs/specs/session.md` â€” session lifecycle specification
-- `docs/specs/subscription.md` â€” subscription model specification
-- `docs/specs/task-lifecycle.md` â€” task lifecycle specification
-- `docs/specs/error-model.md` â€” error model specification
-- `docs/specs/versioning.md` â€” versioning rules specification
-- `docs/specs/transport-stdio.md` â€” stdio transport specification
-- `docs/specs/transport-websocket.md` â€” WebSocket transport specification
-- `docs/specs/transport-sse.md` â€” HTTP SSE transport specification
-- `docs/specs/transport-grpc.md` â€” gRPC streaming transport specification
-- `docs/specs/delivery.md` â€” delivery semantics, acknowledgement, and replay specification
-- `docs/specs/reliability.md` â€” retry, durability, and dead-letter handling specification
-- `docs/specs/security.md` â€” identity, authorization, audit, and tenant isolation specification
-- `docs/specs/conformance.md` â€” draft conformance levels and shared fixture manifest rules
-- `docs/specs/event-registry-governance.md` â€” event type registry governance and versioning
-- `docs/specs/agent-runtime-semantics.md` â€” belief, freshness, delegation, interruption, and provenance metadata
-- `CONTRIBUTING.md` â€” contribution guide and repository conventions
-- `CODE_OF_CONDUCT.md` â€” contributor code of conduct
+- `docs/vision.md` â€?project vision, goals, non-goals, and principles
+- `docs/architecture.md` â€?system architecture and major protocol layers
+- `docs/differentiation.md` â€?non-normative positioning and comparison material
+- `docs/protocol-design.md` â€?initial protocol model, envelope, events, and lifecycle
+- `docs/mcp-relationship.md` â€?detailed comparison and interop model with MCP
+- `docs/roadmap.md` â€?proposed phases toward a usable open protocol
+- `docs/specs/session.md` â€?session lifecycle specification
+- `docs/specs/subscription.md` â€?subscription model specification
+- `docs/specs/task-lifecycle.md` â€?task lifecycle specification
+- `docs/specs/error-model.md` â€?error model specification
+- `docs/specs/versioning.md` â€?versioning rules specification
+- `docs/specs/transport-stdio.md` â€?stdio transport specification
+- `docs/specs/transport-websocket.md` â€?WebSocket transport specification
+- `docs/specs/transport-sse.md` â€?HTTP SSE transport specification
+- `docs/specs/transport-grpc.md` â€?gRPC streaming transport specification
+- `docs/specs/delivery.md` â€?delivery semantics, acknowledgement, and replay specification
+- `docs/specs/reliability.md` â€?retry, durability, and dead-letter handling specification
+- `docs/specs/security.md` â€?identity, authorization, audit, and tenant isolation specification
+- `docs/specs/conformance.md` â€?draft conformance levels and shared fixture manifest rules
+- `docs/specs/event-registry-governance.md` â€?event type registry governance and versioning
+- `docs/specs/agent-runtime-semantics.md` â€?belief, freshness, delegation, interruption, and provenance metadata
+- `CONTRIBUTING.md` â€?contribution guide and repository conventions
+- `CODE_OF_CONDUCT.md` â€?contributor code of conduct
 
 ## Repository Layout
 
-- `docs/` â€” protocol vision, architecture, design drafts, specifications, roadmap, and Superpowers artifacts
-- `docs/specs/` â€” per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning)
-- `schemas/` â€” shared draft JSON Schema assets
-- `conformance/` â€” shared fixtures for reference implementation parity
-- `reference/` â€” language-specific reference implementations
-- `reference/typescript/` â€” primary runnable AEP reference implementation
-- `reference/python/` â€” second-priority reference implementation with full transport and delivery support
-- `reference/go/` â€” Go reference implementation with C0/C1 conformance
-- `reference/java/` â€” Java reference implementation with C0/C1 conformance (JDK 21)
-- `.github/workflows/` â€” repository CI
+- `docs/` â€?protocol vision, architecture, design drafts, specifications, roadmap, and Superpowers artifacts
+- `docs/specs/` â€?per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning)
+- `schemas/` â€?shared draft JSON Schema assets
+- `conformance/` â€?shared fixtures for reference implementation parity
+- `implementations/` â€?language-specific reference implementations
+- `implementations/typescript/` â€?primary runnable AEP reference implementation
+- `implementations/python/` â€?second-priority reference implementation with full transport and delivery support
+- `implementations/go/` â€?Go reference implementation with C0/C1 conformance
+- `implementations/java/` â€?Java reference implementation with C0/C1 conformance (JDK 21)
+- `.github/workflows/` â€?repository CI
 
 ## Development Harness
 
 This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `.superpowers/`.
 
-- `AGENTS.md` â€” OpenCode project rules
-- `CLAUDE.md` â€” Claude Code project rules
-- `.superpowers/specs/` â€” Superpowers-backed design specs
-- `.superpowers/plans/` â€” Superpowers-backed execution plans
+- `AGENTS.md` â€?OpenCode project rules
+- `CLAUDE.md` â€?Claude Code project rules
+- `.superpowers/specs/` â€?Superpowers-backed design specs
+- `.superpowers/plans/` â€?Superpowers-backed execution plans
 
 ## AEP Harness
 
@@ -112,14 +112,14 @@ The repository includes a minimal local AEP 0.1 draft conformance harness that u
 Run tests:
 
 ```sh
-cd reference/typescript && npm install
-cd reference/typescript && npm test
+cd implementations/typescript && npm install
+cd implementations/typescript && npm test
 ```
 
 Run TypeScript conformance fixtures:
 
 ```sh
-cd reference/typescript && npm run conformance
+cd implementations/typescript && npm run conformance
 ```
 
 Run cross-language conformance:
@@ -133,18 +133,18 @@ This runs shared fixtures across all four language references and prints a unifi
 Run the stdio harness:
 
 ```sh
-cd reference/typescript && npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson
+cd implementations/typescript && npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson
 ```
 
 Run examples:
 
 ```sh
-cd reference/typescript && npm run demo:async-tool
-cd reference/typescript && npm run demo:memory
-cd reference/typescript && npm run demo:agent
-cd reference/typescript && npm run demo:mcp-bridge
-cd reference/typescript && npm run demo:mcp-aep-consumer
-cd reference/typescript && npm run demo:production-e2e
+cd implementations/typescript && npm run demo:async-tool
+cd implementations/typescript && npm run demo:memory
+cd implementations/typescript && npm run demo:agent
+cd implementations/typescript && npm run demo:mcp-bridge
+cd implementations/typescript && npm run demo:mcp-aep-consumer
+cd implementations/typescript && npm run demo:production-e2e
 ```
 
 The harness validates draft envelope fields, checks event types against the standard registry, creates subscriptions, tracks task lifecycle, supports stdio/WebSocket/SSE transports, validates shared JSON Schemas, and demonstrates MCP interop.

@@ -41,7 +41,7 @@ Protocol implementers remain served by the reference implementations and conform
 
 ### In Scope
 
-- TypeScript-first SDK packaging under `reference/typescript`.
+- TypeScript-first SDK packaging under `implementations/typescript`.
 - A runnable `aepd` daemon/runtime service.
 - An `aep` CLI for local use and debugging.
 - Configuration file generation and loading.
@@ -60,16 +60,16 @@ Protocol implementers remain served by the reference implementations and conform
 - No protocol version stabilization work.
 - No Python/Go/Java daemon parity in the first productization phase.
 
-Python, Go, and Java continue as SDK/reference/conformance implementations. They may later grow CLI or daemon support if the TypeScript shape proves useful.
+Python, Go, and Java continue as SDK/implementations/conformance implementations. They may later grow CLI or daemon support if the TypeScript shape proves useful.
 
 ## Architecture
 
-Keep the first phase inside `reference/typescript` to avoid a large monorepo restructure while the protocol is still draft.
+Keep the first phase inside `implementations/typescript` to avoid a large monorepo restructure while the protocol is still draft.
 
 Planned structure:
 
 ```text
-reference/typescript/
+implementations/typescript/
   src/
     index.js
     runtime/
@@ -171,7 +171,7 @@ Environment overrides:
 
 ## CLI Package Shape
 
-`reference/typescript/package.json` should expose binaries:
+`implementations/typescript/package.json` should expose binaries:
 
 ```json
 {
@@ -234,7 +234,7 @@ PostgreSQL-backed daemon tests can be optional or isolated behind `AEP_POSTGRES_
 ## Migration Path
 
 1. Keep `2.0` as the reference-complete baseline.
-2. Add TypeScript SDK surface and runtime/CLI files under `reference/typescript`.
+2. Add TypeScript SDK surface and runtime/CLI files under `implementations/typescript`.
 3. Document local usage with examples.
 4. Once stable, consider moving TypeScript productized artifacts to `packages/`:
 

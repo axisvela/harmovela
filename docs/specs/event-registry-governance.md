@@ -12,10 +12,10 @@ The standard event type registry is defined in each language reference:
 
 | Language | File |
 |---|---|
-| TypeScript | `reference/typescript/src/event-types.js` |
-| Python | `reference/python/src/aep/event_types.py` |
-| Go | `reference/go/aep/event_types.go` |
-| Java | `reference/java/src/main/java/com/axisrobo/aep/EventTypes.java` |
+| TypeScript | `implementations/typescript/src/event-types.js` |
+| Python | `implementations/python/src/aep/event_types.py` |
+| Go | `implementations/go/aep/event_types.go` |
+| Java | `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java` |
 
 All implementations share the same set of standard types. The shared conformance manifest defines fixture-level expectations for each event family.
 

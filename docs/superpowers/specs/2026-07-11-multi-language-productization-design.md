@@ -85,7 +85,7 @@ The `aepd` daemon is a separate entrypoint; `aep start` is a convenience wrapper
 
 Each language is its own implementation plan and its own set of batched commits. The three plans share this design.
 
-### Python (`reference/python`)
+### Python (`implementations/python`)
 
 - Dependencies: `click` for CLI; `http.server` (stdlib) for the API server; existing `websockets` for the WebSocket server transport.
 - New modules under `src/aep/runtime/`: `config.py`, `service.py`, `api_server.py`, `server.py` (daemon).
@@ -94,7 +94,7 @@ Each language is its own implementation plan and its own set of batched commits.
 - Reuses existing `subscription.py` and `task.py` directly.
 - Tests with `pytest`, spawning the CLI and daemon as subprocesses; API tested with `urllib`/`http.client` or a small client helper.
 
-### Go (`reference/go`)
+### Go (`implementations/go`)
 
 - Dependencies: `spf13/cobra` for CLI; stdlib `net/http` for the API server.
 - First extract standalone `Subscription` matching into `aep/subscription.go` and task lifecycle into `aep/task.go` (moved out of `harness.go`, keeping harness behavior).
@@ -103,7 +103,7 @@ Each language is its own implementation plan and its own set of batched commits.
 - `go.mod` adds cobra.
 - Tests with `go test ./...`, including cmd packages where practical and runtime service HTTP tests.
 
-### Java (`reference/java`)
+### Java (`implementations/java`)
 
 - Dependencies: `info.picocli:picocli` for CLI; JDK `com.sun.net.httpserver.HttpServer` for the API server.
 - First extract standalone subscription matching into `Subscriptions.java` and task lifecycle into `TaskTracker.java` (moved out of `Harness`).

@@ -4,10 +4,10 @@
 
 **Goal:** Split the Go `aep/` flat package into sub-packages: core (`aep/`), store (`aep/store/`), transport (`aep/transport/`), runtime (`aep/runtime/`), bridge (`aep/bridge/`), with no circular dependencies.
 
-**Architecture:** Dependency graph is acyclic: core â†’ (store, transport, bridge) â†’ runtime. cmd packages import runtime + transport. Each task moves files, changes the package declaration, adds imports to the moved package for referenced symbols from other packages, and exports any previously unexported symbols now needed cross-package.
+**Architecture:** Dependency graph is acyclic: core â†?(store, transport, bridge) â†?runtime. cmd packages import runtime + transport. Each task moves files, changes the package declaration, adds imports to the moved package for referenced symbols from other packages, and exports any previously unexported symbols now needed cross-package.
 
 **Dependency order (enforced by implementation sequence):**
-1. core (`aep/`): self-contained â€” no imports from sub-packages. Exports helpers from `delivery_store.go` that store needs.
+1. core (`aep/`): self-contained â€?no imports from sub-packages. Exports helpers from `delivery_store.go` that store needs.
 2. store (`aep/store/`): imports core, exports nothing that core needs (one-way dependency).
 3. transport (`aep/transport/`): imports core, exports nothing that core needs.
 4. bridge (`aep/bridge/`): imports core (harness, task, errors).
@@ -15,7 +15,7 @@
 6. cmd packages: update imports to point at runtime + transport.
 
 **Critical exports:**
-- `Now()` in core (`aep/util.go`) â€” used by runtime to build event timestamps.
+- `Now()` in core (`aep/util.go`) â€?used by runtime to build event timestamps.
 - `DeliveryStore` interface stays in store; runtime imports it.
 - `WsBroadcastServer` stays in transport; runtime imports it.
 
@@ -24,7 +24,7 @@
 ## Task 1: Create core helper `Now()` and move store package
 
 **Files:**
-- Create: `reference/go/aep/util.go` â€” exported `func Now() string`
+- Create: `implementations/go/aep/util.go` â€?exported `func Now() string`
 - Move: 10 delivery files to `aep/store/`
 - Use the `now()` helper in store internally; remove cross-package dependency on `Now()`
 
@@ -43,44 +43,44 @@ func Now() string {
 - [ ] **Step 2: Move store files**
 
 ```bash
-mkdir -p reference/go/aep/store
-git mv reference/go/aep/delivery_store.go reference/go/aep/store/
-git mv reference/go/aep/delivery_store_test.go reference/go/aep/store/
-git mv reference/go/aep/delivery_sqlite.go reference/go/aep/store/
-git mv reference/go/aep/delivery_sqlite_test.go reference/go/aep/store/
-git mv reference/go/aep/delivery_postgres.go reference/go/aep/store/
-git mv reference/go/aep/delivery_postgres_test.go reference/go/aep/store/
-git mv reference/go/aep/delivery.go reference/go/aep/store/
-git mv reference/go/aep/delivery_test.go reference/go/aep/store/
-git mv reference/go/aep/delivery_journal.go reference/go/aep/store/
-git mv reference/go/aep/delivery_journal_test.go reference/go/aep/store/
+mkdir -p implementations/go/aep/store
+git mv implementations/go/aep/delivery_store.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_store_test.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_sqlite.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_sqlite_test.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_postgres.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_postgres_test.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_test.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_journal.go implementations/go/aep/store/
+git mv implementations/go/aep/delivery_journal_test.go implementations/go/aep/store/
 ```
 
 - [ ] **Step 3: Change package declaration in moved files**
 
-Each store/*.go: `package aep` â†’ `package store`.
+Each store/*.go: `package aep` â†?`package store`.
 
-- [ ] **Step 4: The `now()` helper already exists in store/delivery_store.go** â€” no change needed; store uses its own private `now()`.
+- [ ] **Step 4: The `now()` helper already exists in store/delivery_store.go** â€?no change needed; store uses its own private `now()`.
 
 - [ ] **Step 5: Build store package**
 
-Run: `cd reference/go && go build ./aep/store/`
-Expected: compile â€” the store package imports nothing from outside stdlib + `github.com/axisrobo/aep` (which is `aep` root for shared constants/types).
+Run: `cd implementations/go && go build ./aep/store/`
+Expected: compile â€?the store package imports nothing from outside stdlib + `github.com/axisrobo/aep` (which is `aep` root for shared constants/types).
 
 - [ ] **Step 6: Build root package without store files**
 
-Run: `cd reference/go && go build ./aep/`
+Run: `cd implementations/go && go build ./aep/`
 Expected: root package must still compile without store files, since root does not import store.
 
 - [ ] **Step 7: Build cmd packages**
 
-Run: `cd reference/go && go build ./cmd/aep/ ./cmd/aepd/`
-Expected: they fail because `cmd/aep` imports `aep.DeliveryStore`, etc. â€” this is expected until runtime package is fixed. Note that store is a separate sub-package now.
+Run: `cd implementations/go && go build ./cmd/aep/ ./cmd/aepd/`
+Expected: they fail because `cmd/aep` imports `aep.DeliveryStore`, etc. â€?this is expected until runtime package is fixed. Note that store is a separate sub-package now.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/go/aep/store/ reference/go/aep/util.go
+git add implementations/go/aep/store/ implementations/go/aep/util.go
 git commit -m "refactor(go): extract store sub-package from flat aep"
 git push origin master
 ```
@@ -95,22 +95,22 @@ git push origin master
 - [ ] **Step 1: Move files**
 
 ```bash
-git mv reference/go/aep/transport_ws.go reference/go/aep/transport/
-git mv reference/go/aep/transport_ws_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_ws_broadcast.go reference/go/aep/transport/
-git mv reference/go/aep/transport_ws_broadcast_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_sse.go reference/go/aep/transport/
-git mv reference/go/aep/transport_sse_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_stdio.go reference/go/aep/transport/
-git mv reference/go/aep/transport_stdio_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_grpc.go reference/go/aep/transport/
-git mv reference/go/aep/transport_grpc_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_kafka.go reference/go/aep/transport/
-git mv reference/go/aep/transport_kafka_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_nats.go reference/go/aep/transport/
-git mv reference/go/aep/transport_nats_test.go reference/go/aep/transport/
-git mv reference/go/aep/transport_redis.go reference/go/aep/transport/
-git mv reference/go/aep/transport_redis_test.go reference/go/aep/transport/
+git mv implementations/go/aep/transport_ws.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_ws_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_ws_broadcast.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_ws_broadcast_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_sse.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_sse_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_stdio.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_stdio_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_grpc.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_grpc_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_kafka.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_kafka_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_nats.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_nats_test.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_redis.go implementations/go/aep/transport/
+git mv implementations/go/aep/transport_redis_test.go implementations/go/aep/transport/
 ```
 
 - [ ] **Step 2: Rename package to `package transport`** in all moved files.
@@ -121,11 +121,11 @@ Change `var upgrader = ...` to `var Upgrader = ...` in the WS files so the broad
 
 - [ ] **Step 4: Build transport package**
 
-Run: `cd reference/go && go build ./aep/transport/`
+Run: `cd implementations/go && go build ./aep/transport/`
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/aep/transport/
+git add implementations/go/aep/transport/
 git commit -m "refactor(go): extract transport sub-package from flat aep"
 git push origin master
 ```
@@ -140,11 +140,11 @@ git push origin master
 - [ ] **Step 1: Move files**
 
 ```bash
-git mv reference/go/aep/mcp_bridge.go reference/go/aep/bridge/
-git mv reference/go/aep/mcp_bridge_test.go reference/go/aep/bridge/
+git mv implementations/go/aep/mcp_bridge.go implementations/go/aep/bridge/
+git mv implementations/go/aep/mcp_bridge_test.go implementations/go/aep/bridge/
 ```
 
-- [ ] **Step 2: Package declaration â†’ `package bridge`**
+- [ ] **Step 2: Package declaration â†?`package bridge`**
 
 - [ ] **Step 3: Import root package**
 
@@ -162,18 +162,18 @@ Same in test file. `Sender` is defined in bridge itself; move it.
 
 - [ ] **Step 4: Build bridge package**
 
-Run: `cd reference/go && go build ./aep/bridge/`
+Run: `cd implementations/go && go build ./aep/bridge/`
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/aep/bridge/
+git add implementations/go/aep/bridge/
 git commit -m "refactor(go): extract bridge sub-package from flat aep"
 git push origin master
 ```
 
 ---
 
-## Task 4: Move runtime package (complex â€” imports core + store + transport)
+## Task 4: Move runtime package (complex â€?imports core + store + transport)
 
 **Files:**
 - Move: `runtime.go`, `runtime_test.go`, `runtime_subscriptions_test.go` to `aep/runtime/`
@@ -181,12 +181,12 @@ git push origin master
 - [ ] **Step 1: Move files**
 
 ```bash
-git mv reference/go/aep/runtime.go reference/go/aep/runtime/
-git mv reference/go/aep/runtime_test.go reference/go/aep/runtime/
-git mv reference/go/aep/runtime_subscriptions_test.go reference/go/aep/runtime/
+git mv implementations/go/aep/runtime.go implementations/go/aep/runtime/
+git mv implementations/go/aep/runtime_test.go implementations/go/aep/runtime/
+git mv implementations/go/aep/runtime_subscriptions_test.go implementations/go/aep/runtime/
 ```
 
-- [ ] **Step 2: Package declaration â†’ `package runtime`**
+- [ ] **Step 2: Package declaration â†?`package runtime`**
 
 - [ ] **Step 3: Add imports**
 
@@ -203,24 +203,24 @@ import (
 - [ ] **Step 4: Qualify all cross-package references**
 
 Root-level symbols used in runtime:
-- `ValidateEnvelope` â†’ `aep.ValidateEnvelope`
-- `MatchesType` â†’ `aep.MatchesType`
-- `SubscriptionMatches` â†’ `aep.SubscriptionMatches`
-- `Now()` â†’ `aep.Now()`
-- `EventRouter` â†’ `aep.EventRouter` (if used in runtime? not â€” the runtime uses router internally)
-- Actually, runtime doesn't use EventRouter â€” it uses subscription pattern matching directly.
+- `ValidateEnvelope` â†?`aep.ValidateEnvelope`
+- `MatchesType` â†?`aep.MatchesType`
+- `SubscriptionMatches` â†?`aep.SubscriptionMatches`
+- `Now()` â†?`aep.Now()`
+- `EventRouter` â†?`aep.EventRouter` (if used in runtime? not â€?the runtime uses router internally)
+- Actually, runtime doesn't use EventRouter â€?it uses subscription pattern matching directly.
 
 Store symbols:
-- `DeliveryStore` â†’ `store.DeliveryStore`
-- `NewInMemoryDeliveryStore` â†’ `store.NewInMemoryDeliveryStore`
-- `NewSqliteDeliveryStore` â†’ `store.NewSqliteDeliveryStore`
-- `NewPostgresDeliveryStore` â†’ `store.NewPostgresDeliveryStore`
-- `PostgresOptions` â†’ `store.PostgresOptions`
-- `CreateDeliveryStore` references same â€” qualifies.
+- `DeliveryStore` â†?`store.DeliveryStore`
+- `NewInMemoryDeliveryStore` â†?`store.NewInMemoryDeliveryStore`
+- `NewSqliteDeliveryStore` â†?`store.NewSqliteDeliveryStore`
+- `NewPostgresDeliveryStore` â†?`store.NewPostgresDeliveryStore`
+- `PostgresOptions` â†?`store.PostgresOptions`
+- `CreateDeliveryStore` references same â€?qualifies.
 
 Transport symbols:
-- `WsBroadcastServer` â†’ `transport.WsBroadcastServer`
-- `NewWsBroadcastServer` â†’ `transport.NewWsBroadcastServer`
+- `WsBroadcastServer` â†?`transport.WsBroadcastServer`
+- `NewWsBroadcastServer` â†?`transport.NewWsBroadcastServer`
 
 - [ ] **Step 5: Add private `now()` helper** and remove old `Now()` reference
 
@@ -228,20 +228,20 @@ Runtime has its own `now()` helper; changes in step 4 already handle the `Now()`
 
 - [ ] **Step 6: Build runtime package**
 
-Run: `cd reference/go && go build ./aep/runtime/`
-Expected: compile â€” runtime depends on core + store + transport with no circular imports.
+Run: `cd implementations/go && go build ./aep/runtime/`
+Expected: compile â€?runtime depends on core + store + transport with no circular imports.
 
-- [ ] **Step 7: Update runtime tests** â€” same import qualification changes.
+- [ ] **Step 7: Update runtime tests** â€?same import qualification changes.
 
 - [ ] **Step 8: Run runtime tests**
 
-Run: `cd reference/go && go test ./aep/runtime/`
+Run: `cd implementations/go && go test ./aep/runtime/`
 Expected: PASS.
 
 - [ ] **Step 9: Commit and push**
 
 ```bash
-git add reference/go/aep/runtime/
+git add implementations/go/aep/runtime/
 git commit -m "refactor(go): extract runtime sub-package from flat aep"
 git push origin master
 ```
@@ -251,28 +251,28 @@ git push origin master
 ## Task 5: Update cmd packages
 
 **Files:**
-- Modify: `reference/go/cmd/aep/main.go`, `reference/go/cmd/aepd/main.go`
+- Modify: `implementations/go/cmd/aep/main.go`, `implementations/go/cmd/aepd/main.go`
 
 - [ ] **Step 1: Update cmd/aep imports**
 
 `cmd/aep` imports `aep.WriteDefaultConfig`, `aep.LoadConfig`, `aep.CreateDeliveryStore`, `aep.MatchesType`, `aep.Now`, `aep.NewRuntimeService`.
 
 After restructure:
-- `aep.WriteDefaultConfig` â†’ `runtime.WriteDefaultConfig` (moved to runtime) â€” wait, `WriteDefaultConfig` is in runtime.go, so it moves to runtime package.
+- `aep.WriteDefaultConfig` â†?`runtime.WriteDefaultConfig` (moved to runtime) â€?wait, `WriteDefaultConfig` is in runtime.go, so it moves to runtime package.
 - Actually, I need to check: what symbols in runtime.go does cmd/aep use?
 
 Running through cmd/aep/main.go:
-- `aep.WriteDefaultConfig` â†’ now `runtime.WriteDefaultConfig`
-- `aep.LoadConfig` â†’ `runtime.LoadConfig`  
-- `aep.NewRuntimeService` â†’ `runtime.NewRuntimeService`
-- `aep.CreateDeliveryStore` â†’ `runtime.CreateDeliveryStore` (factory is in runtime)
-- `aep.Now` â†’ `aep.Now()` (still in root)
-- `aep.MatchesType` â†’ `aep.MatchesType` (still in root)
-- `aep.ApplyEnvOverrides` â†’ `runtime.ApplyEnvOverrides` (in runtime)
-- `aep.DefaultConfig` â†’ `runtime.DefaultConfig`
-- `aep.RunTimeConfig` â†’ `runtime.RunTimeConfig`
+- `aep.WriteDefaultConfig` â†?now `runtime.WriteDefaultConfig`
+- `aep.LoadConfig` â†?`runtime.LoadConfig`  
+- `aep.NewRuntimeService` â†?`runtime.NewRuntimeService`
+- `aep.CreateDeliveryStore` â†?`runtime.CreateDeliveryStore` (factory is in runtime)
+- `aep.Now` â†?`aep.Now()` (still in root)
+- `aep.MatchesType` â†?`aep.MatchesType` (still in root)
+- `aep.ApplyEnvOverrides` â†?`runtime.ApplyEnvOverrides` (in runtime)
+- `aep.DefaultConfig` â†?`runtime.DefaultConfig`
+- `aep.RunTimeConfig` â†?`runtime.RunTimeConfig`
 
-Also cmd/aep uses `gorilla/websocket` directly for `emit` and `subscribe` â€” stays as-is (transport import).
+Also cmd/aep uses `gorilla/websocket` directly for `emit` and `subscribe` â€?stays as-is (transport import).
 
 Update cmd/aep/main.go to import:
 
@@ -285,7 +285,7 @@ import (
 
 And qualify all runtime symbols with `runtime.`, root symbols with `aep.`.
 
-Also, the old `import "github.com/axisrobo/aep/aep"` imports are currently `aep` â€” the root package; no rename needed there.
+Also, the old `import "github.com/axisrobo/aep/aep"` imports are currently `aep` â€?the root package; no rename needed there.
 
 - [ ] **Step 2: Update cmd/aepd imports**
 
@@ -293,14 +293,14 @@ Same pattern: import runtime and root packages.
 
 - [ ] **Step 3: Build cmd packages**
 
-Run: `cd reference/go && go build ./cmd/aep/ ./cmd/aepd/`
+Run: `cd implementations/go && go build ./cmd/aep/ ./cmd/aepd/`
 - [ ] **Step 4: Verify full suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/go/cmd/
+git add implementations/go/cmd/
 git commit -m "refactor(go): update cmd packages for sub-package imports"
 git push origin master
 ```
@@ -311,11 +311,11 @@ git push origin master
 
 - [ ] **Step 1: Run full Go suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 
 - [ ] **Step 2: Build all binaries**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 
 - [ ] **Step 3: Verify git sync**
 

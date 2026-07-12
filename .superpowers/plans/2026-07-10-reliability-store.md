@@ -4,7 +4,7 @@
 
 **Goal:** Add a pluggable DeliveryStore interface, an InMemoryDeliveryStore implementation, and a DeliveryJournal to the TypeScript delivery subsystem, then refactor DeliveryTracker to use them.
 
-**Architecture:** Three new modules under `reference/typescript/src/` define a store contract, an in-memory backing store, and a replay journal. DeliveryTracker is refactored to accept `store` and `journal` constructor options with backward-compatible defaults. No protocol changes.
+**Architecture:** Three new modules under `implementations/typescript/src/` define a store contract, an in-memory backing store, and a replay journal. DeliveryTracker is refactored to accept `store` and `journal` constructor options with backward-compatible defaults. No protocol changes.
 
 **Tech Stack:** Node ESM, `node:test`, `node:assert`. Zero new dependencies.
 
@@ -12,25 +12,25 @@
 
 ## File Structure
 
-- Create: `reference/typescript/src/delivery-store-memory.js` â€” InMemoryDeliveryStore with Map-based storage, mirroring current DeliveryTracker internals.
-- Create: `reference/typescript/src/delivery-journal.js` â€” DeliveryJournal for sequence-ordered event retention and replay.
-- Create: `reference/typescript/test/delivery-store.test.js` â€” unit tests for the in-memory store contract.
-- Create: `reference/typescript/test/delivery-journal.test.js` â€” unit tests for journal append/replay/purge.
-- Modify: `reference/typescript/src/delivery.js` â€” refactor DeliveryTracker to accept and delegate to store/journal.
-- Modify: `reference/typescript/test/delivery.test.js` â€” add one test verifying store injection and verify 10 existing tests pass unchanged.
-- Modify: `reference/typescript/README.md` â€” add new modules to current scope.
+- Create: `implementations/typescript/src/delivery-store-memory.js` â€?InMemoryDeliveryStore with Map-based storage, mirroring current DeliveryTracker internals.
+- Create: `implementations/typescript/src/delivery-journal.js` â€?DeliveryJournal for sequence-ordered event retention and replay.
+- Create: `implementations/typescript/test/delivery-store.test.js` â€?unit tests for the in-memory store contract.
+- Create: `implementations/typescript/test/delivery-journal.test.js` â€?unit tests for journal append/replay/purge.
+- Modify: `implementations/typescript/src/delivery.js` â€?refactor DeliveryTracker to accept and delegate to store/journal.
+- Modify: `implementations/typescript/test/delivery.test.js` â€?add one test verifying store injection and verify 10 existing tests pass unchanged.
+- Modify: `implementations/typescript/README.md` â€?add new modules to current scope.
 
 ---
 
 ### Task 1: InMemoryDeliveryStore
 
 **Files:**
-- Create: `reference/typescript/src/delivery-store-memory.js`
-- Create: `reference/typescript/test/delivery-store.test.js`
+- Create: `implementations/typescript/src/delivery-store-memory.js`
+- Create: `implementations/typescript/test/delivery-store.test.js`
 
 - [ ] **Step 1: Write failing store tests**
 
-Create `reference/typescript/test/delivery-store.test.js`:
+Create `implementations/typescript/test/delivery-store.test.js`:
 
 ```js
 import assert from "node:assert/strict";
@@ -124,7 +124,7 @@ test("InMemoryDeliveryStore getPendingForSubscription filters correctly", () => 
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery-store.test.js
 ```
 
@@ -132,7 +132,7 @@ Expected: FAIL with module not found for `../src/delivery-store-memory.js`.
 
 - [ ] **Step 3: Implement InMemoryDeliveryStore**
 
-Create `reference/typescript/src/delivery-store-memory.js`:
+Create `implementations/typescript/src/delivery-store-memory.js`:
 
 ```js
 export class InMemoryDeliveryStore {
@@ -242,7 +242,7 @@ export class InMemoryDeliveryStore {
 - [ ] **Step 4: Run store tests**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery-store.test.js
 ```
 
@@ -251,7 +251,7 @@ Expected: PASS, 8 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/delivery-store-memory.js reference/typescript/test/delivery-store.test.js
+git add implementations/typescript/src/delivery-store-memory.js implementations/typescript/test/delivery-store.test.js
 git commit -m "feat: add InMemoryDeliveryStore with tests"
 ```
 
@@ -262,12 +262,12 @@ Expected: commit succeeds.
 ### Task 2: DeliveryJournal
 
 **Files:**
-- Create: `reference/typescript/src/delivery-journal.js`
-- Create: `reference/typescript/test/delivery-journal.test.js`
+- Create: `implementations/typescript/src/delivery-journal.js`
+- Create: `implementations/typescript/test/delivery-journal.test.js`
 
 - [ ] **Step 1: Write failing journal tests**
 
-Create `reference/typescript/test/delivery-journal.test.js`:
+Create `implementations/typescript/test/delivery-journal.test.js`:
 
 ```js
 import assert from "node:assert/strict";
@@ -340,7 +340,7 @@ test("DeliveryJournal stats are empty for new journal", () => {
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery-journal.test.js
 ```
 
@@ -348,7 +348,7 @@ Expected: FAIL with module not found.
 
 - [ ] **Step 3: Implement DeliveryJournal**
 
-Create `reference/typescript/src/delivery-journal.js`:
+Create `implementations/typescript/src/delivery-journal.js`:
 
 ```js
 export class DeliveryJournal {
@@ -409,7 +409,7 @@ export class DeliveryJournal {
 - [ ] **Step 4: Run journal tests**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery-journal.test.js
 ```
 
@@ -418,7 +418,7 @@ Expected: PASS, 6 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/delivery-journal.js reference/typescript/test/delivery-journal.test.js
+git add implementations/typescript/src/delivery-journal.js implementations/typescript/test/delivery-journal.test.js
 git commit -m "feat: add DeliveryJournal with tests"
 ```
 
@@ -429,12 +429,12 @@ Expected: commit succeeds.
 ### Task 3: Refactor DeliveryTracker
 
 **Files:**
-- Modify: `reference/typescript/src/delivery.js`
-- Modify: `reference/typescript/test/delivery.test.js`
+- Modify: `implementations/typescript/src/delivery.js`
+- Modify: `implementations/typescript/test/delivery.test.js`
 
 - [ ] **Step 1: Add store injection test**
 
-In `reference/typescript/test/delivery.test.js`, add this test at the end of the file (before the closing code):
+In `implementations/typescript/test/delivery.test.js`, add this test at the end of the file (before the closing code):
 
 ```js
 test("DeliveryTracker uses provided store and journal", () => {
@@ -478,7 +478,7 @@ test("DeliveryTracker uses provided store and journal", () => {
 - [ ] **Step 2: Run existing tests to confirm they still pass**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery.test.js
 ```
 
@@ -486,7 +486,7 @@ Expected: 10 existing tests pass (new test fails due to refactored code not yet 
 
 - [ ] **Step 3: Refactor DeliveryTracker**
 
-Replace `reference/typescript/src/delivery.js` with:
+Replace `implementations/typescript/src/delivery.js` with:
 
 ```js
 import { InMemoryDeliveryStore } from "./delivery-store-memory.js";
@@ -577,7 +577,7 @@ export class DeliveryTracker {
 - [ ] **Step 4: Run all delivery tests**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test -- test/delivery.test.js
 ```
 
@@ -586,7 +586,7 @@ Expected: PASS, 11 tests pass (10 existing + 1 new store injection test).
 - [ ] **Step 5: Run full TypeScript test suite**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test
 ```
 
@@ -595,7 +595,7 @@ Expected: all tests pass.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add reference/typescript/src/delivery.js reference/typescript/test/delivery.test.js
+git add implementations/typescript/src/delivery.js implementations/typescript/test/delivery.test.js
 git commit -m "refactor: extract DeliveryTracker store and journal"
 ```
 
@@ -606,11 +606,11 @@ Expected: commit succeeds.
 ### Task 4: Documentation And Full Verification
 
 **Files:**
-- Modify: `reference/typescript/README.md`
+- Modify: `implementations/typescript/README.md`
 
 - [ ] **Step 1: Update TypeScript README scope**
 
-In `reference/typescript/README.md`, replace the scope line:
+In `implementations/typescript/README.md`, replace the scope line:
 
 ```markdown
 - Delivery tracking with ack/retry/dead-letter helpers
@@ -625,7 +625,7 @@ with:
 - [ ] **Step 2: Full TypeScript verification**
 
 ```bash
-cd reference/typescript
+cd implementations/typescript
 npm test
 npm run conformance
 npm run demo:async-tool
@@ -637,7 +637,7 @@ Expected: all passed.
 - [ ] **Step 3: Full Python verification**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest --tb=short -q
 ```
 
@@ -646,7 +646,7 @@ Expected: all 48 passed.
 - [ ] **Step 4: Full Go verification**
 
 ```bash
-cd reference/go
+cd implementations/go
 go test ./aep/ -v
 ```
 
@@ -655,7 +655,7 @@ Expected: all 17 passed.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/typescript/README.md
+git add implementations/typescript/README.md
 git commit -m "docs: update TypeScript delivery scope"
 git status --short
 git log --oneline -5

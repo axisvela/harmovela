@@ -9,7 +9,7 @@ Port the TypeScript MCP bridge to Python, Go, and Java: a JSON-RPC 2.0 handler e
 
 ## Baseline
 
-TypeScript reference: `reference/typescript/src/bridge/mcp-bridge.js`.
+TypeScript reference: `implementations/typescript/src/bridge/mcp-bridge.js`.
 
 - `McpBridge`: registers tools, handles JSON-RPC requests (`initialize`, `notifications/initialized`, `tools/list`, `tools/call`), returns JSON-RPC 2.0 responses.
 - `asyncToolHandler(name, { description, inputSchema, work })`: on `tools/call`, creates a `TaskTracker`, emits `task.accepted` synchronously, returns `{ content: [...] }`, and asynchronously emits `task.started`, `task.progress`, then `task.completed` or `task.failed` through a transport sink.
@@ -31,12 +31,12 @@ These upgrades are additive; existing harness/task tests must stay green.
 2. `McpBridge`:
    - Register tools with a name, schema (description, properties, required), and handler.
    - `handleRequest(request)` dispatch:
-     - `initialize` â†’ returns protocol version, capabilities `{ tools: {} }`, server info.
-     - `notifications/initialized` â†’ no response (null).
-     - `tools/list` â†’ returns tool list with input schemas.
-     - `tools/call` â†’ invokes the tool handler, wraps result; unknown tool â†’ JSON-RPC error `-32602`; handler exception â†’ `{ isError: true, content: [...] }`.
-     - unknown method â†’ JSON-RPC error `-32601`.
-     - malformed request â†’ JSON-RPC error `-32600`.
+     - `initialize` â†?returns protocol version, capabilities `{ tools: {} }`, server info.
+     - `notifications/initialized` â†?no response (null).
+     - `tools/list` â†?returns tool list with input schemas.
+     - `tools/call` â†?invokes the tool handler, wraps result; unknown tool â†?JSON-RPC error `-32602`; handler exception â†?`{ isError: true, content: [...] }`.
+     - unknown method â†?JSON-RPC error `-32601`.
+     - malformed request â†?JSON-RPC error `-32600`.
 3. Async tool handler helper:
    - Creates a `TaskTracker`, emits `task.accepted` to the transport sink, returns MCP content immediately, then asynchronously emits `task.started`, `task.progress`, and terminal `task.completed`/`task.failed`.
 4. A runnable example mirroring the TS demo where practical.
@@ -86,19 +86,19 @@ Sink may be null; the bridge tolerates a nil/None sink (no-op).
 
 ## Per-Language Notes
 
-### Python (`reference/python`)
+### Python (`implementations/python`)
 
 - No task upgrade needed.
 - New `aep/mcp_bridge.py` with `McpBridge` and `async_tool_handler`. Async emission uses a background thread or `asyncio` task; tests can call a synchronous drain or await completion.
 - Export from `aep/__init__.py`.
 
-### Go (`reference/go`)
+### Go (`implementations/go`)
 
 - Upgrade `TaskTracker` with exported lifecycle methods returning events.
 - New `aep/mcp_bridge.go` with `McpBridge`, `RegisterTool`, `HandleRequest(map[string]any) map[string]any`, and an async tool handler helper. Async emission uses a goroutine; tests synchronize via a channel or `sync.WaitGroup`.
 - Define a minimal `Sender` interface in the bridge file.
 
-### Java (`reference/java`)
+### Java (`implementations/java`)
 
 - Promote `TaskTracker` to a public standalone class; update `Harness`.
 - New `com.axisrobo.aep.McpBridge` with tool registration, `handleRequest(Map) -> Map`, and an async tool handler. Async emission uses a thread or executor; tests synchronize via a latch/future.
@@ -106,11 +106,11 @@ Sink may be null; the bridge tolerates a nil/None sink (no-op).
 
 ## Error Handling
 
-- Malformed or missing `method` â†’ `-32600`.
-- Unknown method â†’ `-32601`.
-- Unknown tool on `tools/call` â†’ `-32602`.
-- Tool handler exception â†’ JSON-RPC success envelope with `{ isError: true, content: [{ type: "text", text: message }] }` (matches TS).
-- Async `work` failure â†’ `task.failed` event with `TOOL_ERROR`.
+- Malformed or missing `method` â†?`-32600`.
+- Unknown method â†?`-32601`.
+- Unknown tool on `tools/call` â†?`-32602`.
+- Tool handler exception â†?JSON-RPC success envelope with `{ isError: true, content: [{ type: "text", text: message }] }` (matches TS).
+- Async `work` failure â†?`task.failed` event with `TOOL_ERROR`.
 
 ## Testing Strategy
 

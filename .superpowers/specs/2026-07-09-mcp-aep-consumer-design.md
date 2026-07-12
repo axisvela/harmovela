@@ -32,7 +32,7 @@ This keeps the example easy to run and avoids defining a premature consumer SDK.
 
 ### Consumer Helper
 
-Create a focused module under `reference/typescript/src/bridge/` that drives the existing `McpBridge` directly.
+Create a focused module under `implementations/typescript/src/bridge/` that drives the existing `McpBridge` directly.
 
 Responsibilities:
 
@@ -46,7 +46,7 @@ The helper should not know about transports. It demonstrates protocol flow, not 
 
 ### Demo Script
 
-Add `reference/typescript/examples/mcp-aep-consumer.js`.
+Add `implementations/typescript/examples/mcp-aep-consumer.js`.
 
 The script should:
 
@@ -93,7 +93,7 @@ Errors should include enough context to identify the failing MCP method, tool na
 
 ## Testing
 
-Add a focused Node test under `reference/typescript/test/`.
+Add a focused Node test under `implementations/typescript/test/`.
 
 The test should verify:
 
@@ -105,9 +105,9 @@ The test should verify:
 Verification commands:
 
 ```sh
-cd reference/typescript && npm test
-cd reference/typescript && npm run demo:mcp-aep-consumer
-cd reference/typescript && npm run conformance
+cd implementations/typescript && npm test
+cd implementations/typescript && npm run demo:mcp-aep-consumer
+cd implementations/typescript && npm run conformance
 ```
 
 The demo command is a smoke check. `npm test` carries the behavioral assertions.
@@ -117,7 +117,7 @@ The demo command is a smoke check. `npm test` carries the behavioral assertions.
 Update:
 
 - `README.md` example command list.
-- `reference/typescript/README.md` example command list and current scope.
+- `implementations/typescript/README.md` example command list and current scope.
 - `docs/roadmap.md` Phase 4 deliverable to point to the new example file.
 
 ## Open Decisions Resolved

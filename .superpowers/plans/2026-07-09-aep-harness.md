@@ -23,9 +23,9 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 - [x] Add subscription matching tests for type patterns and routing metadata.
 - [x] Add stdio newline-delimited JSON fixtures for task, memory, context, and ack flows.
 - [x] Document the harness command and expected input/output format.
-- [x] Move the runnable harness under `reference/typescript/` for multi-language repository structure.
+- [x] Move the runnable harness under `implementations/typescript/` for multi-language repository structure.
 - [x] Add placeholders for Python, Go, and Java reference implementations.
-- [x] Update CI to run the TypeScript reference harness tests from `reference/typescript/`.
+- [x] Update CI to run the TypeScript reference harness tests from `implementations/typescript/`.
 - [x] Add shared conformance fixtures under `conformance/fixtures/`.
 - [x] Add draft JSON Schema assets under `schemas/`.
 - [x] Update TypeScript tests to validate shared conformance fixtures.
@@ -63,5 +63,5 @@ Implements `docs/superpowers/specs/2026-07-09-aep-harness-design.md`.
 ## Verification
 
 - Documentation harness changes: inspect links and file references.
-- TypeScript implementation harness changes: run `cd reference/typescript && npm test`.
-- Stdio fixture verification: run `cd reference/typescript && npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson`.
+- TypeScript implementation harness changes: run `cd implementations/typescript && npm test`.
+- Stdio fixture verification: run `cd implementations/typescript && npm run harness < ../../conformance/fixtures/task-lifecycle.ndjson`.

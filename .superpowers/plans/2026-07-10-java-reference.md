@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a minimal Java reference implementation under `reference/java/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
+**Goal:** Add a minimal Java reference implementation under `implementations/java/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
 **Architecture:** One Maven module (`com.axisrobo:aep-reference-java`) with Jackson for JSON, JUnit 5 for tests. Eight source files mirror the Go reference structure: event types, errors, envelope, router, session, harness, fixtures. Conformance tests consume the shared manifest.
 
@@ -12,19 +12,19 @@
 
 ## File Structure
 
-- Create: `reference/java/pom.xml`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/EventTypes.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Errors.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Envelope.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/EventRouter.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Session.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Harness.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Fixtures.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
-- Modify: `reference/java/README.md`
+- Create: `implementations/java/pom.xml`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Session.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Modify: `implementations/java/README.md`
 - Modify: `README.md`
 
 ---
@@ -32,13 +32,13 @@
 ### Task 1: Maven Setup, Event Types, And Errors
 
 **Files:**
-- Create: `reference/java/pom.xml`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/EventTypes.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Errors.java`
+- Create: `implementations/java/pom.xml`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`
 
 - [ ] **Step 1: Create Maven POM**
 
-Create `reference/java/pom.xml`:
+Create `implementations/java/pom.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -86,11 +86,11 @@ Create `reference/java/pom.xml`:
 </project>
 ```
 
-Also create the directory structure â€” `reference/java/src/main/java/com/axisrobo/aep/` and `reference/java/src/test/java/com/axisrobo/aep/` must exist.
+Also create the directory structure â€?`implementations/java/src/main/java/com/axisrobo/aep/` and `implementations/java/src/test/java/com/axisrobo/aep/` must exist.
 
 - [ ] **Step 2: Add EventTypes**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/EventTypes.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -128,7 +128,7 @@ public final class EventTypes {
 
 - [ ] **Step 3: Add Errors**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Errors.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -169,7 +169,7 @@ public final class Errors {
 - [ ] **Step 4: Run Maven compile**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn compile -q
 ```
 
@@ -178,7 +178,7 @@ Expected: BUILD SUCCESS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/pom.xml reference/java/src/main/java/com/axisrobo/aep/EventTypes.java reference/java/src/main/java/com/axisrobo/aep/Errors.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java implementations/java/src/main/java/com/axisrobo/aep/Errors.java
 git commit -m "feat: add Java Maven project with event types and error model"
 ```
 
@@ -189,12 +189,12 @@ Expected: commit succeeds.
 ### Task 2: Envelope Validation
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Envelope.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
 
 - [ ] **Step 1: Write failing envelope tests**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -263,7 +263,7 @@ class EnvelopeTest {
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=EnvelopeTest -q
 ```
 
@@ -271,7 +271,7 @@ Expected: FAIL with compilation error (Envelope class not found).
 
 - [ ] **Step 3: Implement Envelope**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Envelope.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -381,7 +381,7 @@ public final class Envelope {
 - [ ] **Step 4: Run envelope tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=EnvelopeTest -q
 ```
 
@@ -390,7 +390,7 @@ Expected: 4 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/Envelope.java reference/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/Envelope.java implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java
 git commit -m "feat: add Java envelope validation"
 ```
 
@@ -401,12 +401,12 @@ Expected: commit succeeds.
 ### Task 3: Event Router
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/EventRouter.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
 
 - [ ] **Step 1: Write failing router tests**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -476,7 +476,7 @@ class EventRouterTest {
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=EventRouterTest -q
 ```
 
@@ -484,7 +484,7 @@ Expected: FAIL with compilation error.
 
 - [ ] **Step 3: Implement EventRouter**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/EventRouter.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -539,7 +539,7 @@ public class EventRouter {
 - [ ] **Step 4: Run router tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=EventRouterTest -q
 ```
 
@@ -548,7 +548,7 @@ Expected: 5 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/EventRouter.java reference/java/src/test/java/com/axisrobo/aep/EventRouterTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java
 git commit -m "feat: add Java event router"
 ```
 
@@ -559,13 +559,13 @@ Expected: commit succeeds.
 ### Task 4: Session And Harness
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Session.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Harness.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Session.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
 
 - [ ] **Step 1: Write failing harness tests**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/HarnessTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -692,7 +692,7 @@ class HarnessTest {
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=HarnessTest -q
 ```
 
@@ -700,7 +700,7 @@ Expected: FAIL with compilation error.
 
 - [ ] **Step 3: Implement Session**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Session.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Session.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -774,7 +774,7 @@ public class Session {
 
 - [ ] **Step 4: Implement Harness**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Harness.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -1058,7 +1058,7 @@ public class Harness {
 - [ ] **Step 5: Run harness tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=HarnessTest -q
 ```
 
@@ -1067,7 +1067,7 @@ Expected: 6 tests pass.
 - [ ] **Step 6: Run all Java tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -q
 ```
 
@@ -1076,7 +1076,7 @@ Expected: all tests pass.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/Session.java reference/java/src/main/java/com/axisrobo/aep/Harness.java reference/java/src/test/java/com/axisrobo/aep/HarnessTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/Session.java implementations/java/src/main/java/com/axisrobo/aep/Harness.java implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java
 git commit -m "feat: add Java session and harness"
 ```
 
@@ -1087,12 +1087,12 @@ Expected: commit succeeds.
 ### Task 5: Fixtures And Conformance Tests
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Fixtures.java`
-- Create: `reference/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`
+- Create: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
 
 - [ ] **Step 1: Add Fixtures**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Fixtures.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -1136,7 +1136,7 @@ public final class Fixtures {
 
 - [ ] **Step 2: Add conformance test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -1205,7 +1205,7 @@ class ConformanceTest {
 - [ ] **Step 3: Run conformance tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -pl . -Dtest=ConformanceTest -q
 ```
 
@@ -1214,7 +1214,7 @@ Expected: manifest test + 3 fixture tests pass, C2 delivery skipped.
 - [ ] **Step 4: Run all Java tests**
 
 ```bash
-cd reference/java
+cd implementations/java
 mvn test -q
 ```
 
@@ -1223,7 +1223,7 @@ Expected: all tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/Fixtures.java reference/java/src/test/java/com/axisrobo/aep/ConformanceTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java
 git commit -m "feat: add Java conformance tests"
 ```
 
@@ -1234,12 +1234,12 @@ Expected: commit succeeds.
 ### Task 6: Documentation, Verification, And Push
 
 **Files:**
-- Modify: `reference/java/README.md`
+- Modify: `implementations/java/README.md`
 - Modify: `README.md`
 
 - [ ] **Step 1: Update Java README**
 
-Replace `reference/java/README.md`:
+Replace `implementations/java/README.md`:
 
 ```markdown
 # AEP Java Reference
@@ -1251,7 +1251,7 @@ Java reference implementation of the Agent Event Protocol draft.
 Requirements: JDK 21, Maven 3.9+.
 
 ```sh
-cd reference/java
+cd implementations/java
 mvn compile
 ```
 
@@ -1279,22 +1279,22 @@ mvn test
 Replace the Java line under Repository Layout:
 
 ```markdown
-- `reference/java/` â€” planned JVM reference implementation
+- `implementations/java/` â€?planned JVM reference implementation
 ```
 
 with:
 
 ```markdown
-- `reference/java/` â€” draft reference implementation with C0/C1 conformance (JDK 21)
+- `implementations/java/` â€?draft reference implementation with C0/C1 conformance (JDK 21)
 ```
 
 - [ ] **Step 3: Full cross-language verification**
 
 ```bash
-cd reference/java && mvn test -q
-cd reference/typescript && npm test && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
-cd reference/go && go test ./aep/ -v
+cd implementations/java && mvn test -q
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
+cd implementations/go && go test ./aep/ -v
 ```
 
 Expected: Java tests pass, TS 95 + conformance, Python 71, Go 17.
@@ -1302,7 +1302,7 @@ Expected: Java tests pass, TS 95 + conformance, Python 71, Go 17.
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/java/README.md README.md
+git add implementations/java/README.md README.md
 git commit -m "docs: update Java reference status"
 git status --short
 git log --oneline -5

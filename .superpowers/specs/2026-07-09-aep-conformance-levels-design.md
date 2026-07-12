@@ -74,7 +74,7 @@ Each runner declares the maximum conformance level it is verifying in that run. 
 
 ## TypeScript Runner
 
-Add a TypeScript conformance command under `reference/typescript`.
+Add a TypeScript conformance command under `implementations/typescript`.
 
 Expected command:
 
@@ -121,7 +121,7 @@ Update:
 
 - `README.md` document index and verification commands.
 - `docs/roadmap.md` Phase 6 conformance item with the new spec and manifest.
-- `reference/typescript/README.md` with the conformance command.
+- `implementations/typescript/README.md` with the conformance command.
 
 ## Error Handling
 
@@ -142,9 +142,9 @@ The runners should not hide failures behind snapshots or broad exception message
 Verification for this slice:
 
 ```sh
-cd reference/typescript && npm test
-cd reference/typescript && npm run conformance
-cd reference/python && python -m pytest --tb=short -q
+cd implementations/typescript && npm test
+cd implementations/typescript && npm run conformance
+cd implementations/python && python -m pytest --tb=short -q
 ```
 
 Existing demo commands remain smoke checks and are not part of conformance requirements.

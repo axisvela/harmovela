@@ -16,7 +16,7 @@ The TypeScript productization track introduced:
 - Runtime config and `AepRuntimeService`.
 - HTTP health/status support in the runtime service.
 
-The current CLI uses a hand-written dispatcher in `reference/typescript/src/cli/aep.js`. That is sufficient for early testing, but it does not provide polished command help, consistent option parsing, or structured command definitions.
+The current CLI uses a hand-written dispatcher in `implementations/typescript/src/cli/aep.js`. That is sufficient for early testing, but it does not provide polished command help, consistent option parsing, or structured command definitions.
 
 ## Decision
 
@@ -33,7 +33,7 @@ Rationale:
 
 ### In Scope
 
-- Add `commander` dependency to `reference/typescript`.
+- Add `commander` dependency to `implementations/typescript`.
 - Refactor `src/cli/aep.js` into a commander program.
 - Keep command modules under `src/cli/commands/`.
 - Convert command modules from raw `args` parsing to typed options where useful.
@@ -74,7 +74,7 @@ aep conformance --level AEP-C0
 ## Module Shape
 
 ```text
-reference/typescript/src/cli/
+implementations/typescript/src/cli/
   aep.js
   commands/
     init.js

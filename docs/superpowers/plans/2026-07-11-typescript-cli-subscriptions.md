@@ -14,22 +14,22 @@
 
 ## File Structure
 
-- Create `reference/typescript/src/cli/commands/subscriptions.js`.
-- Modify `reference/typescript/src/cli/aep.js`: wire the `subscriptions` command.
-- Modify `reference/typescript/test/cli.test.js`: add subscriptions CLI tests.
+- Create `implementations/typescript/src/cli/commands/subscriptions.js`.
+- Modify `implementations/typescript/src/cli/aep.js`: wire the `subscriptions` command.
+- Modify `implementations/typescript/test/cli.test.js`: add subscriptions CLI tests.
 
 ---
 
 ## Task 1: subscriptions create/list/delete
 
 **Files:**
-- Create: `reference/typescript/src/cli/commands/subscriptions.js`
-- Modify: `reference/typescript/src/cli/aep.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Create: `implementations/typescript/src/cli/commands/subscriptions.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Write failing tests**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 import { AepRuntimeService } from "../src/runtime/service.js";
@@ -77,12 +77,12 @@ test("aep subscriptions create rejects invalid filter JSON", async () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 Expected: FAIL because the `subscriptions` command is unknown / invalid filter path missing.
 
 - [ ] **Step 3: Implement the subscriptions command**
 
-Create `reference/typescript/src/cli/commands/subscriptions.js`:
+Create `implementations/typescript/src/cli/commands/subscriptions.js`:
 
 ```javascript
 export async function subscriptionsCommand(subcommand, arg, options = {}) {
@@ -165,7 +165,7 @@ async function fetchOrThrow(url, init) {
 
 - [ ] **Step 4: Wire the command in the CLI**
 
-In `reference/typescript/src/cli/aep.js`, add the import:
+In `implementations/typescript/src/cli/aep.js`, add the import:
 
 ```javascript
 import { subscriptionsCommand } from "./commands/subscriptions.js";
@@ -185,13 +185,13 @@ program.command("subscriptions")
 
 - [ ] **Step 5: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/typescript/src/cli/commands/subscriptions.js reference/typescript/src/cli/aep.js reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli/commands/subscriptions.js implementations/typescript/src/cli/aep.js implementations/typescript/test/cli.test.js
 git commit -m "feat(ts): add aep subscriptions create/list/delete CLI commands"
 git push origin master
 ```
@@ -201,13 +201,13 @@ git push origin master
 ## Task 2: subscriptions stream
 
 **Files:**
-- Test: `reference/typescript/test/cli.test.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 The `stream` subcommand is already implemented in Task 1. This task adds an end-to-end stream test.
 
 - [ ] **Step 1: Write the stream test**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep subscriptions stream receives a published event", async () => {
@@ -239,13 +239,13 @@ test("aep subscriptions stream receives a published event", async () => {
 
 - [ ] **Step 2: Run the stream test**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 Expected: PASS. The runtime SSE endpoint flushes an initial comment so the CLI reader establishes the stream before the event is published.
 
 - [ ] **Step 3: Commit and push**
 
 ```bash
-git add reference/typescript/test/cli.test.js
+git add implementations/typescript/test/cli.test.js
 git commit -m "test(ts): cover aep subscriptions stream end-to-end"
 git push origin master
 ```
@@ -256,7 +256,7 @@ git push origin master
 
 - [ ] **Step 1: Run full TypeScript suite**
 
-Run: `cd reference/typescript && npm test`
+Run: `cd implementations/typescript && npm test`
 Expected: all tests pass.
 
 - [ ] **Step 2: Verify git sync**

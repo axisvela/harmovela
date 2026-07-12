@@ -13,7 +13,7 @@
 ## File Structure
 
 - Create: `tools/conformance-runner.js`
-- Modify: `README.md` â€” add runner command
+- Modify: `README.md` â€?add runner command
 
 ---
 
@@ -38,10 +38,10 @@ const root = resolve(here, "..");
 const manifest = JSON.parse(readFileSync(resolve(root, "conformance/manifest.json"), "utf8"));
 
 const LANGUAGES = [
-  { name: "TypeScript", dir: "reference/typescript", cmd: "npm run conformance" },
-  { name: "Python",     dir: "reference/python",     cmd: "python -m pytest tests/test_fixtures.py -q --tb=no" },
-  { name: "Go",         dir: "reference/go",         cmd: "go test ./aep/ -run TestConformance -v" },
-  { name: "Java",       dir: "reference/java",       cmd: "mvn test -pl . -Dtest=ConformanceTest -q" }
+  { name: "TypeScript", dir: "implementations/typescript", cmd: "npm run conformance" },
+  { name: "Python",     dir: "implementations/python",     cmd: "python -m pytest tests/test_fixtures.py -q --tb=no" },
+  { name: "Go",         dir: "implementations/go",         cmd: "go test ./aep/ -run TestConformance -v" },
+  { name: "Java",       dir: "implementations/java",       cmd: "mvn test -pl . -Dtest=ConformanceTest -q" }
 ];
 
 const results = {};

@@ -4,7 +4,7 @@
 
 **Goal:** Turn the TypeScript reference implementation into a usable first productization layer: embeddable SDK surface, runnable `aepd` daemon, and `aep` CLI.
 
-**Architecture:** Keep the first implementation under `reference/typescript` to avoid monorepo restructuring after tag `2.0`. Build small focused modules: config loading/generation, runtime service composition, daemon entrypoint, CLI command dispatcher, command handlers, and tests. Runtime service reuses existing router, validation, delivery stores, WebSocket/SSE transports, and conformance CLI rather than creating a new framework.
+**Architecture:** Keep the first implementation under `implementations/typescript` to avoid monorepo restructuring after tag `2.0`. Build small focused modules: config loading/generation, runtime service composition, daemon entrypoint, CLI command dispatcher, command handlers, and tests. Runtime service reuses existing router, validation, delivery stores, WebSocket/SSE transports, and conformance CLI rather than creating a new framework.
 
 **Tech Stack:** Node.js >=20 ESM, `node:test`, existing `ws`, `better-sqlite3`, `pg`, TypeScript reference modules.
 
@@ -14,15 +14,15 @@
 
 ## File Structure
 
-- Create `reference/typescript/src/runtime/config.js`: default config, config file generation, environment overrides, store creation helpers.
-- Create `reference/typescript/src/runtime/service.js`: `AepRuntimeService` class that wires router, delivery store, WebSocket and SSE transports.
-- Create `reference/typescript/src/runtime/server.js`: executable `aepd` entrypoint.
-- Create `reference/typescript/src/cli/aep.js`: executable CLI dispatcher.
-- Create command modules under `reference/typescript/src/cli/commands/`: `init.js`, `start.js`, `emit.js`, `subscribe.js`, `dlq.js`, `conformance.js`.
-- Modify `reference/typescript/src/index.js`: export runtime/config/service and delivery stores as SDK surface.
-- Modify `reference/typescript/package.json`: add `bin.aep`, `bin.aepd`, and scripts.
+- Create `implementations/typescript/src/runtime/config.js`: default config, config file generation, environment overrides, store creation helpers.
+- Create `implementations/typescript/src/runtime/service.js`: `AepRuntimeService` class that wires router, delivery store, WebSocket and SSE transports.
+- Create `implementations/typescript/src/runtime/server.js`: executable `aepd` entrypoint.
+- Create `implementations/typescript/src/cli/aep.js`: executable CLI dispatcher.
+- Create command modules under `implementations/typescript/src/cli/commands/`: `init.js`, `start.js`, `emit.js`, `subscribe.js`, `dlq.js`, `conformance.js`.
+- Modify `implementations/typescript/src/index.js`: export runtime/config/service and delivery stores as SDK surface.
+- Modify `implementations/typescript/package.json`: add `bin.aep`, `bin.aepd`, and scripts.
 - Create tests: `test/runtime-config.test.js`, `test/runtime-service.test.js`, `test/cli.test.js`.
-- Create docs/example: `reference/typescript/examples/runtime-service/README.md`.
+- Create docs/example: `implementations/typescript/examples/runtime-service/README.md`.
 
 Implementation should be minimal. Do not add auth, UI, Kubernetes, agent abstractions, workflow APIs, or protocol-version negotiation.
 
@@ -31,12 +31,12 @@ Implementation should be minimal. Do not add auth, UI, Kubernetes, agent abstrac
 ## Task 1: Runtime Config
 
 **Files:**
-- Create: `reference/typescript/src/runtime/config.js`
-- Test: `reference/typescript/test/runtime-config.test.js`
+- Create: `implementations/typescript/src/runtime/config.js`
+- Test: `implementations/typescript/test/runtime-config.test.js`
 
 - [ ] **Step 1: Write failing config tests**
 
-Create `reference/typescript/test/runtime-config.test.js`:
+Create `implementations/typescript/test/runtime-config.test.js`:
 
 ```javascript
 import assert from "node:assert/strict";
@@ -108,13 +108,13 @@ test("createDeliveryStore creates memory and sqlite stores", async () => {
 
 - [ ] **Step 2: Run tests to verify failure**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: FAIL with module-not-found for `src/runtime/config.js`.
 
 - [ ] **Step 3: Implement config module**
 
-Create `reference/typescript/src/runtime/config.js`:
+Create `implementations/typescript/src/runtime/config.js`:
 
 ```javascript
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -180,14 +180,14 @@ export function createDeliveryStore(config) {
 
 - [ ] **Step 4: Run config tests**
 
-Run: `cd reference/typescript && node --test test/runtime-config.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-config.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/runtime/config.js reference/typescript/test/runtime-config.test.js
+git add implementations/typescript/src/runtime/config.js implementations/typescript/test/runtime-config.test.js
 git commit -m "feat: add AEP runtime config loader"
 ```
 
@@ -196,12 +196,12 @@ git commit -m "feat: add AEP runtime config loader"
 ## Task 2: Runtime Service
 
 **Files:**
-- Create: `reference/typescript/src/runtime/service.js`
-- Test: `reference/typescript/test/runtime-service.test.js`
+- Create: `implementations/typescript/src/runtime/service.js`
+- Test: `implementations/typescript/test/runtime-service.test.js`
 
 - [ ] **Step 1: Write failing runtime service tests**
 
-Create `reference/typescript/test/runtime-service.test.js`:
+Create `implementations/typescript/test/runtime-service.test.js`:
 
 ```javascript
 import assert from "node:assert/strict";
@@ -271,13 +271,13 @@ test("AepRuntimeService starts websocket transport and broadcasts events", async
 
 - [ ] **Step 2: Run tests to verify failure**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: FAIL with module-not-found for `src/runtime/service.js`.
 
 - [ ] **Step 3: Implement runtime service**
 
-Create `reference/typescript/src/runtime/service.js`:
+Create `implementations/typescript/src/runtime/service.js`:
 
 ```javascript
 import { EventRouter } from "../router.js";
@@ -357,14 +357,14 @@ function stripPrivateFields(event) {
 
 - [ ] **Step 4: Run runtime service tests**
 
-Run: `cd reference/typescript && node --test test/runtime-service.test.js`
+Run: `cd implementations/typescript && node --test test/runtime-service.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/runtime/service.js reference/typescript/test/runtime-service.test.js
+git add implementations/typescript/src/runtime/service.js implementations/typescript/test/runtime-service.test.js
 git commit -m "feat: add AEP runtime service"
 ```
 
@@ -373,15 +373,15 @@ git commit -m "feat: add AEP runtime service"
 ## Task 3: CLI Dispatcher, init, start, and aepd
 
 **Files:**
-- Create: `reference/typescript/src/cli/aep.js`
-- Create: `reference/typescript/src/cli/commands/init.js`
-- Create: `reference/typescript/src/cli/commands/start.js`
-- Create: `reference/typescript/src/runtime/server.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Create: `implementations/typescript/src/cli/aep.js`
+- Create: `implementations/typescript/src/cli/commands/init.js`
+- Create: `implementations/typescript/src/cli/commands/start.js`
+- Create: `implementations/typescript/src/runtime/server.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Write failing CLI tests**
 
-Create `reference/typescript/test/cli.test.js`:
+Create `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 import assert from "node:assert/strict";
@@ -424,13 +424,13 @@ test("aep unknown command exits non-zero", async () => {
 
 - [ ] **Step 2: Run tests to verify failure**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because `src/cli/aep.js` does not exist.
 
 - [ ] **Step 3: Implement CLI init/start and daemon entrypoint**
 
-Create `reference/typescript/src/cli/commands/init.js`:
+Create `implementations/typescript/src/cli/commands/init.js`:
 
 ```javascript
 import { writeDefaultConfig } from "../../runtime/config.js";
@@ -447,7 +447,7 @@ function valueAfter(args, name) {
 }
 ```
 
-Create `reference/typescript/src/cli/commands/start.js`:
+Create `implementations/typescript/src/cli/commands/start.js`:
 
 ```javascript
 import { startDaemon } from "../../runtime/server.js";
@@ -463,7 +463,7 @@ function valueAfter(args, name) {
 }
 ```
 
-Create `reference/typescript/src/runtime/server.js`:
+Create `implementations/typescript/src/runtime/server.js`:
 
 ```javascript
 #!/usr/bin/env node
@@ -492,7 +492,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 }
 ```
 
-Create `reference/typescript/src/cli/aep.js`:
+Create `implementations/typescript/src/cli/aep.js`:
 
 ```javascript
 #!/usr/bin/env node
@@ -521,14 +521,14 @@ function printHelp() {
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/cli reference/typescript/src/runtime/server.js reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli implementations/typescript/src/runtime/server.js implementations/typescript/test/cli.test.js
 git commit -m "feat: add aep CLI init/start and aepd entrypoint"
 ```
 
@@ -537,14 +537,14 @@ git commit -m "feat: add aep CLI init/start and aepd entrypoint"
 ## Task 4: CLI emit and subscribe
 
 **Files:**
-- Create: `reference/typescript/src/cli/commands/emit.js`
-- Create: `reference/typescript/src/cli/commands/subscribe.js`
-- Modify: `reference/typescript/src/cli/aep.js`
-- Test: `reference/typescript/test/cli.test.js`
+- Create: `implementations/typescript/src/cli/commands/emit.js`
+- Create: `implementations/typescript/src/cli/commands/subscribe.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
+- Test: `implementations/typescript/test/cli.test.js`
 
 - [ ] **Step 1: Extend CLI tests for emit argument handling**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep emit rejects invalid JSON payload", async () => {
@@ -556,13 +556,13 @@ test("aep emit rejects invalid JSON payload", async () => {
 
 - [ ] **Step 2: Run test to verify failure**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because `emit` is unknown.
 
 - [ ] **Step 3: Implement emit and subscribe commands**
 
-Create `reference/typescript/src/cli/commands/emit.js`:
+Create `implementations/typescript/src/cli/commands/emit.js`:
 
 ```javascript
 import { randomUUID } from "node:crypto";
@@ -601,7 +601,7 @@ function valueAfter(args, name) {
 }
 ```
 
-Create `reference/typescript/src/cli/commands/subscribe.js`:
+Create `implementations/typescript/src/cli/commands/subscribe.js`:
 
 ```javascript
 import { WebSocket } from "ws";
@@ -625,7 +625,7 @@ function valueAfter(args, name) {
 }
 ```
 
-Modify `reference/typescript/src/cli/aep.js` to import and dispatch:
+Modify `implementations/typescript/src/cli/aep.js` to import and dispatch:
 
 ```javascript
 import { emitCommand } from "./commands/emit.js";
@@ -643,14 +643,14 @@ Update help text to include `emit` and `subscribe`.
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/cli reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli implementations/typescript/test/cli.test.js
 git commit -m "feat: add aep CLI emit and subscribe commands"
 ```
 
@@ -659,13 +659,13 @@ git commit -m "feat: add aep CLI emit and subscribe commands"
 ## Task 5: CLI dlq and conformance wrappers
 
 **Files:**
-- Create: `reference/typescript/src/cli/commands/dlq.js`
-- Create: `reference/typescript/src/cli/commands/conformance.js`
-- Modify: `reference/typescript/src/cli/aep.js`
+- Create: `implementations/typescript/src/cli/commands/dlq.js`
+- Create: `implementations/typescript/src/cli/commands/conformance.js`
+- Modify: `implementations/typescript/src/cli/aep.js`
 
 - [ ] **Step 1: Write failing tests for conformance command dispatch**
 
-Append to `reference/typescript/test/cli.test.js`:
+Append to `implementations/typescript/test/cli.test.js`:
 
 ```javascript
 test("aep conformance runs conformance command", async () => {
@@ -677,13 +677,13 @@ test("aep conformance runs conformance command", async () => {
 
 - [ ] **Step 2: Run test to verify failure**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: FAIL because `conformance` is unknown.
 
 - [ ] **Step 3: Implement conformance and dlq commands**
 
-Create `reference/typescript/src/cli/commands/conformance.js`:
+Create `implementations/typescript/src/cli/commands/conformance.js`:
 
 ```javascript
 import { runConformance } from "../../conformance.js";
@@ -704,7 +704,7 @@ export async function conformanceCommand(args) {
 }
 ```
 
-Create `reference/typescript/src/cli/commands/dlq.js`:
+Create `implementations/typescript/src/cli/commands/dlq.js`:
 
 ```javascript
 import { loadConfig, createDeliveryStore } from "../../runtime/config.js";
@@ -726,7 +726,7 @@ function valueAfter(args, name) {
 }
 ```
 
-Modify `reference/typescript/src/cli/aep.js` to import and dispatch:
+Modify `implementations/typescript/src/cli/aep.js` to import and dispatch:
 
 ```javascript
 import { conformanceCommand } from "./commands/conformance.js";
@@ -744,14 +744,14 @@ Update help text to include `conformance` and `dlq`.
 
 - [ ] **Step 4: Run CLI tests**
 
-Run: `cd reference/typescript && node --test test/cli.test.js`
+Run: `cd implementations/typescript && node --test test/cli.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/typescript/src/cli reference/typescript/test/cli.test.js
+git add implementations/typescript/src/cli implementations/typescript/test/cli.test.js
 git commit -m "feat: add aep CLI dlq and conformance commands"
 ```
 
@@ -760,14 +760,14 @@ git commit -m "feat: add aep CLI dlq and conformance commands"
 ## Task 6: SDK Exports, Package Binaries, Docs, Final Verification
 
 **Files:**
-- Modify: `reference/typescript/src/index.js`
-- Modify: `reference/typescript/package.json`
-- Create: `reference/typescript/examples/runtime-service/README.md`
+- Modify: `implementations/typescript/src/index.js`
+- Modify: `implementations/typescript/package.json`
+- Create: `implementations/typescript/examples/runtime-service/README.md`
 - Modify: `README.md` or `docs/roadmap.md` if needed to mention productization track.
 
 - [ ] **Step 1: Update SDK exports**
 
-Modify `reference/typescript/src/index.js` to add:
+Modify `implementations/typescript/src/index.js` to add:
 
 ```javascript
 export { InMemoryDeliveryStore } from "./delivery-store-memory.js";
@@ -779,7 +779,7 @@ export { AepRuntimeService } from "./runtime/service.js";
 
 - [ ] **Step 2: Update package binaries and scripts**
 
-Modify `reference/typescript/package.json` bin section from:
+Modify `implementations/typescript/package.json` bin section from:
 
 ```json
 "bin": {
@@ -806,7 +806,7 @@ Add scripts:
 
 - [ ] **Step 3: Add runtime-service README**
 
-Create `reference/typescript/examples/runtime-service/README.md`:
+Create `implementations/typescript/examples/runtime-service/README.md`:
 
 ```markdown
 # AEP Runtime Service Example
@@ -835,20 +835,20 @@ The runtime remains protocol-first. It is not an agent framework or workflow eng
 
 - [ ] **Step 4: Run final TypeScript tests**
 
-Run: `cd reference/typescript && npm test`
+Run: `cd implementations/typescript && npm test`
 
 Expected: all tests pass.
 
 - [ ] **Step 5: Smoke test CLI init**
 
-Run: `cd reference/typescript && node ./src/cli/aep.js init --config .aep-test-config.json`
+Run: `cd implementations/typescript && node ./src/cli/aep.js init --config .aep-test-config.json`
 
 Expected: prints `created .aep-test-config.json`. Delete the generated file after smoke test.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add reference/typescript/src/index.js reference/typescript/package.json reference/typescript/examples/runtime-service/README.md
+git add implementations/typescript/src/index.js implementations/typescript/package.json implementations/typescript/examples/runtime-service/README.md
 git commit -m "feat: expose AEP SDK runtime and CLI package entrypoints"
 ```
 
@@ -859,7 +859,7 @@ git commit -m "feat: expose AEP SDK runtime and CLI package entrypoints"
 - [ ] **Run TypeScript suite**
 
 ```bash
-cd reference/typescript && npm test
+cd implementations/typescript && npm test
 ```
 
 Expected: all TypeScript tests pass.
@@ -867,9 +867,9 @@ Expected: all TypeScript tests pass.
 - [ ] **Run cross-language smoke suites if implementation touched shared docs only outside TS**
 
 ```bash
-cd reference/python && python -m pytest
-cd reference/go && go test ./...
-cd reference/java && mvn test
+cd implementations/python && python -m pytest
+cd implementations/go && go test ./...
+cd implementations/java && mvn test
 ```
 
 Expected: all pass. If only TypeScript files changed after this plan starts, TypeScript suite is the required verification and the other three are optional but preferred before push.

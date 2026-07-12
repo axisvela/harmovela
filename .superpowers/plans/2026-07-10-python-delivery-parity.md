@@ -4,7 +4,7 @@
 
 **Goal:** Port the TypeScript delivery subsystem (InMemoryDeliveryStore, DeliveryJournal, DeliveryTracker) to Python with identical behavior and test coverage.
 
-**Architecture:** Three new Python modules under `reference/python/src/aep/` mirror the TypeScript implementations. `DeliveryTracker` delegates to pluggable store and journal with backward-compatible defaults. No new dependencies.
+**Architecture:** Three new Python modules under `implementations/python/src/aep/` mirror the TypeScript implementations. `DeliveryTracker` delegates to pluggable store and journal with backward-compatible defaults. No new dependencies.
 
 **Tech Stack:** Python 3.12, pytest, `datetime`, `math`. Zero external dependencies beyond what's already in `pyproject.toml`.
 
@@ -12,25 +12,25 @@
 
 ## File Structure
 
-- Create: `reference/python/src/aep/delivery_store.py` â€” InMemoryDeliveryStore with dict/set-based storage.
-- Create: `reference/python/src/aep/delivery_journal.py` â€” DeliveryJournal for sequence-ordered replay.
-- Create: `reference/python/src/aep/delivery.py` â€” DeliveryTracker delegating to store/journal, plus retry_delay.
-- Create: `reference/python/tests/test_delivery_store.py` â€” 8 unit tests.
-- Create: `reference/python/tests/test_delivery_journal.py` â€” 6 unit tests.
-- Create: `reference/python/tests/test_delivery.py` â€” delivery tracker tests + store injection test.
-- Modify: `reference/python/src/aep/__init__.py` â€” export new modules.
+- Create: `implementations/python/src/aep/delivery_store.py` â€?InMemoryDeliveryStore with dict/set-based storage.
+- Create: `implementations/python/src/aep/delivery_journal.py` â€?DeliveryJournal for sequence-ordered replay.
+- Create: `implementations/python/src/aep/delivery.py` â€?DeliveryTracker delegating to store/journal, plus retry_delay.
+- Create: `implementations/python/tests/test_delivery_store.py` â€?8 unit tests.
+- Create: `implementations/python/tests/test_delivery_journal.py` â€?6 unit tests.
+- Create: `implementations/python/tests/test_delivery.py` â€?delivery tracker tests + store injection test.
+- Modify: `implementations/python/src/aep/__init__.py` â€?export new modules.
 
 ---
 
 ### Task 1: InMemoryDeliveryStore
 
 **Files:**
-- Create: `reference/python/src/aep/delivery_store.py`
-- Create: `reference/python/tests/test_delivery_store.py`
+- Create: `implementations/python/src/aep/delivery_store.py`
+- Create: `implementations/python/tests/test_delivery_store.py`
 
 - [ ] **Step 1: Write failing store tests**
 
-Create `reference/python/tests/test_delivery_store.py`:
+Create `implementations/python/tests/test_delivery_store.py`:
 
 ```python
 from aep.delivery_store import InMemoryDeliveryStore
@@ -114,7 +114,7 @@ def test_get_pending_for_subscription_filters():
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery_store.py -q
 ```
 
@@ -122,7 +122,7 @@ Expected: FAIL with `ModuleNotFoundError: No module named 'aep.delivery_store'`.
 
 - [ ] **Step 3: Implement InMemoryDeliveryStore**
 
-Create `reference/python/src/aep/delivery_store.py`:
+Create `implementations/python/src/aep/delivery_store.py`:
 
 ```python
 from datetime import datetime, timezone
@@ -226,7 +226,7 @@ class InMemoryDeliveryStore:
 - [ ] **Step 4: Run store tests**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery_store.py -q
 ```
 
@@ -235,7 +235,7 @@ Expected: 8 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/python/src/aep/delivery_store.py reference/python/tests/test_delivery_store.py
+git add implementations/python/src/aep/delivery_store.py implementations/python/tests/test_delivery_store.py
 git commit -m "feat: add Python InMemoryDeliveryStore with tests"
 ```
 
@@ -246,12 +246,12 @@ Expected: commit succeeds.
 ### Task 2: DeliveryJournal
 
 **Files:**
-- Create: `reference/python/src/aep/delivery_journal.py`
-- Create: `reference/python/tests/test_delivery_journal.py`
+- Create: `implementations/python/src/aep/delivery_journal.py`
+- Create: `implementations/python/tests/test_delivery_journal.py`
 
 - [ ] **Step 1: Write failing journal tests**
 
-Create `reference/python/tests/test_delivery_journal.py`:
+Create `implementations/python/tests/test_delivery_journal.py`:
 
 ```python
 from aep.delivery_journal import DeliveryJournal
@@ -317,7 +317,7 @@ def test_stats_are_empty_for_new_journal():
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery_journal.py -q
 ```
 
@@ -325,7 +325,7 @@ Expected: FAIL with `ModuleNotFoundError`.
 
 - [ ] **Step 3: Implement DeliveryJournal**
 
-Create `reference/python/src/aep/delivery_journal.py`:
+Create `implementations/python/src/aep/delivery_journal.py`:
 
 ```python
 from datetime import datetime, timezone
@@ -386,7 +386,7 @@ class DeliveryJournal:
 - [ ] **Step 4: Run journal tests**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery_journal.py -q
 ```
 
@@ -395,7 +395,7 @@ Expected: 6 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/python/src/aep/delivery_journal.py reference/python/tests/test_delivery_journal.py
+git add implementations/python/src/aep/delivery_journal.py implementations/python/tests/test_delivery_journal.py
 git commit -m "feat: add Python DeliveryJournal with tests"
 ```
 
@@ -406,12 +406,12 @@ Expected: commit succeeds.
 ### Task 3: DeliveryTracker
 
 **Files:**
-- Create: `reference/python/src/aep/delivery.py`
-- Create: `reference/python/tests/test_delivery.py`
+- Create: `implementations/python/src/aep/delivery.py`
+- Create: `implementations/python/tests/test_delivery.py`
 
 - [ ] **Step 1: Write failing delivery tracker tests**
 
-Create `reference/python/tests/test_delivery.py`:
+Create `implementations/python/tests/test_delivery.py`:
 
 ```python
 from aep.delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
@@ -504,7 +504,7 @@ def test_tracker_uses_provided_store_and_journal():
 - [ ] **Step 2: Run test to verify failure**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery.py -q
 ```
 
@@ -512,7 +512,7 @@ Expected: FAIL with `ModuleNotFoundError`.
 
 - [ ] **Step 3: Implement DeliveryTracker**
 
-Create `reference/python/src/aep/delivery.py`:
+Create `implementations/python/src/aep/delivery.py`:
 
 ```python
 from .delivery_store import InMemoryDeliveryStore
@@ -599,7 +599,7 @@ class DeliveryTracker:
 - [ ] **Step 4: Run delivery tests**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest tests/test_delivery.py -q
 ```
 
@@ -608,7 +608,7 @@ Expected: 9 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reference/python/src/aep/delivery.py reference/python/tests/test_delivery.py
+git add implementations/python/src/aep/delivery.py implementations/python/tests/test_delivery.py
 git commit -m "feat: add Python DeliveryTracker with store and journal"
 ```
 
@@ -619,11 +619,11 @@ Expected: commit succeeds.
 ### Task 4: Package Exports, Verification, And Push
 
 **Files:**
-- Modify: `reference/python/src/aep/__init__.py`
+- Modify: `implementations/python/src/aep/__init__.py`
 
 - [ ] **Step 1: Update package exports**
 
-In `reference/python/src/aep/__init__.py`, add after the existing imports:
+In `implementations/python/src/aep/__init__.py`, add after the existing imports:
 
 ```python
 from .delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
@@ -642,7 +642,7 @@ And update `__all__` to include:
 - [ ] **Step 2: Full Python verification**
 
 ```bash
-cd reference/python
+cd implementations/python
 python -m pytest --tb=short -q
 ```
 
@@ -651,8 +651,8 @@ Expected: all tests pass (48 previous + 23 new = 71).
 - [ ] **Step 3: Full cross-language verification**
 
 ```bash
-cd reference/typescript && npm test && npm run conformance
-cd reference/go && go test ./aep/ -v
+cd implementations/typescript && npm test && npm run conformance
+cd implementations/go && go test ./aep/ -v
 ```
 
 Expected: all pass.
@@ -660,7 +660,7 @@ Expected: all pass.
 - [ ] **Step 4: Commit and push**
 
 ```bash
-git add reference/python/src/aep/__init__.py
+git add implementations/python/src/aep/__init__.py
 git commit -m "feat: export Python delivery modules"
 git status --short
 git log --oneline -5
@@ -675,4 +675,4 @@ Expected: clean tree, push succeeds.
 
 - Spec coverage: Task 1 covers store, Task 2 covers journal, Task 3 covers tracker, Task 4 covers exports + verification + push.
 - Placeholder scan: no TBD/TODO/fill-in markers.
-- Type consistency: Python method names use snake_case, TS uses camelCase â€” test assertions match implementation. Store stat keys like `totalSequences` match TS for fixture compatibility.
+- Type consistency: Python method names use snake_case, TS uses camelCase â€?test assertions match implementation. Store stat keys like `totalSequences` match TS for fixture compatibility.

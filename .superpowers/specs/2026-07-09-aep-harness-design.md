@@ -49,7 +49,7 @@ It should provide:
 
 ## Repository Structure
 
-Reference implementations live under `reference/<language>/` so the repository can support multiple runtimes without mixing package managers or build systems at the root.
+Reference implementations live under `implementations/<language>/` so the repository can support multiple runtimes without mixing package managers or build systems at the root.
 
 Shared protocol assets live outside language implementations:
 
@@ -58,16 +58,16 @@ Shared protocol assets live outside language implementations:
 
 Language priority:
 
-- `reference/typescript/`: primary runnable reference harness.
-- `reference/python/`: second-priority implementation for agent runtimes and tooling.
-- `reference/go/`: later implementation for static binaries and infrastructure integrations.
-- `reference/java/`: later implementation for JVM and enterprise runtimes.
+- `implementations/typescript/`: primary runnable reference harness.
+- `implementations/python/`: second-priority implementation for agent runtimes and tooling.
+- `implementations/go/`: later implementation for static binaries and infrastructure integrations.
+- `implementations/java/`: later implementation for JVM and enterprise runtimes.
 
 The root directory should remain focused on protocol documents, shared project configuration, CI, and harness workflow artifacts.
 
 ## Implementation Choice
 
-The initial harness is a zero-dependency Node ESM package under `reference/typescript/`. This keeps the draft runnable without adding a build step. The validation and registry modules are intentionally small so they can later be replaced or augmented by JSON Schema and generated TypeScript types.
+The initial harness is a zero-dependency Node ESM package under `implementations/typescript/`. This keeps the draft runnable without adding a build step. The validation and registry modules are intentionally small so they can later be replaced or augmented by JSON Schema and generated TypeScript types.
 
 ## Acceptance Criteria
 
@@ -75,5 +75,5 @@ The initial harness is a zero-dependency Node ESM package under `reference/types
 - OpenCode and Claude Code have aligned project rules.
 - The repository contains at least one Superpowers design spec and one executable plan.
 - Future implementation work can start from the plan without re-discovering project scope or protocol boundaries.
-- The local TypeScript harness can be verified with `cd reference/typescript && npm test`.
+- The local TypeScript harness can be verified with `cd implementations/typescript && npm test`.
 - TypeScript tests validate the shared conformance fixtures from `conformance/fixtures/`.

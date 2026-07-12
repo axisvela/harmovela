@@ -14,22 +14,22 @@
 
 ## File Structure
 
-- Modify `reference/go/aep/harness.go`: add exported `TaskTracker` lifecycle methods.
-- Create `reference/go/aep/mcp_bridge.go`: `McpBridge`, `Sender`, tool types, `AsyncToolHandler`.
-- Create `reference/go/aep/mcp_bridge_test.go`.
-- Modify `reference/go/aep/harness_test.go` or add cases for the new methods (a dedicated test file is fine).
+- Modify `implementations/go/aep/harness.go`: add exported `TaskTracker` lifecycle methods.
+- Create `implementations/go/aep/mcp_bridge.go`: `McpBridge`, `Sender`, tool types, `AsyncToolHandler`.
+- Create `implementations/go/aep/mcp_bridge_test.go`.
+- Modify `implementations/go/aep/harness_test.go` or add cases for the new methods (a dedicated test file is fine).
 
 ---
 
 ## Task 1: Upgrade TaskTracker with exported lifecycle methods
 
 **Files:**
-- Modify: `reference/go/aep/harness.go`
-- Test: `reference/go/aep/task_lifecycle_test.go`
+- Modify: `implementations/go/aep/harness.go`
+- Test: `implementations/go/aep/task_lifecycle_test.go`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/go/aep/task_lifecycle_test.go`:
+Create `implementations/go/aep/task_lifecycle_test.go`:
 
 ```go
 package aep
@@ -85,12 +85,12 @@ func TestTaskTrackerFailed(t *testing.T) {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestTaskTracker`
+Run: `cd implementations/go && go test ./aep/ -run TestTaskTracker`
 Expected: build failure, `Accepted`/`Started`/`Progress`/`Completed`/`Failed` undefined.
 
 - [ ] **Step 3: Add exported lifecycle methods**
 
-In `reference/go/aep/harness.go`, after the existing `Accept()` method (which returns `tk.transition("task.accepted", nil)`), add:
+In `implementations/go/aep/harness.go`, after the existing `Accept()` method (which returns `tk.transition("task.accepted", nil)`), add:
 
 ```go
 func (tk *TaskTracker) Accepted() map[string]any {
@@ -120,18 +120,18 @@ Note: `Accept()` already returns the accepted event; `Accepted()` is an alias wi
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/go && go test ./aep/ -run TestTaskTracker`
+Run: `cd implementations/go && go test ./aep/ -run TestTaskTracker`
 Expected: PASS.
 
 - [ ] **Step 5: Run harness tests to confirm no regression**
 
-Run: `cd reference/go && go test ./aep/ -run "Harness|Conformance"`
+Run: `cd implementations/go && go test ./aep/ -run "Harness|Conformance"`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/go/aep/harness.go reference/go/aep/task_lifecycle_test.go
+git add implementations/go/aep/harness.go implementations/go/aep/task_lifecycle_test.go
 git commit -m "feat(go): add exported TaskTracker lifecycle methods"
 git push origin master
 ```
@@ -141,12 +141,12 @@ git push origin master
 ## Task 2: McpBridge and async tool handler
 
 **Files:**
-- Create: `reference/go/aep/mcp_bridge.go`
-- Test: `reference/go/aep/mcp_bridge_test.go`
+- Create: `implementations/go/aep/mcp_bridge.go`
+- Test: `implementations/go/aep/mcp_bridge_test.go`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/go/aep/mcp_bridge_test.go`:
+Create `implementations/go/aep/mcp_bridge_test.go`:
 
 ```go
 package aep
@@ -325,12 +325,12 @@ func containsStr(list []string, s string) bool {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/go && go test ./aep/ -run TestMcp`
+Run: `cd implementations/go && go test ./aep/ -run TestMcp`
 Expected: build failure, `NewMcpBridge`/`McpTool`/`McpContext`/`AsyncToolHandler` undefined.
 
 - [ ] **Step 3: Implement the bridge**
 
-Create `reference/go/aep/mcp_bridge.go`:
+Create `implementations/go/aep/mcp_bridge.go`:
 
 ```go
 package aep
@@ -536,18 +536,18 @@ The file uses `time.Now().UnixMilli()` for a fallback task id and `encoding/json
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `cd reference/go && go test ./aep/ -run TestMcp`
+Run: `cd implementations/go && go test ./aep/ -run TestMcp`
 Expected: PASS.
 
 - [ ] **Step 5: Run the full aep package**
 
-Run: `cd reference/go && go test ./aep/`
+Run: `cd implementations/go && go test ./aep/`
 Expected: PASS.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/go/aep/mcp_bridge.go reference/go/aep/mcp_bridge_test.go
+git add implementations/go/aep/mcp_bridge.go implementations/go/aep/mcp_bridge_test.go
 git commit -m "feat(go): add MCP bridge with JSON-RPC handler and async tool handler"
 git push origin master
 ```
@@ -558,12 +558,12 @@ git push origin master
 
 - [ ] **Step 1: Run full Go suite**
 
-Run: `cd reference/go && go test ./...`
+Run: `cd implementations/go && go test ./...`
 Expected: all packages pass.
 
 - [ ] **Step 2: Build all binaries**
 
-Run: `cd reference/go && go build ./...`
+Run: `cd implementations/go && go build ./...`
 Expected: no errors.
 
 - [ ] **Step 3: Verify git sync**

@@ -25,22 +25,22 @@ function isAboveTarget(fixturePath) {
 
 const LANGUAGES = {
   TypeScript: {
-    cwd: "reference/typescript",
+    cwd: "implementations/typescript",
     cmd: "npm",
     args: ["run", "conformance"],
   },
   Python: {
-    cwd: "reference/python",
+    cwd: "implementations/python",
     cmd: "python",
     args: ["-m", "pytest", "tests/test_fixtures.py", "-q", "--tb=no"],
   },
   Go: {
-    cwd: "reference/go",
+    cwd: "implementations/go",
     cmd: "go",
     args: ["test", "./aep/", "-run", "TestConformance", "-v"],
   },
   Java: {
-    cwd: "reference/java",
+    cwd: "implementations/java",
     cmd: "mvn",
     args: ["test", "-pl", ".", "-Dtest=ConformanceTest", "-q"],
   },

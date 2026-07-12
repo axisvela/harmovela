@@ -14,7 +14,7 @@
 
 ## File Structure
 
-- Create `reference/java/src/main/java/com/axisrobo/aep/Subscriptions.java`: `matchesType`.
+- Create `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`: `matchesType`.
 - Modify `DeliveryStore.java`: make public, add `getDeadLettered`.
 - Modify `InMemoryDeliveryStore.java`, `SqliteDeliveryStore.java`, `PostgresDeliveryStore.java`: add `getDeadLettered`; fix sqlite reason to JSON.
 - Create `runtime/Config.java`, `runtime/AepRuntimeService.java`, `runtime/ApiServer.java`, `runtime/Aepd.java`.
@@ -27,12 +27,12 @@
 ## Task 1: Subscriptions.matchesType
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/Subscriptions.java`
-- Test: `reference/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`
+- Test: `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -56,12 +56,12 @@ class SubscriptionsTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/java && mvn test -Dtest=SubscriptionsTest`
+Run: `cd implementations/java && mvn test -Dtest=SubscriptionsTest`
 Expected: compilation failure, `Subscriptions` not found.
 
 - [ ] **Step 3: Implement Subscriptions**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/Subscriptions.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`:
 
 ```java
 package com.axisrobo.aep;
@@ -89,13 +89,13 @@ public final class Subscriptions {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd reference/java && mvn test -Dtest=SubscriptionsTest`
+Run: `cd implementations/java && mvn test -Dtest=SubscriptionsTest`
 Expected: `Tests run: 1, Failures: 0`.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/Subscriptions.java reference/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java
 git commit -m "feat(java): add Subscriptions.matchesType helper"
 git push origin master
 ```
@@ -105,15 +105,15 @@ git push origin master
 ## Task 2: DeliveryStore getDeadLettered
 
 **Files:**
-- Modify: `reference/java/src/main/java/com/axisrobo/aep/DeliveryStore.java`
-- Modify: `reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
-- Modify: `reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
-- Modify: `reference/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`
-- Test: `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
+- Modify: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`
+- Test: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java` (inside the class):
+Append to `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java` (inside the class):
 
 ```java
     @Test
@@ -129,12 +129,12 @@ Append to `reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTe
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/java && mvn test -Dtest=InMemoryDeliveryStoreTest`
+Run: `cd implementations/java && mvn test -Dtest=InMemoryDeliveryStoreTest`
 Expected: compilation failure, `getDeadLettered` not found.
 
 - [ ] **Step 3: Make the interface public and add the method**
 
-Replace `reference/java/src/main/java/com/axisrobo/aep/DeliveryStore.java` with:
+Replace `implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java` with:
 
 ```java
 package com.axisrobo.aep;
@@ -244,13 +244,13 @@ Read `PostgresDeliveryStore.java` first to confirm the `MAPPER` field name and t
 
 - [ ] **Step 7: Run store tests**
 
-Run: `cd reference/java && mvn test -Dtest=InMemoryDeliveryStoreTest,SqliteDeliveryStoreTest,PostgresDeliveryStoreTest`
+Run: `cd implementations/java && mvn test -Dtest=InMemoryDeliveryStoreTest,SqliteDeliveryStoreTest,PostgresDeliveryStoreTest`
 Expected: all pass.
 
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/DeliveryStore.java reference/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java reference/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java reference/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java reference/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
 git commit -m "feat(java): make DeliveryStore public and add getDeadLettered"
 git push origin master
 ```
@@ -260,12 +260,12 @@ git push origin master
 ## Task 3: Runtime config
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/runtime/Config.java`
-- Test: `reference/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java`
+- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -314,12 +314,12 @@ class ConfigTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/java && mvn test -Dtest=ConfigTest`
+Run: `cd implementations/java && mvn test -Dtest=ConfigTest`
 Expected: compilation failure, `Config` not found.
 
 - [ ] **Step 3: Implement Config**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/runtime/Config.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -497,13 +497,13 @@ Read `SqliteDeliveryStore` and `PostgresDeliveryStore` constructors first to con
 
 - [ ] **Step 4: Run config test**
 
-Run: `cd reference/java && mvn test -Dtest=ConfigTest`
+Run: `cd implementations/java && mvn test -Dtest=ConfigTest`
 Expected: all pass.
 
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/runtime/Config.java reference/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java
 git commit -m "feat(java): add runtime Config"
 git push origin master
 ```
@@ -513,13 +513,13 @@ git push origin master
 ## Task 4: Runtime service and HTTP api
 
 **Files:**
-- Create: `reference/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`
-- Test: `reference/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`
+- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -608,12 +608,12 @@ class RuntimeServiceTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd reference/java && mvn test -Dtest=RuntimeServiceTest`
+Run: `cd implementations/java && mvn test -Dtest=RuntimeServiceTest`
 Expected: compilation failure, `AepRuntimeService` not found.
 
 - [ ] **Step 3: Implement ApiServer**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -718,7 +718,7 @@ public class ApiServer {
 
 - [ ] **Step 4: Implement AepRuntimeService**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -817,13 +817,13 @@ Confirm `WsServer.stop()` exists; `org.java_websocket.server.WebSocketServer` ha
 
 - [ ] **Step 5: Run runtime service test**
 
-Run: `cd reference/java && mvn test -Dtest=RuntimeServiceTest`
+Run: `cd implementations/java && mvn test -Dtest=RuntimeServiceTest`
 Expected: all pass.
 
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add reference/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java reference/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java reference/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java
+git add implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java
 git commit -m "feat(java): add runtime service and HTTP api server"
 git push origin master
 ```
@@ -833,14 +833,14 @@ git push origin master
 ## Task 5: Daemon and picocli CLI
 
 **Files:**
-- Modify: `reference/java/pom.xml` (add picocli)
-- Create: `reference/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`
-- Create: `reference/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`
-- Test: `reference/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`
+- Modify: `implementations/java/pom.xml` (add picocli)
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`
+- Create: `implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`
+- Test: `implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`
 
 - [ ] **Step 1: Add picocli dependency**
 
-In `reference/java/pom.xml`, add after the `junit-jupiter` dependency:
+In `implementations/java/pom.xml`, add after the `junit-jupiter` dependency:
 
 ```xml
         <dependency>
@@ -852,7 +852,7 @@ In `reference/java/pom.xml`, add after the `junit-jupiter` dependency:
 
 - [ ] **Step 2: Write failing CLI test**
 
-Create `reference/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`:
+Create `implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`:
 
 ```java
 package com.axisrobo.aep.cli;
@@ -881,12 +881,12 @@ class AepCliTest {
 
 - [ ] **Step 3: Run test to verify it fails**
 
-Run: `cd reference/java && mvn test -Dtest=AepCliTest`
+Run: `cd implementations/java && mvn test -Dtest=AepCliTest`
 Expected: compilation failure, `AepCli` not found.
 
 - [ ] **Step 4: Implement the daemon main**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`:
 
 ```java
 package com.axisrobo.aep.runtime;
@@ -908,7 +908,7 @@ public class Aepd {
 
 - [ ] **Step 5: Implement the picocli CLI**
 
-Create `reference/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`:
+Create `implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`:
 
 ```java
 package com.axisrobo.aep.cli;
@@ -1062,16 +1062,16 @@ The `WsClient` constructor takes a `java.net.URI` (`new WsClient(URI.create(url)
 
 - [ ] **Step 6: Run CLI test and build**
 
-Run: `cd reference/java && mvn test -Dtest=AepCliTest`
+Run: `cd implementations/java && mvn test -Dtest=AepCliTest`
 Expected: PASS.
 
-Run: `cd reference/java && mvn -q compile`
+Run: `cd implementations/java && mvn -q compile`
 Expected: compiles.
 
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add reference/java/pom.xml reference/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java reference/java/src/main/java/com/axisrobo/aep/cli/AepCli.java reference/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java
 git commit -m "feat(java): add aepd daemon and aep picocli CLI"
 git push origin master
 ```
@@ -1082,7 +1082,7 @@ git push origin master
 
 - [ ] **Step 1: Run full Java suite**
 
-Run: `cd reference/java && mvn test`
+Run: `cd implementations/java && mvn test`
 Expected: BUILD SUCCESS, all tests pass.
 
 - [ ] **Step 2: Verify git sync**
