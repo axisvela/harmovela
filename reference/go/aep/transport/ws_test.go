@@ -1,4 +1,4 @@
-package aep
+package transport
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/axisrobo/aep/aep"
 )
 
 func TestWsServerStartsAndIsReachable(t *testing.T) {
@@ -35,7 +37,7 @@ func TestWsServerStartsAndIsReachable(t *testing.T) {
 
 func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 	srv := NewWsServer()
-	srv.OnMessage(func(msg *AepMessage) *AepMessage {
+	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
 		return msg
 	})
 
@@ -56,12 +58,12 @@ func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 	}
 	defer client.Close()
 
-	received := make(chan *AepMessage, 1)
-	client.OnMessage(func(msg *AepMessage) {
+	received := make(chan *aep.AepMessage, 1)
+	client.OnMessage(func(msg *aep.AepMessage) {
 		received <- msg
 	})
 
-	testMsg := &AepMessage{JsonPayload: `{"type":"test","id":"001"}`}
+	testMsg := &aep.AepMessage{JsonPayload: `{"type":"test","id":"001"}`}
 	if err := client.Send(testMsg); err != nil {
 		t.Fatalf("failed to send: %v", err)
 	}
@@ -78,13 +80,13 @@ func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 
 func TestWsBidirectionalStreaming(t *testing.T) {
 	srv := NewWsServer()
-	var serverReceived []*AepMessage
+	var serverReceived []*aep.AepMessage
 	var mu sync.Mutex
-	srv.OnMessage(func(msg *AepMessage) *AepMessage {
+	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
 		mu.Lock()
 		serverReceived = append(serverReceived, msg)
 		mu.Unlock()
-		return &AepMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
+		return &aep.AepMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
 	})
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
@@ -104,19 +106,19 @@ func TestWsBidirectionalStreaming(t *testing.T) {
 	}
 	defer client.Close()
 
-	clientReceived := make([]*AepMessage, 0)
+	clientReceived := make([]*aep.AepMessage, 0)
 	var clientMu sync.Mutex
 	var wg sync.WaitGroup
 	wg.Add(3)
 
-	client.OnMessage(func(msg *AepMessage) {
+	client.OnMessage(func(msg *aep.AepMessage) {
 		clientMu.Lock()
 		clientReceived = append(clientReceived, msg)
 		clientMu.Unlock()
 		wg.Done()
 	})
 
-	messages := []*AepMessage{
+	messages := []*aep.AepMessage{
 		{JsonPayload: `{"type":"msg1"}`},
 		{JsonPayload: `{"type":"msg2"}`},
 		{JsonPayload: `{"type":"msg3"}`},
@@ -155,7 +157,7 @@ func TestWsBidirectionalStreaming(t *testing.T) {
 
 func TestWsServerShutdownStopsCleanly(t *testing.T) {
 	srv := NewWsServer()
-	srv.OnMessage(func(msg *AepMessage) *AepMessage {
+	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
 		return msg
 	})
 
@@ -174,7 +176,7 @@ func TestWsServerShutdownStopsCleanly(t *testing.T) {
 		t.Fatalf("failed to connect: %v", err)
 	}
 
-	if err := client.Send(&AepMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
+	if err := client.Send(&aep.AepMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
 		t.Fatalf("failed to send before stop: %v", err)
 	}
 	time.Sleep(50 * time.Millisecond)

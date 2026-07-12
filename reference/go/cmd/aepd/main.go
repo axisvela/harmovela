@@ -6,16 +6,16 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/aep/aep/runtime"
 )
 
 func main() {
-	config, err := aep.LoadConfig(os.Getenv("AEP_CONFIG"), nil)
+	config, err := runtime.LoadConfig(os.Getenv("AEP_CONFIG"), nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "aepd: %v\n", err)
 		os.Exit(1)
 	}
-	svc := aep.NewRuntimeService(config)
+	svc := runtime.NewRuntimeService(config)
 	if err := svc.Start(); err != nil {
 		fmt.Fprintf(os.Stderr, "aepd: %v\n", err)
 		os.Exit(1)

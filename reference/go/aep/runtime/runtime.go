@@ -1,4 +1,4 @@
-package aep
+package runtime
 
 import (
 	"encoding/json"
@@ -12,7 +12,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/axisrobo/aep/aep"
 	"github.com/axisrobo/aep/aep/store"
+	"github.com/axisrobo/aep/aep/transport"
 	"github.com/google/uuid"
 )
 
@@ -151,7 +153,7 @@ type RuntimeService struct {
 	subs          []subEntry
 	subscriptions map[string]*registryEntry
 	maxBuffer     int
-	ws            *WsBroadcastServer
+	ws            *transport.WsBroadcastServer
 	api           *http.Server
 	apiPort       int
 	mu            sync.Mutex
@@ -168,7 +170,7 @@ func (s *RuntimeService) Subscribe(pattern string, handler func(event map[string
 }
 
 func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
-	errs := ValidateEnvelope(event)
+	errs := aep.ValidateEnvelope(event)
 	if len(errs) > 0 {
 		return nil, fmt.Errorf("invalid AEP event: %s", strings.Join(errs, "; "))
 	}
@@ -182,7 +184,7 @@ func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
 	}
 	typ, _ := event["type"].(string)
 	for _, e := range s.subs {
-		if MatchesType(e.pattern, typ) {
+		if aep.MatchesType(e.pattern, typ) {
 			e.handler(event)
 		}
 	}
@@ -192,7 +194,7 @@ func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
 	s.mu.Lock()
 	for _, entry := range s.subscriptions {
 		filter, _ := entry.record["filter"].(map[string]any)
-		if SubscriptionMatches(filter, event) {
+		if aep.SubscriptionMatches(filter, event) {
 			entry.buffer = append(entry.buffer, event)
 			if len(entry.buffer) > s.maxBuffer {
 				entry.buffer = entry.buffer[1:]
@@ -214,7 +216,7 @@ func (s *RuntimeService) Start() error {
 		return nil
 	}
 	if s.Config.Transports.WebSocket.Enabled {
-		ws := NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
+		ws := transport.NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
 		ws.OnMessage(func(event map[string]any) { s.Publish(event) })
 		addr := fmt.Sprintf("%s:%d", s.Config.Transports.WebSocket.Host, s.Config.Transports.WebSocket.Port)
 		go ws.Start(addr)
@@ -309,7 +311,7 @@ func (s *RuntimeService) handleIngest(w http.ResponseWriter, r *http.Request) {
 		sendJSON(w, 400, map[string]any{"accepted": false, "errors": []string{"invalid JSON body"}})
 		return
 	}
-	if errs := ValidateEnvelope(event); len(errs) > 0 {
+	if errs := aep.ValidateEnvelope(event); len(errs) > 0 {
 		sendJSON(w, 400, map[string]any{"accepted": false, "errors": errs})
 		return
 	}

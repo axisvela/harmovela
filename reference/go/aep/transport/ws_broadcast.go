@@ -1,4 +1,4 @@
-package aep
+package transport
 
 import (
 	"encoding/json"
@@ -72,7 +72,7 @@ func (s *WsBroadcastServer) Broadcast(event map[string]any) {
 }
 
 func (s *WsBroadcastServer) handle(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}

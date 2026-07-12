@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/aep/aep/runtime"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +21,7 @@ func main() {
 
 	var initConfig string
 	initCmd := &cobra.Command{Use: "init", Short: "Create an AEP runtime config file", RunE: func(_ *cobra.Command, _ []string) error {
-		if err := aep.WriteDefaultConfig(initConfig); err != nil {
+		if err := runtime.WriteDefaultConfig(initConfig); err != nil {
 			return err
 		}
 		fmt.Printf("created %s\n", initConfig)
@@ -30,11 +31,11 @@ func main() {
 
 	var startConfig string
 	startCmd := &cobra.Command{Use: "start", Short: "Start the local aepd runtime daemon", RunE: func(_ *cobra.Command, _ []string) error {
-		config, err := aep.LoadConfig(startConfig, nil)
+		config, err := runtime.LoadConfig(startConfig, nil)
 		if err != nil {
 			return err
 		}
-		svc := aep.NewRuntimeService(config)
+		svc := runtime.NewRuntimeService(config)
 		if err := svc.Start(); err != nil {
 			return err
 		}
@@ -121,11 +122,11 @@ func main() {
 		if sub != "list" {
 			return fmt.Errorf("unsupported dlq command: %s", sub)
 		}
-		config, err := aep.LoadConfig(dlqConfig, nil)
+		config, err := runtime.LoadConfig(dlqConfig, nil)
 		if err != nil {
 			return err
 		}
-		store, err := aep.CreateDeliveryStore(config)
+		store, err := runtime.CreateDeliveryStore(config)
 		if err != nil {
 			return err
 		}

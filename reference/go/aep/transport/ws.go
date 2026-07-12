@@ -1,20 +1,21 @@
-package aep
+package transport
 
 import (
 	"fmt"
 	"net/http"
 	"sync"
 
+	"github.com/axisrobo/aep/aep"
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
+var Upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
 type WsServer struct {
 	httpServer     *http.Server
-	messageHandler MessageHandler
+	messageHandler aep.MessageHandler
 	mu             sync.RWMutex
 }
 
@@ -22,13 +23,13 @@ func NewWsServer() *WsServer {
 	return &WsServer{}
 }
 
-func (s *WsServer) OnMessage(handler MessageHandler) {
+func (s *WsServer) OnMessage(handler aep.MessageHandler) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.messageHandler = handler
 }
 
-func (s *WsServer) getHandler() MessageHandler {
+func (s *WsServer) getHandler() aep.MessageHandler {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.messageHandler
@@ -52,7 +53,7 @@ func (s *WsServer) Stop() {
 }
 
 func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
@@ -67,7 +68,7 @@ func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if handler != nil {
-			msg := &AepMessage{JsonPayload: string(message)}
+			msg := &aep.AepMessage{JsonPayload: string(message)}
 			resp := handler(msg)
 			if resp != nil {
 				if err := conn.WriteMessage(websocket.TextMessage, []byte(resp.JsonPayload)); err != nil {
@@ -80,7 +81,7 @@ func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
 
 type WsClient struct {
 	conn    *websocket.Conn
-	handler ReceiveHandler
+	handler aep.ReceiveHandler
 	mu      sync.RWMutex
 	done    chan struct{}
 }
@@ -89,13 +90,13 @@ func NewWsClient() *WsClient {
 	return &WsClient{done: make(chan struct{})}
 }
 
-func (c *WsClient) OnMessage(handler ReceiveHandler) {
+func (c *WsClient) OnMessage(handler aep.ReceiveHandler) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.handler = handler
 }
 
-func (c *WsClient) getHandler() ReceiveHandler {
+func (c *WsClient) getHandler() aep.ReceiveHandler {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.handler
@@ -119,12 +120,12 @@ func (c *WsClient) receiveLoop() {
 		}
 		handler := c.getHandler()
 		if handler != nil {
-			handler(&AepMessage{JsonPayload: string(message)})
+			handler(&aep.AepMessage{JsonPayload: string(message)})
 		}
 	}
 }
 
-func (c *WsClient) Send(msg *AepMessage) error {
+func (c *WsClient) Send(msg *aep.AepMessage) error {
 	if c.conn == nil {
 		return fmt.Errorf("not connected")
 	}

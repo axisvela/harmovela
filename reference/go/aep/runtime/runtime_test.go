@@ -1,8 +1,9 @@
-package aep
+package runtime
 
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 	"testing"
@@ -117,4 +118,13 @@ func TestRuntimeAPIEndpoints(t *testing.T) {
 		t.Fatalf("expected 404, got %d", resp.StatusCode)
 	}
 	resp.Body.Close()
+}
+
+func freePort(t *testing.T) int {
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port
 }
