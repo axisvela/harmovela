@@ -33,6 +33,21 @@ The existing 0.1 draft implementation remains the compatibility baseline during 
 
 Protocol identity, schema identifiers, package artifact names, repository paths, and public documentation are migrated through versioned releases. The Axisrobo package and group namespace remains unchanged. Compatibility aliases, when required, must have explicit ownership, duration, and removal criteria.
 
+### 0.2 Breaking Identifier Migration
+
+Harmovela 0.2 performs a clean breaking migration of public protocol identifiers. It does not accept or emit legacy AEP aliases.
+
+| 0.1 identifier | 0.2 identifier |
+| --- | --- |
+| `aep_version` | `spec_version` |
+| `AEP-C0` through `AEP-C3` | `HARMOVELA-C0` through `HARMOVELA-C3` |
+| `/aep` transport paths | `/harmovela` transport paths |
+| `aep.*` broker names and headers | `harmovela.*` broker names and headers |
+| `aep.config.json` and `.aep/` | `harmovela.config.json` and `.harmovela/` |
+| `AEP_CONFIG` | `HARMOVELA_CONFIG` |
+
+Axisrobo remains the package and group namespace. The transition must not replace `axisrobo` with `harmovela` in package or group identifiers.
+
 ## Governance Direction
 
 The project will publish a contribution process, event registry process, compatibility policy, and release policy before a 1.0 release. Protocol decisions must be documented in public specifications and validated by conformance fixtures.

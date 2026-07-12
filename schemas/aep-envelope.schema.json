@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/aep-envelope.v0.1.schema.json",
-  "title": "AEP Event Envelope",
+  "$id": "https://schemas.axisrobo.com/harmovela-envelope.v0.2.schema.json",
+  "title": "Harmovela Event Envelope",
   "type": "object",
   "additionalProperties": true,
-  "required": ["aep_version", "id", "type", "source", "created_at", "payload"],
+  "required": ["spec_version", "id", "type", "source", "created_at", "payload"],
   "properties": {
-    "aep_version": {
+    "spec_version": {
       "type": "string",
       "minLength": 1
     },

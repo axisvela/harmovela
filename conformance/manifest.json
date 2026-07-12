@@ -1,16 +1,16 @@
 {
-  "aep_version": "0.1",
-  "default_target_level": "AEP-C3",
+  "spec_version": "0.2",
+  "default_target_level": "HARMOVELA-C3",
   "levels": [
-    "AEP-C0",
-    "AEP-C1",
-    "AEP-C2",
-    "AEP-C3"
+    "HARMOVELA-C0",
+    "HARMOVELA-C1",
+    "HARMOVELA-C2",
+    "HARMOVELA-C3"
   ],
   "fixtures": [
     {
       "path": "fixtures/task-lifecycle.ndjson",
-      "level": "AEP-C1",
+      "level": "HARMOVELA-C1",
       "description": "Task submitted, progress, and completion lifecycle flow.",
       "expectation": "stateful_flow",
       "tags": [
@@ -26,7 +26,7 @@
     },
     {
       "path": "fixtures/memory-context-ack.ndjson",
-      "level": "AEP-C0",
+      "level": "HARMOVELA-C0",
       "description": "Subscription request followed by memory, context, and acknowledgement events.",
       "expectation": "accept_all",
       "tags": [
@@ -44,7 +44,7 @@
     },
     {
       "path": "fixtures/session-flow.ndjson",
-      "level": "AEP-C1",
+      "level": "HARMOVELA-C1",
       "description": "Capabilities, session open, subscription, and session close flow.",
       "expectation": "stateful_flow",
       "tags": [
@@ -60,7 +60,7 @@
     },
     {
       "path": "fixtures/agent-runtime-semantics.ndjson",
-      "level": "AEP-C0",
+      "level": "HARMOVELA-C0",
       "description": "Belief revision, freshness, delegation, interruption, compensation, and provenance events.",
       "expectation": "accept_all",
       "tags": [
@@ -86,7 +86,7 @@
     },
     {
       "path": "fixtures/delivery.ndjson",
-      "level": "AEP-C2",
+      "level": "HARMOVELA-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
       "expectation": "accept_all",
       "tags": [
@@ -104,7 +104,7 @@
     },
     {
       "path": "fixtures/delivery-stateful.ndjson",
-      "level": "AEP-C2",
+      "level": "HARMOVELA-C2",
       "description": "Full task lifecycle with delivery events exercised through harness stateful flow.",
       "expectation": "stateful_flow",
       "tags": [
@@ -125,7 +125,7 @@
     },
     {
       "path": "fixtures/delivery-e2e.ndjson",
-      "level": "AEP-C3",
+      "level": "HARMOVELA-C3",
       "description": "End-to-end delivery tracking: track → ack, track → nack, track → dead-letter, with DeliveryTracker stats verification.",
       "expectation": "delivery_e2e",
       "tags": [

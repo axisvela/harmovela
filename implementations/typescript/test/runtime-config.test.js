@@ -13,24 +13,25 @@ import {
 import { InMemoryDeliveryStore } from "../src/delivery-store-memory.js";
 import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
 
-test("defaultConfig returns local sqlite runtime config", () => {
+test("defaultConfig returns local Harmovela runtime config", () => {
   const config = defaultConfig();
-  assert.equal(config.aep_version, "0.1");
-  assert.equal(config.runtime.id, "aepd-local");
+  assert.equal(config.spec_version, "0.2");
+  assert.equal(config.runtime.id, "harmovelad-local");
   assert.equal(config.delivery.store, "sqlite");
   assert.equal(config.transports.websocket.port, 8787);
   assert.equal(config.transports.sse.port, 8788);
   assert.equal(config.transports.api.enabled, true);
   assert.equal(config.transports.api.port, 8790);
-  assert.equal(config.transports.api.path, "/aep/api");
+  assert.equal(config.transports.api.path, "/harmovela/api");
+  assert.equal(config.delivery.sqlite.path, ".harmovela/harmovela.sqlite");
 });
 
 test("writeDefaultConfig creates JSON file", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "aep-config-"));
-  const file = path.join(dir, "aep.config.json");
+  const file = path.join(dir, "harmovela.config.json");
   await writeDefaultConfig(file);
   const parsed = JSON.parse(await readFile(file, "utf8"));
-  assert.equal(parsed.runtime.source, "runtime:aepd");
+  assert.equal(parsed.runtime.source, "runtime:harmovelad");
   await rm(dir, { recursive: true, force: true });
 });
 

@@ -10,9 +10,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const conformanceDir = resolve(here, "../../../conformance");
 const manifest = JSON.parse(readFileSync(resolve(conformanceDir, "manifest.json"), "utf8"));
 
-test("conformance manifest declares known draft levels", () => {
-  assert.deepEqual(manifest.levels, ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"]);
-  assert.equal(manifest.default_target_level, "AEP-C3");
+test("conformance manifest declares Harmovela levels", () => {
+  assert.deepEqual(manifest.levels, ["HARMOVELA-C0", "HARMOVELA-C1", "HARMOVELA-C2", "HARMOVELA-C3"]);
+  assert.equal(manifest.default_target_level, "HARMOVELA-C3");
 });
 
 for (const fixture of manifest.fixtures) {

@@ -9,7 +9,7 @@ export function validateEnvelope(value) {
     return ["event must be a JSON object"];
   }
 
-  requireString(value, "aep_version", errors);
+  requireString(value, "spec_version", errors);
   requireString(value, "id", errors);
   requireString(value, "type", errors);
   requireString(value, "source", errors);

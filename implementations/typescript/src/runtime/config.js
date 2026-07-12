@@ -6,30 +6,30 @@ import { PostgresDeliveryStore } from "../delivery-store-postgres.js";
 
 export function defaultConfig() {
   return {
-    aep_version: "0.1",
-    runtime: { id: "aepd-local", source: "runtime:aepd" },
+    spec_version: "0.2",
+    runtime: { id: "harmovelad-local", source: "runtime:harmovelad" },
     transports: {
-      websocket: { enabled: true, host: "127.0.0.1", port: 8787, path: "/aep" },
-      sse: { enabled: true, host: "127.0.0.1", port: 8788, path: "/aep/events" },
-      api: { enabled: true, host: "127.0.0.1", port: 8790, path: "/aep/api" },
+      websocket: { enabled: true, host: "127.0.0.1", port: 8787, path: "/harmovela" },
+      sse: { enabled: true, host: "127.0.0.1", port: 8788, path: "/harmovela/events" },
+      api: { enabled: true, host: "127.0.0.1", port: 8790, path: "/harmovela/api" },
       stdio: { enabled: false }
     },
     delivery: {
       store: "sqlite",
-      sqlite: { path: ".aep/aep.sqlite" },
+      sqlite: { path: ".harmovela/harmovela.sqlite" },
       postgres: { url: "postgres://postgres:postgres@localhost:5433/postgres" }
     }
   };
 }
 
-export async function writeDefaultConfig(filePath = "aep.config.json") {
+export async function writeDefaultConfig(filePath = "harmovela.config.json") {
   await mkdir(path.dirname(path.resolve(filePath)), { recursive: true });
   const text = JSON.stringify(defaultConfig(), null, 2) + "\n";
   await writeFile(filePath, text, "utf8");
   return filePath;
 }
 
-export async function loadConfig(filePath = process.env.AEP_CONFIG ?? "aep.config.json", env = process.env) {
+export async function loadConfig(filePath = process.env.HARMOVELA_CONFIG ?? "harmovela.config.json", env = process.env) {
   const text = await readFile(filePath, "utf8");
   const parsed = JSON.parse(text);
   return applyEnvOverrides(parsed, env);
