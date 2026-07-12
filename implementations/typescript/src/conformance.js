@@ -84,18 +84,30 @@ export function verifyFixture(fixture, events) {
     failures.push(`expected types ${JSON.stringify(fixture.expected_types)}, got ${JSON.stringify(types)}`);
   }
 
-  events.forEach((event, index) => {
-    const envelopeErrors = validateEnvelope(event);
-    if (envelopeErrors.length > 0) {
-      failures.push(`event ${index} envelope: ${envelopeErrors.join("; ")}`);
+  if (fixture.expectation === "reject_some") {
+    let rejected = false;
+    for (const event of events) {
+      if (validateEnvelope(event).length > 0 || !isValidBySchema(event, "envelope")) {
+        rejected = true;
+      }
     }
-    if (!isValidBySchema(event, "envelope")) {
-      failures.push(`event ${index} schema validation failed`);
+    if (!rejected) {
+      failures.push("expected at least one event rejection");
     }
-    if (PAYLOAD_VALIDATED_TYPES.has(event.type) && !isValidBySchema(event, "payloads")) {
-      failures.push(`event ${index} payload schema validation failed for type ${event.type}`);
-    }
-  });
+  } else {
+    events.forEach((event, index) => {
+      const envelopeErrors = validateEnvelope(event);
+      if (envelopeErrors.length > 0) {
+        failures.push(`event ${index} envelope: ${envelopeErrors.join("; ")}`);
+      }
+      if (!isValidBySchema(event, "envelope")) {
+        failures.push(`event ${index} schema validation failed`);
+      }
+      if (PAYLOAD_VALIDATED_TYPES.has(event.type) && !isValidBySchema(event, "payloads")) {
+        failures.push(`event ${index} payload schema validation failed for type ${event.type}`);
+      }
+    });
+  }
 
   if (fixture.expectation === "stateful_flow") {
     const harness = new HarmovelaHarness({ useSchemaValidation: true });
@@ -128,7 +140,7 @@ export function verifyFixture(fixture, events) {
     }
   }
 
-  if (!["accept_all", "stateful_flow", "delivery_e2e"].includes(fixture.expectation)) {
+  if (!["accept_all", "reject_some", "stateful_flow", "delivery_e2e"].includes(fixture.expectation)) {
     failures.push(`unsupported expectation: ${fixture.expectation}`);
   }
 

@@ -55,7 +55,7 @@ test("HarmovelaRuntimeService starts websocket transport and broadcasts events",
   const service = new HarmovelaRuntimeService(config);
   await service.start();
   const port = service.transports.websocket.port;
-  const ws = new WebSocket(`ws://127.0.0.1:${port}/aep`, ["aep-0.1"]);
+  const ws = new WebSocket(`ws://127.0.0.1:${port}/harmovela`, ["aep-0.1"]);
   await once(ws, "open");
   const received = once(ws, "message");
   service.publish(event({ id: "evt_ws" }));

@@ -39,14 +39,14 @@ test("aep emit delivers event through running aepd websocket runtime", async () 
 
   try {
     await waitForOutput(daemon.stdout, /harmovelad started/);
-    const ws = new WebSocket("ws://127.0.0.1:18987/aep", ["aep-0.1"]);
+    const ws = new WebSocket("ws://127.0.0.1:18987/harmovela", ["aep-0.1"]);
     await once(ws, "open");
     const received = once(ws, "message");
     const emitted = await runCli([
       "emit",
       "task.submitted",
       "--url",
-      "ws://127.0.0.1:18987/aep",
+      "ws://127.0.0.1:18987/harmovela",
       "--id",
       "evt_cli_e2e",
       "--payload",
@@ -86,7 +86,7 @@ test("aep subscribe receives events emitted through running aepd", async () => {
       cli,
       "subscribe",
       "--url",
-      "ws://127.0.0.1:18989/aep",
+      "ws://127.0.0.1:18989/harmovela",
       "--type",
       "task.*"
     ], { cwd: path.resolve(".") });
@@ -96,7 +96,7 @@ test("aep subscribe receives events emitted through running aepd", async () => {
       "emit",
       "task.submitted",
       "--url",
-      "ws://127.0.0.1:18989/aep",
+      "ws://127.0.0.1:18989/harmovela",
       "--id",
       "evt_cli_subscribe_e2e",
       "--payload",
@@ -146,7 +146,7 @@ function waitForJsonLine(stream, expectedId) {
 }
 
 async function waitForWebSocketConnection(port) {
-  const ws = new WebSocket(`ws://127.0.0.1:${port}/aep`, ["aep-0.1"]);
+  const ws = new WebSocket(`ws://127.0.0.1:${port}/harmovela`, ["aep-0.1"]);
   await once(ws, "open");
   ws.close();
 }
