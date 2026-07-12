@@ -34,6 +34,9 @@ implementations/python/dist/
 # Local environment
 .env.local
 
+# Isolated development worktrees
+.worktrees/
+
 # OS
 .DS_Store
 Thumbs.db
