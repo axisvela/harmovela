@@ -2,6 +2,8 @@ import json
 import os
 import subprocess
 import sys
+import threading
+import time
 
 from aep.runtime.config import default_config
 from aep.runtime.service import AepRuntimeService
@@ -52,3 +54,41 @@ def test_subscriptions_create_rejects_invalid_filter():
     code, out, err = _run(["subscriptions", "create", "--filter", "{"])
     assert code != 0
     assert "invalid JSON filter" in err
+
+import threading
+import time
+
+
+def test_subscriptions_stream_receives_event():
+    service = AepRuntimeService(_api_config(18912))
+    service.start()
+    base = "http://127.0.0.1:18912/aep/api"
+    try:
+        code, out, err = _run(["subscriptions", "create", "--filter", '{"types":"task.*"}', "--base", base])
+        record = json.loads(out)
+
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "aep.cli.main", "subscriptions", "stream", record["id"], "--base", base],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=dict(os.environ),
+        )
+        collected = []
+
+        def reader():
+            for line in proc.stdout:
+                collected.append(line)
+                if "evt_stream" in line:
+                    return
+
+        t = threading.Thread(target=reader, daemon=True)
+        t.start()
+        time.sleep(0.4)
+        service.publish({
+            "aep_version": "0.1", "id": "evt_stream", "type": "task.submitted",
+            "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": {},
+        })
+        t.join(timeout=3)
+        proc.terminate()
+        proc.wait(timeout=5)
+        assert any("evt_stream" in line for line in collected)
+    finally:
+        service.stop()
