@@ -24,7 +24,7 @@ export class AepSession {
   constructor(options = {}) {
     this.id = options.id ?? `sess_${Date.now().toString(36)}`;
     this.source = options.source ?? "aep:session";
-    this.version = options.version ?? "0.1";
+    this.version = options.version ?? "0.2";
     this.capabilities = options.capabilities ?? null;
     this.state = States.CREATED;
     this.heartbeatInterval = options.heartbeatIntervalMs ?? 0;
@@ -45,7 +45,7 @@ export class AepSession {
     this.state = States.OPENED;
     this._openedAt = nowISO();
     return {
-      aep_version: this.version,
+      spec_version: this.version,
       id: this.nextEventId(),
       type: "session.opened",
       source: this.source,
@@ -73,7 +73,7 @@ export class AepSession {
       }, this.heartbeatInterval);
     }
     return {
-      aep_version: this.version,
+      spec_version: this.version,
       id: this.nextEventId(),
       type: "session.ready",
       source: this.source,
@@ -89,7 +89,7 @@ export class AepSession {
   heartbeat() {
     if (this.state !== States.READY) return null;
     return {
-      aep_version: this.version,
+      spec_version: this.version,
       id: this.nextEventId(),
       type: "session.heartbeat",
       source: this.source,
@@ -104,7 +104,7 @@ export class AepSession {
     if (this.state === States.CLOSED) return null;
     this.state = States.CLOSED;
     return {
-      aep_version: this.version,
+      spec_version: this.version,
       id: this.nextEventId(),
       type: "session.closed",
       source: this.source,
@@ -123,7 +123,7 @@ export class AepSession {
       this.state = States.ERROR;
     }
     return {
-      aep_version: this.version,
+      spec_version: this.version,
       id: this.nextEventId(),
       type: "session.error",
       source: this.source,

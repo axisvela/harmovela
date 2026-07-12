@@ -33,7 +33,7 @@ test("WebSocket bidirectional message exchange", async () => {
   client.on("message", (event) => clientMessages.push(event));
   await client.start();
 
-  const testEvent = { aep_version: "0.1", id: "evt_test", type: "session.opened", source: "client", created_at: new Date().toISOString(), payload: {} };
+  const testEvent = { spec_version: "0.2", id: "evt_test", type: "session.opened", source: "client", created_at: new Date().toISOString(), payload: {} };
   client.send(testEvent);
 
   // Wait for message delivery
@@ -42,7 +42,7 @@ test("WebSocket bidirectional message exchange", async () => {
   assert.equal(serverMessages.length, 1);
   assert.equal(serverMessages[0].type, "session.opened");
 
-  const responseEvent = { aep_version: "0.1", id: "evt_resp", type: "session.ready", source: "server", created_at: new Date().toISOString(), payload: {} };
+  const responseEvent = { spec_version: "0.2", id: "evt_resp", type: "session.ready", source: "server", created_at: new Date().toISOString(), payload: {} };
   server.send(responseEvent);
 
   await new Promise((r) => setTimeout(r, 100));
@@ -72,7 +72,7 @@ test("WebSocket server broadcasts to all clients", async () => {
 
   await new Promise((r) => setTimeout(r, 100));
 
-  server.send({ aep_version: "0.1", id: "broadcast_01", type: "memory.fact.added", source: "server", created_at: new Date().toISOString(), payload: { fact: "test" } });
+  server.send({ spec_version: "0.2", id: "broadcast_01", type: "memory.fact.added", source: "server", created_at: new Date().toISOString(), payload: { fact: "test" } });
 
   await new Promise((r) => setTimeout(r, 100));
 

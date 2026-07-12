@@ -5,7 +5,7 @@ import { AepHarness } from "../src/index.js";
 const now = () => "2026-07-09T10:00:01Z";
 
 const validBase = {
-  aep_version: "0.1",
+  spec_version: "0.2",
   id: "evt_input_01",
   source: "agent:tester",
   created_at: "2026-07-09T10:00:00Z"
@@ -197,7 +197,7 @@ test("rejects unsupported protocol versions", () => {
   const harness = new AepHarness({ now });
   const [response] = harness.handle({
     ...validBase,
-    aep_version: "9.9",
+    spec_version: "9.9",
     type: "task.progress",
     payload: {}
   });

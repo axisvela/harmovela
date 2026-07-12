@@ -9,7 +9,7 @@ export async function startDaemon({ configPath } = {}) {
   await service.start();
   const ws = service.transports.websocket?.port;
   const sse = service.transports.sse?.port;
-  console.log(`aepd started ws=${ws ?? "disabled"} sse=${sse ?? "disabled"}`);
+  console.log(`harmovelad started ws=${ws ?? "disabled"} sse=${sse ?? "disabled"}`);
   process.on("SIGINT", async () => {
     await service.stop();
     process.exit(0);
@@ -18,8 +18,8 @@ export async function startDaemon({ configPath } = {}) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  startDaemon({ configPath: process.env.AEP_CONFIG }).catch((err) => {
-    console.error(`aepd: ${err.message}`);
+  startDaemon({ configPath: process.env.HARMOVELA_CONFIG }).catch((err) => {
+    console.error(`harmovelad: ${err.message}`);
     process.exitCode = 1;
   });
 }

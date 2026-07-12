@@ -39,7 +39,7 @@ test("runtime validation and schema validation agree on valid events", () => {
 
 test("schema validation catches invalid delivery mode", () => {
   const event = {
-    aep_version: "0.1", id: "evt_01", type: "task.progress",
+    spec_version: "0.2", id: "evt_01", type: "task.progress",
     source: "tool:crawler", created_at: "2026-07-09T10:00:00Z", payload: {},
     delivery: { mode: "exactly_once" }
   };
@@ -65,7 +65,7 @@ test("subscription filter schema rejects invalid delivery_mode", () => {
 test("harness with schema validation rejects schema-invalid envelope", () => {
   const h = new AepHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
   const [resp] = h.handle({
-    aep_version: "0.1", id: "evt_01", type: "task.progress",
+    spec_version: "0.2", id: "evt_01", type: "task.progress",
     source: "tool:crawler", created_at: "2026-07-09T10:00:00Z", payload: {},
     delivery: { mode: "invalid_mode" }
   });
@@ -76,7 +76,7 @@ test("harness with schema validation rejects schema-invalid envelope", () => {
 test("harness with schema validation accepts valid events", () => {
   const h = new AepHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
   const [resp] = h.handle({
-    aep_version: "0.1", id: "evt_valid", type: "task.progress",
+    spec_version: "0.2", id: "evt_valid", type: "task.progress",
     source: "tool:crawler", created_at: "2026-07-09T10:00:00Z", payload: {},
     delivery: { mode: "best_effort", sequence: 1, cursor: "stream:1" }
   });

@@ -23,7 +23,7 @@ test("SSE server starts and serves text/event-stream", async () => {
         }
       });
 
-      server.send({ aep_version: "0.1", id: "sse_01", type: "task.progress", source: "server", created_at: new Date().toISOString(), payload: {} });
+      server.send({ spec_version: "0.2", id: "sse_01", type: "task.progress", source: "server", created_at: new Date().toISOString(), payload: {} });
     });
     req.on("error", reject);
     setTimeout(() => { req.destroy(); resolve(""); }, 1000);
@@ -38,7 +38,7 @@ test("SSE ingest endpoint accepts POST events", async () => {
   server.on("message", (event) => serverMessages.push(event));
   await server.start();
 
-  const event = JSON.stringify({ aep_version: "0.1", id: "ingest_01", type: "memory.fact.added", source: "client", created_at: new Date().toISOString(), payload: {} });
+  const event = JSON.stringify({ spec_version: "0.2", id: "ingest_01", type: "memory.fact.added", source: "client", created_at: new Date().toISOString(), payload: {} });
   const ac = new AbortController();
   const response = await fetch(`http://127.0.0.1:${server.port}/aep/events`, {
     method: "POST",
@@ -83,7 +83,7 @@ test("SSE client sends events via POST to ingest endpoint", async () => {
   await server.start();
 
   const ac = new AbortController();
-  const body = JSON.stringify({ aep_version: "0.1", id: "post_01", type: "task.submitted", source: "agent:test", created_at: new Date().toISOString(), payload: {} });
+  const body = JSON.stringify({ spec_version: "0.2", id: "post_01", type: "task.submitted", source: "agent:test", created_at: new Date().toISOString(), payload: {} });
   const response = await fetch(`http://127.0.0.1:${server.port}/aep/events`, {
     method: "POST",
     headers: { "Content-Type": "application/x-ndjson" },

@@ -3,7 +3,7 @@ import test from "node:test";
 import { EventRouter } from "../src/index.js";
 
 const makeEvent = (type, overrides = {}) => ({
-  aep_version: "0.1",
+  spec_version: "0.2",
   id: "evt_01",
   type,
   source: "agent:test",

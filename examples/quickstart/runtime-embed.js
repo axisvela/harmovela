@@ -14,7 +14,7 @@ service.subscribe("task.*", (event) => {
 
 await service.start();
 service.publish({
-  aep_version: "0.1",
+  spec_version: "0.2",
   id: "evt_embed",
   type: "task.submitted",
   source: "example:sdk",

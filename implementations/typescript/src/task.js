@@ -66,7 +66,7 @@ export class TaskTracker {
     this.updatedAt = nowISO();
 
     const event = {
-      aep_version: "0.1",
+      spec_version: "0.2",
       id: this.nextEventId(),
       type: eventType,
       source: this.source,

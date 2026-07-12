@@ -6,7 +6,7 @@ export async function emitCommand(type, options = {}) {
   let payload;
   try { payload = JSON.parse(options.payload ?? "{}"); } catch { throw new Error("invalid JSON payload"); }
   const event = {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: options.id ?? randomUUID(),
     type,
     source: options.source ?? "cli:aep",

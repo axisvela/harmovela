@@ -26,20 +26,20 @@ test("sdk runtime-embed example publishes and receives an event", async () => {
 });
 
 test("service http-api-client example round-trips through aepd", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "aep-ex-"));
-  const configPath = path.join(dir, "aep.config.json");
+  const dir = await mkdtemp(path.join(tmpdir(), "harmovela-ex-"));
+  const configPath = path.join(dir, "harmovela.config.json");
   const config = defaultConfig();
   config.delivery.store = "memory";
   config.transports.websocket.enabled = false;
   config.transports.sse.enabled = false;
-  config.transports.api = { enabled: true, host: "127.0.0.1", port: 8795, path: "/aep/api" };
+  config.transports.api = { enabled: true, host: "127.0.0.1", port: 8795, path: "/harmovela/api" };
   await writeFile(configPath, JSON.stringify(config), "utf8");
 
-  const aepd = path.join(repoRoot, "implementations", "typescript", "src", "runtime", "server.js");
-  const daemon = spawn(process.execPath, [aepd], { cwd: repoRoot, env: { ...process.env, AEP_CONFIG: configPath } });
+  const harmovelad = path.join(repoRoot, "implementations", "typescript", "src", "runtime", "server.js");
+  const daemon = spawn(process.execPath, [harmovelad], { cwd: repoRoot, env: { ...process.env, HARMOVELA_CONFIG: configPath } });
   try {
-    await waitFor(daemon.stdout, /aepd started/);
-    const result = await runNode("examples/service-client/http-subscribe.js", ["--base", "http://127.0.0.1:8795/aep/api"]);
+    await waitFor(daemon.stdout, /harmovelad started/);
+    const result = await runNode("examples/service-client/http-subscribe.js", ["--base", "http://127.0.0.1:8795/harmovela/api"]);
     assert.equal(result.code, 0, result.stderr);
     assert.match(result.stdout, /received evt_http/);
   } finally {

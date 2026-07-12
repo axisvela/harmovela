@@ -40,7 +40,7 @@ test("gRPC client connects and exchanges messages", async () => {
   await client.start();
 
   const testEvent = {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: "evt_test",
     type: "session.opened",
     source: "client",
@@ -55,7 +55,7 @@ test("gRPC client connects and exchanges messages", async () => {
   assert.equal(serverMessages[0].type, "session.opened");
 
   const responseEvent = {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: "evt_resp",
     type: "session.ready",
     source: "server",
@@ -89,7 +89,7 @@ test("gRPC bidirectional streaming", async () => {
 
   for (let i = 0; i < 3; i++) {
     client.send({
-      aep_version: "0.1",
+      spec_version: "0.2",
       id: `client_${i}`,
       type: "test.client",
       source: "client",
@@ -107,7 +107,7 @@ test("gRPC bidirectional streaming", async () => {
 
   for (let i = 0; i < 3; i++) {
     server.send({
-      aep_version: "0.1",
+      spec_version: "0.2",
       id: `server_${i}`,
       type: "test.server",
       source: "server",
@@ -165,7 +165,7 @@ test("gRPC server can handle multiple clients", async () => {
   await new Promise((r) => setTimeout(r, 100));
 
   client1.send({
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: "c1_01",
     type: "test.client1",
     source: "client1",
@@ -173,7 +173,7 @@ test("gRPC server can handle multiple clients", async () => {
     payload: {}
   });
   client2.send({
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: "c2_01",
     type: "test.client2",
     source: "client2",

@@ -14,8 +14,8 @@ const fixtures = manifest.fixtures.map((f) => f.path);
 const levels = Object.fromEntries(
   manifest.fixtures.map((f) => [f.path, f.level])
 );
-const targetLevel = manifest.default_target_level || "AEP-C1";
-const LEVEL_ORDER = { "AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2, "AEP-C3": 3 };
+const targetLevel = manifest.default_target_level || "HARMOVELA-C1";
+const LEVEL_ORDER = { "HARMOVELA-C0": 0, "HARMOVELA-C1": 1, "HARMOVELA-C2": 2, "HARMOVELA-C3": 3 };
 
 function isAboveTarget(fixturePath) {
   return (
@@ -79,7 +79,7 @@ function parseResults(stdout, stderr, exitCode) {
   const combined = stdout + "\n" + stderr;
 
   const explicitPattern =
-    /(^|\n|\r|:\s+)(PASS|SKIP|FAIL)\s+(?:AEP-C\d\s+)?(fixtures\/[\w.\/-]+)/gm;
+    /(^|\n|\r|:\s+)(PASS|SKIP|FAIL)\s+(?:HARMOVELA-C\d\s+)?(fixtures\/[\w.\/-]+)/gm;
   let match;
   while ((match = explicitPattern.exec(combined)) !== null) {
     parsed[match[3]] = match[2];

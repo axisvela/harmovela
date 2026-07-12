@@ -7,7 +7,7 @@ import { defaultConfig } from "../src/runtime/config.js";
 
 function event(overrides = {}) {
   return {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: `evt_${Date.now()}_${Math.random()}`,
     type: "task.submitted",
     source: "test",
@@ -87,7 +87,7 @@ test("api healthz returns runtime and delivery stats", async () => {
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.status, "ok");
-  assert.equal(body.runtime.id, "aepd-local");
+  assert.equal(body.runtime.id, "harmovelad-local");
   assert.equal(body.delivery.pending, 0);
   await service.stop();
 });

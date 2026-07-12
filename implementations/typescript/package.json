@@ -3,19 +3,19 @@
   "version": "0.1.0-draft",
   "private": true,
   "type": "module",
-  "description": "Draft Agent Event Protocol TypeScript reference harness.",
+  "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js"
   },
   "bin": {
-    "aep-harness": "./src/stdio.js",
-    "aep": "./src/cli/aep.js",
-    "aepd": "./src/runtime/server.js"
+    "harmovela-harness": "./src/stdio.js",
+    "harmovela": "./src/cli/aep.js",
+    "harmovelad": "./src/runtime/server.js"
   },
   "scripts": {
-    "aep": "node ./src/cli/aep.js",
-    "aepd": "node ./src/runtime/server.js",
+    "harmovela": "node ./src/cli/aep.js",
+    "harmovelad": "node ./src/runtime/server.js",
     "harness": "node ./src/stdio.js",
     "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
     "demo:mcp-aep-consumer": "node ./examples/mcp-aep-consumer.js",

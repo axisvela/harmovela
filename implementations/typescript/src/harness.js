@@ -68,10 +68,10 @@ export class AepHarness {
       })];
     }
 
-    if (value.aep_version !== "0.1") {
+    if (value.spec_version !== "0.2") {
       return [this._event("event.rejected", value, {
-        errors: [`unsupported protocol version: ${value.aep_version}`],
-        error: errorPayload(ErrorCode.UNSUPPORTED_VERSION, `unsupported version ${value.aep_version}`, { details: { supported: ["0.1"] } })
+        errors: [`unsupported protocol version: ${value.spec_version}`],
+        error: errorPayload(ErrorCode.UNSUPPORTED_VERSION, `unsupported version ${value.spec_version}`, { details: { supported: ["0.2"] } })
       })];
     }
 
@@ -115,8 +115,8 @@ export class AepHarness {
 
   _handleCapabilitiesRequested(event) {
     return this._event("capabilities.declared", event, {
-      protocol: "aep",
-      aep_version: "0.1",
+      protocol: "harmovela",
+      spec_version: "0.2",
       transports: ["stdio"],
       delivery_modes: ["best_effort", "at_least_once", "replayable"],
       features: [
@@ -233,14 +233,14 @@ export class AepHarness {
     this._session = new AepSession({
       id: event.session_id ?? `sess_${Date.now().toString(36)}`,
       source: this.source,
-      version: "0.1"
+      version: "0.2"
     });
 
     this._session.opened();
 
     return this._session.ready({
-      protocol: "aep",
-      aep_version: "0.1",
+      protocol: "harmovela",
+      spec_version: "0.2",
       transports: ["stdio"],
       features: ["envelope", "subscription", "task_lifecycle", "error_model"]
     });
@@ -272,7 +272,7 @@ export class AepHarness {
     const next = String(++this._sequence).padStart(6, "0");
 
     return {
-      aep_version: input?.aep_version ?? "0.1",
+      spec_version: input?.spec_version ?? "0.2",
       id: `evt_harness_${next}`,
       type,
       source: this.source,

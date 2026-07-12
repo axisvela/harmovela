@@ -9,9 +9,9 @@ test("MockStdioTransport receives and parses NDJSON events", async () => {
   transport.on("message", (event) => received.push(event));
   await transport.start();
 
-  transport.feed('{"aep_version":"0.1","id":"evt_01","type":"task.progress","source":"tool:crawler","created_at":"2026-07-09T10:00:00Z","payload":{}}');
+  transport.feed('{"spec_version":"0.2","id":"evt_01","type":"task.progress","source":"tool:crawler","created_at":"2026-07-09T10:00:00Z","payload":{}}');
   transport.feed("");
-  transport.feed('{"aep_version":"0.1","id":"evt_02","type":"task.completed","source":"tool:crawler","created_at":"2026-07-09T10:01:00Z","payload":{}}');
+  transport.feed('{"spec_version":"0.2","id":"evt_02","type":"task.completed","source":"tool:crawler","created_at":"2026-07-09T10:01:00Z","payload":{}}');
 
   assert.equal(received.length, 2);
   assert.equal(received[0].type, "task.progress");
@@ -44,7 +44,7 @@ test("MockStdioTransport ignores empty lines", async () => {
   transport.feed("");
   transport.feed("   ");
   transport.feed("");
-  transport.feed('{"aep_version":"0.1","id":"evt_03","type":"session.opened","source":"agent:tester","created_at":"2026-07-09T10:00:00Z","payload":{}}');
+  transport.feed('{"spec_version":"0.2","id":"evt_03","type":"session.opened","source":"agent:tester","created_at":"2026-07-09T10:00:00Z","payload":{}}');
 
   assert.equal(received.length, 1);
   assert.equal(received[0].type, "session.opened");

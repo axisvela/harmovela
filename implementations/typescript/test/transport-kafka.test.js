@@ -55,7 +55,7 @@ test("KafkaTransport _onSend throws when not started", () => {
 });
 
 test("KafkaTransport roundtrip JSON", () => {
-  const event = { aep_version: "0.1", id: "evt_001", type: "test", source: "test", created_at: "2026-07-10T10:00:00Z", payload: {} };
+  const event = { spec_version: "0.2", id: "evt_001", type: "test", source: "test", created_at: "2026-07-10T10:00:00Z", payload: {} };
   const json = JSON.stringify(event);
   const parsed = JSON.parse(json);
   assert.equal(parsed.id, "evt_001");
