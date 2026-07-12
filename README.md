@@ -1,31 +1,31 @@
-# Axisrobo AEP
+# Harmovela Protocol
 
-> [ä¸­æ–‡æ–‡æ¡£ (Chinese)](README_zh.md) | [Spec Site](https://axisrobo.github.io/aep/)
+> [ä¸­æ–‡æ–‡æ¡£ (Chinese)](README_zh.md) | [Spec Site](https://axisrobo.github.io/harmovela/)
 
-**Agent Event Protocol (AEP)** is a proposed open protocol for asynchronous communication between large language model agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
+**Harmovela Protocol** is a proposed open coordination protocol for autonomous systems: large language model agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
 
-AEP is designed as the asynchronous counterpart to MCP. MCP is good at synchronous capability invocation: listing tools, calling tools, reading resources, and returning immediate results. AEP focuses on the communication patterns MCP does not naturally cover: event streams, long-running task lifecycle, background feedback, memory updates, context invalidation, durable delivery, replay, cancellation, and agent-to-agent coordination.
+Harmovela complements MCP. MCP is good at synchronous capability invocation: listing tools, calling tools, reading resources, and returning immediate results. Harmovela focuses on asynchronous coordination across event streams, long-running task lifecycle, background feedback, memory and context updates, durable delivery, replay, cancellation, delegation, recovery, and governance.
 
 ## About
 
-AEP 0.1 draft is a multi-language protocol repository with:
+The current 0.1 draft is a multi-language protocol repository with:
 
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
-- **4 productized implementations** (TypeScript, Python, Go, Java) ï¿-each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
+- **4 productized implementations** (TypeScript, Python, Go, Java) ï¿½-each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance
-- **Spec site** at [axisrobo.github.io/aep](https://axisrobo.github.io/aep/)
+- **Spec site** at [axisrobo.github.io/harmovela](https://axisrobo.github.io/harmovela/)
 
 ## Vision
 
 Agents should not only ask for capabilities. They also need to listen, react, coordinate, and recover.
 
-AEP defines a common event model so that agents can receive asynchronous feedback from tools, other agents, memory systems, external environments, and runtime infrastructure without forcing every system to invent a custom callback, polling, or message queue interface.
+Harmovela defines a common coordination model so that agents can receive asynchronous feedback from tools, other agents, memory systems, external environments, and runtime infrastructure without forcing every system to invent a custom callback, polling, or message queue interface.
 
 ## Scope
 
-AEP covers:
+Harmovela covers:
 
 - Asynchronous events and notifications
 - Publish / subscribe communication
@@ -37,7 +37,7 @@ AEP covers:
 - Delivery acknowledgement, replay, and correlation
 - Transport bindings for local and distributed runtimes
 
-AEP does not replace:
+Harmovela does not replace:
 
 - MCP synchronous tool invocation
 - LLM completion APIs
@@ -47,7 +47,7 @@ AEP does not replace:
 
 ## Relationship To MCP
 
-| MCP | AEP |
+| MCP | Harmovela |
 | --- | --- |
 | Synchronous request / response | Asynchronous event streams |
 | Tool invocation | Task lifecycle and tool feedback |
@@ -55,17 +55,17 @@ AEP does not replace:
 | Client-driven calls | Producer-driven events |
 | Immediate result | Deferred, incremental, replayable results |
 
-AEP should interoperate with MCP rather than fork it. AEP can carry events about MCP tool calls, but it should remain protocol-independent enough to support non-MCP agents, tools, memory systems, robotics systems, browsers, IDEs, and cloud runtimes.
+Harmovela should interoperate with MCP rather than fork it. Harmovela can carry events about MCP tool calls, but it should remain protocol-independent enough to support non-MCP agents, tools, memory systems, robotics systems, browsers, IDEs, and cloud runtimes.
 
 
 ## Documents
 
 ### Core (English)
 
-- `docs/vision.md` -- project vision, goals, non-goals, and principles ([ÖÐÎÄ](docs/zh/vision.md))
-- `docs/architecture.md` -- system architecture and major protocol layers ([ÖÐÎÄ](docs/zh/architecture.md))
+- `docs/vision.md` -- project vision, goals, non-goals, and principles ([ï¿½ï¿½ï¿½ï¿½](docs/zh/vision.md))
+- `docs/architecture.md` -- system architecture and major protocol layers ([ï¿½ï¿½ï¿½ï¿½](docs/zh/architecture.md))
 - `docs/differentiation.md` -- non-normative positioning and comparison material
-- `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([ÖÐÎÄ](docs/zh/protocol-design.md))
+- `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([ï¿½ï¿½ï¿½ï¿½](docs/zh/protocol-design.md))
 - `docs/mcp-relationship.md` -- detailed comparison and interop model with MCP
 - `docs/roadmap.md` -- proposed phases toward a usable open protocol
 
@@ -122,14 +122,14 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 
 This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `.superpowers/`.
 
-- `AGENTS.md` ï¿-OpenCode project rules
-- `CLAUDE.md` ï¿-Claude Code project rules
-- `.superpowers/specs/` ï¿-Superpowers-backed design specs
-- `.superpowers/plans/` ï¿-Superpowers-backed execution plans
+- `AGENTS.md` ï¿½-OpenCode project rules
+- `CLAUDE.md` ï¿½-Claude Code project rules
+- `.superpowers/specs/` ï¿½-Superpowers-backed design specs
+- `.superpowers/plans/` ï¿½-Superpowers-backed execution plans
 
-## AEP Harness
+## Harmovela Harness
 
-The repository includes a minimal local AEP 0.1 draft conformance harness that uses newline-delimited JSON over stdio.
+The repository includes a minimal local 0.1 draft conformance harness that uses newline-delimited JSON over stdio.
 
 Run tests:
 
@@ -160,7 +160,7 @@ cd implementations/typescript && npm run harness < ../../conformance/fixtures/ta
 
 Run examples:
 
-See `examples/` ï¿-organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
+See `examples/` ï¿½-organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
 
 ```sh
 # TypeScript quickstart
@@ -178,8 +178,8 @@ node examples/mcp-bridge/async-tool.js
 
 ## Spec Site
 
-The rendered specification is published at **[https://axisrobo.github.io/aep/](https://axisrobo.github.io/aep/)**.
+The rendered specification is published at **[https://axisrobo.github.io/harmovela/](https://axisrobo.github.io/harmovela/)**.
 
 ## Status
 
-AEP is a draft open protocol with four active reference implementations (TypeScript, Python, Go, Java) maintaining cross-language parity. The repo includes layered specifications for session, subscription, task lifecycle, error model, versioning, conformance, delivery, reliability, security, event registry governance, and four transport bindings (stdio, WebSocket, SSE, gRPC). Each reference supports SQLite-backed delivery stores, and a cross-language conformance runner (`node tools/conformance-runner.js`) validates shared fixtures across all four languages.
+Harmovela is a draft open protocol with four active reference implementations (TypeScript, Python, Go, Java) maintaining cross-language parity. The repo includes layered specifications for session, subscription, task lifecycle, error model, versioning, conformance, delivery, reliability, security, event registry governance, and four transport bindings (stdio, WebSocket, SSE, gRPC). Each reference supports SQLite-backed delivery stores, and a cross-language conformance runner (`node tools/conformance-runner.js`) validates shared fixtures across all four languages.

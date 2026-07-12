@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Session — AEP Specification</title>
+  <title>Session — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -43,21 +43,7 @@
  CLOSED                              ERROR
 </code></pre>
 <p>Valid transitions:</p>
-<table>
-<thead><tr><th>From</th><th>To</th><th>Trigger</th></tr></thead>
-<tbody>
-<tr><td><code>CREATED</code></td><td><code>OPENED</code></td><td><code>session.opened</code> event sent or received</td></tr>
-<tr><td><code>CREATED</code></td><td><code>CLOSED</code></td><td>Transport disconnect before open</td></tr>
-<tr><td><code>CREATED</code></td><td><code>ERROR</code></td><td>Protocol or transport error before open</td></tr>
-<tr><td><code>OPENED</code></td><td><code>READY</code></td><td><code>session.ready</code> sent, capability negotiation complete</td></tr>
-<tr><td><code>OPENED</code></td><td><code>CLOSED</code></td><td><code>session.closed</code> or transport disconnect</td></tr>
-<tr><td><code>OPENED</code></td><td><code>ERROR</code></td><td>Protocol or transport error</td></tr>
-<tr><td><code>READY</code></td><td><code>CLOSED</code></td><td><code>session.closed</code> or graceful transport shutdown</td></tr>
-<tr><td><code>READY</code></td><td><code>ERROR</code></td><td>Unrecoverable error or heartbeat timeout</td></tr>
-<tr><td><code>CLOSED</code></td><td>—</td><td>Terminal state</td></tr>
-<tr><td><code>ERROR</code></td><td>—</td><td>Terminal state</td></tr>
-</tbody>
-</table>
+<p>| From | To | Trigger | |---|---|---| | <code>CREATED</code> | <code>OPENED</code> | <code>session.opened</code> event sent or received | | <code>CREATED</code> | <code>CLOSED</code> | Transport disconnect before open | | <code>CREATED</code> | <code>ERROR</code> | Protocol or transport error before open | | <code>OPENED</code> | <code>READY</code> | <code>session.ready</code> sent, capability negotiation complete | | <code>OPENED</code> | <code>CLOSED</code> | <code>session.closed</code> or transport disconnect | | <code>OPENED</code> | <code>ERROR</code> | Protocol or transport error | | <code>READY</code> | <code>CLOSED</code> | <code>session.closed</code> or graceful transport shutdown | | <code>READY</code> | <code>ERROR</code> | Unrecoverable error or heartbeat timeout | | <code>CLOSED</code> | — | Terminal state | | <code>ERROR</code> | — | Terminal state |</p>
 <h2>Session Events</h2>
 <h3><code>session.opened</code></h3>
 <p>Sent by the initiator to begin a session.</p>
@@ -91,19 +77,7 @@
 </code></pre>
 <p>Required payload fields: <code>session_id</code>, <code>capabilities</code>.</p>
 <p>Capability fields:</p>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>protocol</code></td><td>string</td><td>yes</td><td><code>"aep"</code></td></tr>
-<tr><td><code>aep_version</code></td><td>string</td><td>yes</td><td>Protocol version string</td></tr>
-<tr><td><code>transports</code></td><td>string[]</td><td>yes</td><td>Supported transport names</td></tr>
-<tr><td><code>delivery_modes</code></td><td>string[]</td><td>no</td><td>Supported delivery guarantees</td></tr>
-<tr><td><code>features</code></td><td>string[]</td><td>no</td><td>Supported protocol features</td></tr>
-<tr><td><code>max_payload_size</code></td><td>number</td><td>no</td><td>Maximum payload bytes accepted</td></tr>
-<tr><td><code>compression</code></td><td>string[]</td><td>no</td><td>Supported compression algorithms</td></tr>
-<tr><td><code>heartbeat_interval_ms</code></td><td>number</td><td>no</td><td>Expected heartbeat interval (0 = disabled)</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Required | Description | |---|---|---|---| | <code>protocol</code> | string | yes | <code>"aep"</code> | | <code>aep_version</code> | string | yes | Protocol version string | | <code>transports</code> | string[] | yes | Supported transport names | | <code>delivery_modes</code> | string[] | no | Supported delivery guarantees | | <code>features</code> | string[] | no | Supported protocol features | | <code>max_payload_size</code> | number | no | Maximum payload bytes accepted | | <code>compression</code> | string[] | no | Supported compression algorithms | | <code>heartbeat_interval_ms</code> | number | no | Expected heartbeat interval (0 = disabled) |</p>
 <h3><code>session.heartbeat</code></h3>
 <p>Sent periodically by either side when <code>heartbeat_interval_ms</code> &gt; 0. No response is expected. A peer that misses N consecutive heartbeat intervals (implementation-defined, recommended N=3) should transition the session to <code>ERROR</code>.</p>
 <pre><code>{

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vision — AEP Specification</title>
+  <title>Vision — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -24,9 +24,9 @@
 <body>
 <nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Vision</h1>
-<h1>AEP Vision</h1>
+<h1>Harmovela Vision</h1>
 <h2>One-Line Vision</h2>
-<p>AEP makes asynchronous communication a first-class capability for LLM agents.</p>
+<p>Harmovela makes asynchronous coordination a first-class capability for autonomous systems.</p>
 <h2>Problem</h2>
 <p>Modern agent systems are no longer simple request-response programs. They run background tasks, watch external environments, update memory, collaborate with other agents, receive delayed tool results, and react to context changes after the original prompt has moved on.</p>
 <p>MCP standardizes how agents synchronously discover and call tools. That is necessary but incomplete. Agents also need a standard way to receive events, progress, state changes, memory updates, and deferred results.</p>
@@ -41,7 +41,7 @@
 </ul>
 <p>These approaches do not compose well across agent runtimes, tools, memory systems, and deployment environments.</p>
 <h2>Vision</h2>
-<p>AEP should become the common asynchronous event layer for agentic systems.</p>
+<p>Harmovela should become the common asynchronous coordination layer for agentic systems.</p>
 <p>An agent should be able to subscribe to a memory stream, launch a long-running tool task, receive progress events, observe external state changes, cancel work, replay missed events, and correlate all of this with a conversation or task without depending on one vendor's runtime.</p>
 <h2>Core Use Cases</h2>
 <h3>Event Streams</h3>
@@ -64,7 +64,7 @@
 <li>Simulation</li>
 <li>Multi-step planning</li>
 </ul>
-<p>AEP should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.</p>
+<p>Harmovela should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.</p>
 <h3>Context And Memory Events</h3>
 <p>Agents need to react when their context changes.</p>
 <p>Examples:</p>
@@ -86,8 +86,8 @@
 </ul>
 <h2>Goals</h2>
 <ul>
-<li>Define a protocol-level event envelope suitable for LLM agents.</li>
-<li>Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, and agent messages.</li>
+<li>Define a protocol-level coordination envelope suitable for autonomous systems.</li>
+<li>Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, agent messages, and delegation.</li>
 <li>Support local and distributed runtimes.</li>
 <li>Support multiple transports without making the protocol depend on one broker.</li>
 <li>Preserve causality and correlation across conversations, tasks, tool calls, and events.</li>
@@ -96,11 +96,11 @@
 </ul>
 <h2>Non-Goals</h2>
 <ul>
-<li>AEP is not a replacement for MCP.</li>
-<li>AEP is not a new LLM inference API.</li>
-<li>AEP is not a general database API.</li>
-<li>AEP is not a mandatory message broker implementation.</li>
-<li>AEP does not define every domain-specific event schema.</li>
+<li>Harmovela is not a replacement for MCP.</li>
+<li>Harmovela is not a new LLM inference API.</li>
+<li>Harmovela is not a general database API.</li>
+<li>Harmovela is not a mandatory message broker implementation.</li>
+<li>Harmovela does not define every domain-specific event schema.</li>
 </ul>
 <h2>Design Principles</h2>
 <ul>

@@ -1,8 +1,8 @@
-# AEP Architecture
+# Harmovela Architecture
 
 ## Architectural Position
 
-AEP sits beside MCP as an asynchronous communication protocol for agentic systems.
+Harmovela sits beside MCP as an asynchronous coordination protocol for agentic systems.
 
 ```text
 LLM Agent / Agent Runtime
@@ -17,20 +17,20 @@ LLM Agent / Agent Runtime
         ^
         | asynchronous events
         v
-      AEP
+   Harmovela
         |
         | tools, memory, context, environments, agents, orchestrators
 ```
 
 MCP answers: "What can I call, and what is the result now?"
 
-AEP answers: "What happened, what is still happening, and what should I react to?"
+Harmovela answers: "What happened, what is still happening, what state changed, and what should I react to?"
 
-## What AEP Adds
+## What Harmovela Adds
 
-Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. AEP does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, and agent coordination.
+Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, delegation, recovery, and agent coordination.
 
-AEP also recommends consistently named relationship fields such as `session_id`, `conversation_id`, `task_id`, `correlation_id`, and `causation_id`. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.
+Harmovela also recommends consistently named relationship fields such as `session_id`, `conversation_id`, `task_id`, `correlation_id`, and `causation_id`. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.
 
 ## Major Components
 

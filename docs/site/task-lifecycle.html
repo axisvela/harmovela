@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Task Lifecycle — AEP Specification</title>
+  <title>Task Lifecycle — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -54,46 +54,7 @@
      └───────┘ └──────────┘ └────────┘ └───────────┘
 </code></pre>
 <h3>State Transitions</h3>
-<table>
-<thead><tr><th>From</th><th>To</th><th>Event</th><th>Notes</th></tr></thead>
-<tbody>
-<tr><td>—</td><td><code>SUBMITTED</code></td><td><code>task.submitted</code></td><td>Initial state</td></tr>
-<tr><td><code>SUBMITTED</code></td><td><code>ACCEPTED</code></td><td><code>task.accepted</code></td><td>Producer accepts the task</td></tr>
-<tr><td><code>SUBMITTED</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Pre-validation failure</td></tr>
-<tr><td><code>SUBMITTED</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled before acceptance</td></tr>
-<tr><td><code>SUBMITTED</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Expired before acceptance</td></tr>
-<tr><td><code>ACCEPTED</code></td><td><code>STARTED</code></td><td><code>task.started</code></td><td>Work begins</td></tr>
-<tr><td><code>ACCEPTED</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Failed before starting</td></tr>
-<tr><td><code>ACCEPTED</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled before starting</td></tr>
-<tr><td><code>ACCEPTED</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Expired before starting</td></tr>
-<tr><td><code>STARTED</code></td><td><code>PROGRESS</code></td><td><code>task.progress</code></td><td>Intermediate progress report</td></tr>
-<tr><td><code>STARTED</code></td><td><code>OUTPUT</code></td><td><code>task.output</code></td><td>Partial output produced</td></tr>
-<tr><td><code>STARTED</code></td><td><code>BLOCKED</code></td><td><code>task.blocked</code></td><td>Waiting for dependency</td></tr>
-<tr><td><code>STARTED</code></td><td><code>COMPLETED</code></td><td><code>task.completed</code></td><td>Task finished successfully</td></tr>
-<tr><td><code>STARTED</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Task failed during execution</td></tr>
-<tr><td><code>STARTED</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled during execution</td></tr>
-<tr><td><code>STARTED</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Exceeded deadline</td></tr>
-<tr><td><code>BLOCKED</code></td><td><code>STARTED</code></td><td><code>task.started</code></td><td>Resumed after unblocking</td></tr>
-<tr><td><code>BLOCKED</code></td><td><code>PROGRESS</code></td><td><code>task.progress</code></td><td>Progress while blocked</td></tr>
-<tr><td><code>BLOCKED</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Failed while blocked</td></tr>
-<tr><td><code>BLOCKED</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled while blocked</td></tr>
-<tr><td><code>BLOCKED</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Expired while blocked</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>PROGRESS</code></td><td><code>task.progress</code></td><td>Repeated progress updates</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>OUTPUT</code></td><td><code>task.output</code></td><td>Partial output</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>BLOCKED</code></td><td><code>task.blocked</code></td><td>Blocked during progress</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>COMPLETED</code></td><td><code>task.completed</code></td><td>Task finished</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Failed during progress</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled during progress</td></tr>
-<tr><td><code>PROGRESS</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Expired during progress</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>PROGRESS</code></td><td><code>task.progress</code></td><td>More progress after partial output</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>OUTPUT</code></td><td><code>task.output</code></td><td>Additional partial output</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>BLOCKED</code></td><td><code>task.blocked</code></td><td>Blocked after partial output</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>COMPLETED</code></td><td><code>task.completed</code></td><td>Final output = completion</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>FAILED</code></td><td><code>task.failed</code></td><td>Failed after partial output</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>CANCELLED</code></td><td><code>task.cancelled</code></td><td>Cancelled after partial output</td></tr>
-<tr><td><code>OUTPUT</code></td><td><code>TIMED_OUT</code></td><td><code>task.timed_out</code></td><td>Expired after partial output</td></tr>
-</tbody>
-</table>
+<p>| From | To | Event | Notes | |---|---|---|---| | — | <code>SUBMITTED</code> | <code>task.submitted</code> | Initial state | | <code>SUBMITTED</code> | <code>ACCEPTED</code> | <code>task.accepted</code> | Producer accepts the task | | <code>SUBMITTED</code> | <code>FAILED</code> | <code>task.failed</code> | Pre-validation failure | | <code>SUBMITTED</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled before acceptance | | <code>SUBMITTED</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Expired before acceptance | | <code>ACCEPTED</code> | <code>STARTED</code> | <code>task.started</code> | Work begins | | <code>ACCEPTED</code> | <code>FAILED</code> | <code>task.failed</code> | Failed before starting | | <code>ACCEPTED</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled before starting | | <code>ACCEPTED</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Expired before starting | | <code>STARTED</code> | <code>PROGRESS</code> | <code>task.progress</code> | Intermediate progress report | | <code>STARTED</code> | <code>OUTPUT</code> | <code>task.output</code> | Partial output produced | | <code>STARTED</code> | <code>BLOCKED</code> | <code>task.blocked</code> | Waiting for dependency | | <code>STARTED</code> | <code>COMPLETED</code> | <code>task.completed</code> | Task finished successfully | | <code>STARTED</code> | <code>FAILED</code> | <code>task.failed</code> | Task failed during execution | | <code>STARTED</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled during execution | | <code>STARTED</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Exceeded deadline | | <code>BLOCKED</code> | <code>STARTED</code> | <code>task.started</code> | Resumed after unblocking | | <code>BLOCKED</code> | <code>PROGRESS</code> | <code>task.progress</code> | Progress while blocked | | <code>BLOCKED</code> | <code>FAILED</code> | <code>task.failed</code> | Failed while blocked | | <code>BLOCKED</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled while blocked | | <code>BLOCKED</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Expired while blocked | | <code>PROGRESS</code> | <code>PROGRESS</code> | <code>task.progress</code> | Repeated progress updates | | <code>PROGRESS</code> | <code>OUTPUT</code> | <code>task.output</code> | Partial output | | <code>PROGRESS</code> | <code>BLOCKED</code> | <code>task.blocked</code> | Blocked during progress | | <code>PROGRESS</code> | <code>COMPLETED</code> | <code>task.completed</code> | Task finished | | <code>PROGRESS</code> | <code>FAILED</code> | <code>task.failed</code> | Failed during progress | | <code>PROGRESS</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled during progress | | <code>PROGRESS</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Expired during progress | | <code>OUTPUT</code> | <code>PROGRESS</code> | <code>task.progress</code> | More progress after partial output | | <code>OUTPUT</code> | <code>OUTPUT</code> | <code>task.output</code> | Additional partial output | | <code>OUTPUT</code> | <code>BLOCKED</code> | <code>task.blocked</code> | Blocked after partial output | | <code>OUTPUT</code> | <code>COMPLETED</code> | <code>task.completed</code> | Final output = completion | | <code>OUTPUT</code> | <code>FAILED</code> | <code>task.failed</code> | Failed after partial output | | <code>OUTPUT</code> | <code>CANCELLED</code> | <code>task.cancelled</code> | Cancelled after partial output | | <code>OUTPUT</code> | <code>TIMED_OUT</code> | <code>task.timed_out</code> | Expired after partial output |</p>
 <p>Terminal states: <code>COMPLETED</code>, <code>FAILED</code>, <code>CANCELLED</code>, <code>TIMED_OUT</code>.</p>
 <h2>Task Events</h2>
 <p>All task events share a common envelope pattern:</p>

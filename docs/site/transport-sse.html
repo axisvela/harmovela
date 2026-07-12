@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transport Sse — AEP Specification</title>
+  <title>Transport Sse — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -30,13 +30,7 @@
 <p>Define how AEP runs over HTTP Server-Sent Events (SSE), supporting server-to-client event streams with a separate HTTP endpoint for client-to-server messages.</p>
 <h2>Model</h2>
 <p>SSE is a unidirectional transport (server → client). AEP over SSE uses two HTTP channels:</p>
-<table>
-<thead><tr><th>Channel</th><th>Method</th><th>Direction</th><th>Content-Type</th></tr></thead>
-<tbody>
-<tr><td>Event stream</td><td><code>GET</code></td><td>Server → Client</td><td><code>text/event-stream</code></td></tr>
-<tr><td>Ingest endpoint</td><td><code>POST</code></td><td>Client → Server</td><td><code>application/x-ndjson</code></td></tr>
-</tbody>
-</table>
+<p>| Channel | Method | Direction | Content-Type | |---|---|---|---| | Event stream | <code>GET</code> | Server → Client | <code>text/event-stream</code> | | Ingest endpoint | <code>POST</code> | Client → Server | <code>application/x-ndjson</code> |</p>
 <h2>Event Stream (GET)</h2>
 <p>The client opens a long-lived GET request to receive AEP events as SSE.</p>
 <h3>Request</h3>
@@ -109,27 +103,10 @@ Content-Type: application/json
 }
 </code></pre>
 <h2>Session Lifecycle</h2>
-<table>
-<thead><tr><th>HTTP Interaction</th><th>Session State</th></tr></thead>
-<tbody>
-<tr><td>GET event stream established</td><td><code>OPENED</code></td></tr>
-<tr><td><code>session.ready</code> received via SSE</td><td><code>READY</code></td></tr>
-<tr><td>GET connection closed (client)</td><td><code>CLOSED</code> after grace period</td></tr>
-<tr><td>POST receives <code>session.closed</code></td><td><code>CLOSED</code></td></tr>
-<tr><td>Both channels idle &gt; timeout</td><td><code>ERROR</code> via <code>session.timeout</code></td></tr>
-</tbody>
-</table>
+<p>| HTTP Interaction | Session State | |---|---| | GET event stream established | <code>OPENED</code> | | <code>session.ready</code> received via SSE | <code>READY</code> | | GET connection closed (client) | <code>CLOSED</code> after grace period | | POST receives <code>session.closed</code> | <code>CLOSED</code> | | Both channels idle &gt; timeout | <code>ERROR</code> via <code>session.timeout</code> |</p>
 <p>A session remains open as long as either the event stream or the ingest endpoint is active. The server may close the session after a configurable idle timeout.</p>
 <h2>Error Handling</h2>
-<table>
-<thead><tr><th>Scenario</th><th>Response</th></tr></thead>
-<tbody>
-<tr><td>Invalid JSON in POST body</td><td>400 Bad Request</td></tr>
-<tr><td>Unknown session_id</td><td>404 Not Found</td></tr>
-<tr><td>POST to closed session</td><td>410 Gone</td></tr>
-<tr><td>Server internal error</td><td>500 Internal Server Error with error event on SSE</td></tr>
-</tbody>
-</table>
+<p>| Scenario | Response | |---|---| | Invalid JSON in POST body | 400 Bad Request | | Unknown session_id | 404 Not Found | | POST to closed session | 410 Gone | | Server internal error | 500 Internal Server Error with error event on SSE |</p>
 <h2>Implementation Notes</h2>
 <ul>
 <li>SSE is inherently server-to-client only. Bidirectional communication requires the POST endpoint.</li>

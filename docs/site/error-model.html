@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Error Model — AEP Specification</title>
+  <title>Error Model — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -41,68 +41,24 @@
   }
 }
 </code></pre>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>code</code></td><td>string</td><td>yes</td><td>Machine-readable error code</td></tr>
-<tr><td><code>message</code></td><td>string</td><td>yes</td><td>Human-readable description</td></tr>
-<tr><td><code>retryable</code></td><td>boolean</td><td>yes</td><td>Whether the caller may retry after this error</td></tr>
-<tr><td><code>details</code></td><td>object</td><td>no</td><td>Context-specific error metadata</td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Required | Description | |---|---|---|---| | <code>code</code> | string | yes | Machine-readable error code | | <code>message</code> | string | yes | Human-readable description | | <code>retryable</code> | boolean | yes | Whether the caller may retry after this error | | <code>details</code> | object | no | Context-specific error metadata |</p>
 <h2>Error Code Taxonomy</h2>
 <p>Errors are organized by domain. Each domain has a prefix that maps to the protocol layer where the error originates.</p>
 <h3>Protocol Errors (<code>protocol_*</code>)</h3>
 <p>Errors that prevent normal message processing.</p>
-<table>
-<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>protocol_error</code></td><td>no</td><td>Unspecified protocol violation</td></tr>
-<tr><td><code>invalid_envelope</code></td><td>no</td><td>Envelope missing required fields or malformed</td></tr>
-<tr><td><code>invalid_event_type</code></td><td>no</td><td>Event type not in registry or invalid format</td></tr>
-<tr><td><code>unsupported_version</code></td><td>no</td><td>Protocol version not supported by this peer</td></tr>
-<tr><td><code>internal_error</code></td><td>yes</td><td>Unexpected internal processing failure</td></tr>
-</tbody>
-</table>
+<p>| Code | Retryable | Meaning | |---|---|---| | <code>protocol_error</code> | no | Unspecified protocol violation | | <code>invalid_envelope</code> | no | Envelope missing required fields or malformed | | <code>invalid_event_type</code> | no | Event type not in registry or invalid format | | <code>unsupported_version</code> | no | Protocol version not supported by this peer | | <code>internal_error</code> | yes | Unexpected internal processing failure |</p>
 <h3>Session Errors (<code>session_*</code>)</h3>
 <p>Errors that affect the transport-level session.</p>
-<table>
-<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>session_error</code></td><td>no</td><td>Unspecified session error</td></tr>
-<tr><td><code>session_timeout</code></td><td>yes</td><td>Session timed out (heartbeat or idle)</td></tr>
-<tr><td><code>session_closed</code></td><td>no</td><td>Session was closed unexpectedly</td></tr>
-<tr><td><code>unauthorized</code></td><td>no</td><td>Authentication or authorization failed</td></tr>
-</tbody>
-</table>
+<p>| Code | Retryable | Meaning | |---|---|---| | <code>session_error</code> | no | Unspecified session error | | <code>session_timeout</code> | yes | Session timed out (heartbeat or idle) | | <code>session_closed</code> | no | Session was closed unexpectedly | | <code>unauthorized</code> | no | Authentication or authorization failed |</p>
 <h3>Subscription Errors (<code>subscription_*</code>)</h3>
 <p>Errors related to subscription creation or management.</p>
-<table>
-<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>subscription_error</code></td><td>no</td><td>Unspecified subscription error</td></tr>
-<tr><td><code>subscription_rejected</code></td><td>no</td><td>Subscription request rejected by producer</td></tr>
-</tbody>
-</table>
+<p>| Code | Retryable | Meaning | |---|---|---| | <code>subscription_error</code> | no | Unspecified subscription error | | <code>subscription_rejected</code> | no | Subscription request rejected by producer |</p>
 <h3>Task Errors (<code>task_*</code>)</h3>
 <p>Errors during task lifecycle.</p>
-<table>
-<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>task_error</code></td><td>no</td><td>Unspecified task error</td></tr>
-<tr><td><code>task_timeout</code></td><td>yes</td><td>Task exceeded its deadline</td></tr>
-<tr><td><code>task_cancelled</code></td><td>no</td><td>Task was cancelled</td></tr>
-</tbody>
-</table>
+<p>| Code | Retryable | Meaning | |---|---|---| | <code>task_error</code> | no | Unspecified task error | | <code>task_timeout</code> | yes | Task exceeded its deadline | | <code>task_cancelled</code> | no | Task was cancelled |</p>
 <h3>Tool Errors (<code>tool_*</code>)</h3>
 <p>Errors from tool execution.</p>
-<table>
-<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>tool_error</code></td><td>no</td><td>Unspecified tool execution error</td></tr>
-<tr><td><code>tool_timeout</code></td><td>yes</td><td>Tool execution exceeded deadline</td></tr>
-</tbody>
-</table>
+<p>| Code | Retryable | Meaning | |---|---|---| | <code>tool_error</code> | no | Unspecified tool execution error | | <code>tool_timeout</code> | yes | Tool execution exceeded deadline |</p>
 <h2>Retryability Rules</h2>
 <p>An error is retryable if the same operation might succeed on a subsequent attempt without external state changes. The rule of thumb:</p>
 <ul>
@@ -112,17 +68,7 @@
 <p>Consumers may retry retryable errors. Producers should not retry non-retryable errors.</p>
 <h2>Error Propagation</h2>
 <p>Errors appear in event payloads according to the event type:</p>
-<table>
-<thead><tr><th>Event</th><th>Error Location</th></tr></thead>
-<tbody>
-<tr><td><code>event.rejected</code></td><td><code>payload.error</code></td></tr>
-<tr><td><code>session.error</code></td><td><code>payload.error</code></td></tr>
-<tr><td><code>task.failed</code></td><td><code>payload.error</code></td></tr>
-<tr><td><code>tool.call.failed</code></td><td><code>payload.error</code></td></tr>
-<tr><td><code>subscription.rejected</code></td><td><code>payload.error</code></td></tr>
-<tr><td><code>event.dead_lettered</code></td><td><code>payload.error</code></td></tr>
-</tbody>
-</table>
+<p>| Event | Error Location | |---|---| | <code>event.rejected</code> | <code>payload.error</code> | | <code>session.error</code> | <code>payload.error</code> | | <code>task.failed</code> | <code>payload.error</code> | | <code>tool.call.failed</code> | <code>payload.error</code> | | <code>subscription.rejected</code> | <code>payload.error</code> | | <code>event.dead_lettered</code> | <code>payload.error</code> |</p>
 <h2>Implementation Notes</h2>
 <ul>
 <li>Implementations must validate that error payloads include <code>code</code>, <code>message</code>, and <code>retryable</code>.</li>

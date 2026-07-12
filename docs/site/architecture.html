@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Architecture — AEP Specification</title>
+  <title>Architecture — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -24,9 +24,9 @@
 <body>
 <nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Architecture</h1>
-<h1>AEP Architecture</h1>
+<h1>Harmovela Architecture</h1>
 <h2>Architectural Position</h2>
-<p>AEP sits beside MCP as an asynchronous communication protocol for agentic systems.</p>
+<p>Harmovela sits beside MCP as an asynchronous coordination protocol for agentic systems.</p>
 <pre><code>LLM Agent / Agent Runtime
         |
         | synchronous calls
@@ -39,15 +39,15 @@ LLM Agent / Agent Runtime
         ^
         | asynchronous events
         v
-      AEP
+   Harmovela
         |
         | tools, memory, context, environments, agents, orchestrators
 </code></pre>
 <p>MCP answers: "What can I call, and what is the result now?"</p>
-<p>AEP answers: "What happened, what is still happening, and what should I react to?"</p>
-<h2>What AEP Adds</h2>
-<p>Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. AEP does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, and agent coordination.</p>
-<p>AEP also recommends consistently named relationship fields such as <code>session_id</code>, <code>conversation_id</code>, <code>task_id</code>, <code>correlation_id</code>, and <code>causation_id</code>. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.</p>
+<p>Harmovela answers: "What happened, what is still happening, what state changed, and what should I react to?"</p>
+<h2>What Harmovela Adds</h2>
+<p>Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, delegation, recovery, and agent coordination.</p>
+<p>Harmovela also recommends consistently named relationship fields such as <code>session_id</code>, <code>conversation_id</code>, <code>task_id</code>, <code>correlation_id</code>, and <code>causation_id</code>. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.</p>
 <h2>Major Components</h2>
 <h3>Agent</h3>
 <p>An agent is a producer and consumer of events. It may publish messages, subscribe to topics, launch async tasks, receive progress, react to context changes, and coordinate with other agents.</p>

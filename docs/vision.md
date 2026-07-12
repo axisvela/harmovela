@@ -1,8 +1,8 @@
-# AEP Vision
+# Harmovela Vision
 
 ## One-Line Vision
 
-AEP makes asynchronous communication a first-class capability for LLM agents.
+Harmovela makes asynchronous coordination a first-class capability for autonomous systems.
 
 ## Problem
 
@@ -23,7 +23,7 @@ These approaches do not compose well across agent runtimes, tools, memory system
 
 ## Vision
 
-AEP should become the common asynchronous event layer for agentic systems.
+Harmovela should become the common asynchronous coordination layer for agentic systems.
 
 An agent should be able to subscribe to a memory stream, launch a long-running tool task, receive progress events, observe external state changes, cancel work, replay missed events, and correlate all of this with a conversation or task without depending on one vendor's runtime.
 
@@ -53,7 +53,7 @@ Examples:
 - Simulation
 - Multi-step planning
 
-AEP should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.
+Harmovela should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.
 
 ### Context And Memory Events
 
@@ -80,8 +80,8 @@ Examples:
 
 ## Goals
 
-- Define a protocol-level event envelope suitable for LLM agents.
-- Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, and agent messages.
+- Define a protocol-level coordination envelope suitable for autonomous systems.
+- Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, agent messages, and delegation.
 - Support local and distributed runtimes.
 - Support multiple transports without making the protocol depend on one broker.
 - Preserve causality and correlation across conversations, tasks, tool calls, and events.
@@ -90,11 +90,11 @@ Examples:
 
 ## Non-Goals
 
-- AEP is not a replacement for MCP.
-- AEP is not a new LLM inference API.
-- AEP is not a general database API.
-- AEP is not a mandatory message broker implementation.
-- AEP does not define every domain-specific event schema.
+- Harmovela is not a replacement for MCP.
+- Harmovela is not a new LLM inference API.
+- Harmovela is not a general database API.
+- Harmovela is not a mandatory message broker implementation.
+- Harmovela does not define every domain-specific event schema.
 
 ## Design Principles
 

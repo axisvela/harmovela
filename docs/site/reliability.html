@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reliability — AEP Specification</title>
+  <title>Reliability — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -44,16 +44,7 @@
   }
 }
 </code></pre>
-<table>
-<thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>max_attempts</code></td><td>number</td><td>3</td><td>Maximum delivery attempts before dead-letter</td></tr>
-<tr><td><code>backoff_ms</code></td><td>number</td><td>1000</td><td>Initial backoff delay in milliseconds</td></tr>
-<tr><td><code>backoff_multiplier</code></td><td>number</td><td>2</td><td>Exponential backoff multiplier</td></tr>
-<tr><td><code>max_backoff_ms</code></td><td>number</td><td>30000</td><td>Maximum backoff ceiling</td></tr>
-<tr><td><code>ack_timeout_ms</code></td><td>number</td><td>30000</td><td>Time to wait for <code>event.acknowledged</code></td></tr>
-</tbody>
-</table>
+<p>| Field | Type | Default | Description | |---|---|---|---| | <code>max_attempts</code> | number | 3 | Maximum delivery attempts before dead-letter | | <code>backoff_ms</code> | number | 1000 | Initial backoff delay in milliseconds | | <code>backoff_multiplier</code> | number | 2 | Exponential backoff multiplier | | <code>max_backoff_ms</code> | number | 30000 | Maximum backoff ceiling | | <code>ack_timeout_ms</code> | number | 30000 | Time to wait for <code>event.acknowledged</code> |</p>
 <h3>Backoff Calculation</h3>
 <pre><code>delay_n = min(backoff_ms × backoff_multiplier^(n-1), max_backoff_ms)
 </code></pre>
@@ -97,14 +88,7 @@ Producer dead-letters the event
 </ul>
 <h2>Durability Guarantees</h2>
 <p>Durability is declared per-delivery, not per-transport:</p>
-<table>
-<thead><tr><th>Delivery Mode</th><th>Durability</th><th>Impact</th></tr></thead>
-<tbody>
-<tr><td><code>best_effort</code></td><td>None</td><td>Event lost if consumer is unavailable</td></tr>
-<tr><td><code>at_least_once</code></td><td>Durable until acked</td><td>Producer must persist events until acknowledged</td></tr>
-<tr><td><code>replayable</code></td><td>Durable with history</td><td>Producer must retain events for replay window</td></tr>
-</tbody>
-</table>
+<p>| Delivery Mode | Durability | Impact | |---|---|---| | <code>best_effort</code> | None | Event lost if consumer is unavailable | | <code>at_least_once</code> | Durable until acked | Producer must persist events until acknowledged | | <code>replayable</code> | Durable with history | Producer must retain events for replay window |</p>
 <p>Producers must declare their durability support in <code>session.ready</code> capabilities:</p>
 <pre><code>{
   "capabilities": {
@@ -117,14 +101,7 @@ Producer dead-letters the event
   }
 }
 </code></pre>
-<table>
-<thead><tr><th>Field</th><th>Description</th></tr></thead>
-<tbody>
-<tr><td><code>replay_window_ms</code></td><td>Maximum age of events available for replay</td></tr>
-<tr><td><code>max_retention_events</code></td><td>Maximum number of events retained for replay</td></tr>
-<tr><td><code>dead_letter_support</code></td><td>Whether the producer supports dead-letter queues</td></tr>
-</tbody>
-</table>
+<p>| Field | Description | |---|---| | <code>replay_window_ms</code> | Maximum age of events available for replay | | <code>max_retention_events</code> | Maximum number of events retained for replay | | <code>dead_letter_support</code> | Whether the producer supports dead-letter queues |</p>
 <h2>Subscription-Level Delivery Tracking</h2>
 <p>A producer tracks delivery state per subscription:</p>
 <pre><code>subscription_id: sub_0001

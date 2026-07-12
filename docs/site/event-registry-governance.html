@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Event Registry Governance — AEP Specification</title>
+  <title>Event Registry Governance — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -30,32 +30,10 @@
 <p>Define how the standard event type registry is governed, extended, and versioned.</p>
 <h2>Standard Event Types</h2>
 <p>The standard event type registry is defined in each language reference:</p>
-<table>
-<thead><tr><th>Language</th><th>File</th></tr></thead>
-<tbody>
-<tr><td>TypeScript</td><td><code>implementations/typescript/src/event-types.js</code></td></tr>
-<tr><td>Python</td><td><code>implementations/python/src/aep/event_types.py</code></td></tr>
-<tr><td>Go</td><td><code>implementations/go/aep/event_types.go</code></td></tr>
-<tr><td>Java</td><td><code>implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java</code></td></tr>
-</tbody>
-</table>
+<p>| Language | File | |---|---| | TypeScript | <code>implementations/typescript/src/event-types.js</code> | | Python | <code>implementations/python/src/aep/event_types.py</code> | | Go | <code>implementations/go/aep/event_types.go</code> | | Java | <code>implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java</code> |</p>
 <p>All implementations share the same set of standard types. The shared conformance manifest defines fixture-level expectations for each event family.</p>
 <h2>Event Families</h2>
-<table>
-<thead><tr><th>Family</th><th>Prefix</th><th>Scope</th></tr></thead>
-<tbody>
-<tr><td>Session</td><td><code>session.*</code></td><td>Session lifecycle: opened, ready, heartbeat, closed, error</td></tr>
-<tr><td>Capabilities</td><td><code>capabilities.*</code></td><td>Capability negotiation: requested, declared, changed</td></tr>
-<tr><td>Subscription</td><td><code>subscription.*</code></td><td>Pub/sub lifecycle: requested, created, rejected, cancelled, expired</td></tr>
-<tr><td>Delivery</td><td><code>event.*</code></td><td>Delivery semantics: acknowledged, rejected, redelivered, replayed, dead_lettered</td></tr>
-<tr><td>Tool</td><td><code>tool.call.*</code></td><td>Tool invocation lifecycle (MCP bridge)</td></tr>
-<tr><td>Task</td><td><code>task.*</code></td><td>Async task lifecycle</td></tr>
-<tr><td>Context</td><td><code>context.*</code></td><td>Context provider events</td></tr>
-<tr><td>Memory</td><td><code>memory.*</code></td><td>Memory system events</td></tr>
-<tr><td>Agent</td><td><code>agent.*</code></td><td>Agent-to-agent messages</td></tr>
-<tr><td>Environment</td><td><code>environment.*</code></td><td>Environment observer events</td></tr>
-</tbody>
-</table>
+<p>| Family | Prefix | Scope | |---|---|---| | Session | <code>session.*</code> | Session lifecycle: opened, ready, heartbeat, closed, error | | Capabilities | <code>capabilities.*</code> | Capability negotiation: requested, declared, changed | | Subscription | <code>subscription.*</code> | Pub/sub lifecycle: requested, created, rejected, cancelled, expired | | Delivery | <code>event.*</code> | Delivery semantics: acknowledged, rejected, redelivered, replayed, dead_lettered | | Tool | <code>tool.call.*</code> | Tool invocation lifecycle (MCP bridge) | | Task | <code>task.*</code> | Async task lifecycle | | Context | <code>context.*</code> | Context provider events | | Memory | <code>memory.*</code> | Memory system events | | Agent | <code>agent.*</code> | Agent-to-agent messages | | Environment | <code>environment.*</code> | Environment observer events |</p>
 <h2>Adding a New Event Type</h2>
 <p>1. Propose the new type with a description in an issue or PR. 2. If it belongs to an existing family, prefix accordingly (e.g., <code>memory.*</code>). 3. If it defines a new family, select a clear, single-word prefix. 4. Add the type to each language's event type registry. 5. Add at least one conformance fixture exercising the type. 6. Update at least the TypeScript reference to handle the new type if it carries semantics beyond envelope validation.</p>
 <h2>Adding a New Event Family</h2>

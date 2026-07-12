@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transport Redis Streams — AEP Specification</title>
+  <title>Transport Redis Streams — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -37,43 +37,15 @@
 </ul>
 <h3>Entry Fields</h3>
 <p><code>XADD</code> entries carry the following fields, in addition to the <code>body</code> field holding the complete JSON-encoded event:</p>
-<table>
-<thead><tr><th>Field</th><th>AEP Field</th><th>Type</th></tr></thead>
-<tbody>
-<tr><td><code>body</code></td><td>(entire envelope)</td><td>JSON string</td></tr>
-<tr><td><code>aep-type</code></td><td><code>type</code></td><td>string</td></tr>
-<tr><td><code>aep-source</code></td><td><code>source</code></td><td>string</td></tr>
-<tr><td><code>aep-session</code></td><td><code>session_id</code></td><td>string</td></tr>
-<tr><td><code>aep-conversation</code></td><td><code>conversation_id</code></td><td>string</td></tr>
-<tr><td><code>aep-task</code></td><td><code>task_id</code></td><td>string</td></tr>
-<tr><td><code>aep-correlation</code></td><td><code>correlation_id</code></td><td>string</td></tr>
-<tr><td><code>aep-causation</code></td><td><code>causation_id</code></td><td>string</td></tr>
-<tr><td><code>aep-delivery-mode</code></td><td><code>delivery.mode</code></td><td>string</td></tr>
-</tbody>
-</table>
+<p>| Field | AEP Field | Type | |---|---|---| | <code>body</code> | (entire envelope) | JSON string | | <code>aep-type</code> | <code>type</code> | string | | <code>aep-source</code> | <code>source</code> | string | | <code>aep-session</code> | <code>session_id</code> | string | | <code>aep-conversation</code> | <code>conversation_id</code> | string | | <code>aep-task</code> | <code>task_id</code> | string | | <code>aep-correlation</code> | <code>correlation_id</code> | string | | <code>aep-causation</code> | <code>causation_id</code> | string | | <code>aep-delivery-mode</code> | <code>delivery.mode</code> | string |</p>
 <p>Flat fields let consumers route or filter without deserializing <code>body</code>.</p>
 <h2>Stream Key Mapping</h2>
-<table>
-<thead><tr><th>AEP context</th><th>Redis stream key</th><th>Example</th></tr></thead>
-<tbody>
-<tr><td>Type pattern <code>task.*</code></td><td><code>aep.type.&lt;type&gt;</code></td><td><code>aep.type.task.progress</code></td></tr>
-<tr><td>Source <code>agent:researcher</code></td><td><code>aep.source.&lt;source&gt;</code></td><td><code>aep.source.agent:researcher</code></td></tr>
-<tr><td>Session</td><td><code>aep.sess.&lt;session_id&gt;</code></td><td><code>aep.sess.sess_01</code></td></tr>
-<tr><td>All events</td><td><code>aep.events</code></td><td>Single-stream deployment</td></tr>
-</tbody>
-</table>
+<p>| AEP context | Redis stream key | Example | |---|---|---| | Type pattern <code>task.*</code> | <code>aep.type.&lt;type&gt;</code> | <code>aep.type.task.progress</code> | | Source <code>agent:researcher</code> | <code>aep.source.&lt;source&gt;</code> | <code>aep.source.agent:researcher</code> | | Session | <code>aep.sess.&lt;session_id&gt;</code> | <code>aep.sess.sess_01</code> | | All events | <code>aep.events</code> | Single-stream deployment |</p>
 <p>The default stream prefix is <code>aep</code>. Implementations should allow per-envelope stream routing or a single-stream deployment with field-based filtering.</p>
 <h3>Redis Cluster</h3>
 <p>In Redis Cluster, a stream key hashes to one slot. To co-locate related events on the same node, use hash tags in the stream key (e.g., <code>aep.{task_01}.type.task.progress</code>). Entries within a single stream are always totally ordered by entry ID.</p>
 <h2>Delivery Modes</h2>
-<table>
-<thead><tr><th>AEP Delivery Mode</th><th>Redis Streams Mechanism</th></tr></thead>
-<tbody>
-<tr><td><code>best_effort</code></td><td><code>XADD</code> with <code>MAXLEN</code> capped; consumers read the tail with <code>XREAD</code> and do not track a group</td></tr>
-<tr><td><code>at_least_once</code></td><td>Consumer group with <code>XREADGROUP</code>; <code>XACK</code> only after AEP <code>event.acknowledged</code> is emitted</td></tr>
-<tr><td><code>replayable</code></td><td>Consumers store a cursor entry ID and replay with <code>XRANGE</code>/<code>XREAD</code> from that ID</td></tr>
-</tbody>
-</table>
+<p>| AEP Delivery Mode | Redis Streams Mechanism | |---|---| | <code>best_effort</code> | <code>XADD</code> with <code>MAXLEN</code> capped; consumers read the tail with <code>XREAD</code> and do not track a group | | <code>at_least_once</code> | Consumer group with <code>XREADGROUP</code>; <code>XACK</code> only after AEP <code>event.acknowledged</code> is emitted | | <code>replayable</code> | Consumers store a cursor entry ID and replay with <code>XRANGE</code>/<code>XREAD</code> from that ID |</p>
 <h3>At-Least-Once</h3>
 <ul>
 <li>Consumers read with <code>XREADGROUP GROUP &lt;group&gt; &lt;consumer&gt; COUNT n STREAMS &lt;key&gt; &gt;</code>.</li>
@@ -90,15 +62,7 @@
 </ul>
 <h2>Consumer Groups</h2>
 <p>AEP sessions map to Redis Stream consumer groups:</p>
-<table>
-<thead><tr><th>Session</th><th>Consumer Group</th></tr></thead>
-<tbody>
-<tr><td><code>sess_01</code></td><td><code>aep-sess_01</code></td></tr>
-<tr><td>(no session)</td><td><code>aep-default</code></td></tr>
-<tr><td>Multiple agents sharing a session</td><td>Same group — entries distributed across members</td></tr>
-<tr><td>Independent sessions</td><td>Separate groups — each receives the full stream</td></tr>
-</tbody>
-</table>
+<p>| Session | Consumer Group | |---|---| | <code>sess_01</code> | <code>aep-sess_01</code> | | (no session) | <code>aep-default</code> | | Multiple agents sharing a session | Same group — entries distributed across members | | Independent sessions | Separate groups — each receives the full stream |</p>
 <p>Groups are created with <code>XGROUP CREATE &lt;key&gt; &lt;group&gt; $ MKSTREAM</code> (or <code>0</code> to consume history).</p>
 <h2>Ordering</h2>
 <p>Entries within a single stream key are totally ordered by entry ID:</p>
@@ -108,16 +72,7 @@
 <li>For strict global ordering, route all events through a single stream (<code>aep.events</code>).</li>
 </ul>
 <h2>Session Lifecycle</h2>
-<table>
-<thead><tr><th>Redis State</th><th>Session State</th></tr></thead>
-<tbody>
-<tr><td>Consumer created, group joined (<code>XGROUP CREATECONSUMER</code>)</td><td><code>CREATED</code></td></tr>
-<tr><td>First <code>XREADGROUP</code> returns assignment</td><td><code>OPENED</code></td></tr>
-<tr><td>First entry consumed</td><td><code>READY</code></td></tr>
-<tr><td>Consumer deleted (<code>XGROUP DELCONSUMER</code>)</td><td><code>CLOSED</code></td></tr>
-<tr><td>Consumer idle beyond claim timeout</td><td><code>ERROR</code></td></tr>
-</tbody>
-</table>
+<p>| Redis State | Session State | |---|---| | Consumer created, group joined (<code>XGROUP CREATECONSUMER</code>) | <code>CREATED</code> | | First <code>XREADGROUP</code> returns assignment | <code>OPENED</code> | | First entry consumed | <code>READY</code> | | Consumer deleted (<code>XGROUP DELCONSUMER</code>) | <code>CLOSED</code> | | Consumer idle beyond claim timeout | <code>ERROR</code> |</p>
 <h2>Implementation Notes</h2>
 <ul>
 <li>Use the native Redis client for each language: <code>go-redis</code> (Go), <code>ioredis</code>/<code>node-redis</code> (Node.js), <code>redis-py</code> (Python), <code>Jedis</code>/<code>Lettuce</code> (Java).</li>

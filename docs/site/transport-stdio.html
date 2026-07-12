@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transport Stdio — AEP Specification</title>
+  <title>Transport Stdio — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -42,14 +42,7 @@
 {"aep_version":"0.1","id":"evt_03","type":"session.closed",...}
 </code></pre>
 <h2>Direction</h2>
-<table>
-<thead><tr><th>Stream</th><th>Direction</th><th>Purpose</th></tr></thead>
-<tbody>
-<tr><td><code>stdin</code></td><td>Transport → Process</td><td>Inbound events (consumer receives)</td></tr>
-<tr><td><code>stdout</code></td><td>Process → Transport</td><td>Outbound events (producer sends)</td></tr>
-<tr><td><code>stderr</code></td><td>Process → Transport</td><td>Diagnostic output and error events</td></tr>
-</tbody>
-</table>
+<p>| Stream | Direction | Purpose | |---|---|---| | <code>stdin</code> | Transport → Process | Inbound events (consumer receives) | | <code>stdout</code> | Process → Transport | Outbound events (producer sends) | | <code>stderr</code> | Process → Transport | Diagnostic output and error events |</p>
 <p><code>stderr</code> may carry:</p>
 <ul>
 <li>Non-JSON diagnostic messages</li>
@@ -57,18 +50,7 @@
 </ul>
 <h2>Session Lifecycle</h2>
 <p>The process lifecycle maps directly to session lifecycle:</p>
-<table>
-<thead><tr><th>Process State</th><th>Session State</th><th>Notes</th></tr></thead>
-<tbody>
-<tr><td>Start</td><td><code>CREATED</code></td><td></td></tr>
-<tr><td>First <code>session.opened</code> on stdin</td><td><code>OPENED</code></td><td></td></tr>
-<tr><td><code>session.ready</code> sent on stdout</td><td><code>READY</code></td><td></td></tr>
-<tr><td>Process exit (0)</td><td><code>CLOSED</code></td><td>Graceful shutdown</td></tr>
-<tr><td>Process exit (non-0)</td><td><code>ERROR</code></td><td>Unexpected termination</td></tr>
-<tr><td>stdin closed</td><td><code>CLOSED</code></td><td>Remote peer disconnected</td></tr>
-<tr><td>Broken pipe on stdout</td><td><code>CLOSED</code></td><td>Remote peer disconnected</td></tr>
-</tbody>
-</table>
+<p>| Process State | Session State | Notes | |---|---|---| | Start | <code>CREATED</code> | | | First <code>session.opened</code> on stdin | <code>OPENED</code> | | | <code>session.ready</code> sent on stdout | <code>READY</code> | | | Process exit (0) | <code>CLOSED</code> | Graceful shutdown | | Process exit (non-0) | <code>ERROR</code> | Unexpected termination | | stdin closed | <code>CLOSED</code> | Remote peer disconnected | | Broken pipe on stdout | <code>CLOSED</code> | Remote peer disconnected |</p>
 <h2>Error Handling</h2>
 <ul>
 <li>Malformed JSON (parse error): respond with <code>event.rejected</code> on stderr.</li>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Delivery — AEP Specification</title>
+  <title>Delivery — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -29,14 +29,7 @@
 <h2>Purpose</h2>
 <p>Define the event delivery contract between producer and consumer across all transports, including acknowledgement, sequence tracking, and replay.</p>
 <h2>Delivery Modes</h2>
-<table>
-<thead><tr><th>Mode</th><th>Delivery</th><th>Duplicates</th><th>Replay</th><th>Use Case</th></tr></thead>
-<tbody>
-<tr><td><code>best_effort</code></td><td>At most once</td><td>No</td><td>No</td><td>Transient UI updates, heartbeat</td></tr>
-<tr><td><code>at_least_once</code></td><td>Always delivered</td><td>Possible</td><td>No</td><td>Task results, memory facts</td></tr>
-<tr><td><code>replayable</code></td><td>Always delivered</td><td>Possible</td><td>Yes (cursor)</td><td>Late-joining consumers, audit</td></tr>
-</tbody>
-</table>
+<p>| Mode | Delivery | Duplicates | Replay | Use Case | |---|---|---|---|---| | <code>best_effort</code> | At most once | No | No | Transient UI updates, heartbeat | | <code>at_least_once</code> | Always delivered | Possible | No | Task results, memory facts | | <code>replayable</code> | Always delivered | Possible | Yes (cursor) | Late-joining consumers, audit |</p>
 <p>Delivery mode is declared in the subscription filter as <code>delivery_mode</code> and carried on each event under <code>delivery.mode</code>.</p>
 <h2>Event Identity</h2>
 <p>Every event has a globally unique <code>id</code>. Consumers use the <code>id</code> for idempotent processing:</p>
@@ -95,15 +88,7 @@
 <li><code>cursor</code> — opaque string identifying a position in the event stream, used for replay.</li>
 </ul>
 <p>The cursor format is transport-specific and opaque to consumers. Common formats:</p>
-<table>
-<thead><tr><th>Transport</th><th>Cursor Format</th></tr></thead>
-<tbody>
-<tr><td>stdio</td><td>Not applicable (no replay)</td></tr>
-<tr><td>WebSocket</td><td><code>&lt;stream_id&gt;:&lt;sequence&gt;</code></td></tr>
-<tr><td>HTTP SSE</td><td>Event <code>id</code> from SSE protocol</td></tr>
-<tr><td>NATS/Kafka</td><td>Native offset or timestamp</td></tr>
-</tbody>
-</table>
+<p>| Transport | Cursor Format | |---|---| | stdio | Not applicable (no replay) | | WebSocket | <code>&lt;stream_id&gt;:&lt;sequence&gt;</code> | | HTTP SSE | Event <code>id</code> from SSE protocol | | NATS/Kafka | Native offset or timestamp |</p>
 <h2>Replay</h2>
 <p>A consumer replays events by subscribing with <code>from_cursor</code>:</p>
 <pre><code>{

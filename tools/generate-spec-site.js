@@ -137,7 +137,7 @@ function pageTemplate(title, content, nav) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title} — AEP Specification</title>
+  <title>${title} — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -179,15 +179,15 @@ for (const file of docFiles.filter((f) => existsSync(resolve(docsDir, f)))) {
 }
 
 // Generate home page
-const homeContent = `<h1>AEP Specification</h1>
-<p>Agent Event Protocol (AEP) — an asynchronous event layer for agents, tools, memory systems, context providers, and multi-agent runtimes.</p>
+const homeContent = `<h1>Harmovela Protocol</h1>
+<p>An open coordination protocol for autonomous systems: agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.</p>
 <h2>Specifications</h2>
 <ul>${specFiles.map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <h2>Design Documents</h2>
 <ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
-<p>Generated from <code>docs/specs/</code> and <code>docs/</code>.</p>`;
+<p>Generated from <code>docs/protocol/</code> and <code>docs/</code>.</p>`;
 
-writeFileSync(resolve(outDir, "index.html"), pageTemplate("AEP Specification", homeContent, navLinks));
+writeFileSync(resolve(outDir, "index.html"), pageTemplate("Home", homeContent, navLinks));
 
 console.log(`Site generated: ${outDir}`);
 console.log(`Open: docs/site/index.html`);

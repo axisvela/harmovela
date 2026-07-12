@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roadmap — AEP Specification</title>
+  <title>Roadmap — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -24,7 +24,8 @@
 <body>
 <nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Roadmap</h1>
-<h1>AEP Roadmap</h1>
+<h1>Harmovela Protocol Roadmap</h1>
+<p>&gt; The protocol's formal working name is <strong>Harmovela Protocol</strong>. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases.</p>
 <h2>Phase 0: Vision And Design �?Complete</h2>
 <p>Goal: define the project direction clearly enough for external review.</p>
 <p>Deliverables (all delivered):</p>
@@ -136,7 +137,55 @@
 <li>Payload schema validation for 26 event types in TypeScript and Python (<code>schemas/aep-payloads.schema.json</code>)</li>
 </ul>
 <h2>Current Completion State</h2>
-<p>All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.</p>
+<p>All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/harmovela/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.</p>
 <p>Future roadmap work should focus on: formal protocol versioning and community governance structures. A networked PostgreSQL delivery-store backend now ships in all four languages alongside the in-memory and SQLite backends.</p>
+<h2>Next Release Path</h2>
+<h3>0.1 Transition</h3>
+<p>Goal: establish the Harmovela protocol identity without silently changing the existing draft's wire behavior or delivery guarantees.</p>
+<p>Exit criteria:</p>
+<ul>
+<li>Public documentation consistently identifies Harmovela as the protocol.</li>
+<li>Legacy technical identifiers have an explicit compatibility policy.</li>
+<li>Protocol identity, schema identifiers, package names, and repository paths have a documented migration sequence.</li>
+</ul>
+<h3>0.2 Core Stabilization</h3>
+<p>Goal: freeze the minimum interoperable coordination core.</p>
+<p>Scope:</p>
+<ul>
+<li>Envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and declared delivery semantics.</li>
+<li>Internally consistent conformance levels, manifest expectations, and default runner target.</li>
+<li>Shared positive and negative fixtures for core lifecycle behavior.</li>
+</ul>
+<h3>0.3 Optional Profiles</h3>
+<p>Goal: separate the stable core from independently adoptable coordination capabilities.</p>
+<p>Profiles include runtime semantics, durable delivery, security, and transport-specific capabilities. A profile must define its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.</p>
+<h3>0.5 Beta</h3>
+<p>Goal: prove stable interoperability beyond the founding implementation set.</p>
+<p>Entry criteria:</p>
+<ul>
+<li>A frozen beta core with a published compatibility policy.</li>
+<li>Passing cross-language conformance results.</li>
+<li>At least two independently maintained interoperable implementations.</li>
+<li>At least three documented integration scenarios covering asynchronous task work, state or context updates, and delegated coordination.</li>
+</ul>
+<h3>0.9 Release Candidate</h3>
+<p>Goal: validate the proposed 1.0 core without new feature expansion.</p>
+<p>Entry criteria:</p>
+<ul>
+<li>No unresolved breaking core semantic changes.</li>
+<li>Release-candidate conformance fixtures and compatibility matrix.</li>
+<li>Public governance, release, security-response, and registry processes.</li>
+<li>At least one external deployment or interoperability pilot.</li>
+</ul>
+<h3>1.0</h3>
+<p>Goal: publish a stable, implementable open coordination protocol for autonomous systems.</p>
+<p>Release criteria:</p>
+<ul>
+<li>Stable core semantics and version negotiation.</li>
+<li>Repeatable conformance results across independently maintained implementations.</li>
+<li>Documented governance, release, licensing, and trademark policies.</li>
+<li>Clear separation between required core behavior and optional profiles.</li>
+<li>Published upgrade and deprecation policy.</li>
+</ul>
 </body>
 </html>

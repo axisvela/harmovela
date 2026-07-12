@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security — AEP Specification</title>
+  <title>Security — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -41,17 +41,7 @@
 }
 </code></pre>
 <p>The source format uses a dotted prefix convention:</p>
-<table>
-<thead><tr><th>Prefix</th><th>Meaning</th><th>Example</th></tr></thead>
-<tbody>
-<tr><td><code>agent:</code></td><td>An agent instance</td><td><code>agent:researcher</code></td></tr>
-<tr><td><code>tool:</code></td><td>A tool or tool server</td><td><code>tool:web_crawler</code></td></tr>
-<tr><td><code>memory:</code></td><td>A memory system</td><td><code>memory:main</code></td></tr>
-<tr><td><code>context:</code></td><td>A context provider</td><td><code>context:browser</code></td></tr>
-<tr><td><code>environment:</code></td><td>An environment observer</td><td><code>environment:sensors</code></td></tr>
-<tr><td><code>harness:</code></td><td>Protocol harness or orchestrator</td><td><code>harness:aep</code></td></tr>
-</tbody>
-</table>
+<p>| Prefix | Meaning | Example | |---|---|---| | <code>agent:</code> | An agent instance | <code>agent:researcher</code> | | <code>tool:</code> | A tool or tool server | <code>tool:web_crawler</code> | | <code>memory:</code> | A memory system | <code>memory:main</code> | | <code>context:</code> | A context provider | <code>context:browser</code> | | <code>environment:</code> | An environment observer | <code>environment:sensors</code> | | <code>harness:</code> | Protocol harness or orchestrator | <code>harness:aep</code> |</p>
 <h3>Consumer Identity</h3>
 <p>Every event may carry a <code>target</code> field that identifies the intended consumer:</p>
 <pre><code>{
@@ -84,14 +74,7 @@
   }
 }
 </code></pre>
-<table>
-<thead><tr><th>Scope</th><th>Meaning</th></tr></thead>
-<tbody>
-<tr><td><code>read:&lt;domain&gt;</code></td><td>May receive events from the domain</td></tr>
-<tr><td><code>write:&lt;domain&gt;</code></td><td>May send events to the domain</td></tr>
-<tr><td><code>subscribe:&lt;pattern&gt;</code></td><td>May subscribe to event type patterns</td></tr>
-</tbody>
-</table>
+<p>| Scope | Meaning | |---|---| | <code>read:&lt;domain&gt;</code> | May receive events from the domain | | <code>write:&lt;domain&gt;</code> | May send events to the domain | | <code>subscribe:&lt;pattern&gt;</code> | May subscribe to event type patterns |</p>
 <h3>Subscription Enforcement</h3>
 <p>When a consumer requests a subscription, the producer must verify that the consumer's scopes cover the requested filter:</p>
 <p>1. For each <code>types</code> pattern in the subscription filter, check that the consumer has a matching <code>subscribe:</code> scope. 2. For each <code>source</code> filter, check that the consumer has <code>read:</code> scope for the source domain. 3. If any check fails, reject the subscription with <code>unauthorized</code>.</p>
@@ -135,33 +118,10 @@
 <p>The <code>_redacted</code> key (reserved, prefix <code>_</code>) declares that specific fields in the payload were removed before delivery. Consumers should treat <code>_redacted</code> as informational and not attempt to reconstruct the removed data.</p>
 <h2>Audit Trail</h2>
 <p>Productions deployments should maintain an audit trail of all AEP events. The minimum audit record for each event includes:</p>
-<table>
-<thead><tr><th>Field</th><th>Source</th></tr></thead>
-<tbody>
-<tr><td>Event <code>id</code></td><td>Envelope</td></tr>
-<tr><td>Event <code>type</code></td><td>Envelope</td></tr>
-<tr><td><code>source</code> identity</td><td>Envelope</td></tr>
-<tr><td><code>target</code> identity</td><td>Envelope</td></tr>
-<tr><td><code>created_at</code></td><td>Envelope</td></tr>
-<tr><td>Transport identity</td><td>Transport binding</td></tr>
-<tr><td>Auth identity (if different from source)</td><td>Transport or envelope <code>authorization</code></td></tr>
-<tr><td>Delivery status</td><td>Delivery tracker</td></tr>
-</tbody>
-</table>
+<p>| Field | Source | |---|---| | Event <code>id</code> | Envelope | | Event <code>type</code> | Envelope | | <code>source</code> identity | Envelope | | <code>target</code> identity | Envelope | | <code>created_at</code> | Envelope | | Transport identity | Transport binding | | Auth identity (if different from source) | Transport or envelope <code>authorization</code> | | Delivery status | Delivery tracker |</p>
 <p>Audit records are implementation-specific and not defined by the AEP wire protocol. A conformant implementation may expose audit events as AEP events (e.g., <code>audit.event.delivered</code>), but this is not required.</p>
 <h2>Threat Model Summary</h2>
-<table>
-<thead><tr><th>Threat</th><th>Mitigation</th></tr></thead>
-<tbody>
-<tr><td>Impersonation (spoofed <code>source</code>)</td><td>Transport-level identity verification</td></tr>
-<tr><td>Unauthorized subscription</td><td>Capability-scoped subscription enforcement</td></tr>
-<tr><td>Unauthorized targeted delivery</td><td>Producer-to-target authorization check</td></tr>
-<tr><td>Eavesdropping</td><td>Transport-level encryption (TLS)</td></tr>
-<tr><td>Payload data leak</td><td>Payload redaction before delivery</td></tr>
-<tr><td>Replay attacks</td><td>Event <code>id</code> idempotency + idempotent consumers</td></tr>
-<tr><td>Audit tampering</td><td>Append-only audit log, external to AEP</td></tr>
-</tbody>
-</table>
+<p>| Threat | Mitigation | |---|---| | Impersonation (spoofed <code>source</code>) | Transport-level identity verification | | Unauthorized subscription | Capability-scoped subscription enforcement | | Unauthorized targeted delivery | Producer-to-target authorization check | | Eavesdropping | Transport-level encryption (TLS) | | Payload data leak | Payload redaction before delivery | | Replay attacks | Event <code>id</code> idempotency + idempotent consumers | | Audit tampering | Append-only audit log, external to AEP |</p>
 <h2>Multi-Tenant Isolation</h2>
 <p>In shared deployments, the <code>tenant_id</code> envelope field provides namespace isolation:</p>
 <pre><code>{

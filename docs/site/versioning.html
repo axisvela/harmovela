@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Versioning — AEP Specification</title>
+  <title>Versioning — Harmovela Protocol</title>
 <style>
   body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
   nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
@@ -30,15 +30,7 @@
 <p>Define how AEP versions protocol assets and how implementations negotiate compatibility.</p>
 <h2>Versioned Assets</h2>
 <p>AEP versions four distinct assets independently:</p>
-<table>
-<thead><tr><th>Asset</th><th>Version Field</th><th>Example</th><th>Scope</th></tr></thead>
-<tbody>
-<tr><td>Protocol envelope</td><td><code>aep_version</code></td><td><code>"0.1"</code></td><td>Envelope field set, required fields, semantic rules</td></tr>
-<tr><td>Event type families</td><td>Event type registry</td><td>—</td><td>Standard event type names and semantics</td></tr>
-<tr><td>Payload schemas</td><td><code>payload_schema</code> (URI)</td><td><code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code></td><td>Per-event payload structure</td></tr>
-<tr><td>Transport bindings</td><td>Transport spec</td><td>—</td><td>stdio framing, WebSocket subprotocol, etc.</td></tr>
-</tbody>
-</table>
+<p>| Asset | Version Field | Example | Scope | |---|---|---|---| | Protocol envelope | <code>aep_version</code> | <code>"0.1"</code> | Envelope field set, required fields, semantic rules | | Event type families | Event type registry | — | Standard event type names and semantics | | Payload schemas | <code>payload_schema</code> (URI) | <code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code> | Per-event payload structure | | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. |</p>
 <h2>Protocol Envelope Versioning</h2>
 <h3>Format</h3>
 <p>The <code>aep_version</code> field uses <code>MAJOR.MINOR</code> format (e.g., <code>"0.1"</code>).</p>
