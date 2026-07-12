@@ -52,6 +52,20 @@ class ConformanceTest {
             var absPath = Path.of("../../conformance", fixture.path()).toString();
             var events = Fixtures.loadFixture(absPath);
 
+            if ("reject_some".equals(fixture.expectation())) {
+                var rejected = false;
+                var harness = new Harness();
+                for (var event : events) {
+                    var harnessRejected = harness.handle(event).stream()
+                        .anyMatch(response -> "event.rejected".equals(response.get("type")));
+                    if (!Envelope.validate(event).isEmpty() || harnessRejected) {
+                        rejected = true;
+                    }
+                }
+                assertTrue(rejected, "expected at least one event rejection");
+                continue;
+            }
+
             var types = events.stream().map(e -> (String) e.get("type")).toList();
             assertEquals(fixture.expectedTypes(), types, "type mismatch for " + fixture.path());
 

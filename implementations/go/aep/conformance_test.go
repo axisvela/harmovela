@@ -70,6 +70,26 @@ func TestConformanceFixtures(t *testing.T) {
 				t.Fatalf("failed to load fixture: %v", err)
 			}
 
+			if fixture.Expectation == "reject_some" {
+				rejected := false
+				harness := NewHarness()
+				for _, event := range events {
+					harnessRejected := false
+					for _, response := range harness.Handle(event) {
+						if typ, _ := response["type"].(string); typ == "event.rejected" {
+							harnessRejected = true
+						}
+					}
+					if len(ValidateEnvelope(event)) > 0 || harnessRejected {
+						rejected = true
+					}
+				}
+				if !rejected {
+					t.Fatal("expected at least one event rejection")
+				}
+				return
+			}
+
 			types := make([]string, len(events))
 			for i, event := range events {
 				types[i], _ = event["type"].(string)

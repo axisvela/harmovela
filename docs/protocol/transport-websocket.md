@@ -15,6 +15,8 @@ ws://host:port/path
 wss://host:port/path  (TLS)
 ```
 
+The reference runtime defaults its WebSocket path to `/harmovela`. Deployments may configure a different path.
+
 ### Subprotocol
 
 The WebSocket handshake must request the subprotocol `aep-0.1`:
