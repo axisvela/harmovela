@@ -1,6 +1,7 @@
 package aep
 
 import (
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -31,6 +32,23 @@ func TestConformanceFixtures(t *testing.T) {
 	manifest, err := LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
+	}
+
+	selectedProfile := os.Getenv("HARMOVELA_PROFILE")
+	if selectedProfile != "" {
+		profileFixturePaths := make(map[string]bool)
+		if profileDef, ok := manifest.Profiles[selectedProfile]; ok {
+			for _, fp := range profileDef.Fixtures {
+				profileFixturePaths[fp] = true
+			}
+		}
+		filtered := make([]ManifestFixture, 0)
+		for _, f := range manifest.Fixtures {
+			if f.Profile == "" || profileFixturePaths[f.Path] {
+				filtered = append(filtered, f)
+			}
+		}
+		manifest.Fixtures = filtered
 	}
 
 	targetLevelOrder, ok := levelOrder[manifest.DefaultTargetLevel]

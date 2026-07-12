@@ -55,9 +55,15 @@ export function readNdjson(path) {
 export function runConformance(options = {}) {
   const manifest = options.manifest ?? loadManifest();
   const targetLevel = options.targetLevel ?? manifest.default_target_level ?? "HARMOVELA-C1";
+  const profile = options.profile ?? null;
+  let fixtures = manifest.fixtures;
+  if (profile) {
+    const profileFixturePaths = new Set(manifest.profiles?.[profile]?.fixtures ?? []);
+    fixtures = fixtures.filter((f) => !f.profile || profileFixturePaths.has(f.path));
+  }
   const results = [];
 
-  for (const fixture of manifest.fixtures) {
+  for (const fixture of fixtures) {
     if (!shouldRunFixture(fixture, targetLevel)) {
       results.push({ fixture, status: "skipped", reason: `above target ${targetLevel}` });
       continue;

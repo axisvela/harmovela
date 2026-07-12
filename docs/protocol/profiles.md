@@ -61,6 +61,48 @@ Implementations should reject requests requiring an unsupported profile version.
 
 Each profile defines its own conformance requirements through the standard conformance levels (HARMOVELA-C0 through HARMOVELA-C3) plus profile-specific test fixtures. A profile conformance manifest lives under `conformance/profiles/<profile-id>/manifest.json`.
 
+## Conformance
+
+### Profile Declaration in manifest.json
+
+Profiles are declared in the top-level `profiles` object of `conformance/manifest.json`:
+
+```json
+{
+  "profiles": {
+    "delivery": {
+      "display_name": "Durable Delivery",
+      "description": "At-least-once and replayable delivery...",
+      "fixtures": [
+        "fixtures/delivery.ndjson",
+        "fixtures/delivery-stateful.ndjson",
+        "fixtures/delivery-e2e.ndjson"
+      ]
+    }
+  }
+}
+```
+
+Each fixture may declare a `profile` field to associate itself with a specific profile. Fixtures without a `profile` field are considered core fixtures and are always run.
+
+### Profile Filtering in Conformance Runner
+
+The conformance runner supports `--profile=<name>` to run only fixtures belonging to a specific profile, plus all core fixtures (those without a `profile` field). When profile filtering is active:
+
+1. Core fixtures (no `profile` field) are always included.
+2. Only fixtures whose `profile` field matches the selected profile AND whose path appears in the profile's `fixtures` list are included.
+3. Fixtures belonging to other profiles are excluded.
+
+Example: `--profile=delivery` runs core fixtures plus the three delivery-specific fixtures.
+
+This filtering behavior is available in:
+
+- **Cross-language runner:** `node tools/conformance-runner.js --profile=delivery`
+- **TypeScript CLI:** `node implementations/typescript/src/cli/harmovela.js conformance --profile=delivery`
+- **Python CLI:** `cd implementations/python && python -m aep.cli.main conformance --profile=delivery`
+- **Go CLI:** `cd implementations/go && go run ./cmd/aep conformance --profile=delivery`
+- **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisrobo.aep.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
+
 ## Profile Catalog
 
 ### Core Profile

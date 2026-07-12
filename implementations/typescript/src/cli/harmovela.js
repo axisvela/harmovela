@@ -55,6 +55,7 @@ program.command("dlq")
 program.command("conformance")
   .description("Run Harmovela conformance fixtures")
   .option("--level <level>", "target conformance level")
+  .option("--profile <name>", "conformance profile to filter fixtures")
   .action((options) => run(() => conformanceCommand(options)));
 
 program.command("subscriptions")

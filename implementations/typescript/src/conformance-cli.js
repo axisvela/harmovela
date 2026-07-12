@@ -3,9 +3,11 @@ import { runConformance } from "./conformance.js";
 
 const targetArg = process.argv.find((arg) => arg.startsWith("--level="));
 const targetLevel = targetArg ? targetArg.slice("--level=".length) : undefined;
+const profileArg = process.argv.find((arg) => arg.startsWith("--profile="));
+const profile = profileArg ? profileArg.slice("--profile=".length) : undefined;
 
 try {
-  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel });
+  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel, profile });
 
   console.log(`Harmovela conformance target: ${resolvedTarget}`);
 

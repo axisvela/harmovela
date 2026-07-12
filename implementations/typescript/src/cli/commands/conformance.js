@@ -1,7 +1,7 @@
 import { runConformance } from "../../conformance.js";
 
 export async function conformanceCommand(options = {}) {
-  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel: options.level });
+  const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel: options.level, profile: options.profile });
   console.log(`Harmovela conformance target: ${resolvedTarget}`);
   let failed = false;
   for (const result of results) {

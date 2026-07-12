@@ -17,11 +17,20 @@ public final class Fixtures {
     public record ManifestFixture(String path, String level, String description,
                                   String expectation, List<String> tags,
                                   @JsonProperty("expected_types") List<String> expectedTypes,
-                                  @JsonProperty("expected_stats") Map<String, Object> expectedStats) {}
+                                  @JsonProperty("expected_stats") Map<String, Object> expectedStats,
+                                  String profile) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ProfileDef(@JsonProperty("display_name") String displayName,
+                             String description,
+                             @JsonProperty("required_core_level") String requiredCoreLevel,
+                             List<String> levels,
+                             List<String> fixtures) {}
 
     public record Manifest(@JsonProperty("spec_version") String spec_version,
                            @JsonProperty("default_target_level") String default_target_level,
-                           List<String> levels, List<ManifestFixture> fixtures) {}
+                           List<String> levels, List<ManifestFixture> fixtures,
+                           Map<String, ProfileDef> profiles) {}
 
     public static Manifest loadManifest(String path) throws IOException {
         return MAPPER.readValue(Path.of(path).toFile(), Manifest.class);

@@ -117,10 +117,15 @@ def dlq(subcommand, config_path):
 
 @cli.command()
 @click.option("--level", default=None, help="target conformance level")
-def conformance(level):
+@click.option("--profile", default=None, help="conformance profile to filter fixtures")
+def conformance(level, profile):
     """Run the conformance test suite."""
+    import os
+    env = os.environ.copy()
+    if profile:
+        env["HARMOVELA_PROFILE"] = profile
     args = [sys.executable, "-m", "pytest", "tests/test_fixtures.py", "-q"]
-    result = subprocess.run(args)
+    result = subprocess.run(args, env=env)
     sys.exit(result.returncode)
 
 

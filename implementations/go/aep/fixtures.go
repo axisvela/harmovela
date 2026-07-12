@@ -14,13 +14,23 @@ type ManifestFixture struct {
 	Tags          []string       `json:"tags"`
 	ExpectedTypes []string       `json:"expected_types"`
 	ExpectedStats map[string]any `json:"expected_stats,omitempty"`
+	Profile       string         `json:"profile,omitempty"`
+}
+
+type ProfileDef struct {
+	DisplayName      string   `json:"display_name"`
+	Description      string   `json:"description"`
+	RequiredCoreLevel string  `json:"required_core_level"`
+	Levels           []string `json:"levels"`
+	Fixtures         []string `json:"fixtures"`
 }
 
 type Manifest struct {
-	SpecVersion        string           `json:"spec_version"`
-	DefaultTargetLevel string           `json:"default_target_level"`
-	Levels             []string         `json:"levels"`
+	SpecVersion        string            `json:"spec_version"`
+	DefaultTargetLevel string            `json:"default_target_level"`
+	Levels             []string          `json:"levels"`
 	Fixtures           []ManifestFixture `json:"fixtures"`
+	Profiles           map[string]ProfileDef `json:"profiles,omitempty"`
 }
 
 func LoadManifest(path string) (*Manifest, error) {

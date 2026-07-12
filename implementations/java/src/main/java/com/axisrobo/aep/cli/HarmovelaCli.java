@@ -11,11 +11,13 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,8 @@ import java.util.UUID;
 
 @Command(name = "aep", description = "Agent Event Protocol CLI",
     subcommands = {HarmovelaCli.Init.class, HarmovelaCli.Start.class, HarmovelaCli.Status.class,
-                   HarmovelaCli.Emit.class, HarmovelaCli.Subscribe.class, HarmovelaCli.Dlq.class, HarmovelaCli.SubscriptionsGroup.class})
+                   HarmovelaCli.Emit.class, HarmovelaCli.Subscribe.class, HarmovelaCli.Dlq.class,
+                   HarmovelaCli.Conformance.class, HarmovelaCli.SubscriptionsGroup.class})
 public class HarmovelaCli implements Runnable {
     static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -141,6 +144,44 @@ public class HarmovelaCli implements Runnable {
                 "deadLettered", stats.getOrDefault("deadLettered", records.size()),
                 "records", records)));
             return 0;
+        }
+    }
+
+    @Command(name = "conformance", description = "Run Harmovela conformance fixtures")
+    static class Conformance implements java.util.concurrent.Callable<Integer> {
+        @Option(names = "--profile") String profile;
+        public Integer call() throws Exception {
+            List<String> cmd = new ArrayList<>();
+            String mvnHome = System.getenv("MAVEN_HOME");
+            String mvnPath = System.getenv("PATH");
+            String mvn = "mvn";
+            if (mvnHome != null && !mvnHome.isEmpty()) {
+                mvn = mvnHome + File.separator + "bin" + File.separator + "mvn";
+                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                    mvn += ".cmd";
+                }
+            }
+            try {
+                new ProcessBuilder(mvn, "--version")
+                    .redirectErrorStream(true)
+                    .start()
+                    .waitFor();
+            } catch (Exception e) {
+                System.out.println("SKIP maven not available");
+                return 0;
+            }
+            cmd.add(mvn);
+            cmd.add("test");
+            cmd.add("-pl");
+            cmd.add(".");
+            cmd.add("-Dtest=ConformanceTest");
+            cmd.add("-q");
+            if (profile != null && !profile.isEmpty()) {
+                cmd.add("-Dhv.profile=" + profile);
+            }
+            ProcessBuilder pb = new ProcessBuilder(cmd).inheritIO();
+            int exit = pb.start().waitFor();
+            return exit;
         }
     }
 

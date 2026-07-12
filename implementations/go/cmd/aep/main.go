@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -141,7 +142,19 @@ func main() {
 	}}
 	dlqCmd.Flags().StringVar(&dlqConfig, "config", "harmovela.config.json", "config file path")
 
-	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd, subscriptionsCmd())
+	var conformanceProfile string
+	conformanceCmd := &cobra.Command{Use: "conformance", Short: "Run Harmovela conformance fixtures", RunE: func(_ *cobra.Command, _ []string) error {
+		cmd := exec.Command("go", "test", "./aep/", "-run", "TestConformance", "-v")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if conformanceProfile != "" {
+			cmd.Env = append(os.Environ(), "HARMOVELA_PROFILE="+conformanceProfile)
+		}
+		return cmd.Run()
+	}}
+	conformanceCmd.Flags().StringVar(&conformanceProfile, "profile", "", "conformance profile to filter fixtures")
+
+	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd, conformanceCmd, subscriptionsCmd())
 	if err := root.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "aep: %v\n", err)
 		os.Exit(1)

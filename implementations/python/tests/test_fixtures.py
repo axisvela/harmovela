@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -34,10 +35,18 @@ def _read_ndjson(path: Path) -> list[dict]:
 
 MANIFEST = _read_json(CONFORMANCE_DIR / "manifest.json")
 TARGET_LEVEL = MANIFEST.get("default_target_level", "HARMOVELA-C1")
+PROFILE = os.environ.get("HARMOVELA_PROFILE")
 
 
 def _should_run(fixture: dict, target_level: str = TARGET_LEVEL) -> bool:
-    return LEVEL_ORDER[fixture["level"]] <= LEVEL_ORDER[target_level]
+    if LEVEL_ORDER[fixture["level"]] > LEVEL_ORDER[target_level]:
+        return False
+    if PROFILE:
+        fixture_profile = fixture.get("profile")
+        if fixture_profile:
+            profile_fixtures = set(MANIFEST.get("profiles", {}).get(PROFILE, {}).get("fixtures", []))
+            return fixture["path"] in profile_fixtures
+    return True
 
 
 def _target_fixtures() -> list[dict]:
