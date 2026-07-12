@@ -1,31 +1,55 @@
 # AEP Examples
 
-Two categories of examples.
+Organized by scene. Each file is named with a language suffix.
 
-## SDK examples (`examples/sdk/`)
+## Quickstart (`examples/quickstart/`)
 
-Embed AEP in-process by importing `@axisrobo/aep`. Run from the repo root after `npm install`:
+Minimal in-process runtime: create a service, subscribe to events, publish one event, receive it.
 
+| File | Language | Run command |
+|---|---|---|
+| `runtime-embed.js` | TypeScript | `node examples/quickstart/runtime-embed.js` |
+| `runtime-embed.py` | Python | `PYTHONPATH=implementations/python/src python examples/quickstart/runtime-embed.py` |
+| `runtime-embed.go` | Go | `cd implementations/go && go run ../../examples/quickstart/runtime-embed.go` |
+| `runtime-embed.java` | Java | `cd implementations/java && javac -cp . ../../examples/quickstart/runtime-embed.java` |
+
+## Service Client (`examples/service-client/`)
+
+Connect to a running `aepd` over its HTTP API or WebSocket.
+
+| File | Language | Description |
+|---|---|---|
+| `emit-subscribe.js` | TypeScript | WebSocket: emit then subscribe, print received event |
+| `http-subscribe.js` | TypeScript | HTTP: create subscription, emit event, long-poll/receive |
+
+Start `aepd` first:
 ```bash
-node examples/sdk/runtime-embed.js
-node examples/sdk/agent-subscriber.js
-node examples/sdk/memory-event-producer.js
-```
-
-## Service examples (`examples/service/`)
-
-Connect to a running `aepd` daemon. Start it first:
-
-```bash
-npm run aep --workspace @axisrobo/aep -- init --config aep.config.json
 npm run aepd --workspace @axisrobo/aep
 ```
 
-Then run a client:
+## MCP Bridge (`examples/mcp-bridge/`)
 
-```bash
-node examples/service/emit-and-subscribe.js
-node examples/service/http-api-client.js
-```
+Embed `McpBridge` with an async tool handler. Call the tool and observe AEP task lifecycle events.
 
-Requires `npm install` at the repo root so the `@axisrobo/aep` workspace link exists.
+| File | Language | Run command |
+|---|---|---|
+| `async-tool.js` | TypeScript | `node examples/mcp-bridge/async-tool.js` |
+| `async-tool.py` | Python | `PYTHONPATH=implementations/python/src python examples/mcp-bridge/async-tool.py` |
+| `async-tool.go` | Go | `cd implementations/go && go run ../../examples/mcp-bridge/async-tool.go` |
+| `async-tool.java` | Java | Compile and run from `implementations/java/` with classpath |
+
+## Scenarios (`examples/scenarios/`)
+
+End-to-end domain patterns.
+
+| File | Language | Description |
+|---|---|---|
+| `agent-subscriber.js` | TypeScript | Agent subscribes to memory + context events |
+| `memory-producer.js` | TypeScript | Memory system produces fact/retrieval/preference events |
+
+## Prerequisites
+
+- TypeScript: `npm install` at repo root (establishes `@axisrobo/aep` workspace link).
+- Python: `pip install -e implementations/python/` or set `PYTHONPATH=implementations/python/src`.
+- Go: compile from the module root (`implementations/go/`).
+- Java: compile with Maven classpath from `implementations/java/`.
