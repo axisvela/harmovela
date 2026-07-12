@@ -73,3 +73,28 @@ The default target level for Harmovela 0.2 reference runners is HARMOVELA-C3.
 `stateful_flow` means every fixture event must pass validation and must be accepted by the reference harness without producing `event.rejected`.
 
 `reject_some` is reserved for future negative fixtures.
+
+## Profile Conformance
+
+Optional profiles extend core conformance with domain-specific semantics. Implementations may declare support for zero or more profiles in addition to their core conformance level.
+
+### Profile Dependencies
+
+Each profile declares a `required_core_level` — the minimum core conformance level an implementation must meet before it can claim the profile. For example, the `delivery` profile requires at least `HARMOVELA-C1`, because durable delivery depends on task lifecycle and session management primitives. The `runtime-semantics` profile requires `HARMOVELA-C0` since it operates at the envelope and schema layer.
+
+### Declaring Profile Support
+
+To claim a profile, an implementation must:
+
+1. Meet or exceed the profile's declared `required_core_level`.
+2. Pass all fixtures tagged with that profile in `conformance/manifest.json`.
+
+Profile fixture paths are listed in the manifest under `profiles.<name>.fixtures`.
+
+### Fixture Expectations
+
+Profile fixtures follow the same `accept_all`, `stateful_flow`, and `reject_some` expectations as core fixtures. A profile fixture may also reference conformance levels that are not part of core — for example, `HARMOVELA-C2` is exclusive to the `delivery` profile. Runners configured for a profile should execute only fixtures belonging to that profile plus unprofiled (core) fixtures.
+
+### CLI Filtering
+
+The reference conformance runner supports `--profile=<name>` to filter execution to core fixtures plus the selected profile's fixtures. When a profile is not selected, its fixtures are excluded from the run and reported as `SKIP` in the summary.

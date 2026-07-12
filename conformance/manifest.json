@@ -68,36 +68,11 @@
       ]
     },
     {
-      "path": "fixtures/agent-runtime-semantics.ndjson",
-      "level": "HARMOVELA-C0",
-      "description": "Belief revision, freshness, delegation, interruption, compensation, and provenance events.",
-      "expectation": "accept_all",
-      "tags": [
-        "belief",
-        "freshness",
-        "delegation",
-        "interruption",
-        "compensation",
-        "provenance"
-      ],
-      "expected_types": [
-        "belief.revised",
-        "freshness.expired",
-        "delegation.requested",
-        "delegation.accepted",
-        "delegation.handoff.completed",
-        "interruption.requested",
-        "interruption.acknowledged",
-        "interruption.saved",
-        "compensation.requested",
-        "provenance.attestation.added"
-      ]
-    },
-    {
       "path": "fixtures/delivery.ndjson",
       "level": "HARMOVELA-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
       "expectation": "accept_all",
+      "profile": "delivery",
       "tags": [
         "delivery",
         "ack",
@@ -116,6 +91,7 @@
       "level": "HARMOVELA-C2",
       "description": "Full task lifecycle with delivery events exercised through harness stateful flow.",
       "expectation": "stateful_flow",
+      "profile": "delivery",
       "tags": [
         "delivery",
         "task",
@@ -137,6 +113,7 @@
       "level": "HARMOVELA-C3",
       "description": "End-to-end delivery tracking: track → ack, track → nack, track → dead-letter, with DeliveryTracker stats verification.",
       "expectation": "delivery_e2e",
+      "profile": "delivery",
       "tags": [
         "delivery",
         "e2e",
@@ -156,6 +133,55 @@
         "acknowledged": 1,
         "deadLettered": 1
       }
+    },
+    {
+      "path": "fixtures/agent-runtime-semantics.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Belief revision, freshness, delegation, interruption, compensation, and provenance events.",
+      "expectation": "accept_all",
+      "profile": "runtime-semantics",
+      "tags": [
+        "belief",
+        "freshness",
+        "delegation",
+        "interruption",
+        "compensation",
+        "provenance"
+      ],
+      "expected_types": [
+        "belief.revised",
+        "freshness.expired",
+        "delegation.requested",
+        "delegation.accepted",
+        "delegation.handoff.completed",
+        "interruption.requested",
+        "interruption.acknowledged",
+        "interruption.saved",
+        "compensation.requested",
+        "provenance.attestation.added"
+      ]
     }
-  ]
+  ],
+  "profiles": {
+    "delivery": {
+      "display_name": "Durable Delivery",
+      "description": "At-least-once and replayable delivery with acknowledgement, retry, and dead-letter semantics.",
+      "required_core_level": "HARMOVELA-C1",
+      "levels": ["HARMOVELA-C2", "HARMOVELA-C3"],
+      "fixtures": [
+        "fixtures/delivery.ndjson",
+        "fixtures/delivery-stateful.ndjson",
+        "fixtures/delivery-e2e.ndjson"
+      ]
+    },
+    "runtime-semantics": {
+      "display_name": "Agent Runtime Semantics",
+      "description": "Belief revision, freshness windows, delegation, interruption, compensation, and provenance metadata.",
+      "required_core_level": "HARMOVELA-C0",
+      "levels": ["HARMOVELA-C0"],
+      "fixtures": [
+        "fixtures/agent-runtime-semantics.ndjson"
+      ]
+    }
+  }
 }

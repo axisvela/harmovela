@@ -10,9 +10,24 @@ const manifest = JSON.parse(
   readFileSync(resolve(ROOT, "conformance", "manifest.json"), "utf-8")
 );
 
-const fixtures = manifest.fixtures.map((f) => f.path);
+const profileArg = process.argv.find((a) => a.startsWith("--profile="));
+const selectedProfile = profileArg ? profileArg.split("=")[1] : null;
+
+let fixtures = manifest.fixtures.map((f) => f.path);
+if (selectedProfile) {
+  const profileFixturePaths = new Set(
+    manifest.profiles?.[selectedProfile]?.fixtures ?? []
+  );
+  fixtures = manifest.fixtures
+    .filter((f) => !f.profile || profileFixturePaths.has(f.path))
+    .map((f) => f.path);
+}
+
 const levels = Object.fromEntries(
   manifest.fixtures.map((f) => [f.path, f.level])
+);
+const fixtureProfiles = Object.fromEntries(
+  manifest.fixtures.map((f) => [f.path, f.profile || null])
 );
 const targetLevel = manifest.default_target_level || "HARMOVELA-C1";
 const LEVEL_ORDER = { "HARMOVELA-C0": 0, "HARMOVELA-C1": 1, "HARMOVELA-C2": 2, "HARMOVELA-C3": 3 };
@@ -156,6 +171,35 @@ for (const f of fixtures) {
       .map((l) => (results[l][f] || "SKIP").padEnd(14))
       .join("");
   console.log(row);
+}
+
+const profileNames = Object.keys(manifest.profiles || {});
+if (profileNames.length > 0) {
+  const coreFixtureNames = manifest.fixtures
+    .filter((f) => !f.profile)
+    .map((f) => f.path);
+  const summaryParts = [];
+  const coreFail = coreFixtureNames.some((f) =>
+    Object.values(results).some((r) => r[f] === "FAIL")
+  );
+  summaryParts.push(`core: ${coreFail ? "FAIL" : "PASS"}`);
+
+  for (const pn of profileNames) {
+    const pfPaths = new Set(manifest.profiles[pn].fixtures || []);
+    const pfIncluded = fixtures.some((f) => pfPaths.has(f));
+    if (!pfIncluded) {
+      summaryParts.push(`${pn}: SKIP`);
+    } else {
+      const pfFail = [...pfPaths].some((f) =>
+        Object.values(results).some((r) => r[f] === "FAIL")
+      );
+      const pfAllSkip = [...pfPaths].every((f) =>
+        Object.values(results).every((r) => r[f] === "SKIP")
+      );
+      summaryParts.push(`${pn}: ${pfAllSkip ? "SKIP" : pfFail ? "FAIL" : "PASS"}`);
+    }
+  }
+  console.log("\nSummary: " + summaryParts.join(", "));
 }
 
 process.exit(anyFail ? 1 : 0);
