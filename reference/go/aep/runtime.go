@@ -10,7 +10,9 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/axisrobo/aep/aep/store"
 	"github.com/google/uuid"
 )
 
@@ -112,22 +114,22 @@ func ApplyEnvOverrides(c RuntimeConfig, env map[string]string) RuntimeConfig {
 	return c
 }
 
-func CreateDeliveryStore(c RuntimeConfig) (DeliveryStore, error) {
+func CreateDeliveryStore(c RuntimeConfig) (store.DeliveryStore, error) {
 	switch c.Delivery.Store {
 	case "memory":
-		return NewInMemoryDeliveryStore(0, "stream_01"), nil
+		return store.NewInMemoryDeliveryStore(0, "stream_01"), nil
 	case "sqlite":
 		path := ":memory:"
 		if c.Delivery.Sqlite != nil && c.Delivery.Sqlite["path"] != "" {
 			path = c.Delivery.Sqlite["path"]
 		}
-		return NewSqliteDeliveryStore(path, "stream_01")
+		return store.NewSqliteDeliveryStore(path, "stream_01")
 	case "postgres":
 		url := ""
 		if c.Delivery.Postgres != nil {
 			url = c.Delivery.Postgres["url"]
 		}
-		return NewPostgresDeliveryStore(url, "stream_01", PostgresOptions{})
+		return store.NewPostgresDeliveryStore(url, "stream_01", store.PostgresOptions{})
 	}
 	return nil, fmt.Errorf("unsupported delivery store: %s", c.Delivery.Store)
 }
@@ -145,7 +147,7 @@ type registryEntry struct {
 
 type RuntimeService struct {
 	Config        RuntimeConfig
-	store         DeliveryStore
+	store         store.DeliveryStore
 	subs          []subEntry
 	subscriptions map[string]*registryEntry
 	maxBuffer     int
@@ -328,7 +330,7 @@ func (s *RuntimeService) CreateSubscription(filter map[string]any) map[string]an
 	record := map[string]any{
 		"id":         "sub_" + uuid.NewString(),
 		"filter":     filter,
-		"created_at": now(),
+		"created_at": time.Now().UTC().Format(time.RFC3339),
 	}
 	s.store.CreateSubscription(record)
 	s.mu.Lock()

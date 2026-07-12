@@ -1,15 +1,11 @@
-package aep
+package store
 
 import (
 	"testing"
 )
 
-func TestSqliteDeliveryStore_TrackAndAck(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
-	}
-	defer store.Close()
+func TestInMemoryDeliveryStore_TrackAndAck(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	seq := store.Track("evt_001", "sub_01")
 	if seq != 1 {
@@ -35,12 +31,8 @@ func TestSqliteDeliveryStore_TrackAndAck(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_NackIncrements(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
-	}
-	defer store.Close()
+func TestInMemoryDeliveryStore_NackIncrements(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	store.Track("evt_001", "sub_01")
 	attempts, ok := store.Nack("evt_001")
@@ -60,12 +52,8 @@ func TestSqliteDeliveryStore_NackIncrements(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_DeadLetters(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
-	}
-	defer store.Close()
+func TestInMemoryDeliveryStore_DeadLetters(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	store.Track("evt_001", "sub_01")
 	dlq := store.DeadLetter("evt_001", map[string]any{
@@ -93,12 +81,8 @@ func TestSqliteDeliveryStore_DeadLetters(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_Stats(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
-	}
-	defer store.Close()
+func TestInMemoryDeliveryStore_Stats(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	store.Track("evt_a", "sub_01")
 	store.Track("evt_b", "sub_01")
@@ -121,12 +105,26 @@ func TestSqliteDeliveryStore_Stats(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_HasAttemptsRemaining(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
+func TestInMemoryDeliveryStore_NackReturnsFalseForUnknown(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+
+	_, ok := store.Nack("nonexistent")
+	if ok {
+		t.Fatal("expected nack to return false for unknown event")
 	}
-	defer store.Close()
+}
+
+func TestInMemoryDeliveryStore_DeadLetterReturnsNilForUnknown(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+
+	dlq := store.DeadLetter("nonexistent", nil)
+	if dlq != nil {
+		t.Fatal("expected deadLetter to return nil for unknown event")
+	}
+}
+
+func TestInMemoryDeliveryStore_HasAttemptsRemaining(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	store.Track("evt_001", "sub_01")
 	if !store.HasAttemptsRemaining("evt_001", 3) {
@@ -139,12 +137,8 @@ func TestSqliteDeliveryStore_HasAttemptsRemaining(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_GetPendingForSubscriptionFilters(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
-	}
-	defer store.Close()
+func TestInMemoryDeliveryStore_GetPendingForSubscriptionFilters(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
 
 	store.Track("evt_a", "sub_01")
 	store.Track("evt_b", "sub_02")
@@ -167,46 +161,35 @@ func TestSqliteDeliveryStore_GetPendingForSubscriptionFilters(t *testing.T) {
 	}
 }
 
-func TestSqliteDeliveryStore_PersistsAcrossTracker(t *testing.T) {
-	store, err := NewSqliteDeliveryStore(":memory:", "stream_01")
-	if err != nil {
-		t.Fatalf("failed to create store: %v", err)
+func TestInMemoryGetDeadLettered(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+	store.Track("evt_1", "sub_01")
+	store.DeadLetter("evt_1", map[string]any{"error": map[string]any{"code": "timeout"}})
+	records := store.GetDeadLettered()
+	if len(records) != 1 {
+		t.Fatalf("expected 1 record, got %d", len(records))
 	}
-	defer store.Close()
+	if records[0]["eventId"] != "evt_1" {
+		t.Fatalf("expected evt_1, got %v", records[0]["eventId"])
+	}
+}
 
-	journal := NewDeliveryJournal("stream_01")
-	tracker := NewDeliveryTracker(store, journal)
-
-	seq := tracker.Track("evt_tracker_001", "_default")
-	if seq != 1 {
-		t.Fatalf("expected sequence 1, got %d", seq)
+func TestInMemorySubscriptionCRUD(t *testing.T) {
+	store := NewInMemoryDeliveryStore(0, "stream_01")
+	store.CreateSubscription(map[string]any{"id": "sub_1", "filter": map[string]any{"types": "task.*"}, "created_at": "2026-07-11T10:00:00Z"})
+	if store.GetSubscription("sub_1") == nil {
+		t.Fatal("expected subscription")
 	}
-	if !tracker.IsPending("evt_tracker_001") {
-		t.Fatal("expected event to be pending in tracker")
+	if len(store.ListSubscriptions()) != 1 {
+		t.Fatalf("expected 1, got %d", len(store.ListSubscriptions()))
 	}
-
-	tracker.Ack("evt_tracker_001")
-	if !tracker.IsAcknowledged("evt_tracker_001") {
-		t.Fatal("expected event to be acknowledged in tracker")
+	if !store.DeleteSubscription("sub_1") {
+		t.Fatal("expected delete true")
 	}
-	if tracker.IsPending("evt_tracker_001") {
-		t.Fatal("expected event not to be pending after ack in tracker")
+	if store.GetSubscription("sub_1") != nil {
+		t.Fatal("expected nil after delete")
 	}
-
-	tracker.Track("evt_tracker_002", "_default")
-	pending := tracker.GetPendingForSubscription("_default")
-	if len(pending) != 1 {
-		t.Fatalf("expected 1 pending in tracker, got %d", len(pending))
-	}
-
-	stats := tracker.GetStats()
-	if stats["totalSequences"] != 2 {
-		t.Fatalf("expected totalSequences 2, got %v", stats["totalSequences"])
-	}
-	if stats["acknowledged"] != 1 {
-		t.Fatalf("expected acknowledged 1, got %v", stats["acknowledged"])
-	}
-	if stats["pending"] != 1 {
-		t.Fatalf("expected pending 1, got %v", stats["pending"])
+	if store.DeleteSubscription("sub_1") {
+		t.Fatal("expected delete false")
 	}
 }

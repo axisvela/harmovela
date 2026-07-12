@@ -3,6 +3,8 @@ package aep
 import (
 	"fmt"
 	"time"
+
+	"github.com/axisrobo/aep/aep/store"
 )
 
 type TaskState string
@@ -145,7 +147,7 @@ type Harness struct {
 	tasks         map[string]*TaskTracker
 	router        *EventRouter
 	session       *AepSession
-	Delivery      *DeliveryTracker
+	Delivery      *store.DeliveryTracker
 }
 
 func NewHarness() *Harness {
@@ -154,7 +156,7 @@ func NewHarness() *Harness {
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*TaskTracker),
 		router:        NewEventRouter(),
-		Delivery:      NewDeliveryTracker(nil, nil),
+		Delivery:      store.NewDeliveryTracker(nil, nil),
 	}
 	h.setupRouter()
 	h.setupDeliveryRouter()
