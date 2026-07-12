@@ -7,5 +7,7 @@ coverage/
 dist/
 *.tsbuildinfo
 reference/java/target/
+reference/go/aep.exe
+reference/go/aepd.exe
 __pycache__/
 *.pyc
