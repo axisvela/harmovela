@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/axisrobo/aep/aep"
@@ -138,9 +140,88 @@ func main() {
 	}}
 	dlqCmd.Flags().StringVar(&dlqConfig, "config", "aep.config.json", "config file path")
 
-	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd)
+	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd, subscriptionsCmd())
 	if err := root.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "aep: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+func subscriptionsCmd() *cobra.Command {
+	var base, filter string
+
+	cmd := &cobra.Command{Use: "subscriptions", Short: "Manage runtime subscriptions over HTTP"}
+	cmd.PersistentFlags().StringVar(&base, "base", "http://127.0.0.1:8790/aep/api", "runtime API base URL")
+
+	cmd.AddCommand(&cobra.Command{Use: "create", Short: "Create a subscription", RunE: func(_ *cobra.Command, _ []string) error {
+		var f map[string]any
+		if err := json.Unmarshal([]byte(filter), &f); err != nil {
+			return fmt.Errorf("invalid JSON filter")
+		}
+		body, _ := json.Marshal(map[string]any{"filter": f})
+		resp, err := http.Post(base+"/subscriptions", "application/json", strings.NewReader(string(body)))
+		if err != nil {
+			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 201 {
+			return fmt.Errorf("request failed: HTTP %d", resp.StatusCode)
+		}
+		io.Copy(os.Stdout, resp.Body)
+		return nil
+	}})
+
+	cmd.AddCommand(&cobra.Command{Use: "list", Short: "List subscriptions", RunE: func(_ *cobra.Command, _ []string) error {
+		resp, err := http.Get(base + "/subscriptions")
+		if err != nil {
+			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("request failed: HTTP %d", resp.StatusCode)
+		}
+		io.Copy(os.Stdout, resp.Body)
+		return nil
+	}})
+
+	cmd.AddCommand(&cobra.Command{Use: "delete <id>", Short: "Delete a subscription", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
+		req, _ := http.NewRequest(http.MethodDelete, base+"/subscriptions/"+args[0], nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode == 404 {
+			return fmt.Errorf("not found")
+		}
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("request failed: HTTP %d", resp.StatusCode)
+		}
+		io.Copy(os.Stdout, resp.Body)
+		return nil
+	}})
+
+	cmd.AddCommand(&cobra.Command{Use: "stream <id>", Short: "Stream events for a subscription", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
+		resp, err := http.Get(base + "/subscriptions/" + args[0] + "/stream")
+		if err != nil {
+			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode == 404 {
+			return fmt.Errorf("not found")
+		}
+		scanner := bufio.NewScanner(resp.Body)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "data: ") {
+				fmt.Println(strings.TrimPrefix(line, "data: "))
+			}
+		}
+		return scanner.Err()
+	}})
+
+	createCmd := cmd.Commands()[0]
+	createCmd.Flags().StringVar(&filter, "filter", "{}", "subscription filter JSON")
+
+	return cmd
 }
