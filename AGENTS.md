@@ -48,11 +48,12 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 | `docs/superpowers/plans/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
-| `implementations/typescript/` | Primary runnable reference harness |
-| `implementations/python/` | Second-priority Python reference implementation |
-| `implementations/go/` | Go reference implementation with C0/C1 conformance |
-| `implementations/java/` | Java reference implementation with C0/C1 conformance (JDK 21) |
+| `implementations/typescript/` | Primary TypeScript implementation (SDK, daemon, CLI, HTTP API) |
+| `implementations/python/` | Python implementation (SDK, daemon, CLI, HTTP API) |
+| `implementations/go/` | Go implementation (SDK, daemon, CLI, HTTP API, sub-packages) |
+| `implementations/java/` | Java implementation (SDK, daemon, CLI, HTTP API, JDK 21) |
 | `implementations/typescript/src/bridge/` | MCP bridge and async tool handler |
+| `examples/` | Scene-based examples (quickstart, service-client, mcp-bridge, scenarios) |
 
 ## Working Rules
 

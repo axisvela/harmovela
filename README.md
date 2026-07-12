@@ -94,7 +94,8 @@ AEP should interoperate with MCP rather than fork it. AEP can carry events about
 - `implementations/python/` �-Python implementation (SDK, daemon, CLI, HTTP API)
 - `implementations/go/` �-Go implementation (SDK, daemon, CLI, HTTP API, sub-package layout)
 - `implementations/java/` �-Java implementation (SDK, daemon, CLI, HTTP API, JDK 21)
-- `.github/workflows/` �-repository CI
+- `examples/` -- scene-based examples: quickstart, service-client, mcp-bridge, scenarios
+- `.github/workflows/` -- repository CI
 
 ## Development Harness
 
