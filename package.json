@@ -5,6 +5,6 @@
   "workspaces": ["implementations/typescript"],
   "scripts": {
     "test": "npm test --workspace @axisrobo/aep",
-    "example:sdk": "node examples/sdk/runtime-embed.js"
+    "example:sdk": "node examples/quickstart/runtime-embed.js"
   }
 }

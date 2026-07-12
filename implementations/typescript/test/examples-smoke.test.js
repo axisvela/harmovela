@@ -20,7 +20,7 @@ function runNode(scriptRelPath, args = []) {
 }
 
 test("sdk runtime-embed example publishes and receives an event", async () => {
-  const result = await runNode("examples/sdk/runtime-embed.js");
+  const result = await runNode("examples/quickstart/runtime-embed.js");
   assert.equal(result.code, 0, result.stderr);
   assert.match(result.stdout, /received task.submitted evt_embed/);
 });
@@ -35,11 +35,11 @@ test("service http-api-client example round-trips through aepd", async () => {
   config.transports.api = { enabled: true, host: "127.0.0.1", port: 8795, path: "/aep/api" };
   await writeFile(configPath, JSON.stringify(config), "utf8");
 
-  const aepd = path.join(repoRoot, "reference", "typescript", "src", "runtime", "server.js");
+  const aepd = path.join(repoRoot, "implementations", "typescript", "src", "runtime", "server.js");
   const daemon = spawn(process.execPath, [aepd], { cwd: repoRoot, env: { ...process.env, AEP_CONFIG: configPath } });
   try {
     await waitFor(daemon.stdout, /aepd started/);
-    const result = await runNode("examples/service/http-api-client.js", ["--base", "http://127.0.0.1:8795/aep/api"]);
+    const result = await runNode("examples/service-client/http-subscribe.js", ["--base", "http://127.0.0.1:8795/aep/api"]);
     assert.equal(result.code, 0, result.stderr);
     assert.match(result.stdout, /received evt_http/);
   } finally {
