@@ -16,13 +16,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Command(name = "aep", description = "Agent Event Protocol CLI",
     subcommands = {AepCli.Init.class, AepCli.Start.class, AepCli.Status.class,
-                   AepCli.Emit.class, AepCli.Subscribe.class, AepCli.Dlq.class})
+                   AepCli.Emit.class, AepCli.Subscribe.class, AepCli.Dlq.class, AepCli.SubscriptionsGroup.class})
 public class AepCli implements Runnable {
     static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -141,5 +142,93 @@ public class AepCli implements Runnable {
                 "records", records)));
             return 0;
         }
+    }
+
+    @Command(name = "subscriptions", description = "Manage runtime subscriptions over HTTP",
+        subcommands = {AepCli.SubscriptionsGroup.Create.class, AepCli.SubscriptionsGroup.ListSub.class,
+                       AepCli.SubscriptionsGroup.Delete.class, AepCli.SubscriptionsGroup.Stream.class})
+    static class SubscriptionsGroup implements java.util.concurrent.Callable<Integer> {
+        static final HttpClient HTTP = HttpClient.newHttpClient();
+
+        @Command(name = "create", description = "Create a subscription")
+        static class Create implements java.util.concurrent.Callable<Integer> {
+            @Option(names = "--filter", defaultValue = "{}") String filterText;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            @SuppressWarnings("unchecked")
+            public Integer call() throws Exception {
+                Map<String, Object> filter;
+                try {
+                    filter = (Map<String, Object>) MAPPER.readValue(filterText, Map.class);
+                } catch (Exception e) {
+                    System.err.println("invalid JSON filter");
+                    return 1;
+                }
+                var body = MAPPER.writeValueAsString(Map.of("filter", filter));
+                var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions"))
+                    .header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(body)).build();
+                var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+                if (resp.statusCode() != 201) {
+                    System.err.println("request failed: HTTP " + resp.statusCode());
+                    return 1;
+                }
+                System.out.println(resp.body());
+                return 0;
+            }
+        }
+
+        @Command(name = "list", description = "List subscriptions")
+        static class ListSub implements java.util.concurrent.Callable<Integer> {
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            public Integer call() throws Exception {
+                var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions")).build();
+                var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+                if (resp.statusCode() != 200) {
+                    System.err.println("request failed: HTTP " + resp.statusCode());
+                    return 1;
+                }
+                System.out.println(resp.body());
+                return 0;
+            }
+        }
+
+        @Command(name = "delete", description = "Delete a subscription")
+        static class Delete implements java.util.concurrent.Callable<Integer> {
+            @Parameters(index = "0") String id;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            public Integer call() throws Exception {
+                var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions/" + id)).DELETE().build();
+                var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+                if (resp.statusCode() == 404) {
+                    System.err.println("not found");
+                    return 1;
+                }
+                if (resp.statusCode() != 200) {
+                    System.err.println("request failed: HTTP " + resp.statusCode());
+                    return 1;
+                }
+                System.out.println(resp.body());
+                return 0;
+            }
+        }
+
+        @Command(name = "stream", description = "Stream events for a subscription")
+        static class Stream implements java.util.concurrent.Callable<Integer> {
+            @Parameters(index = "0") String id;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            public Integer call() throws Exception {
+                var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions/" + id + "/stream")).build();
+                var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofLines());
+                if (resp.statusCode() == 404) {
+                    System.err.println("not found");
+                    return 1;
+                }
+                resp.body().forEach(line -> {
+                    if (line.startsWith("data: ")) System.out.println(line.substring("data: ".length()));
+                });
+                return 0;
+            }
+        }
+
+        public Integer call() { return 0; }
     }
 }
