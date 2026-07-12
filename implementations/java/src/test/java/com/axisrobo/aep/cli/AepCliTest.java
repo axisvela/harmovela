@@ -12,7 +12,7 @@ class AepCliTest {
 
     @Test
     void initWritesConfig(@TempDir Path dir) throws Exception {
-        var path = dir.resolve("aep.config.json");
+        var path = dir.resolve("harmovela.config.json");
         int code = AepCli.run(new String[]{"init", "--config", path.toString()});
         assertEquals(0, code);
         var parsed = MAPPER.readValue(Files.readString(path), Map.class);

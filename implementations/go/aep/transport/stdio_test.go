@@ -10,9 +10,9 @@ import (
 
 func TestStdioParseNdjsonEvents(t *testing.T) {
 	reader := strings.NewReader(
-		`{"aep_version":"0.1","id":"evt_01","type":"session.opened","source":"test","created_at":"2026-07-10T10:00:00Z","payload":{}}
-{"aep_version":"0.1","id":"evt_02","type":"session.ready","source":"test","created_at":"2026-07-10T10:00:01Z","payload":{"session_id":"s1"}}
-{"aep_version":"0.1","id":"evt_03","type":"session.closed","source":"test","created_at":"2026-07-10T10:00:02Z","payload":{"reason":"done"}}
+		`{"spec_version":"0.2","id":"evt_01","type":"session.opened","source":"test","created_at":"2026-07-10T10:00:00Z","payload":{}}
+{"spec_version":"0.2","id":"evt_02","type":"session.ready","source":"test","created_at":"2026-07-10T10:00:01Z","payload":{"session_id":"s1"}}
+{"spec_version":"0.2","id":"evt_03","type":"session.closed","source":"test","created_at":"2026-07-10T10:00:02Z","payload":{"reason":"done"}}
 `)
 	var buf strings.Builder
 	transport := NewStdioTransport(reader, &buf)
@@ -51,7 +51,7 @@ func TestStdioCaptureSentData(t *testing.T) {
 	transport := NewStdioTransport(reader, &buf)
 
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_01",
 		"type":        "session.ready",
 		"source":      "test",
@@ -79,9 +79,9 @@ func TestStdioCaptureSentData(t *testing.T) {
 
 func TestStdioIgnoreEmptyLines(t *testing.T) {
 	reader := strings.NewReader(
-		`{"aep_version":"0.1","id":"evt_01","type":"session.opened","source":"test","created_at":"2026-07-10T10:00:00Z","payload":{}}
+		`{"spec_version":"0.2","id":"evt_01","type":"session.opened","source":"test","created_at":"2026-07-10T10:00:00Z","payload":{}}
 
-{"aep_version":"0.1","id":"evt_02","type":"session.ready","source":"test","created_at":"2026-07-10T10:00:01Z","payload":{"session_id":"s1"}}
+{"spec_version":"0.2","id":"evt_02","type":"session.ready","source":"test","created_at":"2026-07-10T10:00:01Z","payload":{"session_id":"s1"}}
 
 
 `)

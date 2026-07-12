@@ -17,9 +17,9 @@ def cli():
 
 
 @cli.command()
-@click.option("--config", "config_path", default="aep.config.json", help="config file path")
+@click.option("--config", "config_path", default="harmovela.config.json", help="config file path")
 def init(config_path):
-    """Create an AEP runtime config file."""
+    """Create a Harmovela runtime config file."""
     write_default_config(config_path)
     click.echo(f"created {config_path}")
 
@@ -38,7 +38,7 @@ def start(config_path):
 
 
 @cli.command()
-@click.option("--url", default="http://127.0.0.1:8790/aep/api/healthz", help="health endpoint URL")
+@click.option("--url", default="http://127.0.0.1:8790/harmovela/api/healthz", help="health endpoint URL")
 def status(url):
     """Query an aepd health endpoint."""
     try:
@@ -52,11 +52,9 @@ def status(url):
 @cli.command()
 @click.argument("event_type")
 @click.option("--payload", default="{}", help="event payload JSON")
-@click.option("--url", default="ws://127.0.0.1:8787/aep", help="WebSocket URL")
-@click.option("--id", "event_id", default=None, help="event id")
-@click.option("--source", default="cli:aep", help="event source")
+@click.option("--url", default="ws://127.0.0.1:8787/harmovela", help="WebSocket URL")
 def emit(event_type, payload, url, event_id, source):
-    """Emit one AEP event over WebSocket."""
+    """Emit one Harmovela event over WebSocket."""
     import uuid
     from datetime import datetime, timezone
     try:
@@ -65,7 +63,7 @@ def emit(event_type, payload, url, event_id, source):
         click.echo("invalid JSON payload", err=True)
         sys.exit(1)
     event = {
-        "aep_version": "0.1",
+        "spec_version": "0.2",
         "id": event_id or f"evt_{uuid.uuid4().hex}",
         "type": event_type,
         "source": source,
@@ -84,9 +82,9 @@ async def _emit_ws(url, event):
 
 @cli.command()
 @click.option("--type", "pattern", default="*", help="event type pattern")
-@click.option("--url", default="ws://127.0.0.1:8787/aep", help="WebSocket URL")
+@click.option("--url", default="ws://127.0.0.1:8787/harmovela", help="WebSocket URL")
 def subscribe(pattern, url):
-    """Subscribe to AEP events over WebSocket."""
+    """Subscribe to Harmovela events over WebSocket."""
     from ..subscription import matches_type
     asyncio.run(_subscribe_ws(url, pattern, matches_type))
 
@@ -102,7 +100,7 @@ async def _subscribe_ws(url, pattern, matches_type):
 
 @cli.command()
 @click.argument("subcommand", default="list")
-@click.option("--config", "config_path", default="aep.config.json", help="config file path")
+@click.option("--config", "config_path", default="harmovela.config.json", help="config file path")
 def dlq(subcommand, config_path):
     """Inspect dead-lettered events."""
     if subcommand != "list":
@@ -133,7 +131,7 @@ def subscriptions():
 
 @subscriptions.command("create")
 @click.option("--filter", "filter_text", default="{}", help="subscription filter JSON")
-@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+@click.option("--base", default="http://127.0.0.1:8790/harmovela/api", help="runtime API base URL")
 def subscriptions_create(filter_text, base):
     try:
         filter_ = json.loads(filter_text)
@@ -147,7 +145,7 @@ def subscriptions_create(filter_text, base):
 
 
 @subscriptions.command("list")
-@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+@click.option("--base", default="http://127.0.0.1:8790/harmovela/api", help="runtime API base URL")
 def subscriptions_list(base):
     req = urllib.request.Request(f"{base}/subscriptions", method="GET")
     _print_response(req)
@@ -155,7 +153,7 @@ def subscriptions_list(base):
 
 @subscriptions.command("delete")
 @click.argument("subscription_id")
-@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+@click.option("--base", default="http://127.0.0.1:8790/harmovela/api", help="runtime API base URL")
 def subscriptions_delete(subscription_id, base):
     req = urllib.request.Request(f"{base}/subscriptions/{subscription_id}", method="DELETE")
     try:
@@ -174,7 +172,7 @@ def subscriptions_delete(subscription_id, base):
 
 @subscriptions.command("stream")
 @click.argument("subscription_id")
-@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+@click.option("--base", default="http://127.0.0.1:8790/harmovela/api", help="runtime API base URL")
 def subscriptions_stream(subscription_id, base):
     try:
         resp = urllib.request.urlopen(f"{base}/subscriptions/{subscription_id}/stream")

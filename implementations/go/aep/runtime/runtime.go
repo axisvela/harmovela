@@ -32,7 +32,7 @@ type DeliveryConfig struct {
 }
 
 type RuntimeConfig struct {
-	AepVersion string `json:"aep_version"`
+	SpecVersion string `json:"spec_version"`
 	Runtime    struct {
 		ID     string `json:"id"`
 		Source string `json:"source"`
@@ -48,12 +48,12 @@ type RuntimeConfig struct {
 
 func DefaultConfig() RuntimeConfig {
 	var c RuntimeConfig
-	c.AepVersion = "0.1"
+	c.SpecVersion = "0.2"
 	c.Runtime.ID = "aepd-local"
 	c.Runtime.Source = "runtime:aepd"
-	c.Transports.WebSocket = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8787, Path: "/aep"}
-	c.Transports.SSE = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8788, Path: "/aep/events"}
-	c.Transports.API = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8790, Path: "/aep/api"}
+	c.Transports.WebSocket = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8787, Path: "/harmovela"}
+	c.Transports.SSE = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8788, Path: "/harmovela/events"}
+	c.Transports.API = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8790, Path: "/harmovela/api"}
 	c.Transports.Stdio = TransportConfig{Enabled: false}
 	c.Delivery = DeliveryConfig{
 		Store:    "sqlite",
@@ -76,7 +76,7 @@ func LoadConfig(path string, env map[string]string) (RuntimeConfig, error) {
 		env = envMap()
 	}
 	if path == "" {
-		path = envOr(env, "AEP_CONFIG", "aep.config.json")
+		path = envOr(env, "HARMOVELA_CONFIG", "harmovela.config.json")
 	}
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -255,7 +255,7 @@ func (s *RuntimeService) APIPort() int { return s.apiPort }
 func (s *RuntimeService) startAPI() error {
 	base := s.Config.Transports.API.Path
 	if base == "" {
-		base = "/aep/api"
+		base = "/harmovela/api"
 	}
 	mux := http.NewServeMux()
 	handler := func(w http.ResponseWriter, r *http.Request) {

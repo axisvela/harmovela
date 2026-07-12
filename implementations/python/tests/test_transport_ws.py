@@ -26,7 +26,7 @@ class TestWsServerTransport:
         received = []
         server.on_event = lambda event: received.append(event)
 
-        client = WsClientTransport(url=f"ws://127.0.0.1:{server.port}/aep")
+        client = WsClientTransport(url=f"ws://127.0.0.1:{server.port}/harmovela")
         client.start()
         time.sleep(0.1)
 
@@ -44,7 +44,7 @@ class TestWsServerTransport:
         server_received = []
         server.on_event = lambda event: server_received.append(event)
 
-        client = WsClientTransport(url=f"ws://127.0.0.1:{server.port}/aep")
+        client = WsClientTransport(url=f"ws://127.0.0.1:{server.port}/harmovela")
         client_received = []
         client.on_event = lambda event: client_received.append(event)
         client.start()

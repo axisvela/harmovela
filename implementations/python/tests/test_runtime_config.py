@@ -8,7 +8,7 @@ from aep.sqlite_delivery_store import SqliteDeliveryStore
 
 def test_default_config():
     config = default_config()
-    assert config["aep_version"] == "0.1"
+    assert config["spec_version"] == "0.2"
     assert config["runtime"]["id"] == "aepd-local"
     assert config["delivery"]["store"] == "sqlite"
     assert config["transports"]["websocket"]["port"] == 8787
@@ -17,7 +17,7 @@ def test_default_config():
 
 def test_write_and_load_config():
     with tempfile.TemporaryDirectory() as d:
-        path = os.path.join(d, "aep.config.json")
+        path = os.path.join(d, "harmovela.config.json")
         write_default_config(path)
         config = load_config(path, env={})
         assert config["runtime"]["source"] == "runtime:aepd"

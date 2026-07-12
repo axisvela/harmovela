@@ -2,7 +2,7 @@ from aep import EventRouter
 
 
 def _make_event(type_: str, **kwargs) -> dict:
-    return {"aep_version": "0.1", "id": "evt_01", "type": type_,
+    return {"spec_version": "0.2", "id": "evt_01", "type": type_,
             "source": "agent:test", "created_at": "2026-07-09T10:00:00Z", "payload": {}, **kwargs}
 
 

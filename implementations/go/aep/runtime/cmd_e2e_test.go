@@ -26,8 +26,8 @@ func TestDaemonServiceHTTPRoundTrip(t *testing.T) {
 	defer svc.Stop()
 	time.Sleep(200 * time.Millisecond)
 
-	base := fmt.Sprintf("http://127.0.0.1:%d/aep/api", port)
-	body := `{"aep_version":"0.1","id":"evt_daemon","type":"task.submitted","source":"t","created_at":"2026-07-11T10:00:00Z","payload":{}}`
+	base := fmt.Sprintf("http://127.0.0.1:%d/harmovela/api", port)
+	body := `{"spec_version":"0.2","id":"evt_daemon","type":"task.submitted","source":"t","created_at":"2026-07-11T10:00:00Z","payload":{}}`
 	resp, err := http.Post(base+"/events", "application/json", strings.NewReader(body))
 	if err != nil {
 		t.Fatalf("post: %v", err)

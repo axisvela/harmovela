@@ -18,7 +18,7 @@ def _run(args, env=None):
 
 def test_init_writes_config():
     with tempfile.TemporaryDirectory() as d:
-        path = os.path.join(d, "aep.config.json")
+        path = os.path.join(d, "harmovela.config.json")
         code, out, err = _run(["init", "--config", path])
         assert code == 0, err
         with open(path) as f:

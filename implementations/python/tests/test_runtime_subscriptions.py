@@ -4,7 +4,7 @@ from aep.runtime.service import AepRuntimeService
 
 def _event(**overrides):
     base = {
-        "aep_version": "0.1", "id": "evt_1", "type": "task.submitted",
+        "spec_version": "0.2", "id": "evt_1", "type": "task.submitted",
         "source": "test", "created_at": "2026-07-11T10:00:00Z", "payload": {},
     }
     base.update(overrides)

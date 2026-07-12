@@ -21,13 +21,13 @@ func freePort(t *testing.T) int {
 
 func TestWsBroadcastDeliversToClients(t *testing.T) {
 	port := freePort(t)
-	server := NewWsBroadcastServer("/aep")
+	server := NewWsBroadcastServer("/harmovela")
 	server.OnMessage(func(event map[string]any) {})
 	go server.Start(fmt.Sprintf("127.0.0.1:%d", port))
 	defer server.Stop()
 	time.Sleep(200 * time.Millisecond)
 
-	url := fmt.Sprintf("ws://127.0.0.1:%d/aep", port)
+	url := fmt.Sprintf("ws://127.0.0.1:%d/harmovela", port)
 	sub, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		t.Fatalf("dial sub: %v", err)
@@ -51,7 +51,7 @@ func TestWsBroadcastDeliversToClients(t *testing.T) {
 
 func TestWsBroadcastReceivesFromClient(t *testing.T) {
 	port := freePort(t)
-	server := NewWsBroadcastServer("/aep")
+	server := NewWsBroadcastServer("/harmovela")
 	received := make(chan map[string]any, 1)
 	server.OnMessage(func(event map[string]any) {
 		received <- event
@@ -60,7 +60,7 @@ func TestWsBroadcastReceivesFromClient(t *testing.T) {
 	defer server.Stop()
 	time.Sleep(200 * time.Millisecond)
 
-	url := fmt.Sprintf("ws://127.0.0.1:%d/aep", port)
+	url := fmt.Sprintf("ws://127.0.0.1:%d/harmovela", port)
 	client, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		t.Fatalf("dial: %v", err)

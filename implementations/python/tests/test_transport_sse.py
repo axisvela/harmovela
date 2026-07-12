@@ -18,17 +18,17 @@ class TestSseServerTransport:
         transport.stop()
 
     def test_serves_text_event_stream(self, server):
-        url = f"http://127.0.0.1:{server.port}/aep/events"
+        url = f"http://127.0.0.1:{server.port}/harmovela/events"
         req = urllib.request.Request(url, headers={"Accept": "text/event-stream"})
         conn = urllib.request.urlopen(req, timeout=2)
         content_type = conn.headers.get("Content-Type", "")
         assert "text/event-stream" in content_type
 
     def test_ingest_endpoint_accepts_post_events(self, server):
-        url = f"http://127.0.0.1:{server.port}/aep/events"
+        url = f"http://127.0.0.1:{server.port}/harmovela/events"
         events = [
-            json.dumps({"id": "evt_01", "type": "test.event", "aep_version": "0.1", "source": "test", "created_at": "2024-01-01T00:00:00Z", "payload": {}}),
-            json.dumps({"id": "evt_02", "type": "test.event", "aep_version": "0.1", "source": "test", "created_at": "2024-01-01T00:00:00Z", "payload": {}}),
+            json.dumps({"id": "evt_01", "type": "test.event", "spec_version": "0.2", "source": "test", "created_at": "2024-01-01T00:00:00Z", "payload": {}}),
+            json.dumps({"id": "evt_02", "type": "test.event", "spec_version": "0.2", "source": "test", "created_at": "2024-01-01T00:00:00Z", "payload": {}}),
         ]
         body = "\n".join(events).encode("utf-8")
         req = urllib.request.Request(url, data=body, method="POST")
@@ -40,7 +40,7 @@ class TestSseServerTransport:
         assert result["rejected"] == 0
 
     def test_rejects_invalid_json(self, server):
-        url = f"http://127.0.0.1:{server.port}/aep/events"
+        url = f"http://127.0.0.1:{server.port}/harmovela/events"
         body = b'{"id": "evt_01", invalid json here\n{"id": "evt_02", "type": "test"}'
         req = urllib.request.Request(url, data=body, method="POST")
         req.add_header("Content-Type", "application/x-ndjson")

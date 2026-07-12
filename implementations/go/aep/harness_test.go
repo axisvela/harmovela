@@ -7,7 +7,7 @@ import (
 func TestHarnessDeclaresCapabilities(t *testing.T) {
 	h := NewHarness()
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "capabilities.requested",
 		"source":      "agent:test",
@@ -27,7 +27,7 @@ func TestHarnessDeclaresCapabilities(t *testing.T) {
 func TestHarnessCreatesSubscription(t *testing.T) {
 	h := NewHarness()
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "subscription.requested",
 		"source":      "agent:test",
@@ -46,7 +46,7 @@ func TestHarnessCreatesSubscription(t *testing.T) {
 func TestHarnessRejectsSubscriptionWithNoFilter(t *testing.T) {
 	h := NewHarness()
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "subscription.requested",
 		"source":      "agent:test",
@@ -66,14 +66,14 @@ func TestHarnessRejectsSubscriptionWithNoFilter(t *testing.T) {
 func TestHarnessSessionOpenAndClose(t *testing.T) {
 	h := NewHarness()
 	open := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_sess_001",
 		"type":        "session.opened",
 		"source":      "agent:test",
 		"created_at":  "2026-07-09T10:00:00Z",
 		"payload": map[string]any{
 			"session_id": "sess_01",
-			"version":    "0.1",
+			"version":    "0.2",
 		},
 	}
 	responses := h.Handle(open)
@@ -99,7 +99,7 @@ func TestHarnessSessionOpenAndClose(t *testing.T) {
 	}
 
 	close := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_close_001",
 		"type":        "session.closed",
 		"source":      "agent:test",
@@ -125,7 +125,7 @@ func TestHarnessSessionOpenAndClose(t *testing.T) {
 func TestHarnessTaskLifecycle(t *testing.T) {
 	h := NewHarness()
 	submitted := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_task_001",
 		"type":        "task.submitted",
 		"source":      "agent:test",
@@ -143,7 +143,7 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 	}
 
 	started := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_task_002",
 		"type":        "task.started",
 		"source":      "tool:crawl",
@@ -163,7 +163,7 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 	}
 
 	completed := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_task_005",
 		"type":        "task.completed",
 		"source":      "tool:crawl",
@@ -186,7 +186,7 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 func TestHarnessTaskRejectsUnknownTask(t *testing.T) {
 	h := NewHarness()
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "task.progress",
 		"source":      "tool:crawl",

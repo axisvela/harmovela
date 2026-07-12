@@ -2,7 +2,7 @@ from aep import AepHarness
 
 _now = "2026-07-09T10:00:01Z"
 _valid_base = {
-    "aep_version": "0.1", "id": "evt_input_01", "source": "agent:tester",
+    "spec_version": "0.2", "id": "evt_input_01", "source": "agent:tester",
     "created_at": "2026-07-09T10:00:00Z",
 }
 
@@ -86,6 +86,6 @@ class TestHarness:
 
     def test_rejects_unsupported_version(self):
         h = AepHarness(now_fn=lambda: _now)
-        [resp] = h.handle({**_valid_base, "aep_version": "9.9", "type": "task.progress", "payload": {}})
+        [resp] = h.handle({**_valid_base, "spec_version": "9.9", "type": "task.progress", "payload": {}})
         assert resp["type"] == "event.rejected"
         assert resp["payload"]["error"]["code"] == "unsupported_version"

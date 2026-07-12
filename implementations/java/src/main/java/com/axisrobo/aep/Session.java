@@ -14,8 +14,8 @@ public class Session {
 
     public Session(String id, String source, String version) {
         this.id = id != null ? id : "sess_" + System.currentTimeMillis();
-        this.source = source != null ? source : "aep:session";
-        this.version = version != null ? version : "0.1";
+        this.source = source != null ? source : "harmovela:session";
+        this.version = version != null ? version : "0.2";
     }
 
     public String getId() { return id; }
@@ -35,7 +35,7 @@ public class Session {
         state = State.OPENED;
         var ts = now();
         return Map.<String, Object>of(
-            "aep_version", version, "id", nextEventId(), "type", "session.opened",
+            "spec_version", version, "id", nextEventId(), "type", "session.opened",
             "source", source, "session_id", id, "created_at", ts,
             "payload", Map.of("session_id", id, "version", version)
         );
@@ -48,7 +48,7 @@ public class Session {
         state = State.READY;
         var ts = now();
         return Map.<String, Object>of(
-            "aep_version", version, "id", nextEventId(), "type", "session.ready",
+            "spec_version", version, "id", nextEventId(), "type", "session.ready",
             "source", source, "session_id", id, "created_at", ts,
             "payload", Map.of("session_id", id, "capabilities", capabilities)
         );
@@ -59,7 +59,7 @@ public class Session {
         state = State.CLOSED;
         var ts = now();
         return Map.<String, Object>of(
-            "aep_version", version, "id", nextEventId(), "type", "session.closed",
+            "spec_version", version, "id", nextEventId(), "type", "session.closed",
             "source", source, "session_id", id, "created_at", ts,
             "payload", Map.of("session_id", id, "reason", "done")
         );

@@ -22,14 +22,14 @@ def _api_config(port):
     config["delivery"]["store"] = "memory"
     config["transports"]["websocket"]["enabled"] = False
     config["transports"]["sse"]["enabled"] = False
-    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": port, "path": "/aep/api"}
+    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": port, "path": "/harmovela/api"}
     return config
 
 
 def test_subscriptions_crud():
     service = AepRuntimeService(_api_config(18911))
     service.start()
-    base = "http://127.0.0.1:18911/aep/api"
+    base = "http://127.0.0.1:18911/harmovela/api"
     try:
         code, out, err = _run(["subscriptions", "create", "--filter", '{"types":"task.*"}', "--base", base])
         assert code == 0, err
@@ -62,7 +62,7 @@ import time
 def test_subscriptions_stream_receives_event():
     service = AepRuntimeService(_api_config(18912))
     service.start()
-    base = "http://127.0.0.1:18912/aep/api"
+    base = "http://127.0.0.1:18912/harmovela/api"
     try:
         code, out, err = _run(["subscriptions", "create", "--filter", '{"types":"task.*"}', "--base", base])
         record = json.loads(out)
@@ -83,7 +83,7 @@ def test_subscriptions_stream_receives_event():
         t.start()
         time.sleep(0.4)
         service.publish({
-            "aep_version": "0.1", "id": "evt_stream", "type": "task.submitted",
+            "spec_version": "0.2", "id": "evt_stream", "type": "task.submitted",
             "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": {},
         })
         t.join(timeout=3)

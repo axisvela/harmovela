@@ -48,7 +48,7 @@ public class AepRuntimeService {
     public Map<String, Object> publish(Map<String, Object> event) {
         var errors = Envelope.validate(event);
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("invalid AEP event: " + String.join("; ", errors));
+            throw new IllegalArgumentException("invalid Harmovela event: " + String.join("; ", errors));
         }
         var id = (String) event.get("id");
         var sub = (String) event.getOrDefault("subscription_id", "_runtime");

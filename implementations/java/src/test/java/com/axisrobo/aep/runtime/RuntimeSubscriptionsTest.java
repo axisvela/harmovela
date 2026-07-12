@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class RuntimeSubscriptionsTest {
     private Config noServerConfig() {
         return Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
-            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/aep/api"));
+            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
     }
 
     private Map<String, Object> event(String id, String type) {
-        return Map.of("aep_version", "0.1", "id", id, "type", type,
+        return Map.of("spec_version", "0.2", "id", id, "type", type,
             "source", "t", "created_at", "2026-07-11T10:00:00Z", "payload", Map.of());
     }
 

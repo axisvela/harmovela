@@ -8,7 +8,7 @@ from aep.harness import AepHarness
 from aep.schema_validator import is_valid_by_schema
 
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"
-LEVEL_ORDER = {"AEP-C0": 0, "AEP-C1": 1, "AEP-C2": 2, "AEP-C3": 3}
+LEVEL_ORDER = {"HARMOVELA-C0": 0, "HARMOVELA-C1": 1, "HARMOVELA-C2": 2, "HARMOVELA-C3": 3}
 
 PAYLOAD_VALIDATED_TYPES = frozenset({
     "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",
@@ -33,7 +33,7 @@ def _read_ndjson(path: Path) -> list[dict]:
 
 
 MANIFEST = _read_json(CONFORMANCE_DIR / "manifest.json")
-TARGET_LEVEL = MANIFEST.get("default_target_level", "AEP-C1")
+TARGET_LEVEL = MANIFEST.get("default_target_level", "HARMOVELA-C1")
 
 
 def _should_run(fixture: dict, target_level: str = TARGET_LEVEL) -> bool:
@@ -45,8 +45,8 @@ def _target_fixtures() -> list[dict]:
 
 
 def test_conformance_manifest_declares_known_draft_levels():
-    assert MANIFEST["levels"] == ["AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"]
-    assert MANIFEST["default_target_level"] == "AEP-C3"
+    assert MANIFEST["levels"] == ["HARMOVELA-C0", "HARMOVELA-C1", "HARMOVELA-C2", "HARMOVELA-C3"]
+    assert MANIFEST["default_target_level"] == "HARMOVELA-C3"
 
 
 @pytest.mark.parametrize("fixture", _target_fixtures(), ids=lambda f: f["path"])

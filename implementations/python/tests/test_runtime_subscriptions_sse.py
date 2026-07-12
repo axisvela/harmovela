@@ -11,15 +11,10 @@ def _api_config():
     config["delivery"]["store"] = "memory"
     config["transports"]["websocket"]["enabled"] = False
     config["transports"]["sse"]["enabled"] = False
-    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": 0, "path": "/aep/api"}
-    return config
-
-
-def test_sse_stream_receives_matching_event():
-    service = AepRuntimeService(_api_config())
+    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": 0, "path": "/harmovela/api"}
     service.start()
     port = service.transports["api"].port
-    base = f"http://127.0.0.1:{port}/aep/api"
+    base = f"http://127.0.0.1:{port}/harmovela/api"
 
     data = json.dumps({"filter": {"types": "task.*"}}).encode()
     req = urllib.request.Request(f"{base}/subscriptions", data=data,
@@ -41,7 +36,7 @@ def test_sse_stream_receives_matching_event():
     t.start()
     time.sleep(0.3)
     service.publish({
-        "aep_version": "0.1", "id": "evt_sse", "type": "task.submitted",
+        "spec_version": "0.2", "id": "evt_sse", "type": "task.submitted",
         "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": {},
     })
     t.join(timeout=3)

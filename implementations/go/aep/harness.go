@@ -130,7 +130,7 @@ func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[
 
 	tk.eventID++
 	return map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          fmt.Sprintf("evt_task_%06d", tk.eventID),
 		"type":        eventType,
 		"source":      tk.Source,
@@ -240,7 +240,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 		})}
 	}
 
-	if v, _ := value["aep_version"].(string); v != "0.1" {
+	if v, _ := value["spec_version"].(string); v != "0.2" {
 		return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
 			"errors": []string{"unsupported protocol version: " + v},
 			"error":  ErrorPayload(ErrorCodeUnsupportedVersion, "unsupported version "+v, false),
@@ -271,7 +271,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 func (h *Harness) handleCapabilities(event map[string]any) any {
 	return h.newEvent("capabilities.declared", event, map[string]any{
 		"protocol":       "aep",
-		"aep_version":    "0.1",
+		"spec_version":    "0.2",
 		"transports":     []string{"stdio"},
 		"delivery_modes": []string{"best_effort", "at_least_once", "replayable"},
 		"features": []string{
@@ -403,14 +403,14 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	}
 
 	sessionID, _ := event["session_id"].(string)
-	h.session = NewAepSession(sessionID, h.Source, "0.1")
+	h.session = NewAepSession(sessionID, h.Source, "0.2")
 	opened, _ := h.session.Opened()
 
 	ready := h.newEvent("session.ready", event, map[string]any{
 		"session_id": sessionID,
 		"capabilities": map[string]any{
 			"protocol":    "aep",
-			"aep_version": "0.1",
+			"spec_version": "0.2",
 			"transports":  []string{"stdio"},
 			"features":    []string{"envelope", "subscription", "task_lifecycle", "error_model"},
 		},
@@ -478,14 +478,14 @@ func (h *Harness) nextSeq() int {
 
 func (h *Harness) newEvent(typ string, input map[string]any, payload map[string]any) map[string]any {
 	seq := h.nextSeq()
-	aepVer, _ := input["aep_version"].(string)
+	aepVer, _ := input["spec_version"].(string)
 	if aepVer == "" {
-		aepVer = "0.1"
+		aepVer = "0.2"
 	}
 	source, _ := input["source"].(string)
 
 	return map[string]any{
-		"aep_version":     aepVer,
+		"spec_version":     aepVer,
 		"id":              fmt.Sprintf("evt_harness_%06d", seq),
 		"type":            typ,
 		"source":          h.Source,

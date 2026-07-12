@@ -6,7 +6,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 class _SseRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == "/aep/events" or self.path.startswith("/aep/events?"):
+        if self.path == "/harmovela/events" or self.path.startswith("/harmovela/events?"):
             self._handle_stream()
         else:
             self.send_response(404)
@@ -14,7 +14,7 @@ class _SseRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"not found")
 
     def do_POST(self):
-        if self.path == "/aep/events" or self.path.startswith("/aep/events?"):
+        if self.path == "/harmovela/events" or self.path.startswith("/harmovela/events?"):
             self._handle_ingest()
         else:
             self.send_response(404)
@@ -111,7 +111,7 @@ class SseServerTransport:
             options = {}
         self.port = options.get("port", 0)
         self.host = options.get("host", "127.0.0.1")
-        self.path = options.get("path", "/aep/events")
+        self.path = options.get("path", "/harmovela/events")
         self._heartbeat_interval = options.get("heartbeatInterval", 15000)
 
         self._listeners = {}

@@ -19,7 +19,7 @@ public final class Fixtures {
                                   @JsonProperty("expected_types") List<String> expectedTypes,
                                   @JsonProperty("expected_stats") Map<String, Object> expectedStats) {}
 
-    public record Manifest(@JsonProperty("aep_version") String aep_version,
+    public record Manifest(@JsonProperty("spec_version") String spec_version,
                            @JsonProperty("default_target_level") String default_target_level,
                            List<String> levels, List<ManifestFixture> fixtures) {}
 

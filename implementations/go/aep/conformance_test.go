@@ -7,10 +7,10 @@ import (
 )
 
 var levelOrder = map[string]int{
-	"AEP-C0": 0,
-	"AEP-C1": 1,
-	"AEP-C2": 2,
-	"AEP-C3": 3,
+	"HARMOVELA-C0": 0,
+	"HARMOVELA-C1": 1,
+	"HARMOVELA-C2": 2,
+	"HARMOVELA-C3": 3,
 }
 
 func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
@@ -18,12 +18,12 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
 	}
-	expectedLevels := []string{"AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"}
+	expectedLevels := []string{"HARMOVELA-C0", "HARMOVELA-C1", "HARMOVELA-C2", "HARMOVELA-C3"}
 	if !reflect.DeepEqual(manifest.Levels, expectedLevels) {
 		t.Fatalf("expected levels %v, got %v", expectedLevels, manifest.Levels)
 	}
-	if manifest.DefaultTargetLevel != "AEP-C3" {
-		t.Fatalf("expected default target AEP-C3, got %v", manifest.DefaultTargetLevel)
+	if manifest.DefaultTargetLevel != "HARMOVELA-C3" {
+		t.Fatalf("expected default target HARMOVELA-C3, got %v", manifest.DefaultTargetLevel)
 	}
 }
 
@@ -35,7 +35,7 @@ func TestConformanceFixtures(t *testing.T) {
 
 	targetLevelOrder, ok := levelOrder[manifest.DefaultTargetLevel]
 	if !ok {
-		targetLevelOrder = levelOrder["AEP-C1"]
+		targetLevelOrder = levelOrder["HARMOVELA-C1"]
 	}
 
 	for _, fixture := range manifest.Fixtures {

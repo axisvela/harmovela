@@ -30,7 +30,7 @@ type AepTransportClient interface {
 
 func RegisterAepTransportServer(s *grpc.Server, srv AepTransportServer) {
 	s.RegisterService(&grpc.ServiceDesc{
-		ServiceName: "aep.v1.AepTransport",
+		ServiceName: "harmovela.v1.HarmovelaTransport",
 		HandlerType: (*AepTransportServer)(nil),
 		Methods:     []grpc.MethodDesc{},
 		Streams: []grpc.StreamDesc{
@@ -78,7 +78,7 @@ func (c *aepTransportClient) Stream(ctx context.Context, opts ...grpc.CallOption
 		StreamName:    "Stream",
 		ServerStreams: true,
 		ClientStreams: true,
-	}, "/aep.v1.AepTransport/Stream", opts...)
+	}, "/harmovela.v1.HarmovelaTransport/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}

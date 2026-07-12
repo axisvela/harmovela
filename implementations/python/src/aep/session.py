@@ -8,7 +8,7 @@ class AepSession:
                  version: str = "0.1", heartbeat_interval_ms: int = 0):
         self.id = id or f"sess_{int(datetime.now(timezone.utc).timestamp() * 1000):x}"
         self.source = source
-        self.version = version
+        self.version = "0.2"
         self.capabilities = None
         self.state = "created"
         self.heartbeat_interval = heartbeat_interval_ms
@@ -29,7 +29,7 @@ class AepSession:
         self.state = "opened"
         self._opened_at = self._now()
         return {
-            "aep_version": self.version,
+            "spec_version": self.version,
             "id": self._next_id(),
             "type": "session.opened",
             "source": self.source,
@@ -45,7 +45,7 @@ class AepSession:
         self._ready_at = self._now()
         self.capabilities = capabilities or self.capabilities
         return {
-            "aep_version": self.version,
+            "spec_version": self.version,
             "id": self._next_id(),
             "type": "session.ready",
             "source": self.source,
@@ -58,7 +58,7 @@ class AepSession:
         if self.state != "ready":
             return None
         return {
-            "aep_version": self.version,
+            "spec_version": self.version,
             "id": self._next_id(),
             "type": "session.heartbeat",
             "source": self.source,
@@ -72,7 +72,7 @@ class AepSession:
             return None
         self.state = "closed"
         return {
-            "aep_version": self.version,
+            "spec_version": self.version,
             "id": self._next_id(),
             "type": "session.closed",
             "source": self.source,
@@ -85,7 +85,7 @@ class AepSession:
         if self.state != "error":
             self.state = "error"
         return {
-            "aep_version": self.version,
+            "spec_version": self.version,
             "id": self._next_id(),
             "type": "session.error",
             "source": self.source,

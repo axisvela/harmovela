@@ -32,8 +32,8 @@ func TestRuntimeSubscriptionRegistry(t *testing.T) {
 	defer svc.Stop()
 	record := svc.CreateSubscription(map[string]any{"types": "task.*"})
 	id := record["id"].(string)
-	svc.Publish(map[string]any{"aep_version": "0.1", "id": "evt_match", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
-	svc.Publish(map[string]any{"aep_version": "0.1", "id": "evt_skip", "type": "session.opened", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
+	svc.Publish(map[string]any{"spec_version": "0.2", "id": "evt_match", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
+	svc.Publish(map[string]any{"spec_version": "0.2", "id": "evt_skip", "type": "session.opened", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
 	drained := svc.TakeEvents(id, 100)
 	if len(drained) != 1 {
 		t.Fatalf("expected 1, got %d", len(drained))
@@ -49,7 +49,7 @@ func TestRuntimeSubscriptionEndpoints(t *testing.T) {
 	svc.Start()
 	defer svc.Stop()
 	time.Sleep(200 * time.Millisecond)
-	base := fmt.Sprintf("http://127.0.0.1:%d/aep/api", port)
+	base := fmt.Sprintf("http://127.0.0.1:%d/harmovela/api", port)
 
 	resp, _ := http.Post(base+"/subscriptions", "application/json", strings.NewReader(`{"filter":{"types":"task.*"}}`))
 	if resp.StatusCode != 201 {
@@ -68,7 +68,7 @@ func TestRuntimeSubscriptionEndpoints(t *testing.T) {
 		t.Fatal("expected 1 subscription")
 	}
 
-	svc.Publish(map[string]any{"aep_version": "0.1", "id": "evt_lp", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
+	svc.Publish(map[string]any{"spec_version": "0.2", "id": "evt_lp", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
 	resp, _ = http.Get(base + "/subscriptions/" + id + "/events")
 	var lp map[string]any
 	json.NewDecoder(resp.Body).Decode(&lp)
@@ -97,7 +97,7 @@ func TestRuntimeSubscriptionSSE(t *testing.T) {
 	svc.Start()
 	defer svc.Stop()
 	time.Sleep(200 * time.Millisecond)
-	base := fmt.Sprintf("http://127.0.0.1:%d/aep/api", port)
+	base := fmt.Sprintf("http://127.0.0.1:%d/harmovela/api", port)
 
 	resp, _ := http.Post(base+"/subscriptions", "application/json", strings.NewReader(`{"filter":{"types":"task.*"}}`))
 	var created map[string]any
@@ -112,7 +112,7 @@ func TestRuntimeSubscriptionSSE(t *testing.T) {
 	defer streamResp.Body.Close()
 
 	time.Sleep(100 * time.Millisecond)
-	svc.Publish(map[string]any{"aep_version": "0.1", "id": "evt_sse", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
+	svc.Publish(map[string]any{"spec_version": "0.2", "id": "evt_sse", "type": "task.submitted", "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": map[string]any{}})
 
 	reader := bufio.NewReader(streamResp.Body)
 	done := make(chan string, 1)

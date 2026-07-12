@@ -40,7 +40,7 @@ func NewAepSession(id, source, version string) *AepSession {
 		source = "aep:session"
 	}
 	if version == "" {
-		version = "0.1"
+		version = "0.2"
 	}
 	return &AepSession{
 		ID:      id,
@@ -70,7 +70,7 @@ func (s *AepSession) Opened() (map[string]any, error) {
 	s.State = StateOpened
 	now := time.Now().UTC().Format(time.RFC3339)
 	return map[string]any{
-		"aep_version": s.Version,
+		"spec_version": s.Version,
 		"id":          s.nextEventID(),
 		"type":        "session.opened",
 		"source":      s.Source,
@@ -95,7 +95,7 @@ func (s *AepSession) Ready(capabilities map[string]any) (map[string]any, error) 
 	s.State = StateReady
 	now := time.Now().UTC().Format(time.RFC3339)
 	return map[string]any{
-		"aep_version": s.Version,
+		"spec_version": s.Version,
 		"id":          s.nextEventID(),
 		"type":        "session.ready",
 		"source":      s.Source,
@@ -115,7 +115,7 @@ func (s *AepSession) Close() (map[string]any, error) {
 	s.State = StateClosed
 	now := time.Now().UTC().Format(time.RFC3339)
 	return map[string]any{
-		"aep_version": s.Version,
+		"spec_version": s.Version,
 		"id":          s.nextEventID(),
 		"type":        "session.closed",
 		"source":      s.Source,

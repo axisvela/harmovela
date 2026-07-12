@@ -13,18 +13,18 @@ class RuntimeServiceTest {
 
     private Config apiConfig() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false);
-        return c.withApi(new Config.Transport(true, "127.0.0.1", 0, "/aep/api"));
+        return c.withApi(new Config.Transport(true, "127.0.0.1", 0, "/harmovela/api"));
     }
 
     private Map<String, Object> event(String id) {
-        return Map.of("aep_version", "0.1", "id", id, "type", "task.submitted",
+        return Map.of("spec_version", "0.2", "id", id, "type", "task.submitted",
             "source", "t", "created_at", "2026-07-11T10:00:00Z", "payload", Map.of());
     }
 
     @Test
     void publishesToSubscribers() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
-            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/aep/api"));
+            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
         var svc = new AepRuntimeService(c);
         var seen = new AtomicInteger();
         svc.subscribe("task.*", e -> seen.incrementAndGet());
@@ -37,7 +37,7 @@ class RuntimeServiceTest {
     @Test
     void rejectsInvalid() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
-            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/aep/api"));
+            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
         var svc = new AepRuntimeService(c);
         svc.start();
         assertThrows(IllegalArgumentException.class, () -> svc.publish(Map.of("type", "task.submitted")));
@@ -49,7 +49,7 @@ class RuntimeServiceTest {
         var svc = new AepRuntimeService(apiConfig());
         svc.start();
         Thread.sleep(200);
-        var base = "http://127.0.0.1:" + svc.apiPort() + "/aep/api";
+        var base = "http://127.0.0.1:" + svc.apiPort() + "/harmovela/api";
         var client = HttpClient.newHttpClient();
 
         var health = client.send(HttpRequest.newBuilder(URI.create(base + "/healthz")).build(),

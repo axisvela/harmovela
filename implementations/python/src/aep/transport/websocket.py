@@ -8,7 +8,7 @@ from .base import Transport
 
 
 class WsServerTransport(Transport):
-    def __init__(self, port=0, host="127.0.0.1", path="/aep"):
+    def __init__(self, port=0, host="127.0.0.1", path="/harmovela"):
         super().__init__()
         self.port = port
         self.host = host
@@ -86,7 +86,7 @@ class WsServerTransport(Transport):
 
 
 class WsClientTransport(Transport):
-    def __init__(self, url="ws://127.0.0.1:0/aep", reconnect=False, reconnect_delay=1000):
+    def __init__(self, url="ws://127.0.0.1:0/harmovela", reconnect=False, reconnect_delay=1000):
         super().__init__()
         self.url = url
         self.reconnect = reconnect

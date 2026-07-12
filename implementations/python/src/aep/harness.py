@@ -65,11 +65,18 @@ class AepHarness:
                 "error": error_payload(ErrorCode.INVALID_EVENT_TYPE, f"unknown event type: {value.get('type')}", retryable=False),
             })]
 
-        if value.get("aep_version") != "0.1":
+        if value.get("aep_version"):
             return [self._event("event.rejected", value, {
-                "errors": [f"unsupported protocol version: {value.get('aep_version')}"],
-                "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, f"unsupported version {value.get('aep_version')}",
-                                       details={"supported": ["0.1"]}),
+                "errors": ["aep_version is not supported; use spec_version instead"],
+                "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, "use spec_version instead of aep_version",
+                                       details={"supported": ["0.2"]}),
+            })]
+
+        if value.get("spec_version") != "0.2":
+            return [self._event("event.rejected", value, {
+                "errors": [f"unsupported protocol version: {value.get('spec_version')}"],
+                "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, f"unsupported version {value.get('spec_version')}",
+                                       details={"supported": ["0.2"]}),
             })]
 
         delivery = value.get("delivery", {})
@@ -91,7 +98,7 @@ class AepHarness:
     def _handle_capabilities(self, event: dict) -> dict:
         return self._event("capabilities.declared", event, {
             "protocol": "aep",
-            "aep_version": "0.1",
+            "spec_version": "0.2",
             "transports": ["stdio"],
             "delivery_modes": ["best_effort", "at_least_once", "replayable"],
             "features": [
@@ -187,7 +194,7 @@ class AepHarness:
         )
         self._session.opened()
         return self._session.ready({
-            "protocol": "aep", "aep_version": "0.1", "transports": ["stdio"],
+            "protocol": "aep", "spec_version": "0.2", "transports": ["stdio"],
             "features": ["envelope", "subscription", "task_lifecycle", "error_model"],
         })
 
@@ -232,7 +239,7 @@ class AepHarness:
         self._sequence += 1
         seq = f"{self._sequence:06d}"
         return {
-            "aep_version": input_.get("aep_version", "0.1"),
+            "spec_version": input_.get("spec_version", "0.2"),
             "id": f"evt_harness_{seq}",
             "type": type_,
             "source": self.source,

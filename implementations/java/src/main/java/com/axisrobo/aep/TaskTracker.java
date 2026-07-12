@@ -72,7 +72,7 @@ public class TaskTracker {
 
         eventId++;
         return Map.<String, Object>of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_task_" + String.format("%06d", eventId),
             "type", eventType,
             "source", source,

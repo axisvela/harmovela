@@ -49,7 +49,7 @@ def test_send_requires_started():
         t.send({"type": "test"})
 
 def test_json_roundtrip():
-    event = {"aep_version": "0.1", "id": "evt_001", "type": "test", "source": "test", "created_at": "2026-07-10T10:00:00Z", "payload": {}}
+    event = {"spec_version": "0.2", "id": "evt_001", "type": "test", "source": "test", "created_at": "2026-07-10T10:00:00Z", "payload": {}}
     data = json.dumps(event)
     parsed = json.loads(data)
     assert parsed["id"] == "evt_001"

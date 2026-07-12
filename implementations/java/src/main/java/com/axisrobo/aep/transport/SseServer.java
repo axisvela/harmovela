@@ -17,7 +17,7 @@ public class SseServer {
     public SseServer(int port) throws IOException {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
         this.mapper = new ObjectMapper();
-        server.createContext("/aep/events", this::handleEvents);
+        server.createContext("/harmovela/events", this::handleEvents);
         server.setExecutor(null);
     }
 

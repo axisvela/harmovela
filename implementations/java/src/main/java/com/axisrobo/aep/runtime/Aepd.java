@@ -2,7 +2,7 @@ package com.axisrobo.aep.runtime;
 
 public class Aepd {
     public static void main(String[] args) throws Exception {
-        var configPath = System.getenv("AEP_CONFIG");
+        var configPath = System.getenv("HARMOVELA_CONFIG");
         Config config = configPath != null && !configPath.isEmpty()
             ? Config.load(configPath, System.getenv())
             : Config.defaultConfig();

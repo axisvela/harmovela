@@ -82,7 +82,7 @@ func TestRedisEntryFields(t *testing.T) {
 
 func TestRedisSendValidJSON(t *testing.T) {
 	tr := NewRedisTransport("", "aep.events")
-	event := map[string]any{"aep_version": "0.1", "id": "evt_001", "type": "test", "source": "test", "created_at": "2026-07-10T10:00:00Z", "payload": map[string]any{}}
+	event := map[string]any{"spec_version": "0.2", "id": "evt_001", "type": "test", "source": "test", "created_at": "2026-07-10T10:00:00Z", "payload": map[string]any{}}
 
 	if err := tr.Send(event); err != nil {
 		t.Fatalf("send: %v", err)

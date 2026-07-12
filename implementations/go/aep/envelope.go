@@ -19,7 +19,7 @@ func ValidateEnvelope(value map[string]any) []string {
 		return []string{"event must be a JSON object"}
 	}
 
-	requireString(value, "aep_version", &errors)
+	requireString(value, "spec_version", &errors)
 	requireString(value, "id", &errors)
 	requireString(value, "type", &errors)
 	requireString(value, "source", &errors)
@@ -33,7 +33,7 @@ func ValidateEnvelope(value map[string]any) []string {
 		errors = append(errors, "type is not in the standard draft registry: "+typ)
 	}
 
-	if v, ok := value["aep_version"].(string); ok && v != "0.1" {
+	if v, ok := value["spec_version"].(string); ok && v != "0.2" {
 		errors = append(errors, "unsupported protocol version: "+v)
 	}
 

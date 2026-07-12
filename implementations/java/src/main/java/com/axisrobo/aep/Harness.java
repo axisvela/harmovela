@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Harness {
 
-    private static final String SOURCE = "harness:aep";
+    private static final String SOURCE = "harness:harmovela";
     private int sequence;
     private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
     private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
@@ -58,10 +58,10 @@ public class Harness {
             )));
         }
 
-        if (!"0.1".equals(value.get("aep_version"))) {
+        if (!"0.2".equals(value.get("spec_version"))) {
             return List.of(newEvent("event.rejected", value, Map.of(
-                "errors", List.of("unsupported protocol version: " + value.get("aep_version")),
-                "error", Errors.errorPayload(Errors.UNSUPPORTED_VERSION, "unsupported version " + value.get("aep_version"), false)
+                "errors", List.of("unsupported protocol version: " + value.get("spec_version")),
+                "error", Errors.errorPayload(Errors.UNSUPPORTED_VERSION, "unsupported version " + value.get("spec_version"), false)
             )));
         }
 
@@ -80,7 +80,7 @@ public class Harness {
 
     private Object handleCapabilities(Map<String, Object> event) {
         return newEvent("capabilities.declared", event, Map.of(
-            "protocol", "aep", "aep_version", "0.1",
+            "protocol", "harmovela", "spec_version", "0.2",
             "transports", List.of("stdio"),
             "delivery_modes", List.of("best_effort", "at_least_once", "replayable"),
             "features", List.of("envelope_validation", "event_type_registry", "subscription_matching",
@@ -179,18 +179,18 @@ public class Harness {
             ));
         }
         var sessionId = (String) event.getOrDefault("session_id", null);
-        session = new Session(sessionId, SOURCE, "0.1");
+        session = new Session(sessionId, SOURCE, "0.2");
         var opened = session.opened();
 
         var ready = Map.<String, Object>of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_sess_ready_" + System.currentTimeMillis(),
             "type", "session.ready",
             "source", SOURCE,
             "session_id", session.getId(),
             "created_at", Instant.now().toString(),
             "payload", Map.of("session_id", session.getId(),
-                "capabilities", Map.of("protocol", "aep", "aep_version", "0.1",
+                "capabilities", Map.of("protocol", "harmovela", "spec_version", "0.2",
                     "transports", List.of("stdio"),
                     "features", List.of("envelope", "subscription", "task_lifecycle", "error_model")))
         );
@@ -253,7 +253,7 @@ public class Harness {
     private Map<String, Object> newEvent(String type, Map<String, Object> input, Map<String, Object> payload) {
         var seq = nextSeq();
         var map = new LinkedHashMap<String, Object>();
-        map.put("aep_version", input.getOrDefault("aep_version", "0.1"));
+        map.put("spec_version", input.getOrDefault("spec_version", "0.2"));
         map.put("id", "evt_harness_" + String.format("%06d", seq));
         map.put("type", type);
         map.put("source", SOURCE);

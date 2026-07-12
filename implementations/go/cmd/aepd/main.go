@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	config, err := runtime.LoadConfig(os.Getenv("AEP_CONFIG"), nil)
+	config, err := runtime.LoadConfig(os.Getenv("HARMOVELA_CONFIG"), nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "aepd: %v\n", err)
 		os.Exit(1)

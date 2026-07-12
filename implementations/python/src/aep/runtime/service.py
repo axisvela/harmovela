@@ -48,7 +48,7 @@ class AepRuntimeService:
             return
         ws = self.config.get("transports", {}).get("websocket", {})
         if ws.get("enabled"):
-            transport = WsServerTransport(port=ws.get("port", 0), host=ws.get("host", "127.0.0.1"), path=ws.get("path", "/aep"))
+            transport = WsServerTransport(port=ws.get("port", 0), host=ws.get("host", "127.0.0.1"), path=ws.get("path", "/harmovela"))
             transport.on_event = lambda event: self.publish(event)
             transport.start()
             self.transports["websocket"] = transport

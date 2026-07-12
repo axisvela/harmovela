@@ -27,7 +27,7 @@ func main() {
 		fmt.Printf("created %s\n", initConfig)
 		return nil
 	}}
-	initCmd.Flags().StringVar(&initConfig, "config", "aep.config.json", "config file path")
+	initCmd.Flags().StringVar(&initConfig, "config", "harmovela.config.json", "config file path")
 
 	var startConfig string
 	startCmd := &cobra.Command{Use: "start", Short: "Start the local aepd runtime daemon", RunE: func(_ *cobra.Command, _ []string) error {
@@ -42,7 +42,7 @@ func main() {
 		fmt.Printf("aepd started api=%d\n", svc.APIPort())
 		select {}
 	}}
-	startCmd.Flags().StringVar(&startConfig, "config", "aep.config.json", "config file path")
+	startCmd.Flags().StringVar(&startConfig, "config", "harmovela.config.json", "config file path")
 
 	var statusURL string
 	statusCmd := &cobra.Command{Use: "status", Short: "Query an aepd health endpoint", RunE: func(_ *cobra.Command, _ []string) error {
@@ -55,7 +55,7 @@ func main() {
 		fmt.Println(string(body))
 		return nil
 	}}
-	statusCmd.Flags().StringVar(&statusURL, "url", "http://127.0.0.1:8790/aep/api/healthz", "health endpoint URL")
+	statusCmd.Flags().StringVar(&statusURL, "url", "http://127.0.0.1:8790/harmovela/api/healthz", "health endpoint URL")
 
 	var emitPayload, emitURL, emitID, emitSource string
 	emitCmd := &cobra.Command{Use: "emit <type>", Short: "Emit one AEP event over WebSocket", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
@@ -68,7 +68,7 @@ func main() {
 			id = fmt.Sprintf("evt_%d", time.Now().UnixNano())
 		}
 		event := map[string]any{
-			"aep_version": "0.1", "id": id, "type": args[0], "source": emitSource,
+			"spec_version": "0.2", "id": id, "type": args[0], "source": emitSource,
 			"created_at": time.Now().UTC().Format(time.RFC3339), "payload": payload,
 		}
 		conn, _, err := websocket.DefaultDialer.Dial(emitURL, nil)
@@ -84,7 +84,7 @@ func main() {
 		return nil
 	}}
 	emitCmd.Flags().StringVar(&emitPayload, "payload", "{}", "event payload JSON")
-	emitCmd.Flags().StringVar(&emitURL, "url", "ws://127.0.0.1:8787/aep", "WebSocket URL")
+	emitCmd.Flags().StringVar(&emitURL, "url", "ws://127.0.0.1:8787/harmovela", "WebSocket URL")
 	emitCmd.Flags().StringVar(&emitID, "id", "", "event id")
 	emitCmd.Flags().StringVar(&emitSource, "source", "cli:aep", "event source")
 
@@ -111,7 +111,7 @@ func main() {
 		}
 	}}
 	subscribeCmd.Flags().StringVar(&subType, "type", "*", "event type pattern")
-	subscribeCmd.Flags().StringVar(&subURL, "url", "ws://127.0.0.1:8787/aep", "WebSocket URL")
+	subscribeCmd.Flags().StringVar(&subURL, "url", "ws://127.0.0.1:8787/harmovela", "WebSocket URL")
 
 	var dlqConfig string
 	dlqCmd := &cobra.Command{Use: "dlq [subcommand]", Short: "Inspect dead-lettered events", RunE: func(_ *cobra.Command, args []string) error {
@@ -139,7 +139,7 @@ func main() {
 		}
 		return nil
 	}}
-	dlqCmd.Flags().StringVar(&dlqConfig, "config", "aep.config.json", "config file path")
+	dlqCmd.Flags().StringVar(&dlqConfig, "config", "harmovela.config.json", "config file path")
 
 	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd, subscriptionsCmd())
 	if err := root.Execute(); err != nil {
@@ -152,7 +152,7 @@ func subscriptionsCmd() *cobra.Command {
 	var base, filter string
 
 	cmd := &cobra.Command{Use: "subscriptions", Short: "Manage runtime subscriptions over HTTP"}
-	cmd.PersistentFlags().StringVar(&base, "base", "http://127.0.0.1:8790/aep/api", "runtime API base URL")
+	cmd.PersistentFlags().StringVar(&base, "base", "http://127.0.0.1:8790/harmovela/api", "runtime API base URL")
 
 	cmd.AddCommand(&cobra.Command{Use: "create", Short: "Create a subscription", RunE: func(_ *cobra.Command, _ []string) error {
 		var f map[string]any

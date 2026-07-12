@@ -8,13 +8,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConformanceTest {
 
-    private static final Map<String, Integer> LEVEL_ORDER = Map.of("AEP-C0", 0, "AEP-C1", 1, "AEP-C2", 2, "AEP-C3", 3);
+    private static final Map<String, Integer> LEVEL_ORDER = Map.of("HARMOVELA-C0", 0, "HARMOVELA-C1", 1, "HARMOVELA-C2", 2, "HARMOVELA-C3", 3);
 
     @Test
     void manifestDeclaresKnownDraftLevels() throws Exception {
         var manifest = Fixtures.loadManifest("../../conformance/manifest.json");
-        assertEquals(List.of("AEP-C0", "AEP-C1", "AEP-C2", "AEP-C3"), manifest.levels());
-        assertEquals("AEP-C3", manifest.default_target_level());
+        assertEquals(List.of("HARMOVELA-C0", "HARMOVELA-C1", "HARMOVELA-C2", "HARMOVELA-C3"), manifest.levels());
+        assertEquals("HARMOVELA-C3", manifest.default_target_level());
     }
 
     @Test

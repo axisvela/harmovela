@@ -84,7 +84,7 @@ class TaskTracker:
             event_payload.update(payload)
 
         event = {
-            "aep_version": "0.1",
+            "spec_version": "0.2",
             "id": self._next_id(),
             "type": event_type,
             "source": self.source,

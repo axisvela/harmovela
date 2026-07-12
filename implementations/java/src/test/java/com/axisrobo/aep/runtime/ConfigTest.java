@@ -11,7 +11,7 @@ class ConfigTest {
     @Test
     void defaultConfigHasApiTransport() {
         var c = Config.defaultConfig();
-        assertEquals("0.1", c.aepVersion());
+        assertEquals("0.2", c.aepVersion());
         assertEquals(8790, c.api().port());
         assertEquals("sqlite", c.delivery().store());
     }
@@ -28,7 +28,7 @@ class ConfigTest {
 
     @Test
     void writeAndLoad(@org.junit.jupiter.api.io.TempDir Path dir) throws Exception {
-        var path = dir.resolve("aep.config.json");
+        var path = dir.resolve("harmovela.config.json");
         Config.writeDefaultConfig(path.toString());
         var loaded = Config.load(path.toString(), Map.of());
         assertEquals("runtime:aepd", loaded.runtimeSource());

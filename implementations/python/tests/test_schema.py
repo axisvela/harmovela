@@ -29,7 +29,7 @@ class TestSchema:
 
     def test_schema_catches_bad_delivery_mode(self):
         event = {
-            "aep_version": "0.1", "id": "evt_01", "type": "task.progress",
+            "spec_version": "0.2", "id": "evt_01", "type": "task.progress",
             "source": "tool:crawler", "created_at": "2026-07-09T10:00:00Z", "payload": {},
             "delivery": {"mode": "exactly_once"},
         }

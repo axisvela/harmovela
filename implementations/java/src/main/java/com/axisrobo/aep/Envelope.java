@@ -17,7 +17,7 @@ public final class Envelope {
             return List.of("event must be a JSON object");
         }
 
-        requireString(value, "aep_version", errors);
+        requireString(value, "spec_version", errors);
         requireString(value, "id", errors);
         requireString(value, "type", errors);
         requireString(value, "source", errors);
@@ -32,8 +32,8 @@ public final class Envelope {
             errors.add("type is not in the standard draft registry: " + type);
         }
 
-        var version = (String) value.get("aep_version");
-        if (version != null && !"0.1".equals(version)) {
+        var version = (String) value.get("spec_version");
+        if (version != null && !"0.2".equals(version)) {
             errors.add("unsupported protocol version: " + version);
         }
 

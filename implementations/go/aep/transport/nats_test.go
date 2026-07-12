@@ -110,7 +110,7 @@ func TestNatsPrefix(t *testing.T) {
 
 func TestNatsSendMarshal(t *testing.T) {
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "task.submitted",
 		"source":      "agent:test",

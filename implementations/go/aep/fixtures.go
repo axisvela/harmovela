@@ -17,7 +17,7 @@ type ManifestFixture struct {
 }
 
 type Manifest struct {
-	AEPVersion         string           `json:"aep_version"`
+	SpecVersion        string           `json:"spec_version"`
 	DefaultTargetLevel string           `json:"default_target_level"`
 	Levels             []string         `json:"levels"`
 	Fixtures           []ManifestFixture `json:"fixtures"`

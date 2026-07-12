@@ -39,7 +39,7 @@ class SseServerTest {
     @Test
     void servesTextEventStream() throws Exception {
         var request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + port + "/aep/events"))
+            .uri(URI.create("http://localhost:" + port + "/harmovela/events"))
             .header("Accept", "text/event-stream")
             .GET()
             .build();
@@ -55,7 +55,7 @@ class SseServerTest {
     @Test
     void postIngestAcceptsValidEvent() throws Exception {
         var event = Map.<String, Object>of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_001",
             "type", "task.submitted",
             "source", "agent:test",
@@ -65,7 +65,7 @@ class SseServerTest {
         var body = mapper.writeValueAsString(event);
 
         var request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + port + "/aep/events"))
+            .uri(URI.create("http://localhost:" + port + "/harmovela/events"))
             .header("Content-Type", "application/x-ndjson")
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build();
@@ -80,7 +80,7 @@ class SseServerTest {
         var body = "this is not json";
 
         var request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:" + port + "/aep/events"))
+            .uri(URI.create("http://localhost:" + port + "/harmovela/events"))
             .header("Content-Type", "application/x-ndjson")
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build();

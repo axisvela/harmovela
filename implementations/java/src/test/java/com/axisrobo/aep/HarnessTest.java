@@ -11,7 +11,7 @@ class HarnessTest {
     void declaresCapabilities() {
         var h = new Harness();
         var event = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_001",
+            "spec_version", "0.2", "id", "evt_001",
             "type", "capabilities.requested", "source", "agent:test",
             "created_at", "2026-07-09T10:00:00Z", "payload", Map.of()
         );
@@ -23,7 +23,7 @@ class HarnessTest {
     void createsSubscription() {
         var h = new Harness();
         var event = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_001",
+            "spec_version", "0.2", "id", "evt_001",
             "type", "subscription.requested", "source", "agent:test",
             "created_at", "2026-07-09T10:00:00Z",
             "payload", Map.of("types", List.of("task.*"))
@@ -36,7 +36,7 @@ class HarnessTest {
     void rejectsSubscriptionWithNoFilter() {
         var h = new Harness();
         var event = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_001",
+            "spec_version", "0.2", "id", "evt_001",
             "type", "subscription.requested", "source", "agent:test",
             "created_at", "2026-07-09T10:00:00Z", "payload", Map.of()
         );
@@ -48,10 +48,10 @@ class HarnessTest {
     void sessionOpenAndClose() {
         var h = new Harness();
         var open = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_sess_001",
+            "spec_version", "0.2", "id", "evt_sess_001",
             "type", "session.opened", "source", "agent:test",
             "created_at", "2026-07-09T10:00:00Z",
-            "payload", Map.of("session_id", "sess_01", "version", "0.1")
+            "payload", Map.of("session_id", "sess_01", "version", "0.2")
         );
         var responses = h.handle(open);
         assertTrue(responses.size() >= 2);
@@ -60,7 +60,7 @@ class HarnessTest {
         assertTrue(types.contains("session.ready"));
 
         var close = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_close_001",
+            "spec_version", "0.2", "id", "evt_close_001",
             "type", "session.closed", "source", "agent:test",
             "created_at", "2026-07-09T10:05:00Z",
             "payload", Map.of("session_id", "sess_01", "reason", "done")
@@ -73,7 +73,7 @@ class HarnessTest {
     void taskLifecycle() {
         var h = new Harness();
         var submitted = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_task_001",
+            "spec_version", "0.2", "id", "evt_task_001",
             "type", "task.submitted", "source", "agent:test",
             "created_at", "2026-07-09T10:00:00Z",
             "task_id", "task_01",
@@ -83,7 +83,7 @@ class HarnessTest {
         assertEquals("task.accepted", responses.get(0).get("type"));
 
         var started = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_task_002",
+            "spec_version", "0.2", "id", "evt_task_002",
             "type", "task.started", "source", "tool:crawl",
             "created_at", "2026-07-09T10:00:05Z",
             "task_id", "task_01",
@@ -93,7 +93,7 @@ class HarnessTest {
         assertTrue(responses.stream().anyMatch(r -> "event.acknowledged".equals(r.get("type"))));
 
         var completed = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_task_005",
+            "spec_version", "0.2", "id", "evt_task_005",
             "type", "task.completed", "source", "tool:crawl",
             "created_at", "2026-07-09T10:01:00Z",
             "task_id", "task_01",
@@ -107,7 +107,7 @@ class HarnessTest {
     void rejectsUnknownTask() {
         var h = new Harness();
         var event = Map.<String, Object>of(
-            "aep_version", "0.1", "id", "evt_001",
+            "spec_version", "0.2", "id", "evt_001",
             "type", "task.progress", "source", "tool:crawl",
             "created_at", "2026-07-09T10:00:00Z",
             "task_id", "task_unknown",

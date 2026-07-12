@@ -22,7 +22,7 @@ public class ApiServer {
 
     public ApiServer(AepRuntimeService service, Config.Transport t) {
         this.service = service;
-        this.base = t.path() == null || t.path().isEmpty() ? "/aep/api" : t.path();
+        this.base = t.path() == null || t.path().isEmpty() ? "/harmovela/api" : t.path();
     }
 
     public int port() { return port; }

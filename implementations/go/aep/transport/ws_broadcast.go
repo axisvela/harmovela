@@ -18,7 +18,7 @@ type WsBroadcastServer struct {
 
 func NewWsBroadcastServer(path string) *WsBroadcastServer {
 	if path == "" {
-		path = "/aep"
+		path = "/harmovela"
 	}
 	return &WsBroadcastServer{
 		path:    path,

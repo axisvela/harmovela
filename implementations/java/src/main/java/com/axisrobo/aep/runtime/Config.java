@@ -17,14 +17,14 @@ public class Config {
 
     public record Delivery(String store, String sqlitePath, String postgresUrl) {}
 
-    private String aepVersion = "0.1";
+    private String aepVersion = "0.2";
     private String runtimeId = "aepd-local";
     private String runtimeSource = "runtime:aepd";
-    private Transport websocket = new Transport(true, "127.0.0.1", 8787, "/aep");
-    private Transport sse = new Transport(true, "127.0.0.1", 8788, "/aep/events");
-    private Transport api = new Transport(true, "127.0.0.1", 8790, "/aep/api");
+    private Transport websocket = new Transport(true, "127.0.0.1", 8787, "/harmovela");
+    private Transport sse = new Transport(true, "127.0.0.1", 8788, "/harmovela/events");
+    private Transport api = new Transport(true, "127.0.0.1", 8790, "/harmovela/api");
     private String deliveryStore = "sqlite";
-    private String sqlitePath = ".aep/aep.sqlite";
+    private String sqlitePath = ".harmovela/harmovela.sqlite";
     private String postgresUrl = "postgres://postgres:postgres@localhost:5433/postgres";
 
     public static Config defaultConfig() {
@@ -67,7 +67,7 @@ public class Config {
 
     public Map<String, Object> toMap() {
         return Map.of(
-            "aep_version", aepVersion,
+            "spec_version", aepVersion,
             "runtime", Map.of("id", runtimeId, "source", runtimeSource),
             "transports", Map.of(
                 "websocket", transportMap(websocket),
@@ -92,7 +92,7 @@ public class Config {
         var raw = Files.readString(Path.of(path));
         var parsed = (Map<String, Object>) MAPPER.readValue(raw, Map.class);
         var c = new Config();
-        c.aepVersion = (String) parsed.getOrDefault("aep_version", "0.1");
+        c.aepVersion = (String) parsed.getOrDefault("spec_version", "0.2");
         var runtime = (Map<String, Object>) parsed.getOrDefault("runtime", Map.of());
         c.runtimeId = (String) runtime.getOrDefault("id", "aepd-local");
         c.runtimeSource = (String) runtime.getOrDefault("source", "runtime:aepd");
@@ -103,7 +103,7 @@ public class Config {
         var delivery = (Map<String, Object>) parsed.getOrDefault("delivery", Map.of());
         c.deliveryStore = (String) delivery.getOrDefault("store", "sqlite");
         var sqlite = (Map<String, Object>) delivery.getOrDefault("sqlite", Map.of());
-        c.sqlitePath = (String) sqlite.getOrDefault("path", ".aep/aep.sqlite");
+        c.sqlitePath = (String) sqlite.getOrDefault("path", ".harmovela/harmovela.sqlite");
         var postgres = (Map<String, Object>) delivery.getOrDefault("postgres", Map.of());
         c.postgresUrl = (String) postgres.getOrDefault("url", c.postgresUrl);
         return applyEnvOverrides(c, env);

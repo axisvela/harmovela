@@ -6,7 +6,7 @@ import (
 
 func TestValidateEnvelopeAcceptsValid(t *testing.T) {
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "task.submitted",
 		"source":      "agent:test",
@@ -29,7 +29,7 @@ func TestValidateEnvelopeRejectsMissingFields(t *testing.T) {
 
 func TestValidateEnvelopeRejectsUnknownType(t *testing.T) {
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "not.a.real.type",
 		"source":      "agent:test",
@@ -44,7 +44,7 @@ func TestValidateEnvelopeRejectsUnknownType(t *testing.T) {
 
 func TestValidateEnvelopeRejectsUnsupportedVersion(t *testing.T) {
 	event := map[string]any{
-		"aep_version": "99.9",
+		"spec_version": "99.9",
 		"id":          "evt_001",
 		"type":        "task.submitted",
 		"source":      "agent:test",

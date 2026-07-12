@@ -20,7 +20,7 @@ def _parse_subscription_route(route):
 
 
 def start_api_server(service, options):
-    base = options.get("path", "/aep/api")
+    base = options.get("path", "/harmovela/api")
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):

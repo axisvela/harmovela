@@ -39,9 +39,9 @@ public class AepCli implements Runnable {
         System.exit(run(args));
     }
 
-    @Command(name = "init", description = "Create an AEP runtime config file")
+    @Command(name = "init", description = "Create a Harmovela runtime config file")
     static class Init implements java.util.concurrent.Callable<Integer> {
-        @Option(names = "--config", defaultValue = "aep.config.json") String config;
+        @Option(names = "--config", defaultValue = "harmovela.config.json") String config;
         public Integer call() throws Exception {
             Config.writeDefaultConfig(config);
             System.out.println("created " + config);
@@ -51,7 +51,7 @@ public class AepCli implements Runnable {
 
     @Command(name = "start", description = "Start the local aepd runtime daemon")
     static class Start implements java.util.concurrent.Callable<Integer> {
-        @Option(names = "--config", defaultValue = "aep.config.json") String config;
+        @Option(names = "--config", defaultValue = "harmovela.config.json") String config;
         public Integer call() throws Exception {
             var c = Config.load(config, System.getenv());
             var svc = new AepRuntimeService(c);
@@ -64,7 +64,7 @@ public class AepCli implements Runnable {
 
     @Command(name = "status", description = "Query an aepd health endpoint")
     static class Status implements java.util.concurrent.Callable<Integer> {
-        @Option(names = "--url", defaultValue = "http://127.0.0.1:8790/aep/api/healthz") String url;
+        @Option(names = "--url", defaultValue = "http://127.0.0.1:8790/harmovela/api/healthz") String url;
         public Integer call() throws Exception {
             var client = HttpClient.newHttpClient();
             var resp = client.send(HttpRequest.newBuilder(URI.create(url)).build(),
@@ -78,7 +78,7 @@ public class AepCli implements Runnable {
     static class Emit implements java.util.concurrent.Callable<Integer> {
         @Parameters(index = "0") String type;
         @Option(names = "--payload", defaultValue = "{}") String payload;
-        @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/aep") String url;
+        @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/harmovela") String url;
         @Option(names = "--id") String id;
         @Option(names = "--source", defaultValue = "cli:aep") String source;
         @SuppressWarnings("unchecked")
@@ -91,7 +91,7 @@ public class AepCli implements Runnable {
                 return 1;
             }
             var event = Map.of(
-                "aep_version", "0.1",
+                "spec_version", "0.2",
                 "id", id != null ? id : "evt_" + UUID.randomUUID().toString().replace("-", ""),
                 "type", type, "source", source,
                 "created_at", Instant.now().toString(), "payload", parsed);
@@ -107,7 +107,7 @@ public class AepCli implements Runnable {
     @Command(name = "subscribe", description = "Subscribe to AEP events over WebSocket")
     static class Subscribe implements java.util.concurrent.Callable<Integer> {
         @Option(names = "--type", defaultValue = "*") String type;
-        @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/aep") String url;
+        @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/harmovela") String url;
         public Integer call() throws Exception {
             var client = new WsClient(URI.create(url));
             client.onMessage(event -> {
@@ -127,7 +127,7 @@ public class AepCli implements Runnable {
     @Command(name = "dlq", description = "Inspect dead-lettered events")
     static class Dlq implements java.util.concurrent.Callable<Integer> {
         @Parameters(index = "0", defaultValue = "list") String subcommand;
-        @Option(names = "--config", defaultValue = "aep.config.json") String config;
+        @Option(names = "--config", defaultValue = "harmovela.config.json") String config;
         public Integer call() throws Exception {
             if (!subcommand.equals("list")) {
                 System.err.println("unsupported dlq command: " + subcommand);
@@ -153,7 +153,7 @@ public class AepCli implements Runnable {
         @Command(name = "create", description = "Create a subscription")
         static class Create implements java.util.concurrent.Callable<Integer> {
             @Option(names = "--filter", defaultValue = "{}") String filterText;
-            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/harmovela/api") String base;
             @SuppressWarnings("unchecked")
             public Integer call() throws Exception {
                 Map<String, Object> filter;
@@ -178,7 +178,7 @@ public class AepCli implements Runnable {
 
         @Command(name = "list", description = "List subscriptions")
         static class ListSub implements java.util.concurrent.Callable<Integer> {
-            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/harmovela/api") String base;
             public Integer call() throws Exception {
                 var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions")).build();
                 var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
@@ -194,7 +194,7 @@ public class AepCli implements Runnable {
         @Command(name = "delete", description = "Delete a subscription")
         static class Delete implements java.util.concurrent.Callable<Integer> {
             @Parameters(index = "0") String id;
-            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/harmovela/api") String base;
             public Integer call() throws Exception {
                 var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions/" + id)).DELETE().build();
                 var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofString());
@@ -214,7 +214,7 @@ public class AepCli implements Runnable {
         @Command(name = "stream", description = "Stream events for a subscription")
         static class Stream implements java.util.concurrent.Callable<Integer> {
             @Parameters(index = "0") String id;
-            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/aep/api") String base;
+            @Option(names = "--base", defaultValue = "http://127.0.0.1:8790/harmovela/api") String base;
             public Integer call() throws Exception {
                 var req = HttpRequest.newBuilder(URI.create(base + "/subscriptions/" + id + "/stream")).build();
                 var resp = HTTP.send(req, HttpResponse.BodyHandlers.ofLines());

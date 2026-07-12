@@ -5,20 +5,16 @@ from aep.runtime.config import default_config
 from aep.runtime.service import AepRuntimeService
 
 
-def _api_config():
+def _start():
     config = default_config()
     config["delivery"]["store"] = "memory"
     config["transports"]["websocket"]["enabled"] = False
     config["transports"]["sse"]["enabled"] = False
-    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": 0, "path": "/aep/api"}
-    return config
-
-
-def _start():
-    service = AepRuntimeService(_api_config())
+    config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": 0, "path": "/harmovela/api"}
+    service = AepRuntimeService(config)
     service.start()
     port = service.transports["api"].port
-    return service, f"http://127.0.0.1:{port}/aep/api"
+    return service, f"http://127.0.0.1:{port}/harmovela/api"
 
 
 def _req(method, url, body=None):
@@ -58,7 +54,7 @@ def test_long_poll_returns_matching_events():
     service, base = _start()
     status, created = _req("POST", f"{base}/subscriptions", {"filter": {"types": "task.*"}})
     service.publish({
-        "aep_version": "0.1", "id": "evt_lp", "type": "task.submitted",
+        "spec_version": "0.2", "id": "evt_lp", "type": "task.submitted",
         "source": "t", "created_at": "2026-07-11T10:00:00Z", "payload": {},
     })
     status, body = _req("GET", f"{base}/subscriptions/{created['id']}/events")

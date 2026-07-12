@@ -35,7 +35,7 @@ func TestSseIngestAcceptsValidEvent(t *testing.T) {
 	defer ts.Close()
 
 	event := map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_001",
 		"type":        "task.progress",
 		"source":      "test",

@@ -9,23 +9,23 @@ from ..postgres_delivery_store import PostgresDeliveryStore
 
 def default_config() -> dict:
     return {
-        "aep_version": "0.1",
+        "spec_version": "0.2",
         "runtime": {"id": "aepd-local", "source": "runtime:aepd"},
         "transports": {
-            "websocket": {"enabled": True, "host": "127.0.0.1", "port": 8787, "path": "/aep"},
-            "sse": {"enabled": True, "host": "127.0.0.1", "port": 8788, "path": "/aep/events"},
-            "api": {"enabled": True, "host": "127.0.0.1", "port": 8790, "path": "/aep/api"},
+            "websocket": {"enabled": True, "host": "127.0.0.1", "port": 8787, "path": "/harmovela"},
+            "sse": {"enabled": True, "host": "127.0.0.1", "port": 8788, "path": "/harmovela/events"},
+            "api": {"enabled": True, "host": "127.0.0.1", "port": 8790, "path": "/harmovela/api"},
             "stdio": {"enabled": False},
         },
         "delivery": {
             "store": "sqlite",
-            "sqlite": {"path": ".aep/aep.sqlite"},
+            "sqlite": {"path": ".harmovela/harmovela.sqlite"},
             "postgres": {"url": "postgres://postgres:postgres@localhost:5433/postgres"},
         },
     }
 
 
-def write_default_config(path: str = "aep.config.json") -> str:
+def write_default_config(path: str = "harmovela.config.json") -> str:
     parent = os.path.dirname(os.path.abspath(path))
     os.makedirs(parent, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -37,7 +37,7 @@ def load_config(path: str | None = None, env: dict | None = None) -> dict:
     if env is None:
         env = os.environ
     if path is None:
-        path = env.get("AEP_CONFIG", "aep.config.json")
+        path = env.get("HARMOVELA_CONFIG", "harmovela.config.json")
     with open(path, "r", encoding="utf-8") as f:
         parsed = json.load(f)
     return apply_env_overrides(parsed, env)

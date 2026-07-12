@@ -28,7 +28,7 @@ def start_daemon(config=None, config_path=None, install_signals=True) -> AepRunt
 def main():
     import os
     import time
-    service = start_daemon(config_path=os.environ.get("AEP_CONFIG"))
+    service = start_daemon(config_path=os.environ.get("HARMOVELA_CONFIG"))
     try:
         while True:
             time.sleep(3600)

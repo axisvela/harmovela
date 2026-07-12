@@ -12,7 +12,7 @@ class ApiSubscriptionsTest {
 
     private AepRuntimeService startService() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
-            .withApi(new Config.Transport(true, "127.0.0.1", 0, "/aep/api"));
+            .withApi(new Config.Transport(true, "127.0.0.1", 0, "/harmovela/api"));
         var svc = new AepRuntimeService(c);
         svc.start();
         return svc;
@@ -22,7 +22,7 @@ class ApiSubscriptionsTest {
     void crudAndLongPoll() throws Exception {
         var svc = startService();
         Thread.sleep(200);
-        var base = "http://127.0.0.1:" + svc.apiPort() + "/aep/api";
+        var base = "http://127.0.0.1:" + svc.apiPort() + "/harmovela/api";
         var client = HttpClient.newHttpClient();
 
         var create = client.send(HttpRequest.newBuilder(URI.create(base + "/subscriptions"))
@@ -38,7 +38,7 @@ class ApiSubscriptionsTest {
             HttpResponse.BodyHandlers.ofString());
         assertTrue(list.body().contains(id));
 
-        svc.publish(Map.of("aep_version", "0.1", "id", "evt_lp", "type", "task.submitted",
+        svc.publish(Map.of("spec_version", "0.2", "id", "evt_lp", "type", "task.submitted",
             "source", "t", "created_at", "2026-07-11T10:00:00Z", "payload", Map.of()));
         var events = client.send(HttpRequest.newBuilder(URI.create(base + "/subscriptions/" + id + "/events")).build(),
             HttpResponse.BodyHandlers.ofString());
@@ -58,7 +58,7 @@ class ApiSubscriptionsTest {
     void sseStreamReceivesEvent() throws Exception {
         var svc = startService();
         Thread.sleep(200);
-        var base = "http://127.0.0.1:" + svc.apiPort() + "/aep/api";
+        var base = "http://127.0.0.1:" + svc.apiPort() + "/harmovela/api";
         var client = HttpClient.newHttpClient();
 
         var create = client.send(HttpRequest.newBuilder(URI.create(base + "/subscriptions"))
@@ -75,7 +75,7 @@ class ApiSubscriptionsTest {
             }));
 
         Thread.sleep(200);
-        svc.publish(Map.of("aep_version", "0.1", "id", "evt_sse", "type", "task.submitted",
+        svc.publish(Map.of("spec_version", "0.2", "id", "evt_sse", "type", "task.submitted",
             "source", "t", "created_at", "2026-07-11T10:00:00Z", "payload", Map.of()));
 
         var line = received.get(3, java.util.concurrent.TimeUnit.SECONDS);

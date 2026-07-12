@@ -11,7 +11,7 @@ class EnvelopeTest {
     @Test
     void acceptsValidEnvelope() {
         var event = Map.<String, Object>of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_001",
             "type", "task.submitted",
             "source", "agent:test",
@@ -32,7 +32,7 @@ class EnvelopeTest {
     @Test
     void rejectsUnknownType() {
         var event = Map.<String, Object>of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_001",
             "type", "not.a.real.type",
             "source", "agent:test",
@@ -46,7 +46,7 @@ class EnvelopeTest {
     @Test
     void rejectsUnsupportedVersion() {
         var event = Map.<String, Object>of(
-            "aep_version", "99.9",
+            "spec_version", "99.9",
             "id", "evt_001",
             "type", "task.submitted",
             "source", "agent:test",
