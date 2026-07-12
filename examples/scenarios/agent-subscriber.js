@@ -13,16 +13,16 @@ const harness = new HarmovelaHarness({ source: "agent:researcher", now });
 const session = new HarmovelaSession({ id: "sess_agent", source: "agent:researcher" });
 console.log("[agent] Opening session...");
 const [readyResponse] = harness.handle({
-  aep_version: "0.1", id: "init_01", type: "session.opened",
-  source: "memory:main", session_id: "sess_agent", created_at: now(),
-  payload: { session_id: "sess_agent", version: "0.1" },
+  spec_version: "0.2", id: "init_01", type: "session.opened",
+  source: "agent:researcher", session_id: "sess_agent", created_at: now(),
+  payload: { session_id: "sess_agent", version: "0.2" },
 });
 console.log("  ←", readyResponse.type);
 
 // Subscribe to memory and context events
 console.log("\n[agent] Subscribing to memory.* + context.* ...");
 const [subResponse] = harness.handle({
-  aep_version: "0.1", id: "sub_req_01", type: "subscription.requested",
+  spec_version: "0.2", id: "sub_req_01", type: "subscription.requested",
   source: "agent:researcher", session_id: "sess_agent", created_at: now(),
   payload: { types: ["memory.*", "context.*"], target: "agent:researcher" },
 });
@@ -56,7 +56,7 @@ console.log("\n[agent] Processing incoming events...\n");
 
 for (const evt of incomingEvents) {
   const event = {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: `incoming_${Date.now().toString(36)}`,
     session_id: "sess_agent",
     conversation_id: "conv_demo",
@@ -83,7 +83,7 @@ for (const evt of incomingEvents) {
 // Close session
 console.log("\n[agent] Closing session...");
 const closeResponses = harness.handle({
-  aep_version: "0.1", id: "close_01", type: "session.closed",
+  spec_version: "0.2", id: "close_01", type: "session.closed",
   source: "agent:researcher", session_id: "sess_agent", created_at: now(),
   payload: { session_id: "sess_agent", reason: "done" },
 });

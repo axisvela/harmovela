@@ -18,7 +18,7 @@ async function main() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      aep_version: "0.1",
+      spec_version: "0.2",
       id: "evt_http",
       type: "task.submitted",
       source: "example:service",
@@ -35,6 +35,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(`http-api-client: ${err.message}. Is aepd running?`);
+  console.error(`http-api-client: ${err.message}. Is harmovelad running?`);
   process.exitCode = 1;
 });

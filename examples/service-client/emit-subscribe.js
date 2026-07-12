@@ -15,7 +15,7 @@ subscriber.on("message", async (event) => {
   process.exit(0);
 });
 subscriber.on("error", (err) => {
-  console.error(`emit-and-subscribe: ${err.message}. Is aepd running?`);
+  console.error(`emit-and-subscribe: ${err.message}. Is harmovelad running?`);
   process.exitCode = 1;
 });
 
@@ -24,7 +24,7 @@ try {
   const emitter = new WsClientTransport({ url });
   await emitter.start();
   emitter.send({
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: "evt_ws_example",
     type: "task.submitted",
     source: "example:service",
@@ -33,6 +33,6 @@ try {
   });
   await emitter.stop();
 } catch (err) {
-  console.error(`emit-and-subscribe: ${err.message}. Is aepd running?`);
+  console.error(`emit-and-subscribe: ${err.message}. Is harmovelad running?`);
   process.exitCode = 1;
 }

@@ -20,7 +20,7 @@ public class Quickstart {
 
         svc.start();
         svc.publish(java.util.Map.of(
-            "aep_version", "0.1",
+            "spec_version", "0.2",
             "id", "evt_embed",
             "type", "task.submitted",
             "source", "example:quickstart",

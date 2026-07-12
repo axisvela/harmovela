@@ -23,7 +23,7 @@ func main() {
 	defer svc.Stop()
 
 	svc.Publish(map[string]any{
-		"aep_version": "0.1",
+		"spec_version": "0.2",
 		"id":          "evt_embed",
 		"type":        "task.submitted",
 		"source":      "example:quickstart",

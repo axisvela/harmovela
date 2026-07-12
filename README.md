@@ -106,6 +106,10 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 - `docs/design/` -- Superpowers-backed design specs and implementation plans
 
+### Conformance
+
+- `CONFORMANCE.md` -- public conformance compliance matrix across all implementations
+
 ### Governance
 
 - `GOVERNANCE.md` -- project governance and decision-making

@@ -13,7 +13,7 @@ const harness = new HarmovelaHarness({ source: "memory:main", now });
 const session = new HarmovelaSession({ id: "sess_mem", source: "memory:main" });
 transport.send(session.opened());
 transport.send(session.ready({
-  protocol: "aep", aep_version: "0.1", transports: ["stdio"],
+  spec_version: "0.2", transports: ["stdio"],
   features: ["envelope", "subscription", "memory_events"],
 }));
 
@@ -55,7 +55,7 @@ console.log("[memory] Emitting 5 memory events...\n");
 
 for (const { type, payload } of events) {
   const event = {
-    aep_version: "0.1",
+    spec_version: "0.2",
     id: `evt_${type.replace(/\./g, "_")}_${Date.now().toString(36)}`,
     type,
     source: "memory:main",
