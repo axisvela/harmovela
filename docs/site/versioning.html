@@ -22,94 +22,86 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Versioning</h1>
-<p><h1>AEP Versioning</h1></p>
+<h1>AEP Versioning</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define how AEP versions protocol assets and how implementations negotiate compatibility.</p>
-<p><h2>Versioned Assets</h2></p>
+<h2>Versioned Assets</h2>
 <p>AEP versions four distinct assets independently:</p>
-<p><table>
-<tr><td>Asset</td><td>Version Field</td><td>Example</td><td>Scope</td></tr>
-</table>
-
 <table>
+<thead><tr><th>Asset</th><th>Version Field</th><th>Example</th><th>Scope</th></tr></thead>
+<tbody>
 <tr><td>Protocol envelope</td><td><code>aep_version</code></td><td><code>"0.1"</code></td><td>Envelope field set, required fields, semantic rules</td></tr>
 <tr><td>Event type families</td><td>Event type registry</td><td>—</td><td>Standard event type names and semantics</td></tr>
 <tr><td>Payload schemas</td><td><code>payload_schema</code> (URI)</td><td><code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code></td><td>Per-event payload structure</td></tr>
-<tr><td>Transport bindings</td><td>Transport spec</td><td>—</td><td>stdio framing, WebSocket subprotocol, etc.</td></tr></table>
-</p>
-<p><h2>Protocol Envelope Versioning</h2></p>
-<p><h3>Format</h3></p>
+<tr><td>Transport bindings</td><td>Transport spec</td><td>—</td><td>stdio framing, WebSocket subprotocol, etc.</td></tr>
+</tbody>
+</table>
+<h2>Protocol Envelope Versioning</h2>
+<h3>Format</h3>
 <p>The <code>aep_version</code> field uses <code>MAJOR.MINOR</code> format (e.g., <code>"0.1"</code>).</p>
-<p><h3>Compatibility Rules</h3></p>
-<p>Within a minor version:
+<h3>Compatibility Rules</h3>
+<p>Within a minor version:</p>
 <ul>
 <li>Existing required envelope fields must not be removed.</li>
 <li>Existing field semantics must not change.</li>
 <li>New optional fields may be added.</li>
 <li>Existing optional fields may become required in the next minor version.</li>
-</ul></p>
-<p>Across major versions:
+</ul>
+<p>Across major versions:</p>
 <ul>
 <li>Required fields may change.</li>
 <li>Envelope structure may differ.</li>
 <li>Implementations must reject envelopes with an unsupported major version with <code>unsupported_version</code>.</li>
-</ul></p>
-<p><h3>Negotiation</h3></p>
+</ul>
+<h3>Negotiation</h3>
 <p>During session initialization (<code>session.opened</code> / <code>session.ready</code>), peers declare their supported protocol version via <code>capabilities.aep_version</code>. Both sides must agree on a version before the session becomes ready. A peer that cannot negotiate a compatible version should send <code>session.error</code> with code <code>unsupported_version</code>.</p>
-<p><h2>Event Type Registry Versioning</h2></p>
+<h2>Event Type Registry Versioning</h2>
 <p>The standard event type registry (the set of <code>type</code> string values defined in <code>docs/specs/</code>) follows these rules:</p>
-<p><ul>
+<ul>
 <li>New event types may be added in any minor version.</li>
 <li>Existing event type names must not be removed within a minor version.</li>
 <li>Existing event type semantics must not change in incompatible ways within a minor version.</li>
 <li>Implementations should treat unknown event types as opaque (validate envelope, forward if applicable) rather than reject them.</li>
-</ul></p>
-<p><h2>Payload Schema Versioning</h2></p>
+</ul>
+<h2>Payload Schema Versioning</h2>
 <p>Each event type family may define one or more payload schemas. A payload schema is identified by a URI in the <code>payload_schema</code> field:</p>
-<p>``<code>json
-{
+<pre><code>{
   "type": "memory.fact.added",
   "payload_schema": "https://schemas.axisrobo.com/memory.fact.added.v1.json",
   "payload": { ... }
 }
-</code>`<code></p>
-<p>Rules:
+</code></pre>
+<p>Rules:</p>
 <ul>
 <li>Payload schemas version independently of the protocol envelope.</li>
-<li>A payload schema URI should embed the schema version (e.g., </code>...v1<code>, </code>...v2<code>).</li>
+<li>A payload schema URI should embed the schema version (e.g., <code>...v1</code>, <code>...v2</code>).</li>
 <li>Changing a payload schema in a backward-incompatible way requires a new URI.</li>
-<li>Implementations may validate payloads against schemas when </code>payload_schema<code> is present.</li>
-</ul></p>
-<p><h2>Transport Binding Versioning</h2></p>
+<li>Implementations may validate payloads against schemas when <code>payload_schema</code> is present.</li>
+</ul>
+<h2>Transport Binding Versioning</h2>
 <p>Each transport binding (stdio, WebSocket, HTTP SSE, etc.) versions independently of the protocol envelope. A transport binding specification defines:</p>
-<p><ul>
+<ul>
 <li>Framing rules (e.g., newline-delimited JSON for stdio)</li>
 <li>Connection lifecycle</li>
 <li>Error handling for transport-level failures</li>
 <li>Subprotocol identifiers (e.g., WebSocket subprotocol names)</li>
-</ul></p>
-<p>Current transport binding documents: none finalized. See </code>docs/specs/transport-stdio.md<code> and </code>docs/specs/transport-websocket.md<code> (planned).</p>
-<p><h2>Forward Compatibility</h2></p>
+</ul>
+<p>Current transport binding documents: none finalized. See <code>docs/specs/transport-stdio.md</code> and <code>docs/specs/transport-websocket.md</code> (planned).</p>
+<h2>Forward Compatibility</h2>
 <p>Implementations should follow these forward-compatibility practices:</p>
-<p>1. <strong>Ignore unknown fields</strong> in envelopes and payloads.
-2. <strong>Treat unknown event types</strong> as valid but unhandled (acknowledge if required, do not reject).
-3. <strong>Downgrade gracefully</strong> when a peer declares an older version — use only features available in that version.
-4. <strong>Log, don't crash</strong> on protocol features you don't recognize.</p>
-<p><h2>Deprecation Policy</h2></p>
+<p>1. <strong>Ignore unknown fields</strong> in envelopes and payloads. 2. <strong>Treat unknown event types</strong> as valid but unhandled (acknowledge if required, do not reject). 3. <strong>Downgrade gracefully</strong> when a peer declares an older version — use only features available in that version. 4. <strong>Log, don't crash</strong> on protocol features you don't recognize.</p>
+<h2>Deprecation Policy</h2>
 <p>AEP follows a no-surprise deprecation policy:</p>
-<p>1. <strong>Deprecation notice</strong>: A field, event type, or feature is marked deprecated in a minor version release.
-2. <strong>Support window</strong>: The deprecated item is supported for at least one additional minor version.
-3. <strong>Removal</strong>: The item is removed in the next major version.</p>
+<p>1. <strong>Deprecation notice</strong>: A field, event type, or feature is marked deprecated in a minor version release. 2. <strong>Support window</strong>: The deprecated item is supported for at least one additional minor version. 3. <strong>Removal</strong>: The item is removed in the next major version.</p>
 <p>Deprecation notices appear in the protocol specification changelog and the relevant spec document.</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>Implementations must include </code>aep_version<code> in every envelope.</li>
-<li>Version mismatch should result in </code>event.rejected<code> with code </code>unsupported_version<code> and </code>details.supported` listing accepted versions.</li>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Implementations must include <code>aep_version</code> in every envelope.</li>
+<li>Version mismatch should result in <code>event.rejected</code> with code <code>unsupported_version</code> and <code>details.supported</code> listing accepted versions.</li>
 <li>Payload schema URIs are not validated by the protocol layer itself; they are metadata for schema-aware consumers.</li>
 </ul>
-</p>
 </body>
 </html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Kafka — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Transport Kafka</h1>
+<h1>AEP Transport Binding: Kafka</h1>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<h2>Purpose</h2>
+<p>Define how AEP runs over Apache Kafka, supporting topic-based publish/subscribe with partition-based ordering and offset-based replay.</p>
+<h2>Framing</h2>
+<p>AEP over Kafka uses JSON-encoded AEP events as Kafka message values:</p>
+<ul>
+<li>Each Kafka record value is a complete, valid JSON-encoded AEP event.</li>
+<li>Records are published to Kafka topics and consumed by consumer groups.</li>
+<li>The transport does not fragment events across multiple records.</li>
+</ul>
+<h3>Message Key</h3>
+<p>The Kafka record key is derived from one of the following AEP envelope fields, in priority order:</p>
+<table>
+<thead><tr><th>Priority</th><th>Field</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>task_id</code></td><td>All events for a task land in the same partition</td></tr>
+<tr><td>2</td><td><code>conversation_id</code></td><td>All events for a conversation are ordered</td></tr>
+<tr><td>3</td><td><code>session_id</code></td><td>Events for a session are ordered</td></tr>
+<tr><td>4</td><td><code>source</code></td><td>Events from the same producer are ordered</td></tr>
+<tr><td>5</td><td>(none)</td><td>Round-robin across partitions</td></tr>
+</tbody>
+</table>
+<h3>Message Headers</h3>
+<table>
+<thead><tr><th>Header</th><th>AEP Field</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td><code>aep-type</code></td><td><code>type</code></td><td>string</td></tr>
+<tr><td><code>aep-source</code></td><td><code>source</code></td><td>string</td></tr>
+<tr><td><code>aep-session</code></td><td><code>session_id</code></td><td>string</td></tr>
+<tr><td><code>aep-conversation</code></td><td><code>conversation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-task</code></td><td><code>task_id</code></td><td>string</td></tr>
+<tr><td><code>aep-correlation</code></td><td><code>correlation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-causation</code></td><td><code>causation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-delivery-mode</code></td><td><code>delivery.mode</code></td><td>string</td></tr>
+</tbody>
+</table>
+<p>Headers enable consumers to filter and route without deserializing the message body.</p>
+<h2>Topic Mapping</h2>
+<table>
+<thead><tr><th>AEP context</th><th>Kafka topic pattern</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Topic <code>tasks.task_01</code></td><td><code>aep.topic.tasks.task_01</code></td><td><code>aep.topic.tasks.task_01</code></td></tr>
+<tr><td>Source <code>agent:researcher</code></td><td><code>aep.source.agent.researcher</code></td><td><code>aep.source.agent.researcher</code></td></tr>
+<tr><td>Type pattern <code>task.*</code></td><td><code>aep.type.task.*</code></td><td>Matches all task subtopics</td></tr>
+<tr><td>Session</td><td><code>aep.sess.&lt;session_id&gt;</code></td><td><code>aep.sess.sess_01</code></td></tr>
+<tr><td>All events</td><td><code>aep.events</code></td><td>Single-topic deployment</td></tr>
+</tbody>
+</table>
+<p>The default topic prefix is <code>aep</code>. Implementations should allow per-envelope topic routing or single-topic deployment with header-based filtering.</p>
+<h2>Delivery Modes</h2>
+<table>
+<thead><tr><th>AEP Delivery Mode</th><th>Kafka Mechanism</th></tr></thead>
+<tbody>
+<tr><td><code>best_effort</code></td><td>Fire-and-forget producer with <code>acks=0</code></td></tr>
+<tr><td><code>at_least_once</code></td><td>Producer with <code>acks=1</code> or <code>acks=all</code>, consumer with manual commit after processing</td></tr>
+<tr><td><code>replayable</code></td><td>Consumer with <code>auto.offset.reset=earliest</code>, replay by seeking to offset</td></tr>
+</tbody>
+</table>
+<h3>At-Least-Once</h3>
+<ul>
+<li>Producer: <code>enable.idempotence=true</code>, <code>acks=all</code> prevents duplicates from producer retries.</li>
+<li>Consumer: commit offset only after AEP <code>event.acknowledged</code> is emitted. On rebalance, uncommitted offsets are redelivered.</li>
+</ul>
+<h3>Replayable</h3>
+<ul>
+<li>Consumers track their own cursor (<code>consumer_group:topic:partition:offset</code>).</li>
+<li>Replay by seeking to a stored offset: <code>consumer.seek(partition, offset)</code>.</li>
+<li>Retention policy dictates maximum replay window.</li>
+</ul>
+<h2>Consumer Groups</h2>
+<p>AEP sessions map to Kafka consumer groups:</p>
+<table>
+<thead><tr><th>Session</th><th>Consumer Group</th></tr></thead>
+<tbody>
+<tr><td><code>sess_01</code></td><td><code>aep-sess_01</code></td></tr>
+<tr><td>Multiple agents sharing a session</td><td>Same group — events distributed across members</td></tr>
+<tr><td>Independent sessions</td><td>Separate groups — each receives full event stream</td></tr>
+</tbody>
+</table>
+<h2>Partitioning And Ordering</h2>
+<p>Ordering is guaranteed within a partition, not across partitions:</p>
+<ul>
+<li>Events sharing the same key land in the same partition and are ordered.</li>
+<li>Events with different keys may arrive out of order.</li>
+<li>Consumers must not assume global ordering.</li>
+</ul>
+<p>For strict ordering, route all events through a single partition (<code>num.partitions=1</code>) or use a consistent key (e.g., <code>session_id</code>).</p>
+<h2>Session Lifecycle</h2>
+<table>
+<thead><tr><th>Kafka State</th><th>Session State</th></tr></thead>
+<tbody>
+<tr><td>Consumer connects and joins group</td><td><code>CREATED</code></td></tr>
+<tr><td>Partition assignment received</td><td><code>OPENED</code></td></tr>
+<tr><td>First event consumed</td><td><code>READY</code></td></tr>
+<tr><td>Consumer leaves group (graceful)</td><td><code>CLOSED</code></td></tr>
+<tr><td>Consumer session timeout</td><td><code>ERROR</code></td></tr>
+</tbody>
+</table>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Use the native Kafka client for each language: <code>kafka-go</code> (Go), <code>kafkajs</code> (Node.js), <code>confluent-kafka</code> (Python), <code>kafka-clients</code> (Java).</li>
+<li>Producers should batch events when possible (<code>linger.ms</code>, <code>batch.size</code>).</li>
+<li>Consumers should use poll loops with configurable <code>max.poll.records</code>.</li>
+<li>Topic auto-creation should be opt-in, not default.</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://kafka.apache.org/documentation/">Apache Kafka Documentation</a></li>
+<li>Key-based partitioning, consumer groups, offset management, and transactional producers are Kafka-native concepts mapped to AEP semantics.</li>
+</ul>
+</body>
+</html>

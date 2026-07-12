@@ -11,7 +11,7 @@ AEP is designed as the asynchronous counterpart to MCP. MCP is good at synchrono
 AEP 0.1 draft is a multi-language protocol repository with:
 
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
-- **4 productized implementations** (TypeScript, Python, Go, Java) ï¿?each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
+- **4 productized implementations** (TypeScript, Python, Go, Java) ï¿-each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance
@@ -57,54 +57,75 @@ AEP does not replace:
 
 AEP should interoperate with MCP rather than fork it. AEP can carry events about MCP tool calls, but it should remain protocol-independent enough to support non-MCP agents, tools, memory systems, robotics systems, browsers, IDEs, and cloud runtimes.
 
+
 ## Documents
+
+### Core (English)
 
 - `docs/vision.md` -- project vision, goals, non-goals, and principles ([ÖÐÎÄ](docs/zh/vision.md))
 - `docs/architecture.md` -- system architecture and major protocol layers ([ÖÐÎÄ](docs/zh/architecture.md))
-- `docs/differentiation.md` ï¿?non-normative positioning and comparison material
+- `docs/differentiation.md` -- non-normative positioning and comparison material
 - `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([ÖÐÎÄ](docs/zh/protocol-design.md))
-- `docs/mcp-relationship.md` ï¿?detailed comparison and interop model with MCP
-- `docs/roadmap.md` ï¿?proposed phases toward a usable open protocol
-- `docs/specs/session.md` ï¿?session lifecycle specification
-- `docs/specs/subscription.md` ï¿?subscription model specification
-- `docs/specs/task-lifecycle.md` ï¿?task lifecycle specification
-- `docs/specs/error-model.md` ï¿?error model specification
-- `docs/specs/versioning.md` ï¿?versioning rules specification
-- `docs/specs/transport-stdio.md` ï¿?stdio transport specification
-- `docs/specs/transport-websocket.md` ï¿?WebSocket transport specification
-- `docs/specs/transport-sse.md` ï¿?HTTP SSE transport specification
-- `docs/specs/transport-grpc.md` ï¿?gRPC streaming transport specification
-- `docs/specs/delivery.md` ï¿?delivery semantics, acknowledgement, and replay specification
-- `docs/specs/reliability.md` ï¿?retry, durability, and dead-letter handling specification
-- `docs/specs/security.md` ï¿?identity, authorization, audit, and tenant isolation specification
-- `docs/specs/conformance.md` ï¿?draft conformance levels and shared fixture manifest rules
-- `docs/specs/event-registry-governance.md` ï¿?event type registry governance and versioning
-- `docs/specs/agent-runtime-semantics.md` ï¿?belief, freshness, delegation, interruption, and provenance metadata
-- `CONTRIBUTING.md` ï¿?contribution guide and repository conventions
-- `CODE_OF_CONDUCT.md` ï¿?contributor code of conduct
+- `docs/mcp-relationship.md` -- detailed comparison and interop model with MCP
+- `docs/roadmap.md` -- proposed phases toward a usable open protocol
+
+### Protocol Specs (`docs/protocol/`)
+
+- `docs/protocol/session.md` -- session lifecycle specification
+- `docs/protocol/subscription.md` -- subscription model specification
+- `docs/protocol/task-lifecycle.md` -- task lifecycle specification
+- `docs/protocol/error-model.md` -- error model specification
+- `docs/protocol/versioning.md` -- versioning rules specification
+- `docs/protocol/transport-stdio.md` -- stdio transport specification
+- `docs/protocol/transport-websocket.md` -- WebSocket transport specification
+- `docs/protocol/transport-sse.md` -- HTTP SSE transport specification
+- `docs/protocol/transport-grpc.md` -- gRPC streaming transport specification
+- `docs/protocol/transport-kafka.md` -- Kafka transport specification
+- `docs/protocol/transport-nats.md` -- NATS transport specification
+- `docs/protocol/transport-redis-streams.md` -- Redis Streams transport specification
+- `docs/protocol/delivery.md` -- delivery semantics, acknowledgement, and replay specification
+- `docs/protocol/reliability.md` -- retry, durability, and dead-letter handling specification
+- `docs/protocol/security.md` -- identity, authorization, audit, and tenant isolation specification
+- `docs/protocol/conformance.md` -- draft conformance levels and shared fixture manifest rules
+- `docs/protocol/event-registry-governance.md` -- event type registry governance and versioning
+- `docs/protocol/agent-runtime-semantics.md` -- belief, freshness, delegation, interruption, and provenance metadata
+
+### Design Documents (`docs/design/`)
+
+- `docs/design/` -- Superpowers-backed design specs and implementation plans
+
+### Guides
+
+- `CONTRIBUTING.md` -- contribution guide and repository conventions
+- `CODE_OF_CONDUCT.md` -- contributor code of conduct
+
 
 ## Repository Layout
 
-- `docs/` ï¿?protocol vision, architecture, design drafts, specifications, roadmap, and Superpowers artifacts
-- `docs/specs/` ï¿?per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning)
-- `schemas/` ï¿?shared draft JSON Schema assets
-- `conformance/` ï¿?shared fixtures for reference implementation parity
-- `implementations/` ï¿?language-specific reference implementations
-- `implementations/typescript/` ï¿?primary TypeScript implementation (SDK, `aepd` daemon, `aep` CLI, HTTP API)
-- `implementations/python/` ï¿?Python implementation (SDK, daemon, CLI, HTTP API)
-- `implementations/go/` ï¿?Go implementation (SDK, daemon, CLI, HTTP API, sub-package layout)
-- `implementations/java/` ï¿?Java implementation (SDK, daemon, CLI, HTTP API, JDK 21)
+- `docs/` -- protocol vision, architecture, design drafts, specifications, roadmap
+- `docs/protocol/` -- per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning, transports)
+- `docs/design/` -- Superpowers-backed design specs and implementation plans
+- `docs/zh/` -- Chinese translations of key documents
+- `docs/site/` -- generated specification site (HTML)
+- `schemas/` -- shared draft JSON Schema assets
+- `conformance/` -- shared fixtures for cross-language conformance
 - `examples/` -- scene-based examples: quickstart, service-client, mcp-bridge, scenarios
+- `implementations/` -- language-specific implementations
+- `implementations/typescript/` -- TypeScript implementation (SDK, aepd daemon, aep CLI, HTTP API)
+- `implementations/python/` -- Python implementation (SDK, daemon, CLI, HTTP API)
+- `implementations/go/` -- Go implementation (SDK, daemon, CLI, HTTP API, sub-package layout)
+- `implementations/java/` -- Java implementation (SDK, daemon, CLI, HTTP API, JDK 21)
 - `.github/workflows/` -- repository CI
+- `tools/` -- development tools (conformance runner, spec site generator)
 
 ## Development Harness
 
 This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `.superpowers/`.
 
-- `AGENTS.md` ï¿?OpenCode project rules
-- `CLAUDE.md` ï¿?Claude Code project rules
-- `.superpowers/specs/` ï¿?Superpowers-backed design specs
-- `.superpowers/plans/` ï¿?Superpowers-backed execution plans
+- `AGENTS.md` ï¿-OpenCode project rules
+- `CLAUDE.md` ï¿-Claude Code project rules
+- `.superpowers/specs/` ï¿-Superpowers-backed design specs
+- `.superpowers/plans/` ï¿-Superpowers-backed execution plans
 
 ## AEP Harness
 
@@ -139,7 +160,7 @@ cd implementations/typescript && npm run harness < ../../conformance/fixtures/ta
 
 Run examples:
 
-See `examples/` ï¿?organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
+See `examples/` ï¿-organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
 
 ```sh
 # TypeScript quickstart

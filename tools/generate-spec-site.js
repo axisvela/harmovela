@@ -9,9 +9,9 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
-const specsDir = resolve(root, "docs/specs");
+const specsDir = resolve(root, "docs/protocol");
 const docsDir = resolve(root, "docs");
-const outDir = resolve(root, "docs");
+const outDir = resolve(root, "docs/site");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
 const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];

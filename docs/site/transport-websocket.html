@@ -22,94 +22,84 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Websocket</h1>
-<p><h1>AEP Transport Binding: WebSocket</h1></p>
+<h1>AEP Transport Binding: WebSocket</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define how AEP runs over WebSocket, supporting bidirectional event streams over TCP with optional TLS.</p>
-<p><h2>Connection</h2></p>
-<p><h3>URI Scheme</h3></p>
-<p>``<code>
-ws://host:port/path
+<h2>Connection</h2>
+<h3>URI Scheme</h3>
+<pre><code>ws://host:port/path
 wss://host:port/path  (TLS)
-</code>`<code></p>
-<p><h3>Subprotocol</h3></p>
-<p>The WebSocket handshake must request the subprotocol </code>aep-0.1<code>:</p>
-<p></code>`<code>
-GET /aep HTTP/1.1
+</code></pre>
+<h3>Subprotocol</h3>
+<p>The WebSocket handshake must request the subprotocol <code>aep-0.1</code>:</p>
+<pre><code>GET /aep HTTP/1.1
 Upgrade: websocket
 Sec-WebSocket-Protocol: aep-0.1
-</code>`<code></p>
-<p>The server must respond with </code>Sec-WebSocket-Protocol: aep-0.1<code> on success.</p>
-<p>Future protocol versions use distinct subprotocol strings (e.g., </code>aep-0.2<code>). The server may advertise supported versions, and the client selects one.</p>
-<p><h3>Connection Parameters</h3></p>
-<p>Path and query string may carry initialization parameters (e.g., </code>ws://host/aep?session_id=sess_01<code>). This is transport-level metadata and not part of the protocol envelope.</p>
-<p><h2>Framing</h2></p>
-<p><table>
-<tr><td>Aspect</td><td>Specification</td></tr>
-</table>
-
+</code></pre>
+<p>The server must respond with <code>Sec-WebSocket-Protocol: aep-0.1</code> on success.</p>
+<p>Future protocol versions use distinct subprotocol strings (e.g., <code>aep-0.2</code>). The server may advertise supported versions, and the client selects one.</p>
+<h3>Connection Parameters</h3>
+<p>Path and query string may carry initialization parameters (e.g., <code>ws://host/aep?session_id=sess_01</code>). This is transport-level metadata and not part of the protocol envelope.</p>
+<h2>Framing</h2>
 <table>
-<tr><td>Frame type</td><td>Text frames only (opcode </code>0x1<code>)</td></tr>
+<thead><tr><th>Aspect</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td>Frame type</td><td>Text frames only (opcode <code>0x1</code>)</td></tr>
 <tr><td>Message format</td><td>One complete JSON AEP event per message</td></tr>
 <tr><td>Encoding</td><td>UTF-8</td></tr>
 <tr><td>Multi-frame</td><td>Not used. Each event is a single text frame.</td></tr>
-<tr><td>Control frames</td><td>Ping/Pong used for heartbeat (see below)</td></tr></table>
-</p>
-<p><h2>Session Lifecycle</h2></p>
-<p><table>
-<tr><td>WebSocket State</td><td>Session State</td><td>Notes</td></tr>
+<tr><td>Control frames</td><td>Ping/Pong used for heartbeat (see below)</td></tr>
+</tbody>
 </table>
-
+<h2>Session Lifecycle</h2>
 <table>
-<tr><td>Connecting</td><td></code>CREATED<code></td></tr>
-<tr><td>Open (after handshake)</td><td></code>OPENED<code></td></tr>
-<tr><td>After </code>session.ready<code></td><td></code>READY<code></td></tr>
-<tr><td>Close frame (1000)</td><td></code>CLOSED<code></td><td>Graceful shutdown</td></tr>
-<tr><td>Close frame (1001–1015)</td><td></code>CLOSED<code></td><td>Shutdown with reason</td></tr>
-<tr><td>Connection error</td><td></code>ERROR<code></td><td>Network failure</td></tr>
-<tr><td>Protocol error (1002)</td><td></code>ERROR<code></td><td>Framing or message error</td></tr></table>
-</p>
-<p><h2>Heartbeat</h2></p>
+<thead><tr><th>WebSocket State</th><th>Session State</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Connecting</td><td><code>CREATED</code></td><td></td></tr>
+<tr><td>Open (after handshake)</td><td><code>OPENED</code></td><td></td></tr>
+<tr><td>After <code>session.ready</code></td><td><code>READY</code></td><td></td></tr>
+<tr><td>Close frame (1000)</td><td><code>CLOSED</code></td><td>Graceful shutdown</td></tr>
+<tr><td>Close frame (1001–1015)</td><td><code>CLOSED</code></td><td>Shutdown with reason</td></tr>
+<tr><td>Connection error</td><td><code>ERROR</code></td><td>Network failure</td></tr>
+<tr><td>Protocol error (1002)</td><td><code>ERROR</code></td><td>Framing or message error</td></tr>
+</tbody>
+</table>
+<h2>Heartbeat</h2>
 <p>WebSocket Ping/Pong frames serve as the transport-level heartbeat:</p>
-<p><ul>
+<ul>
 <li>Either peer may send WebSocket Ping frames.</li>
 <li>The receiving peer must respond with a Pong frame.</li>
-<li>Ping/Pong interval is negotiated in </code>session.ready<code> via </code>capabilities.heartbeat_interval_ms<code>.</li>
-<li>A peer that does not receive a Pong within 3 × </code>heartbeat_interval_ms<code> should close the connection with code 1001 (going away) and transition the session to </code>ERROR<code>.</li>
-</ul></p>
-<p>Application-level </code>session.heartbeat<code> events are still sent over text frames and carry structured metadata. Transport-level Ping is a simpler, lower-overhead mechanism for keep-alive.</p>
-<p><h2>Reconnect and Cursor Recovery</h2></p>
-<p>A disconnected client may reconnect and resume the event stream from a cursor:</p>
-<p>1. Client opens a new WebSocket connection.
-2. Client sends </code>session.opened<code> with a new or existing </code>session_id<code>.
-3. Client sends </code>subscription.requested<code> with </code>from_cursor<code> set to the last received cursor value.
-4. Server replays events from the cursor position.</p>
-<p>Cursor format is transport-specific. For WebSocket, the cursor is the event </code>id<code> plus a sequence number:</p>
-<p></code>`<code>
-evt_01JZ0000000000000000000000:42
-</code>`<code></p>
-<p><h2>Close Codes</h2></p>
-<p>Standard WebSocket close codes are mapped to AEP semantics:</p>
-<p><table>
-<tr><td>Code</td><td>Meaning</td><td>AEP Mapping</td></tr>
-</table>
-
-<table>
-<tr><td>1000</td><td>Normal closure</td><td></code>session.closed<code> with reason </code>"normal"<code></td></tr>
-<tr><td>1001</td><td>Going away</td><td></code>session.closed<code> with reason </code>"peer_disconnected"<code></td></tr>
-<tr><td>1002</td><td>Protocol error</td><td></code>session.error<code> with code </code>protocol_error<code></td></tr>
-<tr><td>1008</td><td>Policy violation</td><td></code>session.error<code> with code </code>unauthorized<code></td></tr>
-<tr><td>1011</td><td>Internal error</td><td></code>session.error<code> with code </code>internal_error<code></td></tr></table>
-</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>Implementations should set a maximum message size. Messages exceeding the limit should trigger a close (1009 — message too big).</li>
-<li>TLS (</code>wss://`) is strongly recommended for any network-exposed deployment.</li>
-<li>The WebSocket transport may coexist with other transports in the same AEP runtime.</li>
-<li>See the <a href="../session.md">session lifecycle specification</a> for session state machine details.</li>
+<li>Ping/Pong interval is negotiated in <code>session.ready</code> via <code>capabilities.heartbeat_interval_ms</code>.</li>
+<li>A peer that does not receive a Pong within 3 × <code>heartbeat_interval_ms</code> should close the connection with code 1001 (going away) and transition the session to <code>ERROR</code>.</li>
 </ul>
-</p>
+<p>Application-level <code>session.heartbeat</code> events are still sent over text frames and carry structured metadata. Transport-level Ping is a simpler, lower-overhead mechanism for keep-alive.</p>
+<h2>Reconnect and Cursor Recovery</h2>
+<p>A disconnected client may reconnect and resume the event stream from a cursor:</p>
+<p>1. Client opens a new WebSocket connection. 2. Client sends <code>session.opened</code> with a new or existing <code>session_id</code>. 3. Client sends <code>subscription.requested</code> with <code>from_cursor</code> set to the last received cursor value. 4. Server replays events from the cursor position.</p>
+<p>Cursor format is transport-specific. For WebSocket, the cursor is the event <code>id</code> plus a sequence number:</p>
+<pre><code>evt_01JZ0000000000000000000000:42
+</code></pre>
+<h2>Close Codes</h2>
+<p>Standard WebSocket close codes are mapped to AEP semantics:</p>
+<table>
+<thead><tr><th>Code</th><th>Meaning</th><th>AEP Mapping</th></tr></thead>
+<tbody>
+<tr><td>1000</td><td>Normal closure</td><td><code>session.closed</code> with reason <code>"normal"</code></td></tr>
+<tr><td>1001</td><td>Going away</td><td><code>session.closed</code> with reason <code>"peer_disconnected"</code></td></tr>
+<tr><td>1002</td><td>Protocol error</td><td><code>session.error</code> with code <code>protocol_error</code></td></tr>
+<tr><td>1008</td><td>Policy violation</td><td><code>session.error</code> with code <code>unauthorized</code></td></tr>
+<tr><td>1011</td><td>Internal error</td><td><code>session.error</code> with code <code>internal_error</code></td></tr>
+</tbody>
+</table>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Implementations should set a maximum message size. Messages exceeding the limit should trigger a close (1009 — message too big).</li>
+<li>TLS (<code>wss://</code>) is strongly recommended for any network-exposed deployment.</li>
+<li>The WebSocket transport may coexist with other transports in the same AEP runtime.</li>
+<li>See the <a href="session.html">session lifecycle specification</a> for session state machine details.</li>
+</ul>
 </body>
 </html>

@@ -22,31 +22,28 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Event Registry Governance</h1>
-<p><h1>AEP Event Registry Governance</h1></p>
+<h1>AEP Event Registry Governance</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define how the standard event type registry is governed, extended, and versioned.</p>
-<p><h2>Standard Event Types</h2></p>
+<h2>Standard Event Types</h2>
 <p>The standard event type registry is defined in each language reference:</p>
-<p><table>
-<tr><td>Language</td><td>File</td></tr>
-</table>
-
 <table>
-<tr><td>TypeScript</td><td><code>reference/typescript/src/event-types.js</code></td></tr>
-<tr><td>Python</td><td><code>reference/python/src/aep/event_types.py</code></td></tr>
-<tr><td>Go</td><td><code>reference/go/aep/event_types.go</code></td></tr>
-<tr><td>Java</td><td><code>reference/java/src/main/java/com/axisrobo/aep/EventTypes.java</code></td></tr></table>
-</p>
+<thead><tr><th>Language</th><th>File</th></tr></thead>
+<tbody>
+<tr><td>TypeScript</td><td><code>implementations/typescript/src/event-types.js</code></td></tr>
+<tr><td>Python</td><td><code>implementations/python/src/aep/event_types.py</code></td></tr>
+<tr><td>Go</td><td><code>implementations/go/aep/event_types.go</code></td></tr>
+<tr><td>Java</td><td><code>implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java</code></td></tr>
+</tbody>
+</table>
 <p>All implementations share the same set of standard types. The shared conformance manifest defines fixture-level expectations for each event family.</p>
-<p><h2>Event Families</h2></p>
-<p><table>
-<tr><td>Family</td><td>Prefix</td><td>Scope</td></tr>
-</table>
-
+<h2>Event Families</h2>
 <table>
+<thead><tr><th>Family</th><th>Prefix</th><th>Scope</th></tr></thead>
+<tbody>
 <tr><td>Session</td><td><code>session.*</code></td><td>Session lifecycle: opened, ready, heartbeat, closed, error</td></tr>
 <tr><td>Capabilities</td><td><code>capabilities.*</code></td><td>Capability negotiation: requested, declared, changed</td></tr>
 <tr><td>Subscription</td><td><code>subscription.*</code></td><td>Pub/sub lifecycle: requested, created, rejected, cancelled, expired</td></tr>
@@ -56,34 +53,24 @@
 <tr><td>Context</td><td><code>context.*</code></td><td>Context provider events</td></tr>
 <tr><td>Memory</td><td><code>memory.*</code></td><td>Memory system events</td></tr>
 <tr><td>Agent</td><td><code>agent.*</code></td><td>Agent-to-agent messages</td></tr>
-<tr><td>Environment</td><td><code>environment.*</code></td><td>Environment observer events</td></tr></table>
-</p>
-<p><h2>Adding a New Event Type</h2></p>
-<p>1. Propose the new type with a description in an issue or PR.
-2. If it belongs to an existing family, prefix accordingly (e.g., <code>memory.*</code>).
-3. If it defines a new family, select a clear, single-word prefix.
-4. Add the type to each language's event type registry.
-5. Add at least one conformance fixture exercising the type.
-6. Update at least the TypeScript reference to handle the new type if it carries semantics beyond envelope validation.</p>
-<p><h2>Adding a New Event Family</h2></p>
-<p>1. Propose the family with motivation and initial event types.
-2. Define the family's scope in <code>docs/specs/</code> if it has protocol semantics.
-3. Add all initial types to each language registry.
-4. Add conformance fixtures for the family.
-5. Implement handling in at least the TypeScript reference.</p>
-<p><h2>Versioning</h2></p>
-<p><ul>
+<tr><td>Environment</td><td><code>environment.*</code></td><td>Environment observer events</td></tr>
+</tbody>
+</table>
+<h2>Adding a New Event Type</h2>
+<p>1. Propose the new type with a description in an issue or PR. 2. If it belongs to an existing family, prefix accordingly (e.g., <code>memory.*</code>). 3. If it defines a new family, select a clear, single-word prefix. 4. Add the type to each language's event type registry. 5. Add at least one conformance fixture exercising the type. 6. Update at least the TypeScript reference to handle the new type if it carries semantics beyond envelope validation.</p>
+<h2>Adding a New Event Family</h2>
+<p>1. Propose the family with motivation and initial event types. 2. Define the family's scope in <code>docs/specs/</code> if it has protocol semantics. 3. Add all initial types to each language registry. 4. Add conformance fixtures for the family. 5. Implement handling in at least the TypeScript reference.</p>
+<h2>Versioning</h2>
+<ul>
 <li>Event types are tied to the AEP protocol version (currently 0.1).</li>
 <li>Types may be added in minor versions but not removed.</li>
 <li>Deprecated types remain in the registry with a deprecation note.</li>
 <li>Breaking changes to event semantics require a new major version.</li>
-</ul></p>
-<p><h2>Cross-Reference Consistency</h2></p>
+</ul>
+<h2>Cross-Reference Consistency</h2>
 <p>The <code>conformance/manifest.json</code> serves as the source of truth for which event types are expected in each fixture. All language references must agree on the standard registry.</p>
 <p>To verify consistency:</p>
-<p>``<code>sh
-node tools/conformance-runner.js
-</code>``
-</p>
+<pre><code>node tools/conformance-runner.js
+</code></pre>
 </body>
 </html>

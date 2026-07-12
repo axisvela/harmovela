@@ -18,6 +18,7 @@ implementations/go/aepd.exe
 __pycache__/
 *.pyc
 *.egg-info/
+.pytest_cache/
 implementations/python/.pytest_cache/
 implementations/python/build/
 implementations/python/dist/
@@ -29,6 +30,9 @@ implementations/python/dist/
 .idea/
 *.iml
 .vscode/
+
+# Local environment
+.env.local
 
 # OS
 .DS_Store

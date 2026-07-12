@@ -22,52 +22,51 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Conformance</h1>
-<p><h1>AEP Conformance</h1></p>
+<h1>AEP Conformance</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define observable compatibility levels for AEP implementations. Conformance levels are cumulative and describe externally visible behavior, not internal architecture.</p>
-<p><h2>Levels</h2></p>
-<p><h3>AEP-C0: Envelope And Schema</h3></p>
+<h2>Levels</h2>
+<h3>AEP-C0: Envelope And Schema</h3>
 <p>An AEP-C0 implementation can parse AEP envelopes and validate shared schema assets.</p>
 <p>Required behavior:</p>
-<p><ul>
+<ul>
 <li>Accept valid envelopes from shared conformance fixtures.</li>
 <li>Reject envelopes missing required fields.</li>
 <li>Reject unsupported protocol versions.</li>
 <li>Reject unknown or malformed standard event types.</li>
 <li>Validate <code>schemas/aep-envelope.schema.json</code>.</li>
 <li>Validate <code>schemas/subscription-filter.schema.json</code> when checking subscription filters.</li>
-</ul></p>
-<p><h3>AEP-C1: Core Runtime</h3></p>
+</ul>
+<h3>AEP-C1: Core Runtime</h3>
 <p>An AEP-C1 implementation supports the core local runtime protocol. AEP-C1 includes all AEP-C0 behavior.</p>
 <p>Required behavior:</p>
-<p><ul>
+<ul>
 <li>Process session open, ready, heartbeat, error, and close flows.</li>
 <li>Create, validate, and cancel subscriptions using standard filter fields.</li>
 <li>Route events according to type, source, target, topic, session, task, and metadata filters.</li>
 <li>Process task lifecycle events for accepted, started, progress, blocked, resumed, completed, failed, cancelled, and timed out states.</li>
 <li>Emit standard error payloads for invalid protocol actions.</li>
-</ul></p>
-<p><h3>AEP-C2: Delivery And Reliability</h3></p>
+</ul>
+<h3>AEP-C2: Delivery And Reliability</h3>
 <p>An AEP-C2 implementation supports observable delivery semantics for distributed or durable deployments. AEP-C2 includes all AEP-C0 and AEP-C1 behavior.</p>
 <p>Required behavior:</p>
-<p><ul>
+<ul>
 <li>Track delivery sequence and cursor state.</li>
 <li>Process acknowledgement and negative acknowledgement events.</li>
 <li>Apply retry policy metadata consistently.</li>
 <li>Move exhausted deliveries to dead-letter state.</li>
 <li>Expose replay behavior through observable event sequences.</li>
-</ul></p>
-<p><h2>Shared Manifest</h2></p>
+</ul>
+<h2>Shared Manifest</h2>
 <p>Shared conformance fixtures are described by <code>conformance/manifest.json</code>.</p>
 <p>Manifest paths are relative to <code>conformance/</code>. A runner declares a target level and executes every fixture at or below that level. Runners must ignore higher-level fixtures unless explicitly configured to verify that level.</p>
 <p>The default target level for AEP 0.1 draft reference runners is AEP-C1.</p>
-<p><h2>Fixture Expectations</h2></p>
+<h2>Fixture Expectations</h2>
 <p><code>accept_all</code> means every fixture event must pass envelope and schema validation.</p>
 <p><code>stateful_flow</code> means every fixture event must pass validation and must be accepted by the reference harness without producing <code>event.rejected</code>.</p>
-<p><code>reject_some</code> is reserved for future negative fixtures.
-</p>
+<p><code>reject_some</code> is reserved for future negative fixtures.</p>
 </body>
 </html>

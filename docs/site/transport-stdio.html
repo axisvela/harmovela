@@ -22,68 +22,64 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Stdio</h1>
-<p><h1>AEP Transport Binding: stdio</h1></p>
+<h1>AEP Transport Binding: stdio</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define how AEP runs over standard input / standard output, supporting local process integration with no network dependency.</p>
-<p><h2>Framing</h2></p>
+<h2>Framing</h2>
 <p>AEP over stdio uses <strong>newline-delimited JSON (NDJSON)</strong>:</p>
-<p><ul>
+<ul>
 <li>Each line is a complete, valid JSON-encoded AEP event.</li>
 <li>Lines are separated by <code>\n</code> (LF).</li>
 <li>Empty lines are ignored.</li>
 <li>Neither side should emit partial or multi-line JSON.</li>
-</ul></p>
+</ul>
 <p>Example stream:</p>
-<p>``<code>
-{"aep_version":"0.1","id":"evt_01","type":"session.opened",...}
+<pre><code>{"aep_version":"0.1","id":"evt_01","type":"session.opened",...}
 {"aep_version":"0.1","id":"evt_02","type":"session.ready",...}
 {"aep_version":"0.1","id":"evt_03","type":"session.closed",...}
-</code>`<code></p>
-<p><h2>Direction</h2></p>
-<p><table>
-<tr><td>Stream</td><td>Direction</td><td>Purpose</td></tr>
-</table>
-
+</code></pre>
+<h2>Direction</h2>
 <table>
-<tr><td></code>stdin<code></td><td>Transport → Process</td><td>Inbound events (consumer receives)</td></tr>
-<tr><td></code>stdout<code></td><td>Process → Transport</td><td>Outbound events (producer sends)</td></tr>
-<tr><td></code>stderr<code></td><td>Process → Transport</td><td>Diagnostic output and error events</td></tr></table>
-</p>
-<p></code>stderr<code> may carry:
+<thead><tr><th>Stream</th><th>Direction</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>stdin</code></td><td>Transport → Process</td><td>Inbound events (consumer receives)</td></tr>
+<tr><td><code>stdout</code></td><td>Process → Transport</td><td>Outbound events (producer sends)</td></tr>
+<tr><td><code>stderr</code></td><td>Process → Transport</td><td>Diagnostic output and error events</td></tr>
+</tbody>
+</table>
+<p><code>stderr</code> may carry:</p>
 <ul>
 <li>Non-JSON diagnostic messages</li>
-<li></code>event.rejected<code> or </code>session.error<code> events that could not be sent on </code>stdout<code></li>
-</ul></p>
-<p><h2>Session Lifecycle</h2></p>
-<p>The process lifecycle maps directly to session lifecycle:</p>
-<p><table>
-<tr><td>Process State</td><td>Session State</td><td>Notes</td></tr>
-</table>
-
-<table>
-<tr><td>Start</td><td></code>CREATED<code></td></tr>
-<tr><td>First </code>session.opened<code> on stdin</td><td></code>OPENED<code></td></tr>
-<tr><td></code>session.ready<code> sent on stdout</td><td></code>READY<code></td></tr>
-<tr><td>Process exit (0)</td><td></code>CLOSED<code></td><td>Graceful shutdown</td></tr>
-<tr><td>Process exit (non-0)</td><td></code>ERROR<code></td><td>Unexpected termination</td></tr>
-<tr><td>stdin closed</td><td></code>CLOSED<code></td><td>Remote peer disconnected</td></tr>
-<tr><td>Broken pipe on stdout</td><td></code>CLOSED<code></td><td>Remote peer disconnected</td></tr></table>
-</p>
-<p><h2>Error Handling</h2></p>
-<p><ul>
-<li>Malformed JSON (parse error): respond with </code>event.rejected<code> on stderr.</li>
-<li>Write failure (broken pipe): treat as session close, exit cleanly.</li>
-<li>Stdin closed unexpectedly: send </code>session.closed<code> on stdout if still open, then exit.</li>
-</ul></p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>The transport binding is OS-independent. On Windows, the process must handle </code>\r\n<code> gracefully (the reader should accept </code>\r\n<code> as a line terminator).</li>
-<li>Payload size is limited by available memory. Implementations may set a </code>max_payload_size` in capability negotiation.</li>
-<li>See the <a href="../session.md">session lifecycle specification</a> for session state machine details.</li>
+<li><code>event.rejected</code> or <code>session.error</code> events that could not be sent on <code>stdout</code></li>
 </ul>
-</p>
+<h2>Session Lifecycle</h2>
+<p>The process lifecycle maps directly to session lifecycle:</p>
+<table>
+<thead><tr><th>Process State</th><th>Session State</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Start</td><td><code>CREATED</code></td><td></td></tr>
+<tr><td>First <code>session.opened</code> on stdin</td><td><code>OPENED</code></td><td></td></tr>
+<tr><td><code>session.ready</code> sent on stdout</td><td><code>READY</code></td><td></td></tr>
+<tr><td>Process exit (0)</td><td><code>CLOSED</code></td><td>Graceful shutdown</td></tr>
+<tr><td>Process exit (non-0)</td><td><code>ERROR</code></td><td>Unexpected termination</td></tr>
+<tr><td>stdin closed</td><td><code>CLOSED</code></td><td>Remote peer disconnected</td></tr>
+<tr><td>Broken pipe on stdout</td><td><code>CLOSED</code></td><td>Remote peer disconnected</td></tr>
+</tbody>
+</table>
+<h2>Error Handling</h2>
+<ul>
+<li>Malformed JSON (parse error): respond with <code>event.rejected</code> on stderr.</li>
+<li>Write failure (broken pipe): treat as session close, exit cleanly.</li>
+<li>Stdin closed unexpectedly: send <code>session.closed</code> on stdout if still open, then exit.</li>
+</ul>
+<h2>Implementation Notes</h2>
+<ul>
+<li>The transport binding is OS-independent. On Windows, the process must handle <code>\r\n</code> gracefully (the reader should accept <code>\r\n</code> as a line terminator).</li>
+<li>Payload size is limited by available memory. Implementations may set a <code>max_payload_size</code> in capability negotiation.</li>
+<li>See the <a href="session.html">session lifecycle specification</a> for session state machine details.</li>
+</ul>
 </body>
 </html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transport Redis Streams — AEP Specification</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Transport Redis Streams</h1>
+<h1>AEP Transport Binding: Redis Streams</h1>
+<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<h2>Purpose</h2>
+<p>Define how AEP runs over Redis Streams, supporting append-only event logs with consumer-group delivery, per-entry acknowledgement, and entry-ID-based replay.</p>
+<h2>Framing</h2>
+<p>AEP over Redis Streams stores each AEP event as one stream entry:</p>
+<ul>
+<li>Each entry is appended with <code>XADD</code> and carries the AEP envelope as entry fields.</li>
+<li>The full JSON-encoded AEP event is stored in the <code>body</code> field; selected envelope fields are stored as flat fields for server-side filtering and inspection.</li>
+<li>The transport does not fragment events across multiple entries.</li>
+</ul>
+<h3>Entry Fields</h3>
+<p><code>XADD</code> entries carry the following fields, in addition to the <code>body</code> field holding the complete JSON-encoded event:</p>
+<table>
+<thead><tr><th>Field</th><th>AEP Field</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td><code>body</code></td><td>(entire envelope)</td><td>JSON string</td></tr>
+<tr><td><code>aep-type</code></td><td><code>type</code></td><td>string</td></tr>
+<tr><td><code>aep-source</code></td><td><code>source</code></td><td>string</td></tr>
+<tr><td><code>aep-session</code></td><td><code>session_id</code></td><td>string</td></tr>
+<tr><td><code>aep-conversation</code></td><td><code>conversation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-task</code></td><td><code>task_id</code></td><td>string</td></tr>
+<tr><td><code>aep-correlation</code></td><td><code>correlation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-causation</code></td><td><code>causation_id</code></td><td>string</td></tr>
+<tr><td><code>aep-delivery-mode</code></td><td><code>delivery.mode</code></td><td>string</td></tr>
+</tbody>
+</table>
+<p>Flat fields let consumers route or filter without deserializing <code>body</code>.</p>
+<h2>Stream Key Mapping</h2>
+<table>
+<thead><tr><th>AEP context</th><th>Redis stream key</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>Type pattern <code>task.*</code></td><td><code>aep.type.&lt;type&gt;</code></td><td><code>aep.type.task.progress</code></td></tr>
+<tr><td>Source <code>agent:researcher</code></td><td><code>aep.source.&lt;source&gt;</code></td><td><code>aep.source.agent:researcher</code></td></tr>
+<tr><td>Session</td><td><code>aep.sess.&lt;session_id&gt;</code></td><td><code>aep.sess.sess_01</code></td></tr>
+<tr><td>All events</td><td><code>aep.events</code></td><td>Single-stream deployment</td></tr>
+</tbody>
+</table>
+<p>The default stream prefix is <code>aep</code>. Implementations should allow per-envelope stream routing or a single-stream deployment with field-based filtering.</p>
+<h3>Redis Cluster</h3>
+<p>In Redis Cluster, a stream key hashes to one slot. To co-locate related events on the same node, use hash tags in the stream key (e.g., <code>aep.{task_01}.type.task.progress</code>). Entries within a single stream are always totally ordered by entry ID.</p>
+<h2>Delivery Modes</h2>
+<table>
+<thead><tr><th>AEP Delivery Mode</th><th>Redis Streams Mechanism</th></tr></thead>
+<tbody>
+<tr><td><code>best_effort</code></td><td><code>XADD</code> with <code>MAXLEN</code> capped; consumers read the tail with <code>XREAD</code> and do not track a group</td></tr>
+<tr><td><code>at_least_once</code></td><td>Consumer group with <code>XREADGROUP</code>; <code>XACK</code> only after AEP <code>event.acknowledged</code> is emitted</td></tr>
+<tr><td><code>replayable</code></td><td>Consumers store a cursor entry ID and replay with <code>XRANGE</code>/<code>XREAD</code> from that ID</td></tr>
+</tbody>
+</table>
+<h3>At-Least-Once</h3>
+<ul>
+<li>Consumers read with <code>XREADGROUP GROUP &lt;group&gt; &lt;consumer&gt; COUNT n STREAMS &lt;key&gt; &gt;</code>.</li>
+<li>An entry stays in the group Pending Entries List (PEL) until <code>XACK</code>.</li>
+<li>Emit <code>XACK</code> only after the AEP <code>event.acknowledged</code> event is produced.</li>
+<li>On consumer failure, <code>XAUTOCLAIM</code> (or <code>XCLAIM</code>) reassigns idle pending entries to another consumer.</li>
+</ul>
+<h3>Replayable</h3>
+<ul>
+<li>Each entry has a monotonically increasing entry ID (<code>&lt;ms&gt;-&lt;seq&gt;</code>).</li>
+<li>Consumers persist their cursor as <code>group:key:entry_id</code>.</li>
+<li>Replay by reading with <code>XRANGE &lt;key&gt; &lt;entry_id&gt; +</code> or <code>XREAD ... STREAMS &lt;key&gt; &lt;entry_id&gt;</code>.</li>
+<li><code>MAXLEN</code>/<code>MINID</code> retention dictates the maximum replay window.</li>
+</ul>
+<h2>Consumer Groups</h2>
+<p>AEP sessions map to Redis Stream consumer groups:</p>
+<table>
+<thead><tr><th>Session</th><th>Consumer Group</th></tr></thead>
+<tbody>
+<tr><td><code>sess_01</code></td><td><code>aep-sess_01</code></td></tr>
+<tr><td>(no session)</td><td><code>aep-default</code></td></tr>
+<tr><td>Multiple agents sharing a session</td><td>Same group — entries distributed across members</td></tr>
+<tr><td>Independent sessions</td><td>Separate groups — each receives the full stream</td></tr>
+</tbody>
+</table>
+<p>Groups are created with <code>XGROUP CREATE &lt;key&gt; &lt;group&gt; $ MKSTREAM</code> (or <code>0</code> to consume history).</p>
+<h2>Ordering</h2>
+<p>Entries within a single stream key are totally ordered by entry ID:</p>
+<ul>
+<li>Consumers in a group receive each entry once; ordering is preserved per stream.</li>
+<li>Events routed to different stream keys have no cross-stream ordering guarantee.</li>
+<li>For strict global ordering, route all events through a single stream (<code>aep.events</code>).</li>
+</ul>
+<h2>Session Lifecycle</h2>
+<table>
+<thead><tr><th>Redis State</th><th>Session State</th></tr></thead>
+<tbody>
+<tr><td>Consumer created, group joined (<code>XGROUP CREATECONSUMER</code>)</td><td><code>CREATED</code></td></tr>
+<tr><td>First <code>XREADGROUP</code> returns assignment</td><td><code>OPENED</code></td></tr>
+<tr><td>First entry consumed</td><td><code>READY</code></td></tr>
+<tr><td>Consumer deleted (<code>XGROUP DELCONSUMER</code>)</td><td><code>CLOSED</code></td></tr>
+<tr><td>Consumer idle beyond claim timeout</td><td><code>ERROR</code></td></tr>
+</tbody>
+</table>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Use the native Redis client for each language: <code>go-redis</code> (Go), <code>ioredis</code>/<code>node-redis</code> (Node.js), <code>redis-py</code> (Python), <code>Jedis</code>/<code>Lettuce</code> (Java).</li>
+<li>Cap unbounded streams with <code>XADD ... MAXLEN ~ &lt;n&gt;</code> or trim with <code>XTRIM MINID</code>.</li>
+<li>Reclaim stuck entries with <code>XAUTOCLAIM</code> on a background interval.</li>
+<li>Group creation should be opt-in via <code>MKSTREAM</code>, not silently implicit.</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://redis.io/docs/latest/develop/data-types/streams/">Redis Streams Introduction</a></li>
+<li>Consumer groups, Pending Entries List, <code>XACK</code>, <code>XAUTOCLAIM</code>, and entry-ID replay are Redis-native concepts mapped to AEP semantics.</li>
+</ul>
+</body>
+</html>

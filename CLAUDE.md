@@ -22,22 +22,22 @@ AEP complements MCP. MCP is the synchronous call layer; AEP is the asynchronous 
 | `docs/protocol-design.md` | Envelope, event families, lifecycle, subscriptions |
 | `docs/mcp-relationship.md` | MCP comparison and interop model |
 | `docs/roadmap.md` | Milestones toward a usable open protocol |
-| `docs/specs/session.md` | Session lifecycle specification |
-| `docs/specs/subscription.md` | Subscription model specification |
-| `docs/specs/task-lifecycle.md` | Task lifecycle specification |
-| `docs/specs/error-model.md` | Error model specification |
-| `docs/specs/versioning.md` | Versioning rules specification |
-| `docs/specs/transport-stdio.md` | stdio transport specification |
-| `docs/specs/transport-websocket.md` | WebSocket transport specification |
-| `docs/specs/transport-sse.md` | HTTP SSE transport specification |
-| `docs/specs/transport-grpc.md` | gRPC streaming transport specification |
-| `docs/specs/delivery.md` | Delivery semantics, ack protocol, replay |
-| `docs/specs/reliability.md` | Retry policy, dead-letter, durability |
-| `docs/specs/security.md` | Identity, authorization, audit, tenant isolation |
-| `docs/specs/conformance.md` | Conformance levels and test manifest specification |
-| `docs/specs/event-registry-governance.md` | Event type registry governance and versioning |
-| `docs/superpowers/specs/` | Superpowers-backed design specs |
-| `docs/superpowers/plans/` | Superpowers-backed execution plans |
+| `docs/protocol/session.md` | Session lifecycle specification |
+| `docs/protocol/subscription.md` | Subscription model specification |
+| `docs/protocol/task-lifecycle.md` | Task lifecycle specification |
+| `docs/protocol/error-model.md` | Error model specification |
+| `docs/protocol/versioning.md` | Versioning rules specification |
+| `docs/protocol/transport-stdio.md` | stdio transport specification |
+| `docs/protocol/transport-websocket.md` | WebSocket transport specification |
+| `docs/protocol/transport-sse.md` | HTTP SSE transport specification |
+| `docs/protocol/transport-grpc.md` | gRPC streaming transport specification |
+| `docs/protocol/delivery.md` | Delivery semantics, ack protocol, replay |
+| `docs/protocol/reliability.md` | Retry policy, dead-letter, durability |
+| `docs/protocol/security.md` | Identity, authorization, audit, tenant isolation |
+| `docs/protocol/conformance.md` | Conformance levels and test manifest specification |
+| `docs/protocol/event-registry-governance.md` | Event type registry governance and versioning |
+| `docs/design/` | Superpowers-backed design specs |
+| `docs/design/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
 | `implementations/typescript/` | Primary TypeScript implementation (SDK, daemon, CLI, HTTP API) |

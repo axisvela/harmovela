@@ -22,16 +22,15 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Error Model</h1>
-<p><h1>AEP Error Model</h1></p>
+<h1>AEP Error Model</h1>
 <p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
-<p><h2>Purpose</h2></p>
+<h2>Purpose</h2>
 <p>Define the standard error structure, error code taxonomy, and retryability rules used across all AEP events.</p>
-<p><h2>Standard Error Payload</h2></p>
+<h2>Standard Error Payload</h2>
 <p>Every AEP error uses the same structure:</p>
-<p>``<code>json
-{
+<pre><code>{
   "code": "task_timeout",
   "message": "task task_01 exceeded the 300s deadline",
   "retryable": true,
@@ -41,103 +40,95 @@
     "elapsed_ms": 302150
   }
 }
-</code>`<code></p>
-<p><table>
-<tr><td>Field</td><td>Type</td><td>Required</td><td>Description</td></tr>
-</table>
-
+</code></pre>
 <table>
-<tr><td></code>code<code></td><td>string</td><td>yes</td><td>Machine-readable error code</td></tr>
-<tr><td></code>message<code></td><td>string</td><td>yes</td><td>Human-readable description</td></tr>
-<tr><td></code>retryable<code></td><td>boolean</td><td>yes</td><td>Whether the caller may retry after this error</td></tr>
-<tr><td></code>details<code></td><td>object</td><td>no</td><td>Context-specific error metadata</td></tr></table>
-</p>
-<p><h2>Error Code Taxonomy</h2></p>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>code</code></td><td>string</td><td>yes</td><td>Machine-readable error code</td></tr>
+<tr><td><code>message</code></td><td>string</td><td>yes</td><td>Human-readable description</td></tr>
+<tr><td><code>retryable</code></td><td>boolean</td><td>yes</td><td>Whether the caller may retry after this error</td></tr>
+<tr><td><code>details</code></td><td>object</td><td>no</td><td>Context-specific error metadata</td></tr>
+</tbody>
+</table>
+<h2>Error Code Taxonomy</h2>
 <p>Errors are organized by domain. Each domain has a prefix that maps to the protocol layer where the error originates.</p>
-<p><h3>Protocol Errors (</code>protocol_*<code>)</h3></p>
+<h3>Protocol Errors (<code>protocol_*</code>)</h3>
 <p>Errors that prevent normal message processing.</p>
-<p><table>
-<tr><td>Code</td><td>Retryable</td><td>Meaning</td></tr>
-</table>
-
 <table>
-<tr><td></code>protocol_error<code></td><td>no</td><td>Unspecified protocol violation</td></tr>
-<tr><td></code>invalid_envelope<code></td><td>no</td><td>Envelope missing required fields or malformed</td></tr>
-<tr><td></code>invalid_event_type<code></td><td>no</td><td>Event type not in registry or invalid format</td></tr>
-<tr><td></code>unsupported_version<code></td><td>no</td><td>Protocol version not supported by this peer</td></tr>
-<tr><td></code>internal_error<code></td><td>yes</td><td>Unexpected internal processing failure</td></tr></table>
-</p>
-<p><h3>Session Errors (</code>session_*<code>)</h3></p>
+<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>protocol_error</code></td><td>no</td><td>Unspecified protocol violation</td></tr>
+<tr><td><code>invalid_envelope</code></td><td>no</td><td>Envelope missing required fields or malformed</td></tr>
+<tr><td><code>invalid_event_type</code></td><td>no</td><td>Event type not in registry or invalid format</td></tr>
+<tr><td><code>unsupported_version</code></td><td>no</td><td>Protocol version not supported by this peer</td></tr>
+<tr><td><code>internal_error</code></td><td>yes</td><td>Unexpected internal processing failure</td></tr>
+</tbody>
+</table>
+<h3>Session Errors (<code>session_*</code>)</h3>
 <p>Errors that affect the transport-level session.</p>
-<p><table>
-<tr><td>Code</td><td>Retryable</td><td>Meaning</td></tr>
-</table>
-
 <table>
-<tr><td></code>session_error<code></td><td>no</td><td>Unspecified session error</td></tr>
-<tr><td></code>session_timeout<code></td><td>yes</td><td>Session timed out (heartbeat or idle)</td></tr>
-<tr><td></code>session_closed<code></td><td>no</td><td>Session was closed unexpectedly</td></tr>
-<tr><td></code>unauthorized<code></td><td>no</td><td>Authentication or authorization failed</td></tr></table>
-</p>
-<p><h3>Subscription Errors (</code>subscription_*<code>)</h3></p>
+<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>session_error</code></td><td>no</td><td>Unspecified session error</td></tr>
+<tr><td><code>session_timeout</code></td><td>yes</td><td>Session timed out (heartbeat or idle)</td></tr>
+<tr><td><code>session_closed</code></td><td>no</td><td>Session was closed unexpectedly</td></tr>
+<tr><td><code>unauthorized</code></td><td>no</td><td>Authentication or authorization failed</td></tr>
+</tbody>
+</table>
+<h3>Subscription Errors (<code>subscription_*</code>)</h3>
 <p>Errors related to subscription creation or management.</p>
-<p><table>
-<tr><td>Code</td><td>Retryable</td><td>Meaning</td></tr>
-</table>
-
 <table>
-<tr><td></code>subscription_error<code></td><td>no</td><td>Unspecified subscription error</td></tr>
-<tr><td></code>subscription_rejected<code></td><td>no</td><td>Subscription request rejected by producer</td></tr></table>
-</p>
-<p><h3>Task Errors (</code>task_*<code>)</h3></p>
+<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>subscription_error</code></td><td>no</td><td>Unspecified subscription error</td></tr>
+<tr><td><code>subscription_rejected</code></td><td>no</td><td>Subscription request rejected by producer</td></tr>
+</tbody>
+</table>
+<h3>Task Errors (<code>task_*</code>)</h3>
 <p>Errors during task lifecycle.</p>
-<p><table>
-<tr><td>Code</td><td>Retryable</td><td>Meaning</td></tr>
-</table>
-
 <table>
-<tr><td></code>task_error<code></td><td>no</td><td>Unspecified task error</td></tr>
-<tr><td></code>task_timeout<code></td><td>yes</td><td>Task exceeded its deadline</td></tr>
-<tr><td></code>task_cancelled<code></td><td>no</td><td>Task was cancelled</td></tr></table>
-</p>
-<p><h3>Tool Errors (</code>tool_*<code>)</h3></p>
+<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>task_error</code></td><td>no</td><td>Unspecified task error</td></tr>
+<tr><td><code>task_timeout</code></td><td>yes</td><td>Task exceeded its deadline</td></tr>
+<tr><td><code>task_cancelled</code></td><td>no</td><td>Task was cancelled</td></tr>
+</tbody>
+</table>
+<h3>Tool Errors (<code>tool_*</code>)</h3>
 <p>Errors from tool execution.</p>
-<p><table>
-<tr><td>Code</td><td>Retryable</td><td>Meaning</td></tr>
-</table>
-
 <table>
-<tr><td></code>tool_error<code></td><td>no</td><td>Unspecified tool execution error</td></tr>
-<tr><td></code>tool_timeout<code></td><td>yes</td><td>Tool execution exceeded deadline</td></tr></table>
-</p>
-<p><h2>Retryability Rules</h2></p>
+<thead><tr><th>Code</th><th>Retryable</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>tool_error</code></td><td>no</td><td>Unspecified tool execution error</td></tr>
+<tr><td><code>tool_timeout</code></td><td>yes</td><td>Tool execution exceeded deadline</td></tr>
+</tbody>
+</table>
+<h2>Retryability Rules</h2>
 <p>An error is retryable if the same operation might succeed on a subsequent attempt without external state changes. The rule of thumb:</p>
-<p><ul>
-<li><strong>Retryable</strong>: timeout-based errors, transient infrastructure failures (</code>internal_error<code>)</li>
+<ul>
+<li><strong>Retryable</strong>: timeout-based errors, transient infrastructure failures (<code>internal_error</code>)</li>
 <li><strong>Not retryable</strong>: validation errors, authorization failures, protocol violations, explicit cancellations</li>
-</ul></p>
+</ul>
 <p>Consumers may retry retryable errors. Producers should not retry non-retryable errors.</p>
-<p><h2>Error Propagation</h2></p>
+<h2>Error Propagation</h2>
 <p>Errors appear in event payloads according to the event type:</p>
-<p><table>
-<tr><td>Event</td><td>Error Location</td></tr>
-</table>
-
 <table>
-<tr><td></code>event.rejected<code></td><td></code>payload.error<code></td></tr>
-<tr><td></code>session.error<code></td><td></code>payload.error<code></td></tr>
-<tr><td></code>task.failed<code></td><td></code>payload.error<code></td></tr>
-<tr><td></code>tool.call.failed<code></td><td></code>payload.error<code></td></tr>
-<tr><td></code>subscription.rejected<code></td><td></code>payload.error<code></td></tr>
-<tr><td></code>event.dead_lettered<code></td><td></code>payload.error<code></td></tr></table>
-</p>
-<p><h2>Implementation Notes</h2></p>
-<p><ul>
-<li>Implementations must validate that error payloads include </code>code<code>, </code>message<code>, and </code>retryable<code>.</li>
-<li>The </code>details<code> field is free-form but should be a JSON object with string keys.</li>
-<li>New error codes may be added in minor protocol versions. Implementations should treat unknown error codes as </code>protocol_error` rather than rejecting the envelope.</li>
+<thead><tr><th>Event</th><th>Error Location</th></tr></thead>
+<tbody>
+<tr><td><code>event.rejected</code></td><td><code>payload.error</code></td></tr>
+<tr><td><code>session.error</code></td><td><code>payload.error</code></td></tr>
+<tr><td><code>task.failed</code></td><td><code>payload.error</code></td></tr>
+<tr><td><code>tool.call.failed</code></td><td><code>payload.error</code></td></tr>
+<tr><td><code>subscription.rejected</code></td><td><code>payload.error</code></td></tr>
+<tr><td><code>event.dead_lettered</code></td><td><code>payload.error</code></td></tr>
+</tbody>
+</table>
+<h2>Implementation Notes</h2>
+<ul>
+<li>Implementations must validate that error payloads include <code>code</code>, <code>message</code>, and <code>retryable</code>.</li>
+<li>The <code>details</code> field is free-form but should be a JSON object with string keys.</li>
+<li>New error codes may be added in minor protocol versions. Implementations should treat unknown error codes as <code>protocol_error</code> rather than rejecting the envelope.</li>
 <li>Error codes are case-sensitive lowercase strings with underscores.</li>
 </ul>
-</p>
 </body>
 </html>
