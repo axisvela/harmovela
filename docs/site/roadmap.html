@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Roadmap</h1>
 <h1>Harmovela Protocol Roadmap</h1>
 <p>&gt; The protocol's formal working name is <strong>Harmovela Protocol</strong>. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases.</p>
@@ -159,14 +159,22 @@
 <h3>0.3 Optional Profiles</h3>
 <p>Goal: separate the stable core from independently adoptable coordination capabilities.</p>
 <p>Profiles include runtime semantics, durable delivery, security, and transport-specific capabilities. A profile must define its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.</p>
-<h3>0.5 Beta</h3>
-<p>Goal: prove stable interoperability beyond the founding implementation set.</p>
+<h3>0.4 Beta</h3>
+<p>Goal: release a stable, well-documented coordination core to attract independent implementations and community feedback.</p>
 <p>Entry criteria:</p>
 <ul>
-<li>A frozen beta core with a published compatibility policy.</li>
-<li>Passing cross-language conformance results.</li>
+<li>0.3 profiles complete with profile conformance declarations and <code>--profile</code> filtering.</li>
+<li>Frozen core with published compatibility policy.</li>
+<li>Passing cross-language conformance (TypeScript, Go).</li>
+<li>Three documented integration scenarios: async task orchestration, context/memory coordination, MCP bridge with async feedback.</li>
+<li>Public conformance matrix (CONFORMANCE.md).</li>
+<li>Governance, release, trademark, and license documentation published.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
 <li>At least two independently maintained interoperable implementations.</li>
-<li>At least three documented integration scenarios covering asynchronous task work, state or context updates, and delegated coordination.</li>
+<li>No unremediated core conformance regressions.</li>
+<li>Community governance proposal published.</li>
 </ul>
 <h3>0.9 Release Candidate</h3>
 <p>Goal: validate the proposed 1.0 core without new feature expansion.</p>

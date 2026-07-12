@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Architecture</h1>
 <h1>Harmovela Architecture</h1>
 <h2>Architectural Position</h2>
@@ -44,10 +44,30 @@ LLM Agent / Agent Runtime
         | tools, memory, context, environments, agents, orchestrators
 </code></pre>
 <p>MCP answers: "What can I call, and what is the result now?"</p>
-<p>Harmovela answers: "What happened, what is still happening, what state changed, and what should I react to?"</p>
+<p>Harmovela answers: "What happened (Event), what work is in flight (Task), what is the current known truth (State), what informs decisions (Context/Memory), who is responsible (Delegation), how to handle failure (Recovery), and who may do what (Governance)."</p>
 <h2>What Harmovela Adds</h2>
-<p>Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, delegation, recovery, and agent coordination.</p>
+<p>Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary spanning all 7 coordination dimensions:</p>
+<ul>
+<li><strong>Event</strong> -- what changed, via typed, correlatable event envelopes</li>
+<li><strong>Task</strong> -- work in flight, with full lifecycle from submission through completion, failure, or cancellation</li>
+<li><strong>State</strong> -- the current known truth, carried as snapshot events and incremental deltas</li>
+<li><strong>Context / Memory</strong> -- facts, episodes, preferences, and invalidation that inform agent decisions</li>
+<li><strong>Delegation</strong> -- assignment of work across agents, with visibility into ownership and handoff</li>
+<li><strong>Recovery</strong> -- retry, dead-letter, replay, and durability primitives for resilience</li>
+<li><strong>Governance</strong> -- identity, authorization, capability-scoped subscriptions, and audit</li>
+</ul>
 <p>Harmovela also recommends consistently named relationship fields such as <code>session_id</code>, <code>conversation_id</code>, <code>task_id</code>, <code>correlation_id</code>, and <code>causation_id</code>. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.</p>
+<h2>Coordination Model</h2>
+<p>Harmovela does not define a separate protocol for each concern. It provides one coherent coordination surface:</p>
+<ul>
+<li>Events carry what changed.</li>
+<li>Tasks represent work in flight.</li>
+<li>State describes the current known truth.</li>
+<li>Context and memory events inform cognitive decisions.</li>
+<li>Delegation assigns work across agents.</li>
+<li>Recovery primitives enable resilience.</li>
+<li>Governance defines who may do what.</li>
+</ul>
 <h2>Major Components</h2>
 <h3>Agent</h3>
 <p>An agent is a producer and consumer of events. It may publish messages, subscribe to topics, launch async tasks, receive progress, react to context changes, and coordinate with other agents.</p>
@@ -136,6 +156,19 @@ Agent -&gt; AEP: event.acknowledged
 AEP -&gt; Agent: context.invalidated
 Agent -&gt; MCP or AEP: requests fresh context
 Context provider -&gt; AEP: context.snapshot.ready
+</code></pre>
+<h3>Delegation</h3>
+<pre><code>Orchestrator -&gt; AEP: task.delegated (task_id, from_agent, to_agent)
+AEP -&gt; from_agent: task.delegated (ack)
+AEP -&gt; to_agent: task.delegated (new assignment)
+to_agent -&gt; AEP: task.delegation.accepted
+to_agent -&gt; AEP: task.running
+</code></pre>
+<h3>Recovery</h3>
+<pre><code>AEP -&gt; dead_letter: delivery.failed (after retry policy exhausted)
+Orchestrator -&gt; AEP: delivery.replay.requested (cursor)
+AEP -&gt; Agent: replay stream from cursor
+Agent -&gt; AEP: event.acknowledged (idempotent check on event_id)
 </code></pre>
 <h2>Reliability Model</h2>
 <p>AEP should support multiple reliability levels:</p>

@@ -22,15 +22,16 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Versioning</h1>
-<h1>AEP Versioning</h1>
-<p>&gt; Status: draft. Part of the AEP 0.1 protocol specification.</p>
+<h1>Harmovela Versioning</h1>
+<p>&gt; Status: draft. Part of the Harmovela 0.2 core specification. &gt; Category: core</p>
 <h2>Purpose</h2>
-<p>Define how AEP versions protocol assets and how implementations negotiate compatibility.</p>
+<p>Define how Harmovela versions protocol assets and how implementations negotiate compatibility.</p>
 <h2>Versioned Assets</h2>
-<p>AEP versions four distinct assets independently:</p>
-<p>| Asset | Version Field | Example | Scope | |---|---|---|---| | Protocol envelope | <code>aep_version</code> | <code>"0.1"</code> | Envelope field set, required fields, semantic rules | | Event type families | Event type registry | — | Standard event type names and semantics | | Payload schemas | <code>payload_schema</code> (URI) | <code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code> | Per-event payload structure | | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. |</p>
+<p>Harmovela versions four distinct assets independently:</p>
+<p>| Asset | Version Field | Example | Scope | Category | |---|---|---|---|---| | Protocol envelope | <code>aep_version</code> | <code>"0.1"</code> | Envelope field set, required fields, semantic rules | core | | Event type families | Event type registry | — | Standard event type names and semantics | core | | Payload schemas | <code>payload_schema</code> (URI) | <code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code> | Per-event payload structure | profile | | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. | profile |</p>
+<p>Core assets are required by every conformant implementation. Profile assets may be adopted independently and carry their own conformance requirements.</p>
 <h2>Protocol Envelope Versioning</h2>
 <h3>Format</h3>
 <p>The <code>aep_version</code> field uses <code>MAJOR.MINOR</code> format (e.g., <code>"0.1"</code>).</p>
@@ -81,12 +82,12 @@
 <li>Error handling for transport-level failures</li>
 <li>Subprotocol identifiers (e.g., WebSocket subprotocol names)</li>
 </ul>
-<p>Current transport binding documents: none finalized. See <code>docs/specs/transport-stdio.md</code> and <code>docs/specs/transport-websocket.md</code> (planned).</p>
+<p>Current transport binding documents: see <code>docs/protocol/transport-stdio.md</code>, <code>docs/protocol/transport-websocket.md</code>, <code>docs/protocol/transport-sse.md</code>, <code>docs/protocol/transport-grpc.md</code>, <code>docs/protocol/transport-nats.md</code>, <code>docs/protocol/transport-kafka.md</code>, <code>docs/protocol/transport-redis-streams.md</code>. Transports are profile assets and may be adopted independently from core.</p>
 <h2>Forward Compatibility</h2>
 <p>Implementations should follow these forward-compatibility practices:</p>
 <p>1. <strong>Ignore unknown fields</strong> in envelopes and payloads. 2. <strong>Treat unknown event types</strong> as valid but unhandled (acknowledge if required, do not reject). 3. <strong>Downgrade gracefully</strong> when a peer declares an older version — use only features available in that version. 4. <strong>Log, don't crash</strong> on protocol features you don't recognize.</p>
 <h2>Deprecation Policy</h2>
-<p>AEP follows a no-surprise deprecation policy:</p>
+<p>Harmovela follows a no-surprise deprecation policy:</p>
 <p>1. <strong>Deprecation notice</strong>: A field, event type, or feature is marked deprecated in a minor version release. 2. <strong>Support window</strong>: The deprecated item is supported for at least one additional minor version. 3. <strong>Removal</strong>: The item is removed in the next major version.</p>
 <p>Deprecation notices appear in the protocol specification changelog and the relevant spec document.</p>
 <h2>Implementation Notes</h2>

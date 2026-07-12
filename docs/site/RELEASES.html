@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RELEASES — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>RELEASES</h1>
+<h1>Harmovela Protocol Releases</h1>
+<p>&gt; Current version: <strong>0.4.0-beta</strong></p>
+<h2>Release Phases</h2>
+<p>Harmovela follows a phased release model toward 1.0. Each phase has documented entry and exit criteria derived from <a href="roadmap.html"><code>docs/roadmap.md</code></a>.</p>
+<h3>0.1 — Draft</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Delivered | | <strong>Goal</strong> | Produce a minimal, implementable protocol specification with multi-language reference implementations | | <strong>Entry criteria</strong> | Vision, architecture, and design documents drafted | | <strong>Exit criteria</strong> | Event envelope, session, subscription, task lifecycle, error model, versioning, and transport binding specifications complete; four language references passing cross-language conformance | | <strong>Deliverables</strong> | 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 7 transport bindings, ~700 tests across four languages, published spec site |</p>
+<h3>0.2 — Core Migration</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Delivered | | <strong>Goal</strong> | Establish the Harmovela protocol identity and freeze the minimum interoperable coordination core | | <strong>Entry criteria</strong> | 0.1 draft complete with passing cross-language conformance | | <strong>Exit criteria</strong> | Protocol identity consistently documented; legacy technical identifiers have explicit compatibility policy; envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and delivery semantics frozen; internally consistent conformance levels | | <strong>Scope</strong> | Public identity transition from AEP to Harmovela; naming and namespace rules; governance, release, trademark, and licensing documentation; core semantics freeze |</p>
+<h3>0.3 — Profiles</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Delivered | | <strong>Entry criteria</strong> | 0.2 core stabilization complete | | <strong>Exit criteria</strong> | Profile model defined with identifier, dependencies, capability negotiation, versioning, and conformance fixture requirements; at least one optional profile fully specified with fixtures | | <strong>Scope</strong> | Runtime semantics profile, durable delivery profile, security profile, transport-specific capability profiles |</p>
+<h3>0.4 — Beta</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Current | | <strong>Goal</strong> | Attract independent implementations and community feedback with a stable, well-documented coordination core | | <strong>Entry criteria</strong> | 0.3 profiles complete; frozen core with published compatibility policy; passing cross-language conformance (TypeScript, Go); three documented integration scenarios (async task, context/memory, MCP bridge); public conformance matrix; governance, release, trademark, and license documentation | | <strong>Exit criteria</strong> | At least two independently maintained interoperable implementations; no unremediated core conformance regressions; community governance proposal published | | <strong>Scope</strong> | External implementation support; community governance; scenario expansion |</p>
+<h3>0.9 — Release Candidate</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Planned | | <strong>Goal</strong> | Validate the proposed 1.0 core without new feature expansion | | <strong>Entry criteria</strong> | No unresolved breaking core semantic changes; release-candidate conformance fixtures and compatibility matrix; public governance, release, security-response, and registry processes; at least one external deployment or interoperability pilot | | <strong>Exit criteria</strong> | No new blocking issues during RC period; conformance stable across all implementations | | <strong>Scope</strong> | Final polishing; documentation completeness; governance operational |</p>
+<h3>1.0</h3>
+<p>| Attribute | Detail | |---|---| | <strong>Status</strong> | Planned | | <strong>Goal</strong> | Publish a stable, implementable open coordination protocol for autonomous systems | | <strong>Entry criteria</strong> | Stable core semantics and version negotiation; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, and trademark policies; clear separation between required core behavior and optional profiles; published upgrade and deprecation policy | | <strong>Exit criteria</strong> | 1.0 released |</p>
+<h2>Breaking Changes Policy</h2>
+<p>Before 1.0, breaking changes to the protocol envelope, required event families, delivery semantics, or conformance expectations are permitted. All breaking changes must:</p>
+<p>1. Be documented in the release notes for the version that introduces them. 2. Include migration guidance for implementations affected by the change. 3. Update conformance fixtures to reflect the new expectations. 4. Be reflected in all language reference implementations before the release is tagged.</p>
+<p>After 1.0, breaking changes follow the deprecation policy defined in <code>docs/protocol/versioning.md</code>.</p>
+<h2>Release Artifacts</h2>
+<p>Each versioned release produces the following artifacts:</p>
+<p>| Artifact | Description | |---|---| | <strong>Spec site</strong> | Rendered HTML specification at <code>https://axisrobo.github.io/harmovela/</code>, version-pinned | | <strong>Schemas</strong> | JSON Schema assets in <code>schemas/</code>, tagged with the release version | | <strong>Conformance fixtures</strong> | Shared cross-language fixtures in <code>conformance/fixtures/</code>, tagged with the release version | | <strong>Implementation tags</strong> | Git tags on each language implementation directory (e.g., <code>implementations/typescript</code>, <code>implementations/python</code>, <code>implementations/go</code>, <code>implementations/java</code>) | | <strong>Release notes</strong> | Per-version changelog documenting additions, changes, deprecations, and migration guidance |</p>
+<h2>Versioning</h2>
+<p>Protocol versioning follows <code>docs/protocol/versioning.md</code>. The protocol envelope <code>aep_version</code> field uses <code>MAJOR.MINOR</code> format. Release phase numbers correspond to the protocol version.</p>
+<h2>Related Documents</h2>
+<ul>
+<li><a href="GOVERNANCE.html">Governance</a> (<code>GOVERNANCE.md</code>) — project governance and decision-making</li>
+<li><a href="roadmap.html">Roadmap</a> — detailed phase descriptions and milestones</li>
+<li><a href="versioning.html">Versioning</a> — protocol versioning rules</li>
+<li><a href="TRADEMARKS.html">Trademarks</a> (<code>TRADEMARKS.md</code>) — name and mark usage</li>
+</ul>
+</body>
+</html>

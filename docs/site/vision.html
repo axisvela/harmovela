@@ -22,27 +22,32 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="reliability.html">Reliability</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Vision</h1>
 <h1>Harmovela Vision</h1>
 <h2>One-Line Vision</h2>
-<p>Harmovela makes asynchronous coordination a first-class capability for autonomous systems.</p>
+<p>Harmovela provides the open coordination layer for autonomous systems to sense, decide, act, recover, and evolve together.</p>
 <h2>Problem</h2>
-<p>Modern agent systems are no longer simple request-response programs. They run background tasks, watch external environments, update memory, collaborate with other agents, receive delayed tool results, and react to context changes after the original prompt has moved on.</p>
-<p>MCP standardizes how agents synchronously discover and call tools. That is necessary but incomplete. Agents also need a standard way to receive events, progress, state changes, memory updates, and deferred results.</p>
-<p>Without such a protocol, every runtime invents its own pattern:</p>
+<p>Modern autonomous systems face coordination challenges that go far beyond synchronous tool calls. Agents, tools, memory systems, and runtimes must coordinate across multiple interdependent dimensions, and the absence of a shared protocol forces each system to invent its own patterns.</p>
+<h3>Beyond events and async</h3>
+<p>Event streams and asynchronous communication are necessary but insufficient. Autonomous systems also need standard primitives for:</p>
 <ul>
-<li>Polling for task state</li>
-<li>Custom webhooks</li>
-<li>Tool-specific callbacks</li>
-<li>Ad hoc message queues</li>
-<li>Non-standard JSON events</li>
-<li>Prompt-level conventions that are not machine-verifiable</li>
+<li><strong>State management</strong>: agents must know what is true now, when state becomes stale, and when it changes — without every consumer polling or guessing.</li>
+<li><strong>Delegation</strong>: work must flow across entities through assignment, acceptance, handoff, escalation, and cancellation — not ad-hoc message passing with no lifecycle guarantees.</li>
+<li><strong>Recovery</strong>: when components fail, restart, or lose connection, the system must recover through idempotency, replay, checkpoints, and compensation — not custom retry logic in every integration.</li>
+<li><strong>Governance</strong>: coordination spans trust boundaries — identity, authorization, audit, tenant isolation — requiring verifiable protocol-level boundaries, not application-level conventions.</li>
 </ul>
-<p>These approaches do not compose well across agent runtimes, tools, memory systems, and deployment environments.</p>
+<p>Without a unified coordination protocol, each dimension is reinvented per-vendor, per-runtime, and per-integration. Polling loops, custom webhooks, tool-specific callbacks, ad-hoc message queues, and prompt-level conventions proliferate. These approaches do not compose across agent runtimes, tools, memory systems, and deployment environments.</p>
 <h2>Vision</h2>
-<p>Harmovela should become the common asynchronous coordination layer for agentic systems.</p>
-<p>An agent should be able to subscribe to a memory stream, launch a long-running tool task, receive progress events, observe external state changes, cancel work, replay missed events, and correlate all of this with a conversation or task without depending on one vendor's runtime.</p>
+<p>Harmovela integrates seven interdependent coordination dimensions into one open protocol:</p>
+<p>| Dimension | What Harmovela defines | |---|---| | Event | What happened — publish, subscribe, correlate, replay, acknowledge. | | Task | What is executing — lifecycle from submitted through completed, failed, or cancelled. | | State | What is true now — versioned state, freshness windows, invalidation, change propagation. | | Context / Memory | What informs decisions — updates, invalidation, provenance, retrieval readiness. | | Delegation | Who does what — assignment, acceptance, handoff, escalation, cancellation propagation. | | Recovery | What to do when things break — idempotency, replay, checkpoints, interruption, compensation. | | Governance | Who can do what — identity, authorization, audit, tenant isolation, policy integration. |</p>
+<p>These dimensions are not isolated features. Task lifecycle produces events. Delegation chains produce recovery obligations. State changes trigger context invalidation. Governance constrains every other dimension. The protocol treats them as a unified whole, not a bag of features.</p>
+<p>Three interwoven qualities emerge from this unification:</p>
+<ul>
+<li><strong>Connection &amp; Collaboration</strong>: network effects across autonomous entities, collective intelligence that grows with participants, alignment across agents, tools, and runtimes.</li>
+<li><strong>Dynamic &amp; Evolution</strong>: continuous adaptation to changing environments, emergence of coordinated behavior, flow of context and state over time.</li>
+<li><strong>Order &amp; Governance</strong>: trust through verifiable boundaries, balance between autonomy and constraint, resilient coordination under uncertainty.</li>
+</ul>
 <h2>Core Use Cases</h2>
 <h3>Event Streams</h3>
 <p>Agents need to receive events from tools, environments, memory systems, orchestrators, and other agents.</p>
@@ -53,46 +58,26 @@
 <li>A robotics sensor emits <code>environment.object.detected</code>.</li>
 <li>A workflow engine emits <code>task.blocked</code>.</li>
 </ul>
-<h3>Async Tool Calls</h3>
-<p>Some tool calls are too slow or open-ended for synchronous RPC.</p>
-<p>Examples:</p>
-<ul>
-<li>Web crawling</li>
-<li>Long research tasks</li>
-<li>Codebase indexing</li>
-<li>Video or audio processing</li>
-<li>Simulation</li>
-<li>Multi-step planning</li>
-</ul>
-<p>Harmovela should represent these as tasks with accepted, progress, output, completed, failed, cancelled, and timed-out events.</p>
-<h3>Context And Memory Events</h3>
-<p>Agents need to react when their context changes.</p>
-<p>Examples:</p>
-<ul>
-<li>New relevant memory has been indexed.</li>
-<li>A previously trusted fact is invalidated.</li>
-<li>A constraint changes.</li>
-<li>A user preference is updated.</li>
-<li>A retrieved context bundle is ready.</li>
-</ul>
-<h3>Agent-To-Agent Communication</h3>
-<p>Agents need to exchange messages without blocking each other.</p>
-<p>Examples:</p>
-<ul>
-<li>A researcher agent publishes findings to a planner.</li>
-<li>A reviewer agent flags a risk.</li>
-<li>A worker agent asks for clarification.</li>
-<li>A coordinator cancels duplicate work.</li>
-</ul>
+<p>Harmovela provides publish, subscribe, correlate, replay, and acknowledge semantics so events are first-class protocol objects, not ad-hoc JSON messages.</p>
+<h3>Task Lifecycle</h3>
+<p>Some tool calls are too slow or open-ended for synchronous RPC. Harmovela represents these as tasks with a full lifecycle: submitted, accepted, executing, progressing, completed, failed, cancelled, and timed-out. Every transition is an event that consumers can subscribe to.</p>
+<h3>State And Context</h3>
+<p>Agents need to react when what they know becomes stale. Harmovela defines versioned state updates, freshness windows, invalidation, and change propagation so consumers receive structured notifications rather than polling.</p>
+<h3>Delegation And Recovery</h3>
+<p>Agents need to share work across entities. Harmovela defines assignment, acceptance, handoff, escalation, and cancellation propagation as protocol-level primitives. When components fail, the protocol specifies recovery through idempotency, replay, checkpoints, and compensation — not custom retry logic.</p>
+<h3>Governance</h3>
+<p>Autonomous coordination requires verifiable boundaries. Harmovela provides identity, authorization, audit, and tenant isolation at the protocol level so trust boundaries are explicit and machine-verifiable — not application-level conventions.</p>
 <h2>Goals</h2>
 <ul>
-<li>Define a protocol-level coordination envelope suitable for autonomous systems.</li>
-<li>Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, agent messages, and delegation.</li>
-<li>Support local and distributed runtimes.</li>
-<li>Support multiple transports without making the protocol depend on one broker.</li>
+<li>Define a unified protocol-level coordination model integrating event, task, state, context/memory, delegation, recovery, and governance dimensions.</li>
+<li>Provide standard event types for task lifecycle, tool feedback, context changes, memory updates, agent messages, and delegation flows.</li>
+<li>Enable connection and collaboration through publish/subscribe, delegation, and shared context — growing network effects across autonomous entities.</li>
+<li>Support dynamic adaptation through versioned state, freshness windows, invalidation, and change propagation.</li>
+<li>Provide order and governance through identity, authorization, audit, tenant isolation, and policy integration.</li>
+<li>Support local and distributed runtimes across multiple transports.</li>
 <li>Preserve causality and correlation across conversations, tasks, tool calls, and events.</li>
 <li>Enable replay and recovery after disconnection.</li>
-<li>Keep the core small enough for easy implementation.</li>
+<li>Keep the core small enough for easy implementation while remaining extensible for domain-specific needs.</li>
 </ul>
 <h2>Non-Goals</h2>
 <ul>
@@ -101,12 +86,16 @@
 <li>Harmovela is not a general database API.</li>
 <li>Harmovela is not a mandatory message broker implementation.</li>
 <li>Harmovela does not define every domain-specific event schema.</li>
+<li>Harmovela does not define a general intelligence model or universal ontology.</li>
 </ul>
 <h2>Design Principles</h2>
 <ul>
+<li><strong>Connection before control</strong>: coordinate across boundaries before constraining behavior — openness enables network effects.</li>
 <li><strong>Protocol before platform</strong>: define interoperable messages before choosing infrastructure.</li>
 <li><strong>MCP-compatible, not MCP-dependent</strong>: integrate with MCP while remaining useful outside MCP.</li>
 <li><strong>Event-first</strong>: asynchronous communication should not be modeled as fake synchronous calls.</li>
+<li><strong>Adaptation is explicit</strong>: state freshness, invalidation, and change propagation must be declared, not inferred.</li>
+<li><strong>Trust boundaries are protocol boundaries</strong>: identity, authorization, and audit must be embedded in the protocol, not deferred to application logic.</li>
 <li><strong>Durability optional, semantics explicit</strong>: transports may be ephemeral or durable, but delivery guarantees must be declared.</li>
 <li><strong>Causality matters</strong>: every event should be traceable to a task, conversation, or triggering event when available.</li>
 <li><strong>Human-readable, machine-validatable</strong>: JSON should be easy to inspect and schema-check.</li>

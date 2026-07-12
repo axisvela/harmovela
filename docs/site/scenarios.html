@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scenarios — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Scenarios</h1>
+<h1>Harmovela Integration Scenarios</h1>
+<p>Three end-to-end scenarios demonstrating Harmovela's coordination dimensions working together.</p>
+<p>---</p>
+<h2>1. Async Task Orchestration</h2>
+<p><strong>Narrative:</strong> An autonomous agent submits a long-running tool task (e.g. code analysis across a large repository), receives incremental progress events and a final completion event, and may cancel the task mid-flight.</p>
+<p><strong>Coordination Dimensions:</strong> Task, Delegation</p>
+<h3>Interaction Steps</h3>
+<table>
+<thead><tr><th>Step</th><th>Actor</th><th>Action</th><th>Event Types</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Agent</td><td>Submits a task via <code>publish</code></td><td><code>task.submitted</code></td></tr>
+<tr><td>2</td><td>Runtime</td><td>Acknowledges and enqueues the task</td><td><code>task.accepted</code></td></tr>
+<tr><td>3</td><td>Worker</td><td>Picks up the task and starts processing</td><td><code>task.started</code></td></tr>
+<tr><td>4</td><td>Worker</td><td>Reports progress periodically</td><td><code>task.progress</code></td></tr>
+<tr><td>5</td><td>Worker</td><td>Completes the task with a result</td><td><code>task.completed</code></td></tr>
+<tr><td>5a</td><td>Agent</td><td>(optional) Sends cancellation request</td><td><code>task.cancelled</code></td></tr>
+</tbody>
+</table>
+<h3>Code References</h3>
+<table>
+<thead><tr><th>File</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>examples/quickstart/runtime-embed.*</code></td><td>Minimal in-process runtime: create service, subscribe, publish, receive task events</td></tr>
+<tr><td><code>examples/service-client/emit-subscribe.js</code></td><td>WebSocket client: emit a task event and subscribe to receive it</td></tr>
+<tr><td><code>examples/service-client/http-subscribe.js</code></td><td>HTTP API client: create subscription, publish event, long-poll for delivery</td></tr>
+</tbody>
+</table>
+<h3>Expected Output</h3>
+<p>The quickstart runtime-embed example produces:</p>
+<pre><code>received task.submitted evt_embed
+</code></pre>
+<p>The service-client examples produce:</p>
+<pre><code>received task.submitted evt_ws_example
+</code></pre>
+<pre><code>received evt_http
+</code></pre>
+<h3>Related Specifications</h3>
+<ul>
+<li><code>docs/protocol/task-lifecycle.md</code> — full task state machine and lifecycle events</li>
+<li><code>docs/protocol/delivery.md</code> — ack protocol, at-least-once and at-most-once semantics</li>
+<li><code>docs/protocol/reliability.md</code> — retry policy, dead-letter, durability</li>
+</ul>
+<p>---</p>
+<h2>2. Context and Memory Coordination</h2>
+<p><strong>Narrative:</strong> A memory system emits fact changes (additions, invalidations) and retrieval results while a context provider signals context invalidations (e.g. user navigated to a new page). An agent subscriber holds active subscriptions to both <code>memory.*</code> and <code>context.*</code> events and reacts as they arrive.</p>
+<p><strong>Coordination Dimensions:</strong> Event, State, Context / Memory</p>
+<h3>Interaction Steps</h3>
+<table>
+<thead><tr><th>Step</th><th>Actor</th><th>Action</th><th>Event Types</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Agent</td><td>Opens a session and subscribes to <code>memory.*</code> and <code>context.*</code></td><td><code>subscription.requested</code> → <code>subscription.ready</code></td></tr>
+<tr><td>2</td><td>Context Provider</td><td>Signals that the current context is invalidated</td><td><code>context.invalidated</code></td></tr>
+<tr><td>3</td><td>Memory System</td><td>Adds a new fact with confidence score</td><td><code>memory.fact.added</code></td></tr>
+<tr><td>4</td><td>Context Provider</td><td>Reports that a new snapshot is ready</td><td><code>context.snapshot.ready</code></td></tr>
+<tr><td>5</td><td>Memory System</td><td>Returns results for a retrieval query</td><td><code>memory.retrieval.ready</code></td></tr>
+<tr><td>6</td><td>Non-matching Source</td><td>Sends an event the agent is NOT subscribed to</td><td>*(rejected — no matching subscription)*</td></tr>
+<tr><td>7</td><td>Memory System</td><td>Invalidates a previously recorded fact</td><td><code>memory.fact.invalidated</code></td></tr>
+<tr><td>8</td><td>Agent</td><td>Closes the session</td><td><code>session.closed</code></td></tr>
+</tbody>
+</table>
+<h3>Code References</h3>
+<table>
+<thead><tr><th>File</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>examples/scenarios/agent-subscriber.js</code></td><td>Agent subscribes to memory + context events, processes incoming events, handles rejection for unsubscribed types</td></tr>
+<tr><td><code>examples/scenarios/memory-producer.js</code></td><td>Memory system produces fact, retrieval, preference, and invalidation events, routes them via subscription matching</td></tr>
+</tbody>
+</table>
+<h3>Expected Output</h3>
+<p>Agent subscriber output (abridged):</p>
+<pre><code>=== Agent Subscriber Demo ===
+[agent] Opening session...
+  ← session.ready
+[agent] Subscribing to memory.* + context.* ...
+  ← subscription.ready sub_memory_context
+[agent] Processing incoming events...
+  [ack] context.invalidated → user navigated to new page
+  [ack] memory.fact.added → fact_101
+  [ack] context.snapshot.ready → /results
+  [reject] task.progress — subscription filter mismatch
+  [ack] memory.retrieval.ready → AEP events
+[agent] Closing session...
+  ← session.closed
+</code></pre>
+<p>Memory producer output (abridged):</p>
+<pre><code>=== Memory Event Producer Demo ===
+[agent] Subscribes to memory.* events for conv_demo
+[memory] Emitting 5 memory events...
+  [send] memory.fact.added
+  [send] memory.preference.updated
+  [send] memory.summary.ready
+  [send] memory.fact.invalidated
+  [send] memory.retrieval.ready
+=== Events Delivered ===
+  [memory.fact.added] fact_001
+  [memory.preference.updated] response_style
+  ...
+</code></pre>
+<h3>Related Specifications</h3>
+<ul>
+<li><code>docs/protocol/subscription.md</code> — subscription model, filter matching, wildcard patterns</li>
+<li><code>docs/protocol/session.md</code> — session lifecycle and state management</li>
+<li><code>docs/protocol/event-registry-governance.md</code> — event type registry and family governance</li>
+</ul>
+<p>---</p>
+<h2>3. MCP Bridge with Async Feedback</h2>
+<p><strong>Narrative:</strong> A synchronous MCP <code>tools/call</code> request arrives at the bridge. The bridge delegates the work to an async AEP task handler, returns an MCP <code>accepted</code> response immediately, and emits <code>task.submitted</code>, <code>task.started</code>, and <code>task.completed</code> lifecycle events through the transport as the work progresses — all within the same process.</p>
+<p><strong>Coordination Dimensions:</strong> Event, Task, Recovery</p>
+<h3>Interaction Steps</h3>
+<table>
+<thead><tr><th>Step</th><th>Actor</th><th>Action</th><th>Wire</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>MCP Client</td><td>Calls <code>tools/call</code> for async tool <code>"build"</code></td><td>MCP request (JSON-RPC <code>2.0</code>)</td></tr>
+<tr><td>2</td><td>McpBridge</td><td>Registers the tool via <code>asyncToolHandler</code>, creates a task tracker</td><td>Internal</td></tr>
+<tr><td>3</td><td>McpBridge</td><td>Emits <code>task.submitted</code> lifecycle event</td><td>Harmovela transport</td></tr>
+<tr><td>4</td><td>McpBridge</td><td>Emits <code>task.started</code> lifecycle event</td><td>Harmovela transport</td></tr>
+<tr><td>5</td><td>Tool Handler</td><td>Executes the work function (e.g. produces <code>app.bin</code> artifact)</td><td>Internal</td></tr>
+<tr><td>6</td><td>McpBridge</td><td>Emits <code>task.completed</code> with result payload</td><td>Harmovela transport</td></tr>
+<tr><td>7</td><td>MCP Client</td><td>Receives <code>accepted</code> response with content (artifact, task_id)</td><td>MCP response</td></tr>
+</tbody>
+</table>
+<p>The MCP response is returned synchronously, while the full lifecycle event stream is observable through the transport for downstream consumers (dashboards, audit logs, downstream agents).</p>
+<h3>Code References</h3>
+<table>
+<thead><tr><th>File</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>examples/mcp-bridge/async-tool.*</code></td><td>Registers an async <code>"build"</code> tool, calls it, observes lifecycle events across all 4 languages</td></tr>
+</tbody>
+</table>
+<h3>Expected Output</h3>
+<pre><code>tools/call response: [{"type":"text","text":"{\"artifact\":\"app.bin\",\"task_id\":\"task_demo\"}"}]
+lifecycle events: task.submitted → task.started → task.completed
+</code></pre>
+<h3>Related Specifications</h3>
+<ul>
+<li><code>docs/mcp-relationship.md</code> — MCP comparison and interop model</li>
+<li><code>docs/protocol/task-lifecycle.md</code> — task state machine</li>
+<li><code>docs/protocol/reliability.md</code> — retry and dead-letter for bridge-delegated tasks</li>
+<li>Implementations: <code>implementations/typescript/src/bridge/</code> (TypeScript), <code>implementations/go/aep/bridge/</code> (Go), <code>implementations/python/src/aep/mcp_bridge.py</code> (Python), <code>implementations/java/.../McpBridge.java</code> (Java)</li>
+</ul>
+</body>
+</html>

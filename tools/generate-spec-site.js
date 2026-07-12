@@ -15,6 +15,7 @@ const outDir = resolve(root, "docs/site");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
 const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];
+const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "TRADEMARKS.md"];
 
 mkdirSync(outDir, { recursive: true });
 
@@ -164,6 +165,9 @@ ${content}
 
 // Generate nav
 const navLinks = '<a href="index.html">Home</a>' +
+  '<a href="roadmap.html">Roadmap</a>' +
+  '<a href="CONFORMANCE.html">Conformance</a>' +
+  '<a href="GOVERNANCE.html">Governance</a>' +
   specFiles.map((f) => `<a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a>`).join("");
 
 // Generate spec pages
@@ -178,6 +182,12 @@ for (const file of docFiles.filter((f) => existsSync(resolve(docsDir, f)))) {
   writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
 }
 
+// Generate root doc pages
+for (const file of rootDocFiles.filter((f) => existsSync(resolve(root, f)))) {
+  const { title, html } = readAndConvert(resolve(root, file));
+  writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
+}
+
 // Generate home page
 const homeContent = `<h1>Harmovela Protocol</h1>
 <p>An open coordination protocol for autonomous systems: agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.</p>
@@ -185,6 +195,9 @@ const homeContent = `<h1>Harmovela Protocol</h1>
 <ul>${specFiles.map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <h2>Design Documents</h2>
 <ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
+<h2>Project</h2>
+<ul>${rootDocFiles.filter((f) => existsSync(resolve(root, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}
+<li><a href="schemas/aep-envelope.schema.json">Envelope Schema</a></li></ul>
 <p>Generated from <code>docs/protocol/</code> and <code>docs/</code>.</p>`;
 
 writeFileSync(resolve(outDir, "index.html"), pageTemplate("Home", homeContent, navLinks));

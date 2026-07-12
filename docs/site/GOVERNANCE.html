@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOVERNANCE — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>GOVERNANCE</h1>
+<h1>Harmovela Protocol Governance</h1>
+<p>&gt; Status: draft. Governance model evolves toward 1.0.</p>
+<h2>Purpose</h2>
+<p>This document defines how the Harmovela Protocol is governed: who makes decisions, how changes are proposed and accepted, and how the project transitions from a founding-organization model to independent multi-party governance.</p>
+<h2>Governance Structure</h2>
+<h3>Founding Organization</h3>
+<p>Axisrobo is the founding organization of the Harmovela Protocol. Axisrobo initiated the protocol design, maintains the canonical repository (<code>https://github.com/axisrobo/harmovela</code>), and stewards the 0.x draft phase.</p>
+<p>Axisrobo maintainers hold final decision-making authority over the specification, event type registry, conformance fixtures, and implementation repositories during the pre-1.0 phase.</p>
+<h3>Maintainer Responsibilities</h3>
+<p>Maintainers are responsible for:</p>
+<ul>
+<li>Reviewing and merging protocol specification changes</li>
+<li>Ensuring cross-language consistency across reference implementations</li>
+<li>Maintaining conformance fixture integrity</li>
+<li>Enforcing versioning and compatibility policies</li>
+<li>Upholding the code of conduct</li>
+</ul>
+<h3>Future: Multi-Party Governance</h3>
+<p>The Harmovela Protocol intends to establish independent multi-party governance before the 1.0 release. The goal is a governance structure that includes:</p>
+<ul>
+<li>Representation from multiple organizations and independent contributors</li>
+<li>A documented decision-making process with clear escalation paths</li>
+<li>A technical steering committee responsible for protocol evolution</li>
+<li>Transparent processes for specification changes, event registry updates, and conformance decisions</li>
+</ul>
+<p>The specific governance model (e.g., foundation-hosted, community-driven steering group, or standards-body affiliation) will be determined through community discussion during the 0.5 beta phase, with a target of being operational before 1.0.</p>
+<h2>Decision-Making</h2>
+<h3>Protocol Changes</h3>
+<p>Protocol specification changes require the following process:</p>
+<p>1. <strong>Proposal</strong>: A documented proposal (GitHub issue or discussion) describing the change, its motivation, and impact analysis. 2. <strong>Specification update</strong>: A pull request updating the relevant specification document(s) in <code>docs/protocol/</code>. 3. <strong>Conformance fixture update</strong>: Corresponding updates to shared conformance fixtures in <code>conformance/fixtures/</code> that exercise the new or changed behavior. 4. <strong>Maintainer review</strong>: At least one Axisrobo maintainer must review and approve the change. 5. <strong>Cross-language consistency</strong>: At least the TypeScript reference implementation must be updated to match. Parity across Python, Go, and Java is expected but not gating for initial spec changes; cross-language parity should follow within a reasonable timeframe.</p>
+<h3>Event Registry Changes</h3>
+<p>Event type registry governance follows <code>docs/protocol/event-registry-governance.md</code>. New event types or event families require:</p>
+<ul>
+<li>A proposal describing the type, its semantics, and its relationship to existing families</li>
+<li>Registration in all four language event type registries</li>
+<li>At least one conformance fixture exercising the new type</li>
+<li>Maintainer review</li>
+</ul>
+<h3>Compatibility Decisions</h3>
+<p>All compatibility decisions follow <code>docs/protocol/versioning.md</code>. Breaking changes to the core protocol envelope, required event families, or delivery semantics require a major version change. During the 0.x phase, breaking changes are permitted but must be documented with migration guidance.</p>
+<h3>Informal Decisions</h3>
+<p>Bug fixes, documentation improvements, example updates, and non-semantic implementation changes may proceed through the standard pull request process without a formal proposal, provided they do not alter protocol behavior or conformance expectations.</p>
+<h2>Code of Conduct</h2>
+<p>This project follows the <a href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a>. All participants in governance processes are expected to uphold it.</p>
+<h2>License</h2>
+<p>All governance documents, protocol specifications, schemas, and conformance fixtures are licensed under the <a href="LICENSE">Apache License 2.0</a>. Implementations may be licensed under the same terms. Contributions are accepted under the Apache 2.0 license as described in <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</p>
+<h2>Related Documents</h2>
+<ul>
+<li><a href="GOVERNANCE.html">Governance</a> (<code>GOVERNANCE.md</code>) — this document</li>
+<li><a href="RELEASES.html">Releases</a> (<code>RELEASES.md</code>) — release phases, versioning, and artifacts</li>
+<li><a href="TRADEMARKS.html">Trademarks</a> (<code>TRADEMARKS.md</code>) — name and mark usage guidelines</li>
+<li><a href="versioning.html">Versioning</a> — protocol versioning rules</li>
+<li><a href="event-registry-governance.html">Event Registry Governance</a> — event type registry governance</li>
+<li><a href="CONTRIBUTING.html">Contributing</a> — contribution guidelines</li>
+<li><a href="CODE_OF_CONDUCT.html">Code of Conduct</a> — community standards</li>
+</ul>
+</body>
+</html>
