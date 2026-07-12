@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.axisrobo.aep.transport.RedisTransportTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.axisrobo.aep.transport.RedisTransportTest

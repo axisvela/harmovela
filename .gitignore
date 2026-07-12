@@ -6,8 +6,30 @@ coverage/
 .nyc_output/
 dist/
 *.tsbuildinfo
-reference/java/target/
-reference/go/aep.exe
-reference/go/aepd.exe
+
+# Java build artifacts
+implementations/java/target/
+
+# Go build artifacts
+implementations/go/aep.exe
+implementations/go/aepd.exe
+
+# Python build artifacts
 __pycache__/
 *.pyc
+*.egg-info/
+implementations/python/.pytest_cache/
+implementations/python/build/
+implementations/python/dist/
+
+# Maven wrapper
+.mvn/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

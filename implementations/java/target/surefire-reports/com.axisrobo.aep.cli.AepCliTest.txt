@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.axisrobo.aep.cli.AepCliTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.762 s -- in com.axisrobo.aep.cli.AepCliTest
