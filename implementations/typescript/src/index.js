@@ -1,8 +1,8 @@
 export { STANDARD_EVENT_TYPES, isStandardEventType } from "./event-types.js";
 export { validateEnvelope } from "./validate.js";
 export { matchesType, subscriptionMatches } from "./subscription.js";
-export { AepHarness } from "./harness.js";
-export { AepSession } from "./session.js";
+export { HarmovelaHarness } from "./harness.js";
+export { HarmovelaSession } from "./session.js";
 export { TaskTracker } from "./task.js";
 export { EventRouter } from "./router.js";
 export { ErrorCode, errorPayload, isRetryableCode } from "./errors.js";
@@ -17,4 +17,4 @@ export { InMemoryDeliveryStore } from "./delivery-store-memory.js";
 export { SqliteDeliveryStore } from "./delivery-store-sqlite.js";
 export { PostgresDeliveryStore } from "./delivery-store-postgres.js";
 export { defaultConfig, writeDefaultConfig, loadConfig, applyEnvOverrides, createDeliveryStore } from "./runtime/config.js";
-export { AepRuntimeService } from "./runtime/service.js";
+export { HarmovelaRuntimeService } from "./runtime/service.js";

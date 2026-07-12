@@ -2,7 +2,7 @@ package com.axisrobo.aep.cli;
 
 import com.axisrobo.aep.DeliveryStore;
 import com.axisrobo.aep.Subscriptions;
-import com.axisrobo.aep.runtime.AepRuntimeService;
+import com.axisrobo.aep.runtime.HarmovelaRuntimeService;
 import com.axisrobo.aep.runtime.Config;
 import com.axisrobo.aep.transport.WsClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @Command(name = "aep", description = "Agent Event Protocol CLI",
-    subcommands = {AepCli.Init.class, AepCli.Start.class, AepCli.Status.class,
-                   AepCli.Emit.class, AepCli.Subscribe.class, AepCli.Dlq.class, AepCli.SubscriptionsGroup.class})
-public class AepCli implements Runnable {
+    subcommands = {HarmovelaCli.Init.class, HarmovelaCli.Start.class, HarmovelaCli.Status.class,
+                   HarmovelaCli.Emit.class, HarmovelaCli.Subscribe.class, HarmovelaCli.Dlq.class, HarmovelaCli.SubscriptionsGroup.class})
+public class HarmovelaCli implements Runnable {
     static final ObjectMapper MAPPER = new ObjectMapper();
 
     public void run() {
@@ -32,7 +32,7 @@ public class AepCli implements Runnable {
     }
 
     public static int run(String[] args) {
-        return new CommandLine(new AepCli()).execute(args);
+        return new CommandLine(new HarmovelaCli()).execute(args);
     }
 
     public static void main(String[] args) {
@@ -54,7 +54,7 @@ public class AepCli implements Runnable {
         @Option(names = "--config", defaultValue = "harmovela.config.json") String config;
         public Integer call() throws Exception {
             var c = Config.load(config, System.getenv());
-            var svc = new AepRuntimeService(c);
+            var svc = new HarmovelaRuntimeService(c);
             svc.start();
             System.out.println("aepd started api=" + svc.apiPort());
             Thread.currentThread().join();
@@ -145,8 +145,8 @@ public class AepCli implements Runnable {
     }
 
     @Command(name = "subscriptions", description = "Manage runtime subscriptions over HTTP",
-        subcommands = {AepCli.SubscriptionsGroup.Create.class, AepCli.SubscriptionsGroup.ListSub.class,
-                       AepCli.SubscriptionsGroup.Delete.class, AepCli.SubscriptionsGroup.Stream.class})
+        subcommands = {HarmovelaCli.SubscriptionsGroup.Create.class, HarmovelaCli.SubscriptionsGroup.ListSub.class,
+                       HarmovelaCli.SubscriptionsGroup.Delete.class, HarmovelaCli.SubscriptionsGroup.Stream.class})
     static class SubscriptionsGroup implements java.util.concurrent.Callable<Integer> {
         static final HttpClient HTTP = HttpClient.newHttpClient();
 

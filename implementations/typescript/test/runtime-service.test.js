@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { once } from "node:events";
 import { WebSocket } from "ws";
-import { AepRuntimeService } from "../src/runtime/service.js";
+import { HarmovelaRuntimeService } from "../src/runtime/service.js";
 import { defaultConfig } from "../src/runtime/config.js";
 
 function event(overrides = {}) {
@@ -17,13 +17,13 @@ function event(overrides = {}) {
   };
 }
 
-test("AepRuntimeService publishes valid events to router subscribers", async () => {
+test("HarmovelaRuntimeService publishes valid events to router subscribers", async () => {
   const config = defaultConfig();
   config.transports.websocket.enabled = false;
   config.transports.sse.enabled = false;
   config.transports.api.enabled = false;
   config.delivery.store = "memory";
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   const seen = [];
   service.subscribe("task.*", (evt) => seen.push(evt));
   await service.start();
@@ -33,26 +33,26 @@ test("AepRuntimeService publishes valid events to router subscribers", async () 
   await service.stop();
 });
 
-test("AepRuntimeService rejects invalid events", async () => {
+test("HarmovelaRuntimeService rejects invalid events", async () => {
   const config = defaultConfig();
   config.transports.websocket.enabled = false;
   config.transports.sse.enabled = false;
   config.transports.api.enabled = false;
   config.delivery.store = "memory";
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
-  assert.throws(() => service.publish({ type: "task.submitted" }), /invalid AEP event/);
+  assert.throws(() => service.publish({ type: "task.submitted" }), /invalid Harmovela event/);
   await service.stop();
 });
 
-test("AepRuntimeService starts websocket transport and broadcasts events", async () => {
+test("HarmovelaRuntimeService starts websocket transport and broadcasts events", async () => {
   const config = defaultConfig();
   config.delivery.store = "memory";
   config.transports.websocket.enabled = true;
   config.transports.websocket.port = 0;
   config.transports.sse.enabled = false;
   config.transports.api.enabled = false;
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
   const port = service.transports.websocket.port;
   const ws = new WebSocket(`ws://127.0.0.1:${port}/aep`, ["aep-0.1"]);
@@ -75,7 +75,7 @@ function apiConfig() {
 }
 
 async function startApiService(config) {
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
   const base = `http://127.0.0.1:${service.transports.api.port}/aep/api`;
   return { service, base };
@@ -169,7 +169,7 @@ test("api unknown route returns 404", async () => {
 
 test("service registry buffers matching events and drains them", async () => {
   const config = apiConfig();
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
   const record = await service.createSubscription({ types: "task.*" });
   service.publish(event({ id: "evt_match", type: "task.submitted" }));
@@ -183,7 +183,7 @@ test("service registry buffers matching events and drains them", async () => {
 
 test("service loads persisted subscriptions on start", async () => {
   const config = apiConfig();
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
   await service.createSubscription({ types: "task.*" });
   const list = service.listSubscriptions();

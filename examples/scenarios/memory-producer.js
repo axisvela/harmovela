@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "@axisrobo/aep";
+import { HarmovelaHarness, MockStdioTransport, HarmovelaSession, subscriptionMatches } from "@axisrobo/aep";
 
 console.log("=== Memory Event Producer Demo ===\n");
 
@@ -7,10 +7,10 @@ const transport = new MockStdioTransport();
 await transport.start();
 
 const now = () => new Date().toISOString();
-const harness = new AepHarness({ source: "memory:main", now });
+const harness = new HarmovelaHarness({ source: "memory:main", now });
 
 // Start a session
-const session = new AepSession({ id: "sess_mem", source: "memory:main" });
+const session = new HarmovelaSession({ id: "sess_mem", source: "memory:main" });
 transport.send(session.opened());
 transport.send(session.ready({
   protocol: "aep", aep_version: "0.1", transports: ["stdio"],

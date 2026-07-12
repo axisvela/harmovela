@@ -1,5 +1,5 @@
 from aep.runtime.config import default_config
-from aep.runtime.service import AepRuntimeService
+from aep.runtime.service import HarmovelaRuntimeService
 
 
 def _event(**overrides):
@@ -21,7 +21,7 @@ def _config():
 
 
 def test_registry_buffers_matching_events():
-    service = AepRuntimeService(_config())
+    service = HarmovelaRuntimeService(_config())
     service.start()
     record = service.create_subscription({"types": "task.*"})
     service.publish(_event(id="evt_match", type="task.submitted"))
@@ -34,7 +34,7 @@ def test_registry_buffers_matching_events():
 
 
 def test_registry_lists_and_deletes():
-    service = AepRuntimeService(_config())
+    service = HarmovelaRuntimeService(_config())
     service.start()
     record = service.create_subscription({"types": "task.*"})
     assert len(service.list_subscriptions()) == 1

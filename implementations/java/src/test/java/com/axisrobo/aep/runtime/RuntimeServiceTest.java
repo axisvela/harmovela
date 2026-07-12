@@ -25,7 +25,7 @@ class RuntimeServiceTest {
     void publishesToSubscribers() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
             .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
-        var svc = new AepRuntimeService(c);
+        var svc = new HarmovelaRuntimeService(c);
         var seen = new AtomicInteger();
         svc.subscribe("task.*", e -> seen.incrementAndGet());
         svc.start();
@@ -38,7 +38,7 @@ class RuntimeServiceTest {
     void rejectsInvalid() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
             .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
-        var svc = new AepRuntimeService(c);
+        var svc = new HarmovelaRuntimeService(c);
         svc.start();
         assertThrows(IllegalArgumentException.class, () -> svc.publish(Map.of("type", "task.submitted")));
         svc.stop();
@@ -46,7 +46,7 @@ class RuntimeServiceTest {
 
     @Test
     void apiEndpoints() throws Exception {
-        var svc = new AepRuntimeService(apiConfig());
+        var svc = new HarmovelaRuntimeService(apiConfig());
         svc.start();
         Thread.sleep(200);
         var base = "http://127.0.0.1:" + svc.apiPort() + "/harmovela/api";

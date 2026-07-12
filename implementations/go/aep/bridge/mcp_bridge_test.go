@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/harmovela/aep"
 )
 
 func TestMcpInitialize(t *testing.T) {

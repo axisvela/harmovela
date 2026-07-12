@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "./config.js";
-import { AepRuntimeService } from "./service.js";
+import { HarmovelaRuntimeService } from "./service.js";
 
 export async function startDaemon({ configPath } = {}) {
   const config = await loadConfig(configPath);
-  const service = new AepRuntimeService(config);
+  const service = new HarmovelaRuntimeService(config);
   await service.start();
   const ws = service.transports.websocket?.port;
   const sse = service.transports.sse?.port;

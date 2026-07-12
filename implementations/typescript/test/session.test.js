@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { AepSession } from "../src/index.js";
+import { HarmovelaSession } from "../src/index.js";
 
 test("session lifecycle transitions: opened -> ready -> close", () => {
-  const session = new AepSession({ id: "sess_test", heartbeatIntervalMs: 0 });
+  const session = new HarmovelaSession({ id: "sess_test", heartbeatIntervalMs: 0 });
 
   const opened = session.opened();
   assert.equal(opened.type, "session.opened");
@@ -22,7 +22,7 @@ test("session lifecycle transitions: opened -> ready -> close", () => {
 });
 
 test("session error produces error event with standard payload", () => {
-  const session = new AepSession({ id: "sess_err" });
+  const session = new HarmovelaSession({ id: "sess_err" });
   session.opened();
   session.ready();
 
@@ -33,7 +33,7 @@ test("session error produces error event with standard payload", () => {
 });
 
 test("session rejects invalid state transitions", () => {
-  const session = new AepSession({ id: "sess_bad", heartbeatIntervalMs: 0 });
+  const session = new HarmovelaSession({ id: "sess_bad", heartbeatIntervalMs: 0 });
   session.opened();
   session.ready();
   session.close();
@@ -43,7 +43,7 @@ test("session rejects invalid state transitions", () => {
 });
 
 test("session heartbeat returns null when not ready", () => {
-  const session = new AepSession({ id: "sess_hb", heartbeatIntervalMs: 0 });
+  const session = new HarmovelaSession({ id: "sess_hb", heartbeatIntervalMs: 0 });
   assert.equal(session.heartbeat(), null);
 
   session.opened();

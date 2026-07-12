@@ -7,7 +7,7 @@ import { SseServerTransport } from "../transport/sse.js";
 import { createDeliveryStore } from "./config.js";
 import { startApiServer } from "./api-server.js";
 
-export class AepRuntimeService {
+export class HarmovelaRuntimeService {
   constructor(config, options = {}) {
     this.config = config;
     this.router = options.router ?? new EventRouter();
@@ -26,7 +26,7 @@ export class AepRuntimeService {
   publish(event) {
     const errors = validateEnvelope(event);
     if (errors.length > 0) {
-      throw new Error(`invalid AEP event: ${errors.join("; ")}`);
+      throw new Error(`invalid Harmovela event: ${errors.join("; ")}`);
     }
     this.store.track?.(event.id, event.subscription_id ?? "_runtime");
     this.router.dispatch(event);

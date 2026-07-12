@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepRuntimeService, defaultConfig } from "@axisrobo/aep";
+import { HarmovelaRuntimeService, defaultConfig } from "@axisrobo/aep";
 
 const config = defaultConfig();
 config.delivery.store = "memory";
@@ -7,7 +7,7 @@ config.transports.websocket.enabled = false;
 config.transports.sse.enabled = false;
 config.transports.api.enabled = false;
 
-const service = new AepRuntimeService(config);
+const service = new HarmovelaRuntimeService(config);
 service.subscribe("task.*", (event) => {
   console.log(`received ${event.type} ${event.id}`);
 });

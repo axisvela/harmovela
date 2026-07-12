@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/harmovela/aep"
 )
 
 func TestWsServerStartsAndIsReachable(t *testing.T) {
@@ -37,7 +37,7 @@ func TestWsServerStartsAndIsReachable(t *testing.T) {
 
 func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 	srv := NewWsServer()
-	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
+	srv.OnMessage(func(msg *aep.HarmovelaMessage) *aep.HarmovelaMessage {
 		return msg
 	})
 
@@ -58,12 +58,12 @@ func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 	}
 	defer client.Close()
 
-	received := make(chan *aep.AepMessage, 1)
-	client.OnMessage(func(msg *aep.AepMessage) {
+	received := make(chan *aep.HarmovelaMessage, 1)
+	client.OnMessage(func(msg *aep.HarmovelaMessage) {
 		received <- msg
 	})
 
-	testMsg := &aep.AepMessage{JsonPayload: `{"type":"test","id":"001"}`}
+	testMsg := &aep.HarmovelaMessage{JsonPayload: `{"type":"test","id":"001"}`}
 	if err := client.Send(testMsg); err != nil {
 		t.Fatalf("failed to send: %v", err)
 	}
@@ -80,13 +80,13 @@ func TestWsClientConnectsAndExchangesMessages(t *testing.T) {
 
 func TestWsBidirectionalStreaming(t *testing.T) {
 	srv := NewWsServer()
-	var serverReceived []*aep.AepMessage
+	var serverReceived []*aep.HarmovelaMessage
 	var mu sync.Mutex
-	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
+	srv.OnMessage(func(msg *aep.HarmovelaMessage) *aep.HarmovelaMessage {
 		mu.Lock()
 		serverReceived = append(serverReceived, msg)
 		mu.Unlock()
-		return &aep.AepMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
+		return &aep.HarmovelaMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
 	})
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
@@ -106,19 +106,19 @@ func TestWsBidirectionalStreaming(t *testing.T) {
 	}
 	defer client.Close()
 
-	clientReceived := make([]*aep.AepMessage, 0)
+	clientReceived := make([]*aep.HarmovelaMessage, 0)
 	var clientMu sync.Mutex
 	var wg sync.WaitGroup
 	wg.Add(3)
 
-	client.OnMessage(func(msg *aep.AepMessage) {
+	client.OnMessage(func(msg *aep.HarmovelaMessage) {
 		clientMu.Lock()
 		clientReceived = append(clientReceived, msg)
 		clientMu.Unlock()
 		wg.Done()
 	})
 
-	messages := []*aep.AepMessage{
+	messages := []*aep.HarmovelaMessage{
 		{JsonPayload: `{"type":"msg1"}`},
 		{JsonPayload: `{"type":"msg2"}`},
 		{JsonPayload: `{"type":"msg3"}`},
@@ -157,7 +157,7 @@ func TestWsBidirectionalStreaming(t *testing.T) {
 
 func TestWsServerShutdownStopsCleanly(t *testing.T) {
 	srv := NewWsServer()
-	srv.OnMessage(func(msg *aep.AepMessage) *aep.AepMessage {
+	srv.OnMessage(func(msg *aep.HarmovelaMessage) *aep.HarmovelaMessage {
 		return msg
 	})
 
@@ -176,7 +176,7 @@ func TestWsServerShutdownStopsCleanly(t *testing.T) {
 		t.Fatalf("failed to connect: %v", err)
 	}
 
-	if err := client.Send(&aep.AepMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
+	if err := client.Send(&aep.HarmovelaMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
 		t.Fatalf("failed to send before stop: %v", err)
 	}
 	time.Sleep(50 * time.Millisecond)

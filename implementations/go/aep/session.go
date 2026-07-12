@@ -24,7 +24,7 @@ var validTransitions = map[SessionState][]SessionState{
 	StateError:   {},
 }
 
-type AepSession struct {
+type HarmovelaSession struct {
 	ID      string
 	Source  string
 	Version string
@@ -32,17 +32,17 @@ type AepSession struct {
 	eventID int
 }
 
-func NewAepSession(id, source, version string) *AepSession {
+func NewHarmovelaSession(id, source, version string) *HarmovelaSession {
 	if id == "" {
 		id = fmt.Sprintf("sess_%d", time.Now().UnixMilli())
 	}
 	if source == "" {
-		source = "aep:session"
+		source = "harmovela:session"
 	}
 	if version == "" {
 		version = "0.2"
 	}
-	return &AepSession{
+	return &HarmovelaSession{
 		ID:      id,
 		Source:  source,
 		Version: version,
@@ -50,20 +50,20 @@ func NewAepSession(id, source, version string) *AepSession {
 	}
 }
 
-func (s *AepSession) nextEventID() string {
+func (s *HarmovelaSession) nextEventID() string {
 	s.eventID++
 	return fmt.Sprintf("evt_sess_%06d", s.eventID)
 }
 
-func (s *AepSession) IsActive() bool {
+func (s *HarmovelaSession) IsActive() bool {
 	return s.State == StateOpened || s.State == StateReady
 }
 
-func (s *AepSession) IsOpen() bool {
+func (s *HarmovelaSession) IsOpen() bool {
 	return s.State == StateOpened
 }
 
-func (s *AepSession) Opened() (map[string]any, error) {
+func (s *HarmovelaSession) Opened() (map[string]any, error) {
 	if s.State != StateCreated {
 		return nil, errors.New("cannot open session in state " + string(s.State))
 	}
@@ -83,7 +83,7 @@ func (s *AepSession) Opened() (map[string]any, error) {
 	}, nil
 }
 
-func (s *AepSession) Ready(capabilities map[string]any) (map[string]any, error) {
+func (s *HarmovelaSession) Ready(capabilities map[string]any) (map[string]any, error) {
 	if s.State != StateOpened && s.State != StateCreated {
 		return nil, errors.New("cannot mark session ready in state " + string(s.State))
 	}
@@ -108,7 +108,7 @@ func (s *AepSession) Ready(capabilities map[string]any) (map[string]any, error) 
 	}, nil
 }
 
-func (s *AepSession) Close() (map[string]any, error) {
+func (s *HarmovelaSession) Close() (map[string]any, error) {
 	if s.State == StateClosed {
 		return nil, nil
 	}

@@ -1,7 +1,7 @@
 package com.axisrobo.aep.transport;
 
-import aep.v1.Aep;
-import aep.v1.AepTransportGrpc;
+import harmovela.v1.Harmovela;
+import harmovela.v1.HarmovelaTransportGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -26,7 +26,7 @@ public class GrpcServer {
 
     public void start() throws IOException {
         server = ServerBuilder.forPort(port)
-            .addService(new AepTransportImpl())
+            .addService(new HarmovelaTransportImpl())
             .build()
             .start();
         this.port = server.getPort();
@@ -52,17 +52,17 @@ public class GrpcServer {
         return server == null || server.isShutdown();
     }
 
-    private class AepTransportImpl extends AepTransportGrpc.AepTransportImplBase {
+    private class HarmovelaTransportImpl extends HarmovelaTransportGrpc.HarmovelaTransportImplBase {
         @Override
-        public StreamObserver<Aep.AepMessage> stream(StreamObserver<Aep.AepMessage> responseObserver) {
-            return new StreamObserver<Aep.AepMessage>() {
+        public StreamObserver<Harmovela.HarmovelaMessage> stream(StreamObserver<Harmovela.HarmovelaMessage> responseObserver) {
+            return new StreamObserver<Harmovela.HarmovelaMessage>() {
                 @Override
-                public void onNext(Aep.AepMessage msg) {
+                public void onNext(Harmovela.HarmovelaMessage msg) {
                     var h = handler;
                     if (h != null) {
                         var response = h.apply(msg.getJsonPayload());
                         if (response != null) {
-                            responseObserver.onNext(Aep.AepMessage.newBuilder()
+                            responseObserver.onNext(Harmovela.HarmovelaMessage.newBuilder()
                                 .setJsonPayload(response).build());
                         }
                     }

@@ -1,8 +1,8 @@
-import { AepHarness, TaskTracker, ErrorCode, errorPayload } from "../index.js";
+import { HarmovelaHarness, TaskTracker, ErrorCode, errorPayload } from "../index.js";
 
 export class McpBridge {
   constructor(options = {}) {
-    this.aep = options.aep ?? new AepHarness();
+    this.aep = options.aep ?? new HarmovelaHarness();
     this.transport = options.transport ?? null;
     this.tools = new Map();
     this.serverInfo = options.serverInfo ?? { name: "aep-mcp-bridge", version: "0.1.0" };

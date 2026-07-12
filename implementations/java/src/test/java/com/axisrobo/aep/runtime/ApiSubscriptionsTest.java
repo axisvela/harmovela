@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApiSubscriptionsTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private AepRuntimeService startService() {
+    private HarmovelaRuntimeService startService() {
         var c = Config.defaultConfig().withStore("memory").withWebsocketEnabled(false).withSseEnabled(false)
             .withApi(new Config.Transport(true, "127.0.0.1", 0, "/harmovela/api"));
-        var svc = new AepRuntimeService(c);
+        var svc = new HarmovelaRuntimeService(c);
         svc.start();
         return svc;
     }

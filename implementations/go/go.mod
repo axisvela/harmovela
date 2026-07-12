@@ -1,4 +1,4 @@
-module github.com/axisrobo/aep
+module github.com/axisrobo/harmovela
 
 go 1.25.0
 

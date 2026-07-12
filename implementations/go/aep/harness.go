@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/aep/aep/store"
+	"github.com/axisrobo/harmovela/aep/store"
 )
 
 type TaskState string
@@ -146,13 +146,13 @@ type Harness struct {
 	subscriptions map[string]map[string]any
 	tasks         map[string]*TaskTracker
 	router        *EventRouter
-	session       *AepSession
+	session       *HarmovelaSession
 	Delivery      *store.DeliveryTracker
 }
 
 func NewHarness() *Harness {
 	h := &Harness{
-		Source:        "harness:aep",
+		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*TaskTracker),
 		router:        NewEventRouter(),
@@ -163,7 +163,7 @@ func NewHarness() *Harness {
 	return h
 }
 
-func (h *Harness) Session() *AepSession {
+func (h *Harness) Session() *HarmovelaSession {
 	return h.session
 }
 
@@ -403,7 +403,7 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	}
 
 	sessionID, _ := event["session_id"].(string)
-	h.session = NewAepSession(sessionID, h.Source, "0.2")
+	h.session = NewHarmovelaSession(sessionID, h.Source, "0.2")
 	opened, _ := h.session.Opened()
 
 	ready := h.newEvent("session.ready", event, map[string]any{

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/harmovela/aep"
 	"github.com/gorilla/websocket"
 )
 
@@ -68,7 +68,7 @@ func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if handler != nil {
-			msg := &aep.AepMessage{JsonPayload: string(message)}
+			msg := &aep.HarmovelaMessage{JsonPayload: string(message)}
 			resp := handler(msg)
 			if resp != nil {
 				if err := conn.WriteMessage(websocket.TextMessage, []byte(resp.JsonPayload)); err != nil {
@@ -120,12 +120,12 @@ func (c *WsClient) receiveLoop() {
 		}
 		handler := c.getHandler()
 		if handler != nil {
-			handler(&aep.AepMessage{JsonPayload: string(message)})
+			handler(&aep.HarmovelaMessage{JsonPayload: string(message)})
 		}
 	}
 }
 
-func (c *WsClient) Send(msg *aep.AepMessage) error {
+func (c *WsClient) Send(msg *aep.HarmovelaMessage) error {
 	if c.conn == nil {
 		return fmt.Errorf("not connected")
 	}

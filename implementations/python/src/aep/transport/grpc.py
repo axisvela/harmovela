@@ -24,7 +24,7 @@ class _StreamHandler:
         self.send_queue.put(None)
 
 
-class _AepServicer(aep_pb2_grpc.AepTransportServicer):
+class _HarmovelaServicer(aep_pb2_grpc.HarmovelaTransportServicer):
     def __init__(self, transport):
         self._transport = transport
 
@@ -66,7 +66,7 @@ class _AepServicer(aep_pb2_grpc.AepTransportServicer):
                 data = handler.send_queue.get()
                 if data is None:
                     break
-                yield aep_pb2.AepMessage(json_payload=json.dumps(data))
+                yield aep_pb2.HarmovelaMessage(json_payload=json.dumps(data))
         finally:
             self._transport._remove_stream(handler)
 
@@ -92,8 +92,8 @@ class GrpcServerTransport(Transport):
     def _on_start(self):
         self._server = grpc.server(ThreadPoolExecutor(max_workers=10))
 
-        servicer = _AepServicer(self)
-        aep_pb2_grpc.add_AepTransportServicer_to_server(servicer, self._server)
+        servicer = _HarmovelaServicer(self)
+        aep_pb2_grpc.add_HarmovelaTransportServicer_to_server(servicer, self._server)
 
         self._port = self._server.add_insecure_port(f"{self.host}:{self._port}")
         self._server.start()
@@ -138,7 +138,7 @@ class GrpcClientTransport(Transport):
 
     def _on_start(self):
         self._channel = grpc.insecure_channel(self.address)
-        self._stub = aep_pb2_grpc.AepTransportStub(self._channel)
+        self._stub = aep_pb2_grpc.HarmovelaTransportStub(self._channel)
         self._send_queue = queue.Queue()
 
         self._stream_thread = threading.Thread(
@@ -153,7 +153,7 @@ class GrpcClientTransport(Transport):
                     data = self._send_queue.get(timeout=0.1)
                     if data is None:
                         return
-                    yield aep_pb2.AepMessage(json_payload=json.dumps(data))
+                    yield aep_pb2.HarmovelaMessage(json_payload=json.dumps(data))
                 except queue.Empty:
                     if not self._started:
                         return

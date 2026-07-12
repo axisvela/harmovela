@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public class AepRuntimeService {
+public class HarmovelaRuntimeService {
     private record Sub(String pattern, Consumer<Map<String, Object>> handler) {}
 
     private static class RegistryEntry {
@@ -34,7 +34,7 @@ public class AepRuntimeService {
     private ApiServer api;
     private boolean started;
 
-    public AepRuntimeService(Config config) {
+    public HarmovelaRuntimeService(Config config) {
         this.config = config;
         this.store = Config.createDeliveryStore(config);
     }

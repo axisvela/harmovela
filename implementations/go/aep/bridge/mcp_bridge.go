@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisrobo/harmovela/aep"
 )
 
 // Sender receives AEP events emitted by tool handlers.

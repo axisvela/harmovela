@@ -3,7 +3,7 @@ import threading
 import time
 import urllib.request
 from aep.runtime.config import default_config
-from aep.runtime.service import AepRuntimeService
+from aep.runtime.service import HarmovelaRuntimeService
 
 
 def _api_config():

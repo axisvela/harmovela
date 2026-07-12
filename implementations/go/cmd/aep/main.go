@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
-	"github.com/axisrobo/aep/aep/runtime"
+	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/aep/runtime"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
 )

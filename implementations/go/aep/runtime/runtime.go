@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
-	"github.com/axisrobo/aep/aep/store"
-	"github.com/axisrobo/aep/aep/transport"
+	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/aep/store"
+	"github.com/axisrobo/harmovela/aep/transport"
 	"github.com/google/uuid"
 )
 

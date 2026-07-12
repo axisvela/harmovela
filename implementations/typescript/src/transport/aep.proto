@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package harmovela.v1;
+
+service HarmovelaTransport {
+  rpc Stream(stream HarmovelaMessage) returns (stream HarmovelaMessage);
+}
+
+message HarmovelaMessage {
+  string json_payload = 1;
+}

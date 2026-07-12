@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { validateEnvelope } from "./validate.js";
 import { isValidBySchema } from "./schema.js";
-import { AepHarness } from "./harness.js";
+import { HarmovelaHarness } from "./harness.js";
 import { STANDARD_EVENT_TYPES } from "./event-types.js";
 
 const PAYLOAD_VALIDATED_TYPES = new Set([
@@ -92,7 +92,7 @@ export function verifyFixture(fixture, events) {
   });
 
   if (fixture.expectation === "stateful_flow") {
-    const harness = new AepHarness({ useSchemaValidation: true });
+    const harness = new HarmovelaHarness({ useSchemaValidation: true });
     events.forEach((event, index) => {
       const responses = harness.handle(event) ?? [];
       const rejected = responses.find((response) => response.type === "event.rejected");
@@ -103,7 +103,7 @@ export function verifyFixture(fixture, events) {
   }
 
   if (fixture.expectation === "delivery_e2e") {
-    const harness = new AepHarness({ useSchemaValidation: true });
+    const harness = new HarmovelaHarness({ useSchemaValidation: true });
     events.forEach((event, index) => {
       const responses = harness.handle(event) ?? [];
       const rejected = responses.find((response) => response.type === "event.rejected");

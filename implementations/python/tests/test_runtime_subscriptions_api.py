@@ -2,7 +2,7 @@ import json
 import urllib.error
 import urllib.request
 from aep.runtime.config import default_config
-from aep.runtime.service import AepRuntimeService
+from aep.runtime.service import HarmovelaRuntimeService
 
 
 def _start():
@@ -11,7 +11,7 @@ def _start():
     config["transports"]["websocket"]["enabled"] = False
     config["transports"]["sse"]["enabled"] = False
     config["transports"]["api"] = {"enabled": True, "host": "127.0.0.1", "port": 0, "path": "/harmovela/api"}
-    service = AepRuntimeService(config)
+    service = HarmovelaRuntimeService(config)
     service.start()
     port = service.transports["api"].port
     return service, f"http://127.0.0.1:{port}/harmovela/api"

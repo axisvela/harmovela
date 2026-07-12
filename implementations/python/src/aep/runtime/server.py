@@ -1,13 +1,12 @@
 import signal
 
 from .config import load_config
-from .service import AepRuntimeService
+from .service import HarmovelaRuntimeService
 
-
-def start_daemon(config=None, config_path=None, install_signals=True) -> AepRuntimeService:
+def start_daemon(config=None, config_path=None, install_signals=True) -> HarmovelaRuntimeService:
     if config is None:
         config = load_config(config_path)
-    service = AepRuntimeService(config)
+    service = HarmovelaRuntimeService(config)
     service.start()
     ws = service.transports.get("websocket")
     api = service.transports.get("api")

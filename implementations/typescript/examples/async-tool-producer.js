@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepHarness, TaskTracker, MockStdioTransport } from "../src/index.js";
+import { HarmovelaHarness, TaskTracker, MockStdioTransport } from "../src/index.js";
 
 console.log("=== Async Tool Producer Demo ===\n");
 
@@ -7,7 +7,7 @@ const transport = new MockStdioTransport();
 await transport.start();
 
 const toolName = "doc_indexer";
-const harness = new AepHarness({ source: `tool:${toolName}`, now: () => new Date().toISOString() });
+const harness = new HarmovelaHarness({ source: `tool:${toolName}`, now: () => new Date().toISOString() });
 
 // Accept a task and simulate work with lifecycle events
 async function runTask(args) {

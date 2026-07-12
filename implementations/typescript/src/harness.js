@@ -1,15 +1,15 @@
 import { validateEnvelope } from "./validate.js";
 import { isValidBySchema } from "./schema.js";
-import { AepSession } from "./session.js";
+import { HarmovelaSession } from "./session.js";
 import { TaskTracker } from "./task.js";
 import { EventRouter } from "./router.js";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isStandardEventType } from "./event-types.js";
 import { DeliveryTracker } from "./delivery.js";
 
-export class AepHarness {
+export class HarmovelaHarness {
   constructor(options = {}) {
-    this.source = options.source ?? "harness:aep";
+    this.source = options.source ?? "harness:harmovela";
     this.now = options.now ?? (() => new Date().toISOString());
     this.useSchemaValidation = options.useSchemaValidation ?? false;
     this._sequence = 0;
@@ -230,7 +230,7 @@ export class AepHarness {
       });
     }
 
-    this._session = new AepSession({
+    this._session = new HarmovelaSession({
       id: event.session_id ?? `sess_${Date.now().toString(36)}`,
       source: this.source,
       version: "0.2"
@@ -264,7 +264,7 @@ export class AepHarness {
   }
 
   startSession(options = {}) {
-    this._session = new AepSession(options);
+    this._session = new HarmovelaSession(options);
     return this._session.opened();
   }
 

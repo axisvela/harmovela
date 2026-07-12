@@ -15,12 +15,12 @@ import java.util.concurrent.Executors;
 public class ApiServer {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final AepRuntimeService service;
+    private final HarmovelaRuntimeService service;
     private final String base;
     private HttpServer server;
     private int port;
 
-    public ApiServer(AepRuntimeService service, Config.Transport t) {
+    public ApiServer(HarmovelaRuntimeService service, Config.Transport t) {
         this.service = service;
         this.base = t.path() == null || t.path().isEmpty() ? "/harmovela/api" : t.path();
     }

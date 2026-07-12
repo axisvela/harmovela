@@ -1,5 +1,5 @@
 from aep.runtime.config import default_config
-from aep.runtime.service import AepRuntimeService
+from aep.runtime.service import HarmovelaRuntimeService
 
 
 def _event(**overrides):
@@ -25,7 +25,7 @@ def _no_server_config():
 
 
 def test_publishes_to_subscribers():
-    service = AepRuntimeService(_no_server_config())
+    service = HarmovelaRuntimeService(_no_server_config())
     seen = []
     service.subscribe("task.*", lambda e: seen.append(e))
     service.start()
@@ -36,11 +36,11 @@ def test_publishes_to_subscribers():
 
 
 def test_rejects_invalid_event():
-    service = AepRuntimeService(_no_server_config())
+    service = HarmovelaRuntimeService(_no_server_config())
     service.start()
     try:
         service.publish({"type": "task.submitted"})
         assert False, "expected ValueError"
     except ValueError as err:
-        assert "invalid AEP event" in str(err)
+        assert "invalid Harmovela event" in str(err)
     service.stop()

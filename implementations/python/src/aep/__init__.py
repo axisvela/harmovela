@@ -2,10 +2,10 @@ from .errors import ErrorCode, error_payload, is_retryable
 from .event_types import STANDARD_EVENT_TYPES, is_standard_event_type
 from .envelope import validate_envelope
 from .subscription import subscription_matches, matches_type
-from .session import AepSession
+from .session import HarmovelaSession
 from .task import TaskTracker, TaskState
 from .router import EventRouter
-from .harness import AepHarness
+from .harness import HarmovelaHarness
 from .schema_validator import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
 from .delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
 from .delivery_store import InMemoryDeliveryStore
@@ -18,10 +18,10 @@ __all__ = [
     "STANDARD_EVENT_TYPES", "is_standard_event_type",
     "validate_envelope",
     "subscription_matches", "matches_type",
-    "AepSession",
+    "HarmovelaSession",
     "TaskTracker", "TaskState",
     "EventRouter",
-    "AepHarness",
+    "HarmovelaHarness",
     "validate_envelope_schema", "validate_subscription_schema", "is_valid_by_schema",
     "DeliveryTracker", "retry_delay", "DEFAULT_RETRY",
     "InMemoryDeliveryStore",

@@ -17,7 +17,7 @@ class RuntimeSubscriptionsTest {
 
     @Test
     void registryBuffersMatchingEvents() {
-        var svc = new AepRuntimeService(noServerConfig());
+        var svc = new HarmovelaRuntimeService(noServerConfig());
         svc.start();
         var record = svc.createSubscription(Map.of("types", "task.*"));
         var id = (String) record.get("id");
@@ -31,7 +31,7 @@ class RuntimeSubscriptionsTest {
 
     @Test
     void listsAndDeletes() {
-        var svc = new AepRuntimeService(noServerConfig());
+        var svc = new HarmovelaRuntimeService(noServerConfig());
         svc.start();
         var record = svc.createSubscription(Map.of("types", "task.*"));
         var id = (String) record.get("id");

@@ -24,15 +24,11 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17\x61\x65p/transport/aep.proto\x12\x06\x61\x65p.v1\"\"\n\nAepMessage\x12\x14\n\x0cjson_payload\x18\x01 \x01(\t2D\n\x0c\x41\x65pTransport\x12\x34\n\x06Stream\x12\x12.aep.v1.AepMessage\x1a\x12.aep.v1.AepMessage(\x01\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17aep/transport/aep.proto\x12\x0charmovela.v1"3\n\x10HarmovelaMessage\x12\x1f\n\x0cjson_payload\x18\x01(\tR\x0bjsonPayload2b\n\x12HarmovelaTransport\x12L\n\x06Stream\x12\x1e.harmovela.v1.HarmovelaMessage\x1a\x1e.harmovela.v1.HarmovelaMessage(\x010\x01b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'aep.transport.aep_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_AEPMESSAGE']._serialized_start=35
-  _globals['_AEPMESSAGE']._serialized_end=69
-  _globals['_AEPTRANSPORT']._serialized_start=71
-  _globals['_AEPTRANSPORT']._serialized_end=139
 # @@protoc_insertion_point(module_scope)

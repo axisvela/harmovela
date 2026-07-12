@@ -1,7 +1,7 @@
 package com.axisrobo.aep.transport;
 
-import aep.v1.Aep;
-import aep.v1.AepTransportGrpc;
+import harmovela.v1.Harmovela;
+import harmovela.v1.HarmovelaTransportGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -28,15 +28,15 @@ class GrpcTransportTest {
             .usePlaintext()
             .build();
 
-        var stub = AepTransportGrpc.newStub(channel);
+        var stub = HarmovelaTransportGrpc.newStub(channel);
         var latch = new CountDownLatch(1);
-        var responseObserver = new StreamObserver<Aep.AepMessage>() {
-            @Override public void onNext(Aep.AepMessage msg) { latch.countDown(); }
+        var responseObserver = new StreamObserver<Harmovela.HarmovelaMessage>() {
+            @Override public void onNext(Harmovela.HarmovelaMessage msg) { latch.countDown(); }
             @Override public void onError(Throwable t) {}
             @Override public void onCompleted() {}
         };
         var requestObserver = stub.stream(responseObserver);
-        requestObserver.onNext(Aep.AepMessage.newBuilder()
+        requestObserver.onNext(Harmovela.HarmovelaMessage.newBuilder()
             .setJsonPayload("{\"type\":\"test\"}").build());
         requestObserver.onCompleted();
 

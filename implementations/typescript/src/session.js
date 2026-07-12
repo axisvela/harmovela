@@ -20,10 +20,10 @@ function nowISO() {
   return new Date().toISOString();
 }
 
-export class AepSession {
+export class HarmovelaSession {
   constructor(options = {}) {
     this.id = options.id ?? `sess_${Date.now().toString(36)}`;
-    this.source = options.source ?? "aep:session";
+    this.source = options.source ?? "harmovela:session";
     this.version = options.version ?? "0.2";
     this.capabilities = options.capabilities ?? null;
     this.state = States.CREATED;

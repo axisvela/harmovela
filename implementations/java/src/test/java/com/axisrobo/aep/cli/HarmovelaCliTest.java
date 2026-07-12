@@ -7,13 +7,13 @@ import java.nio.file.*;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
-class AepCliTest {
+class HarmovelaCliTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     void initWritesConfig(@TempDir Path dir) throws Exception {
         var path = dir.resolve("harmovela.config.json");
-        int code = AepCli.run(new String[]{"init", "--config", path.toString()});
+        int code = HarmovelaCli.run(new String[]{"init", "--config", path.toString()});
         assertEquals(0, code);
         var parsed = MAPPER.readValue(Files.readString(path), Map.class);
         var runtime = (Map<?, ?>) parsed.get("runtime");

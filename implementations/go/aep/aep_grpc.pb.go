@@ -8,35 +8,35 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type AepTransport_StreamServer interface {
-	Send(*AepMessage) error
-	Recv() (*AepMessage, error)
+type HarmovelaTransport_StreamServer interface {
+	Send(*HarmovelaMessage) error
+	Recv() (*HarmovelaMessage, error)
 	grpc.ServerStream
 }
 
-type AepTransport_StreamClient interface {
-	Send(*AepMessage) error
-	Recv() (*AepMessage, error)
+type HarmovelaTransport_StreamClient interface {
+	Send(*HarmovelaMessage) error
+	Recv() (*HarmovelaMessage, error)
 	grpc.ClientStream
 }
 
-type AepTransportServer interface {
-	Stream(AepTransport_StreamServer) error
+type HarmovelaTransportServer interface {
+	Stream(HarmovelaTransport_StreamServer) error
 }
 
-type AepTransportClient interface {
-	Stream(ctx context.Context, opts ...grpc.CallOption) (AepTransport_StreamClient, error)
+type HarmovelaTransportClient interface {
+	Stream(ctx context.Context, opts ...grpc.CallOption) (HarmovelaTransport_StreamClient, error)
 }
 
-func RegisterAepTransportServer(s *grpc.Server, srv AepTransportServer) {
+func RegisterHarmovelaTransportServer(s *grpc.Server, srv HarmovelaTransportServer) {
 	s.RegisterService(&grpc.ServiceDesc{
 		ServiceName: "harmovela.v1.HarmovelaTransport",
-		HandlerType: (*AepTransportServer)(nil),
+		HandlerType: (*HarmovelaTransportServer)(nil),
 		Methods:     []grpc.MethodDesc{},
 		Streams: []grpc.StreamDesc{
 			{
 				StreamName:    "Stream",
-				Handler:       _AepTransport_Stream_Handler,
+				Handler:       _HarmovelaTransport_Stream_Handler,
 				ServerStreams: true,
 				ClientStreams: true,
 			},
@@ -45,35 +45,35 @@ func RegisterAepTransportServer(s *grpc.Server, srv AepTransportServer) {
 	}, srv)
 }
 
-func _AepTransport_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(AepTransportServer).Stream(&aepTransportStreamServer{stream})
+func _HarmovelaTransport_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HarmovelaTransportServer).Stream(&harmovelaTransportStreamServer{stream})
 }
 
-func NewAepTransportClient(cc grpc.ClientConnInterface) AepTransportClient {
-	return &aepTransportClient{cc}
+func NewHarmovelaTransportClient(cc grpc.ClientConnInterface) HarmovelaTransportClient {
+	return &harmovelaTransportClient{cc}
 }
 
-type aepTransportStreamServer struct {
+type harmovelaTransportStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *aepTransportStreamServer) Send(m *AepMessage) error {
+func (x *harmovelaTransportStreamServer) Send(m *HarmovelaMessage) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *aepTransportStreamServer) Recv() (*AepMessage, error) {
-	m := new(AepMessage)
+func (x *harmovelaTransportStreamServer) Recv() (*HarmovelaMessage, error) {
+	m := new(HarmovelaMessage)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-type aepTransportClient struct {
+type harmovelaTransportClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func (c *aepTransportClient) Stream(ctx context.Context, opts ...grpc.CallOption) (AepTransport_StreamClient, error) {
+func (c *harmovelaTransportClient) Stream(ctx context.Context, opts ...grpc.CallOption) (HarmovelaTransport_StreamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &grpc.StreamDesc{
 		StreamName:    "Stream",
 		ServerStreams: true,
@@ -82,20 +82,20 @@ func (c *aepTransportClient) Stream(ctx context.Context, opts ...grpc.CallOption
 	if err != nil {
 		return nil, err
 	}
-	x := &aepTransportStreamClient{stream}
+	x := &harmovelaTransportStreamClient{stream}
 	return x, nil
 }
 
-type aepTransportStreamClient struct {
+type harmovelaTransportStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *aepTransportStreamClient) Send(m *AepMessage) error {
+func (x *harmovelaTransportStreamClient) Send(m *HarmovelaMessage) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *aepTransportStreamClient) Recv() (*AepMessage, error) {
-	m := new(AepMessage)
+func (x *harmovelaTransportStreamClient) Recv() (*HarmovelaMessage, error) {
+	m := new(HarmovelaMessage)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -103,6 +103,6 @@ func (x *aepTransportStreamClient) Recv() (*AepMessage, error) {
 }
 
 func init() {
-	_ = status.Errorf // keep imports
-	_ = codes.OK       // keep imports
+	_ = status.Errorf
+	_ = codes.OK
 }

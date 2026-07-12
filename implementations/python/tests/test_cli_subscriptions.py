@@ -6,7 +6,7 @@ import threading
 import time
 
 from aep.runtime.config import default_config
-from aep.runtime.service import AepRuntimeService
+from aep.runtime.service import HarmovelaRuntimeService
 
 
 def _run(args):
@@ -27,7 +27,7 @@ def _api_config(port):
 
 
 def test_subscriptions_crud():
-    service = AepRuntimeService(_api_config(18911))
+    service = HarmovelaRuntimeService(_api_config(18911))
     service.start()
     base = "http://127.0.0.1:18911/harmovela/api"
     try:
@@ -60,7 +60,7 @@ import time
 
 
 def test_subscriptions_stream_receives_event():
-    service = AepRuntimeService(_api_config(18912))
+    service = HarmovelaRuntimeService(_api_config(18912))
     service.start()
     base = "http://127.0.0.1:18912/harmovela/api"
     try:

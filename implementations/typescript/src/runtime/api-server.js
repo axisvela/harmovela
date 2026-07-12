@@ -95,8 +95,8 @@ async function handleIngest(service, req, res) {
   try {
     service.publish(event);
   } catch (err) {
-    const errors = err.message.startsWith("invalid AEP event: ")
-      ? err.message.slice("invalid AEP event: ".length).split("; ")
+    const errors = err.message.startsWith("invalid Harmovela event: ")
+      ? err.message.slice("invalid Harmovela event: ".length).split("; ")
       : [err.message];
     return sendJson(res, 400, { accepted: false, errors });
   }

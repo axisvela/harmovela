@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { AepHarness } from "../src/index.js";
+import { HarmovelaHarness } from "../src/index.js";
 
 const now = () => "2026-07-09T10:00:01Z";
 
@@ -12,7 +12,7 @@ const validBase = {
 };
 
 test("declares harness capabilities", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     type: "capabilities.requested",
@@ -27,7 +27,7 @@ test("declares harness capabilities", () => {
 });
 
 test("creates subscriptions", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     type: "subscription.requested",
@@ -39,7 +39,7 @@ test("creates subscriptions", () => {
 });
 
 test("rejects subscription with no filter criteria", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     type: "subscription.requested",
@@ -51,7 +51,7 @@ test("rejects subscription with no filter criteria", () => {
 });
 
 test("manages session opening and ready", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const responses = harness.handle({
     ...validBase,
     type: "session.opened",
@@ -65,7 +65,7 @@ test("manages session opening and ready", () => {
 });
 
 test("closes active session", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   harness.handle({
     ...validBase,
     type: "session.opened",
@@ -86,7 +86,7 @@ test("closes active session", () => {
 });
 
 test("rejects duplicate session open", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   harness.handle({
     ...validBase,
     type: "session.opened",
@@ -106,7 +106,7 @@ test("rejects duplicate session open", () => {
 });
 
 test("accepts task submission and tracks lifecycle", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [accepted] = harness.handle({
     ...validBase,
     type: "task.submitted",
@@ -132,7 +132,7 @@ test("accepts task submission and tracks lifecycle", () => {
 });
 
 test("removes task on completion", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   harness.handle({
     ...validBase,
     type: "task.submitted",
@@ -160,7 +160,7 @@ test("removes task on completion", () => {
 });
 
 test("rejects task events for unknown task", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     type: "task.progress",
@@ -173,7 +173,7 @@ test("rejects task events for unknown task", () => {
 });
 
 test("acknowledges valid non-control events", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     type: "task.progress",
@@ -185,7 +185,7 @@ test("acknowledges valid non-control events", () => {
 });
 
 test("rejects invalid envelopes with standard error", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({ type: "unknown.event", payload: {} });
 
   assert.equal(response.type, "event.rejected");
@@ -194,7 +194,7 @@ test("rejects invalid envelopes with standard error", () => {
 });
 
 test("rejects unsupported protocol versions", () => {
-  const harness = new AepHarness({ now });
+  const harness = new HarmovelaHarness({ now });
   const [response] = harness.handle({
     ...validBase,
     spec_version: "9.9",

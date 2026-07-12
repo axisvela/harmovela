@@ -51,7 +51,7 @@ test("groupEventsByTask groups only task events with task_id", () => {
   assert.deepEqual(grouped.get("task_b").map((event) => event.type), ["task.accepted"]);
 });
 
-test("runMcpAepConsumerDemo correlates MCP task IDs with AEP lifecycle events", async () => {
+test("runMcpAepConsumerDemo correlates MCP task IDs with Harmovela lifecycle events", async () => {
   const summary = await runMcpAepConsumerDemo({ delayMs: 1, timeoutMs: 500 });
 
   assert.deepEqual(summary.tools.map((tool) => tool.name), ["web_crawl", "index_docs"]);

@@ -1,7 +1,7 @@
 package com.axisrobo.aep.transport;
 
-import aep.v1.Aep;
-import aep.v1.AepTransportGrpc;
+import harmovela.v1.Harmovela;
+import harmovela.v1.HarmovelaTransportGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -14,7 +14,7 @@ public class GrpcClient {
     private final String host;
     private final int port;
     private ManagedChannel channel;
-    private StreamObserver<Aep.AepMessage> requestObserver;
+    private StreamObserver<Harmovela.HarmovelaMessage> requestObserver;
     private volatile Consumer<String> listener;
 
     public GrpcClient(String host, int port) {
@@ -30,10 +30,10 @@ public class GrpcClient {
         channel = ManagedChannelBuilder.forAddress(host, port)
             .usePlaintext()
             .build();
-        var stub = AepTransportGrpc.newStub(channel);
-        requestObserver = stub.stream(new StreamObserver<Aep.AepMessage>() {
+        var stub = HarmovelaTransportGrpc.newStub(channel);
+        requestObserver = stub.stream(new StreamObserver<Harmovela.HarmovelaMessage>() {
             @Override
-            public void onNext(Aep.AepMessage msg) {
+            public void onNext(Harmovela.HarmovelaMessage msg) {
                 var l = listener;
                 if (l != null) {
                     l.accept(msg.getJsonPayload());
@@ -52,7 +52,7 @@ public class GrpcClient {
 
     public void send(String jsonPayload) {
         if (requestObserver != null) {
-            requestObserver.onNext(Aep.AepMessage.newBuilder()
+            requestObserver.onNext(Harmovela.HarmovelaMessage.newBuilder()
                 .setJsonPayload(jsonPayload).build());
         }
     }

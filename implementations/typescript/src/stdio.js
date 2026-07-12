@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { StdioTransport } from "./transport/stdio.js";
-import { AepHarness } from "./harness.js";
+import { HarmovelaHarness } from "./harness.js";
 
-const harness = new AepHarness();
+const harness = new HarmovelaHarness();
 const transport = new StdioTransport();
 
 transport.on("message", (event) => {

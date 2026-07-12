@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
-	"github.com/axisrobo/aep/aep/bridge"
+	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/aep/bridge"
 )
 
 type sink struct {

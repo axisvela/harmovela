@@ -9,7 +9,7 @@ export function createDemoBridge(options = {}) {
   const bridge = new McpBridge({ transport });
 
   bridge.registerTool(asyncToolHandler("web_crawl", {
-    description: "Crawl a URL and index its content. Returns immediately with a task_id; progress and results are delivered as AEP events.",
+    description: "Crawl a URL and index its content. Returns immediately with a task_id; progress and results are delivered as Harmovela events.",
     inputSchema: {
       properties: {
         url: { type: "string", description: "URL to crawl" },
@@ -24,7 +24,7 @@ export function createDemoBridge(options = {}) {
   }));
 
   bridge.registerTool(asyncToolHandler("index_docs", {
-    description: "Index documents into memory. Async task with AEP lifecycle events.",
+    description: "Index documents into memory. Async task with Harmovela lifecycle events.",
     inputSchema: {
       properties: {
         path: { type: "string", description: "Path to documents" }
@@ -49,7 +49,7 @@ export async function runMcpAepConsumerDemo(options = {}) {
       jsonrpc: "2.0",
       id: 1,
       method: "initialize",
-      params: { protocolVersion: "0.1.0", capabilities: {}, clientInfo: { name: "mcp-aep-consumer", version: "1.0.0" } }
+      params: { protocolVersion: "0.1.0", capabilities: {}, clientInfo: { name: "mcp-harmovela-consumer", version: "1.0.0" } }
     }), { method: "initialize" });
 
     const toolsResponse = await expectMcpSuccess(await bridge.handleRequest({
@@ -146,7 +146,7 @@ export async function waitForTaskTimelines(transport, taskIds, options = {}) {
     await sleep(10);
   }
 
-  throw new Error(`Timed out waiting for terminal AEP events for tasks: ${taskIds.join(", ")}`);
+  throw new Error(`Timed out waiting for terminal Harmovela events for tasks: ${taskIds.join(", ")}`);
 }
 
 async function expectMcpSuccess(response, context) {

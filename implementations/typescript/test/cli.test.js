@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import { defaultConfig } from "../src/runtime/config.js";
 import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
-import { AepRuntimeService } from "../src/runtime/service.js";
+import { HarmovelaRuntimeService } from "../src/runtime/service.js";
 
 const cli = path.resolve("src/cli/harmovela.js");
 
@@ -133,7 +133,7 @@ function subApiConfig(port) {
 }
 
 test("aep subscriptions create/list/delete round-trip", async () => {
-  const service = new AepRuntimeService(subApiConfig(18901));
+  const service = new HarmovelaRuntimeService(subApiConfig(18901));
   await service.start();
   const base = "http://127.0.0.1:18901/aep/api";
   try {
@@ -164,7 +164,7 @@ test("aep subscriptions create rejects invalid filter JSON", async () => {
 });
 
 test("aep subscriptions stream receives a published event", async () => {
-  const service = new AepRuntimeService(subApiConfig(18902));
+  const service = new HarmovelaRuntimeService(subApiConfig(18902));
   await service.start();
   const base = "http://127.0.0.1:18902/aep/api";
   const created = await run(["subscriptions", "create", "--filter", "{\"types\":\"task.*\"}", "--base", base]);

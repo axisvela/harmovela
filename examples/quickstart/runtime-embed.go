@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/axisrobo/aep/aep"
-	"github.com/axisrobo/aep/aep/runtime"
+	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/aep/runtime"
 )
 
 func main() {

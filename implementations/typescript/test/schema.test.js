@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema, AepHarness } from "../src/index.js";
+import { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema, HarmovelaHarness } from "../src/index.js";
 import { validateEnvelope } from "../src/validate.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -63,7 +63,7 @@ test("subscription filter schema rejects invalid delivery_mode", () => {
 });
 
 test("harness with schema validation rejects schema-invalid envelope", () => {
-  const h = new AepHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
+  const h = new HarmovelaHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
   const [resp] = h.handle({
     spec_version: "0.2", id: "evt_01", type: "task.progress",
     source: "tool:crawler", created_at: "2026-07-09T10:00:00Z", payload: {},
@@ -74,7 +74,7 @@ test("harness with schema validation rejects schema-invalid envelope", () => {
 });
 
 test("harness with schema validation accepts valid events", () => {
-  const h = new AepHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
+  const h = new HarmovelaHarness({ useSchemaValidation: true, now: () => "2026-07-09T10:00:01Z" });
   const [resp] = h.handle({
     spec_version: "0.2", id: "evt_valid", type: "task.progress",
     source: "tool:crawler", created_at: "2026-07-09T10:00:00Z", payload: {},

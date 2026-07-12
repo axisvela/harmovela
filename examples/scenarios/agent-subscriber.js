@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { AepHarness, MockStdioTransport, AepSession } from "@axisrobo/aep";
+import { HarmovelaHarness, MockStdioTransport, HarmovelaSession } from "@axisrobo/aep";
 
 console.log("=== Agent Subscriber Demo ===\n");
 
@@ -7,10 +7,10 @@ const transport = new MockStdioTransport();
 await transport.start();
 
 const now = () => new Date().toISOString();
-const harness = new AepHarness({ source: "agent:researcher", now });
+const harness = new HarmovelaHarness({ source: "agent:researcher", now });
 
 // Start a session with the harness
-const session = new AepSession({ id: "sess_agent", source: "agent:researcher" });
+const session = new HarmovelaSession({ id: "sess_agent", source: "agent:researcher" });
 console.log("[agent] Opening session...");
 const [readyResponse] = harness.handle({
   aep_version: "0.1", id: "init_01", type: "session.opened",

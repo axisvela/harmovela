@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class AepTransportStub:
+class HarmovelaTransportStub:
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,13 +35,13 @@ class AepTransportStub:
             channel: A grpc.Channel.
         """
         self.Stream = channel.stream_stream(
-                '/aep.v1.AepTransport/Stream',
-                request_serializer=aep_dot_transport_dot_aep__pb2.AepMessage.SerializeToString,
-                response_deserializer=aep_dot_transport_dot_aep__pb2.AepMessage.FromString,
+                '/harmovela.v1.HarmovelaTransport/Stream',
+                request_serializer=aep_dot_transport_dot_aep__pb2.HarmovelaMessage.SerializeToString,
+                response_deserializer=aep_dot_transport_dot_aep__pb2.HarmovelaMessage.FromString,
                 _registered_method=True)
 
 
-class AepTransportServicer:
+class HarmovelaTransportServicer:
     """Missing associated documentation comment in .proto file."""
 
     def Stream(self, request_iterator, context):
@@ -51,22 +51,22 @@ class AepTransportServicer:
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AepTransportServicer_to_server(servicer, server):
+def add_HarmovelaTransportServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Stream': grpc.stream_stream_rpc_method_handler(
                     servicer.Stream,
-                    request_deserializer=aep_dot_transport_dot_aep__pb2.AepMessage.FromString,
-                    response_serializer=aep_dot_transport_dot_aep__pb2.AepMessage.SerializeToString,
+                    request_deserializer=aep_dot_transport_dot_aep__pb2.HarmovelaMessage.FromString,
+                    response_serializer=aep_dot_transport_dot_aep__pb2.HarmovelaMessage.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'aep.v1.AepTransport', rpc_method_handlers)
+            'harmovela.v1.HarmovelaTransport', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('aep.v1.AepTransport', rpc_method_handlers)
+    server.add_registered_method_handlers('harmovela.v1.HarmovelaTransport', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class AepTransport:
+class HarmovelaTransport:
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -83,9 +83,9 @@ class AepTransport:
         return grpc.experimental.stream_stream(
             request_iterator,
             target,
-            '/aep.v1.AepTransport/Stream',
-            aep_dot_transport_dot_aep__pb2.AepMessage.SerializeToString,
-            aep_dot_transport_dot_aep__pb2.AepMessage.FromString,
+            '/harmovela.v1.HarmovelaTransport/Stream',
+            aep_dot_transport_dot_aep__pb2.HarmovelaMessage.SerializeToString,
+            aep_dot_transport_dot_aep__pb2.HarmovelaMessage.FromString,
             options,
             channel_credentials,
             insecure,

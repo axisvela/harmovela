@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from .errors import error_payload
 
 
-class AepSession:
-    def __init__(self, id: str | None = None, source: str = "aep:session",
+class HarmovelaSession:
+    def __init__(self, id: str | None = None, source: str = "harmovela:session",
                  version: str = "0.1", heartbeat_interval_ms: int = 0):
         self.id = id or f"sess_{int(datetime.now(timezone.utc).timestamp() * 1000):x}"
         self.source = source

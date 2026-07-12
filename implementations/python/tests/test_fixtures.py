@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from aep import validate_envelope
-from aep.harness import AepHarness
+from aep.harness import HarmovelaHarness
 from aep.schema_validator import is_valid_by_schema
 
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"
@@ -68,7 +68,7 @@ def test_conformance_fixture_validation(fixture: dict):
     ids=lambda f: f["path"],
 )
 def test_conformance_stateful_flows_are_accepted(fixture: dict):
-    harness = AepHarness()
+    harness = HarmovelaHarness()
     events = _read_ndjson(CONFORMANCE_DIR / fixture["path"])
 
     for index, event in enumerate(events):

@@ -9,7 +9,7 @@ from .config import create_delivery_store
 from .api_server import start_api_server
 
 
-class AepRuntimeService:
+class HarmovelaRuntimeService:
     def __init__(self, config: dict, router=None, store=None):
         self.config = config
         self.router = router or EventRouter()
@@ -26,7 +26,7 @@ class AepRuntimeService:
     def publish(self, event: dict) -> dict:
         errors = validate_envelope(event)
         if errors:
-            raise ValueError(f"invalid AEP event: {'; '.join(errors)}")
+            raise ValueError(f"invalid Harmovela event: {'; '.join(errors)}")
         if hasattr(self.store, "track"):
             self.store.track(event["id"], event.get("subscription_id", "_runtime"))
         self.router.dispatch(event)

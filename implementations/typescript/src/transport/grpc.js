@@ -38,7 +38,7 @@ export class GrpcServerTransport extends Transport {
 
   async _onStart() {
     const proto = _loadProto();
-    const service = proto.aep.v1.AepTransport.service;
+    const service = proto.harmovela.v1.HarmovelaTransport.service;
 
     this.#server = new grpc.Server({
       "grpc.max_receive_message_length": this.maxMessageSize,
@@ -143,7 +143,7 @@ export class GrpcServerTransport extends Transport {
   ping() {
     for (const [, call] of this.#calls) {
       try {
-        call.write({ json_payload: JSON.stringify({ type: "session.heartbeat", aep_version: "0.1", id: "ping" }) });
+        call.write({ json_payload: JSON.stringify({ type: "session.heartbeat", spec_version: "0.2", id: "ping" }) });
       } catch {}
     }
   }
@@ -198,7 +198,7 @@ export class GrpcClientTransport extends Transport {
       this.#metadata.set(key, String(value));
     }
 
-    this.#client = new proto.aep.v1.AepTransport(
+    this.#client = new proto.harmovela.v1.HarmovelaTransport(
       this.address,
       this.credentials,
       {

@@ -2,28 +2,28 @@ from datetime import datetime, timezone
 
 from .envelope import validate_envelope
 from .event_types import is_standard_event_type
-from .session import AepSession
+from .session import HarmovelaSession
 from .task import TaskTracker
 from .router import EventRouter
 from .errors import ErrorCode, error_payload
 from .delivery import DeliveryTracker
 
 
-class AepHarness:
-    def __init__(self, source: str = "harness:aep", now_fn=None):
+class HarmovelaHarness:
+    def __init__(self, source: str = "harness:harmovela", now_fn=None):
         self.source = source
         self._now = now_fn or (lambda: datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"))
         self._sequence = 0
         self._subscriptions: dict[str, dict] = {}
         self._tasks: dict[str, TaskTracker] = {}
         self._router = EventRouter()
-        self._session: AepSession | None = None
+        self._session: HarmovelaSession | None = None
         self._delivery = DeliveryTracker()
         self._setup_router()
         self._setup_delivery_router()
 
     @property
-    def session(self) -> AepSession | None:
+    def session(self) -> HarmovelaSession | None:
         return self._session
 
     @property
@@ -92,7 +92,7 @@ class AepHarness:
         })]
 
     def start_session(self, **kwargs) -> dict:
-        self._session = AepSession(**kwargs)
+        self._session = HarmovelaSession(**kwargs)
         return self._session.opened()
 
     def _handle_capabilities(self, event: dict) -> dict:
@@ -187,7 +187,7 @@ class AepHarness:
                                        f"session already active", details={"existing_session": self._session.id}),
             })
 
-        self._session = AepSession(
+        self._session = HarmovelaSession(
             id=event.get("session_id") or f"sess_{self._now()}",
             source=self.source,
             version="0.1",

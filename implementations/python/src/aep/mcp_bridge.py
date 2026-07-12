@@ -1,14 +1,14 @@
 import json
 import threading
 
-from .harness import AepHarness
+from .harness import HarmovelaHarness
 from .task import TaskTracker
 from .errors import ErrorCode
 
 
 class McpBridge:
     def __init__(self, aep=None, transport=None, server_info=None):
-        self.aep = aep or AepHarness()
+        self.aep = aep or HarmovelaHarness()
         self.transport = transport
         self.tools = {}
         self.server_info = server_info or {"name": "aep-mcp-bridge", "version": "0.1.0"}
