@@ -8,7 +8,7 @@ Harmovela complements MCP. MCP is good at synchronous capability invocation: lis
 
 ## About
 
-The current 0.1 draft is a multi-language protocol repository with:
+The current 0.2 draft is a multi-language protocol repository with:
 
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
 - **4 productized implementations** (TypeScript, Python, Go, Java) �-each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
@@ -93,6 +93,13 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 ### Design Documents (`docs/design/`)
 
 - `docs/design/` -- Superpowers-backed design specs and implementation plans
+
+### Governance
+
+- `GOVERNANCE.md` -- project governance and decision-making
+- `RELEASES.md` -- release phases, versioning, and artifacts
+- `TRADEMARKS.md` -- name and mark usage guidelines
+- `LICENSE` -- Apache License 2.0
 
 ### Guides
 

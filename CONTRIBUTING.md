@@ -1,14 +1,15 @@
-# Contributing to AEP
+# Contributing to Harmovela Protocol
 
-Thank you for your interest in contributing to the Agent Event Protocol (AEP).
+Thank you for your interest in contributing to the Harmovela Protocol.
 
-AEP is a draft open protocol. Contributions that refine the specification, improve reference implementations, add conformance coverage, or fix bugs are welcome.
+Harmovela is a draft open coordination protocol. Contributions that refine the specification, improve reference implementations, add conformance coverage, or fix bugs are welcome.
 
 ## Getting Started
 
-1. Read [`README.md`](README.md) and [`docs/roadmap.md`](docs/roadmap.md).
+1. Read [`README.md`](README.md), [`GOVERNANCE.md`](GOVERNANCE.md), and [`docs/roadmap.md`](docs/roadmap.md).
 2. Check open issues for areas where help is needed.
 3. For protocol changes, start with a design discussion before writing code.
+4. Contributions are licensed under the [Apache License 2.0](LICENSE).
 
 ## Repository Structure
 
@@ -75,6 +76,10 @@ node tools/conformance-runner.js
 - **Go:** `testing.T`, camelCase, `gofmt`
 - **Java:** JUnit 5, camelCase, JDK 21
 
+## Governance
+
+See [`GOVERNANCE.md`](GOVERNANCE.md) for the project governance structure and decision-making processes. See [`RELEASES.md`](RELEASES.md) for release phases and [`TRADEMARKS.md`](TRADEMARKS.md) for name and mark usage.
+
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [Apache License 2.0](LICENSE). All contributions are accepted under the same license.

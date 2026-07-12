@@ -1,21 +1,23 @@
-# AEP Versioning
+# Harmovela Versioning
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 specification.
 
 ## Purpose
 
-Define how AEP versions protocol assets and how implementations negotiate compatibility.
+Define how Harmovela versions protocol assets and how implementations negotiate compatibility.
 
 ## Versioned Assets
 
-AEP versions four distinct assets independently:
+Harmovela versions four distinct assets independently:
 
-| Asset | Version Field | Example | Scope |
-|---|---|---|---|
-| Protocol envelope | `aep_version` | `"0.1"` | Envelope field set, required fields, semantic rules |
-| Event type families | Event type registry | — | Standard event type names and semantics |
-| Payload schemas | `payload_schema` (URI) | `https://schemas.axisrobo.com/tool.call.progress.v1.json` | Per-event payload structure |
-| Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. |
+| Asset | Version Field | Example | Scope | Category |
+|---|---|---|---|---|
+| Protocol envelope | `aep_version` | `"0.1"` | Envelope field set, required fields, semantic rules | core |
+| Event type families | Event type registry | — | Standard event type names and semantics | core |
+| Payload schemas | `payload_schema` (URI) | `https://schemas.axisrobo.com/tool.call.progress.v1.json` | Per-event payload structure | profile |
+| Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. | profile |
+
+Core assets are required by every conformant implementation. Profile assets may be adopted independently and carry their own conformance requirements.
 
 ## Protocol Envelope Versioning
 
@@ -76,7 +78,7 @@ Each transport binding (stdio, WebSocket, HTTP SSE, etc.) versions independently
 - Error handling for transport-level failures
 - Subprotocol identifiers (e.g., WebSocket subprotocol names)
 
-Current transport binding documents: none finalized. See `docs/specs/transport-stdio.md` and `docs/specs/transport-websocket.md` (planned).
+Current transport binding documents: see `docs/protocol/transport-stdio.md`, `docs/protocol/transport-websocket.md`, `docs/protocol/transport-sse.md`, `docs/protocol/transport-grpc.md`, `docs/protocol/transport-nats.md`, `docs/protocol/transport-kafka.md`, `docs/protocol/transport-redis-streams.md`. Transports are profile assets and may be adopted independently from core.
 
 ## Forward Compatibility
 
@@ -89,7 +91,7 @@ Implementations should follow these forward-compatibility practices:
 
 ## Deprecation Policy
 
-AEP follows a no-surprise deprecation policy:
+Harmovela follows a no-surprise deprecation policy:
 
 1. **Deprecation notice**: A field, event type, or feature is marked deprecated in a minor version release.
 2. **Support window**: The deprecated item is supported for at least one additional minor version.
