@@ -1,4 +1,4 @@
-# Axisrobo AEP
+# Harmovela Protocol
 
 OpenCode project rules file. Claude Code reads `CLAUDE.md`. Keep both aligned.
 
@@ -10,11 +10,20 @@ Superpowers is enabled through `opencode.json` and project work artifacts live u
 
 Use Superpowers workflows for planning, test-driven development, systematic debugging, verification, and code review.
 
-## Project Scope
+## Project Identity
 
-Axisrobo AEP defines the Agent Event Protocol: an asynchronous event layer for agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
+Harmovela Protocol is an open coordination protocol for autonomous systems: agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
 
-AEP complements MCP. MCP remains the synchronous call layer; AEP is the asynchronous event, subscription, lifecycle, and coordination layer.
+Harmovela complements MCP. MCP remains the synchronous capability invocation layer; Harmovela provides asynchronous event, subscription, lifecycle, state, recovery, and coordination semantics.
+
+The canonical repository location is `https://github.com/axisrobo/harmovela`.
+
+## Naming And Namespace Rules
+
+- Harmovela is the public protocol identity.
+- Axisrobo remains the implementation organization and package namespace. Do not replace `axisrobo` package or group namespaces with `harmovela`.
+- Migrate public artifact names, repository paths, wire identifiers, configuration names, and transport defaults only through an explicit versioned compatibility decision.
+- Do not change protocol behavior, delivery guarantees, or conformance claims as a side effect of a naming migration.
 
 ## Current Status
 
@@ -64,6 +73,7 @@ This repository is currently a design draft. Treat protocol behavior as provisio
 - Prioritize TypeScript first, Python second, then Go and Java.
 - Do not introduce production guarantees beyond the documented delivery semantics.
 - Update the relevant spec or plan when implementation direction changes.
+- Keep `AGENTS.md` and `CLAUDE.md` aligned when changing project identity or harness rules.
 
 ## Verification
 

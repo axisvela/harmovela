@@ -1,6 +1,8 @@
-# AEP Roadmap
+# Harmovela Protocol Roadmap
 
-## Phase 0: Vision And Design âœ?Complete
+> The protocol's formal working name is **Harmovela Protocol**. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases.
+
+## Phase 0: Vision And Design ï¿½?Complete
 
 Goal: define the project direction clearly enough for external review.
 
@@ -12,7 +14,7 @@ Deliverables (all delivered):
 - MCP relationship document
 - Initial terminology
 
-## Phase 1: Core Specification Draft âœ?Complete
+## Phase 1: Core Specification Draft ï¿½?Complete
 
 Goal: produce a minimal implementable protocol specification.
 
@@ -27,7 +29,7 @@ Deliverables (all delivered):
 - Versioning rules (`docs/specs/versioning.md`)
 - Shared conformance fixtures for reference implementations (`conformance/fixtures/`)
 
-## Phase 2: Transport Bindings âœ?Complete
+## Phase 2: Transport Bindings ï¿½?Complete
 
 Goal: define how AEP runs over common transports.
 
@@ -44,7 +46,7 @@ Later bindings:
 - Kafka (`docs/specs/transport-kafka.md`, implemented in all 4 languages)
 - Redis Streams (`docs/specs/transport-redis-streams.md`, implemented in all 4 languages)
 
-## Phase 3: Reference Implementation âœ?Complete
+## Phase 3: Reference Implementation ï¿½?Complete
 
 Goal: prove the spec with a small, understandable implementation.
 
@@ -59,7 +61,7 @@ Deliverables (all delivered across four languages):
 - Example agent subscriber (`implementations/typescript/examples/agent-subscriber.js`)
 - Cross-language conformance tests using shared fixtures
 
-## Phase 4: MCP Bridge âœ?Complete
+## Phase 4: MCP Bridge ï¿½?Complete
 
 Goal: demonstrate clean interop with MCP.
 
@@ -70,7 +72,7 @@ Deliverables (all delivered):
 - Example MCP server emitting AEP events (`implementations/typescript/examples/mcp-bridge/demo.js`)
 - Example agent consuming both MCP and AEP (`implementations/typescript/examples/mcp-aep-consumer.js`)
 
-## Phase 5: Reliability And Production Semantics âœ?Complete
+## Phase 5: Reliability And Production Semantics ï¿½?Complete
 
 Goal: support durable and distributed deployments.
 
@@ -83,7 +85,7 @@ Deliverables (all delivered):
 - Authorization model (`docs/specs/security.md`)
 - Multi-tenant routing model (`docs/specs/security.md`)
 
-## Phase 6: Ecosystem And Governance âœ?Complete
+## Phase 6: Ecosystem And Governance ï¿½?Complete
 
 Goal: make AEP usable as a general open protocol.
 
@@ -97,14 +99,14 @@ Deliverables (all delivered):
 - Code of conduct (`CODE_OF_CONDUCT.md`)
 - Security considerations (`docs/specs/security.md`)
 
-## Suggested First Milestone âœ?Achieved
+## Suggested First Milestone ï¿½?Achieved
 
 The first milestone **AEP 0.1 Draft** has been delivered:
 
-- One event envelope âœ?- One subscription model âœ?- One async task lifecycle âœ?- One context event family âœ?- One memory event family âœ?- Two transport bindings: stdio and WebSocket âœ?- One MCP bridge example âœ?
+- One event envelope ï¿½?- One subscription model ï¿½?- One async task lifecycle ï¿½?- One context event family ï¿½?- One memory event family ï¿½?- Two transport bindings: stdio and WebSocket ï¿½?- One MCP bridge example ï¿½?
 AEP has since expanded to include four transport bindings (stdio, WebSocket, SSE, gRPC), full delivery and reliability subsystems, SQLite-backed stores, four language references, cross-language conformance testing, and a published spec site.
 
-## Phase 7: Agent Semantics And Positioning âœ?Complete
+## Phase 7: Agent Semantics And Positioning ï¿½?Complete
 
 Goal: distinguish AEP from existing event systems and define agent-runtime metadata.
 
@@ -117,14 +119,14 @@ Deliverables (all delivered):
 - All 4 language event registries updated with 18 new event types
 - Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)
 
-## Phase 8: Delivery End-to-End Conformance âœ?Complete
+## Phase 8: Delivery End-to-End Conformance ï¿½?Complete
 
-Goal: exercise real DeliveryTracker trace (track â†?ack, track â†?nack, track â†?dead-letter) in every language's conformance harness.
+Goal: exercise real DeliveryTracker trace (track ï¿½?ack, track ï¿½?nack, track ï¿½?dead-letter) in every language's conformance harness.
 
 Deliverables (all delivered):
 
 - AEP-C3 conformance level with `delivery_e2e` expectation
-- `conformance/fixtures/delivery-e2e.ndjson` â€?full tracking lifecycle fixture
+- `conformance/fixtures/delivery-e2e.ndjson` ï¿½?full tracking lifecycle fixture
 - DeliveryTracker integration in all 4 language harnesses
 - Cross-language delivery-e2e fixture PASS at AEP-C3 default target
 - Payload schema validation for 26 event types in TypeScript and Python (`schemas/aep-payloads.schema.json`)
@@ -134,3 +136,65 @@ Deliverables (all delivered):
 All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0â€“C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/aep/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.
 
 Future roadmap work should focus on: formal protocol versioning and community governance structures. A networked PostgreSQL delivery-store backend now ships in all four languages alongside the in-memory and SQLite backends.
+
+## Next Release Path
+
+### 0.1 Transition
+
+Goal: establish the Harmovela protocol identity without silently changing the existing draft's wire behavior or delivery guarantees.
+
+Exit criteria:
+
+- Public documentation consistently identifies Harmovela as the protocol.
+- Legacy technical identifiers have an explicit compatibility policy.
+- Protocol identity, schema identifiers, package names, and repository paths have a documented migration sequence.
+
+### 0.2 Core Stabilization
+
+Goal: freeze the minimum interoperable coordination core.
+
+Scope:
+
+- Envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and declared delivery semantics.
+- Internally consistent conformance levels, manifest expectations, and default runner target.
+- Shared positive and negative fixtures for core lifecycle behavior.
+
+### 0.3 Optional Profiles
+
+Goal: separate the stable core from independently adoptable coordination capabilities.
+
+Profiles include runtime semantics, durable delivery, security, and transport-specific capabilities. A profile must define its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.
+
+### 0.5 Beta
+
+Goal: prove stable interoperability beyond the founding implementation set.
+
+Entry criteria:
+
+- A frozen beta core with a published compatibility policy.
+- Passing cross-language conformance results.
+- At least two independently maintained interoperable implementations.
+- At least three documented integration scenarios covering asynchronous task work, state or context updates, and delegated coordination.
+
+### 0.9 Release Candidate
+
+Goal: validate the proposed 1.0 core without new feature expansion.
+
+Entry criteria:
+
+- No unresolved breaking core semantic changes.
+- Release-candidate conformance fixtures and compatibility matrix.
+- Public governance, release, security-response, and registry processes.
+- At least one external deployment or interoperability pilot.
+
+### 1.0
+
+Goal: publish a stable, implementable open coordination protocol for autonomous systems.
+
+Release criteria:
+
+- Stable core semantics and version negotiation.
+- Repeatable conformance results across independently maintained implementations.
+- Documented governance, release, licensing, and trademark policies.
+- Clear separation between required core behavior and optional profiles.
+- Published upgrade and deprecation policy.
