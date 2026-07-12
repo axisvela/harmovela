@@ -1,6 +1,7 @@
-# AEP Delivery Semantics
+# Harmovela Delivery Semantics
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 core specification.
+> Category: core
 
 ## Purpose
 

@@ -1,6 +1,6 @@
-# AEP Transport Binding: gRPC
+# Harmovela Transport Binding: gRPC
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 transport-grpc profile.
 
 ## Purpose
 

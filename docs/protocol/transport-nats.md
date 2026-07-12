@@ -1,6 +1,6 @@
-# AEP Transport Binding: NATS
+# Harmovela Transport Binding: NATS
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 transport-nats profile.
 
 ## Purpose
 

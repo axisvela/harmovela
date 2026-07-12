@@ -1,6 +1,6 @@
-# AEP Transport Binding: Kafka
+# Harmovela Transport Binding: Kafka
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 transport-kafka profile.
 
 ## Purpose
 

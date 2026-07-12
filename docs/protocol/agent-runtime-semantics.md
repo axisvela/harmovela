@@ -1,6 +1,6 @@
-# AEP Agent Runtime Semantics
+# Harmovela Agent Runtime Semantics
 
-> Status: draft. Part of the AEP 0.1 protocol specification.
+> Status: draft. Part of the Harmovela 0.2 runtime-semantics profile.
 
 ## Purpose
 

@@ -9,6 +9,15 @@
   ],
   "fixtures": [
     {
+      "path": "fixtures/negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Negative test events: unknown event type, missing spec_version, unsupported version.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative"
+      ]
+    },
+    {
       "path": "fixtures/task-lifecycle.ndjson",
       "level": "HARMOVELA-C1",
       "description": "Task submitted, progress, and completion lifecycle flow.",

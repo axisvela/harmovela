@@ -1,6 +1,7 @@
 # Harmovela Versioning
 
-> Status: draft. Part of the Harmovela 0.2 specification.
+> Status: draft. Part of the Harmovela 0.2 core specification.
+> Category: core
 
 ## Purpose
 
