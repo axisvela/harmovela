@@ -2,6 +2,7 @@ import asyncio
 import json
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 
 import click
@@ -123,6 +124,88 @@ def conformance(level):
     args = [sys.executable, "-m", "pytest", "tests/test_fixtures.py", "-q"]
     result = subprocess.run(args)
     sys.exit(result.returncode)
+
+
+@cli.group()
+def subscriptions():
+    """Manage runtime subscriptions over HTTP."""
+
+
+@subscriptions.command("create")
+@click.option("--filter", "filter_text", default="{}", help="subscription filter JSON")
+@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+def subscriptions_create(filter_text, base):
+    try:
+        filter_ = json.loads(filter_text)
+    except json.JSONDecodeError:
+        click.echo("invalid JSON filter", err=True)
+        sys.exit(1)
+    data = json.dumps({"filter": filter_}).encode()
+    req = urllib.request.Request(f"{base}/subscriptions", data=data,
+                                headers={"Content-Type": "application/json"}, method="POST")
+    _print_response(req)
+
+
+@subscriptions.command("list")
+@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+def subscriptions_list(base):
+    req = urllib.request.Request(f"{base}/subscriptions", method="GET")
+    _print_response(req)
+
+
+@subscriptions.command("delete")
+@click.argument("subscription_id")
+@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+def subscriptions_delete(subscription_id, base):
+    req = urllib.request.Request(f"{base}/subscriptions/{subscription_id}", method="DELETE")
+    try:
+        with urllib.request.urlopen(req) as resp:
+            click.echo(resp.read().decode())
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            click.echo("not found", err=True)
+        else:
+            click.echo(f"request failed: HTTP {err.code}", err=True)
+        sys.exit(1)
+    except Exception as err:
+        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        sys.exit(1)
+
+
+@subscriptions.command("stream")
+@click.argument("subscription_id")
+@click.option("--base", default="http://127.0.0.1:8790/aep/api", help="runtime API base URL")
+def subscriptions_stream(subscription_id, base):
+    try:
+        resp = urllib.request.urlopen(f"{base}/subscriptions/{subscription_id}/stream")
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            click.echo("not found", err=True)
+        else:
+            click.echo(f"request failed: HTTP {err.code}", err=True)
+        sys.exit(1)
+    except Exception as err:
+        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        sys.exit(1)
+    try:
+        for raw in resp:
+            line = raw.decode()
+            if line.startswith("data: "):
+                click.echo(line[len("data: "):].rstrip("\n"))
+    except KeyboardInterrupt:
+        pass
+
+
+def _print_response(req):
+    try:
+        with urllib.request.urlopen(req) as resp:
+            click.echo(resp.read().decode())
+    except urllib.error.HTTPError as err:
+        click.echo(f"request failed: HTTP {err.code}", err=True)
+        sys.exit(1)
+    except Exception as err:
+        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
