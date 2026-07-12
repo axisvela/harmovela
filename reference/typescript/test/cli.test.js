@@ -162,3 +162,29 @@ test("aep subscriptions create rejects invalid filter JSON", async () => {
   assert.equal(result.code, 1);
   assert.match(result.stderr, /invalid JSON filter/);
 });
+
+test("aep subscriptions stream receives a published event", async () => {
+  const service = new AepRuntimeService(subApiConfig(18902));
+  await service.start();
+  const base = "http://127.0.0.1:18902/aep/api";
+  const created = await run(["subscriptions", "create", "--filter", "{\"types\":\"task.*\"}", "--base", base]);
+  const record = JSON.parse(created.stdout);
+
+  const child = spawn(process.execPath, [cli, "subscriptions", "stream", record.id, "--base", base], { cwd: path.resolve(".") });
+  let stdout = "";
+  const gotEvent = new Promise((resolve) => {
+    child.stdout.on("data", (d) => {
+      stdout += d;
+      if (stdout.includes("evt_stream")) resolve();
+    });
+  });
+  try {
+    await new Promise((r) => setTimeout(r, 300));
+    service.publish({ aep_version: "0.1", id: "evt_stream", type: "task.submitted", source: "t", created_at: new Date().toISOString(), payload: {} });
+    await Promise.race([gotEvent, new Promise((_, rej) => setTimeout(() => rej(new Error("timed out")), 3000))]);
+    assert.match(stdout, /evt_stream/);
+  } finally {
+    child.kill("SIGINT");
+    await service.stop();
+  }
+});
