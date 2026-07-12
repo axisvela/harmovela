@@ -2,16 +2,26 @@
 
 > [中文文档 (Chinese)](README_zh.md) | [Spec Site](https://axisrobo.github.io/harmovela/)
 
-**Harmovela Protocol** is a proposed open coordination protocol for autonomous systems: large language model agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
+**Harmovela Protocol** is an open coordination protocol for autonomous systems. It defines how agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes coordinate across seven interdependent dimensions:
 
-Harmovela complements MCP. MCP is good at synchronous capability invocation: listing tools, calling tools, reading resources, and returning immediate results. Harmovela focuses on asynchronous coordination across event streams, long-running task lifecycle, background feedback, memory and context updates, durable delivery, replay, cancellation, delegation, recovery, and governance.
+| Dimension | What Harmovela defines |
+|---|---|
+| Event | What happened — publish, subscribe, correlate, replay, acknowledge. |
+| Task | What is executing — lifecycle from submitted through completed, failed, or cancelled. |
+| State | What is true now — versioned state, freshness windows, invalidation, change propagation. |
+| Context / Memory | What informs decisions — updates, invalidation, provenance, retrieval readiness. |
+| Delegation | Who does what — assignment, acceptance, handoff, escalation, cancellation propagation. |
+| Recovery | What to do when things break — idempotency, replay, checkpoints, interruption, compensation. |
+| Governance | Who can do what — identity, authorization, audit, tenant isolation, policy integration. |
+
+Harmovela complements MCP. MCP remains the synchronous capability invocation layer; Harmovela provides the asynchronous coordination layer — event streams, task lifecycle, state management, context awareness, delegation, recovery, and governance.
 
 ## About
 
 The current 0.2 draft is a multi-language protocol repository with:
 
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
-- **4 productized implementations** (TypeScript, Python, Go, Java) �-each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
+- **4 productized implementations** (TypeScript, Python, Go, Java) — each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance
@@ -19,23 +29,25 @@ The current 0.2 draft is a multi-language protocol repository with:
 
 ## Vision
 
-Agents should not only ask for capabilities. They also need to listen, react, coordinate, and recover.
+Autonomous systems need more than synchronous tool calls. They need to sense, decide, act, recover, and coordinate continuously. Harmovela Protocol provides the open coordination layer for that continuous cycle.
 
-Harmovela defines a common coordination model so that agents can receive asynchronous feedback from tools, other agents, memory systems, external environments, and runtime infrastructure without forcing every system to invent a custom callback, polling, or message queue interface.
+Harmovela integrates three interwoven qualities:
+
+- **Connection & Collaboration**: network effects across autonomous entities, collective intelligence that grows with participants, alignment across agents, tools, and runtimes.
+- **Dynamic & Evolution**: continuous adaptation to changing environments, emergence of coordinated behavior, flow of context and state over time.
+- **Order & Governance**: trust through verifiable boundaries, balance between autonomy and constraint, resilient coordination under uncertainty.
 
 ## Scope
 
 Harmovela covers:
 
-- Asynchronous events and notifications
-- Publish / subscribe communication
-- Long-running tool and task lifecycle
-- Progress, output, completion, failure, cancellation, and timeout events
-- Context and memory change streams
-- Environment observation streams
-- Agent-to-agent messages
-- Delivery acknowledgement, replay, and correlation
-- Transport bindings for local and distributed runtimes
+- **Event**: publish, subscribe, correlate, replay, acknowledge — the complete event lifecycle.
+- **Task**: lifecycle from submitted through accepted, executing, progressing, completed, failed, or cancelled — with timeout, blockage, and output streaming.
+- **State**: versioned state, freshness windows, invalidation, change propagation — what is true now.
+- **Context / Memory**: updates, invalidation, provenance, retrieval readiness — what informs decisions.
+- **Delegation**: assignment, acceptance, handoff, escalation, cancellation propagation — who does what.
+- **Recovery**: idempotency, replay, checkpoints, interruption, compensation — what to do when things break.
+- **Governance**: identity, authorization, audit, tenant isolation, policy integration — who can do what.
 
 Harmovela does not replace:
 
@@ -49,9 +61,9 @@ Harmovela does not replace:
 
 | MCP | Harmovela |
 | --- | --- |
-| Synchronous request / response | Asynchronous event streams |
+| Synchronous request / response | Asynchronous coordination streams |
 | Tool invocation | Task lifecycle and tool feedback |
-| Resource reading | Context updates and invalidation |
+| Resource reading | Context updates, state changes, invalidation |
 | Client-driven calls | Producer-driven events |
 | Immediate result | Deferred, incremental, replayable results |
 

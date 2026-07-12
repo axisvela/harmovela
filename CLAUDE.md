@@ -8,7 +8,17 @@ Use Superpowers as the project development harness. Superpowers is enabled throu
 
 ## Project Identity
 
-Harmovela Protocol is an open coordination protocol for autonomous systems: agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.
+Harmovela Protocol is an open coordination protocol for autonomous systems across all 7 coordination dimensions:
+
+| Dimension | Concern |
+| --- | --- |
+| Event | What changed (typed, correlatable event envelopes) |
+| Task | Work in flight (lifecycle from submission through completion) |
+| State | Current known truth (snapshots and incremental deltas) |
+| Context / Memory | Cognitive decisions (facts, episodes, invalidation) |
+| Delegation | Work assignment across agents (ownership and handoff) |
+| Recovery | Resilience (retry, dead-letter, replay, durability) |
+| Governance | Who may do what (identity, authorization, audit) |
 
 Harmovela complements MCP. MCP is the synchronous capability invocation layer; Harmovela provides asynchronous event, subscription, lifecycle, state, recovery, and coordination semantics.
 

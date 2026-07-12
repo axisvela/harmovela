@@ -24,13 +24,33 @@ LLM Agent / Agent Runtime
 
 MCP answers: "What can I call, and what is the result now?"
 
-Harmovela answers: "What happened, what is still happening, what state changed, and what should I react to?"
+Harmovela answers: "What happened (Event), what work is in flight (Task), what is the current known truth (State), what informs decisions (Context/Memory), who is responsible (Delegation), how to handle failure (Recovery), and who may do what (Governance)."
 
 ## What Harmovela Adds
 
-Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary for task lifecycle, context and memory changes, environment observations, delegation, recovery, and agent coordination.
+Generic event infrastructure already supplies envelopes, brokers, delivery mechanisms, and transport bindings. Harmovela does not replace those concerns. It adds a shared, agent-facing vocabulary spanning all 7 coordination dimensions:
+
+- **Event** -- what changed, via typed, correlatable event envelopes
+- **Task** -- work in flight, with full lifecycle from submission through completion, failure, or cancellation
+- **State** -- the current known truth, carried as snapshot events and incremental deltas
+- **Context / Memory** -- facts, episodes, preferences, and invalidation that inform agent decisions
+- **Delegation** -- assignment of work across agents, with visibility into ownership and handoff
+- **Recovery** -- retry, dead-letter, replay, and durability primitives for resilience
+- **Governance** -- identity, authorization, capability-scoped subscriptions, and audit
 
 Harmovela also recommends consistently named relationship fields such as `session_id`, `conversation_id`, `task_id`, `correlation_id`, and `causation_id`. These fields are optional and composable, not mandatory or hierarchical. Detailed consumer semantics for belief revision after context or memory invalidation remain future specification work.
+
+## Coordination Model
+
+Harmovela does not define a separate protocol for each concern. It provides one coherent coordination surface:
+
+- Events carry what changed.
+- Tasks represent work in flight.
+- State describes the current known truth.
+- Context and memory events inform cognitive decisions.
+- Delegation assigns work across agents.
+- Recovery primitives enable resilience.
+- Governance defines who may do what.
 
 ## Major Components
 
@@ -157,6 +177,25 @@ Context provider -> AEP: context.invalidated
 AEP -> Agent: context.invalidated
 Agent -> MCP or AEP: requests fresh context
 Context provider -> AEP: context.snapshot.ready
+```
+
+### Delegation
+
+```text
+Orchestrator -> AEP: task.delegated (task_id, from_agent, to_agent)
+AEP -> from_agent: task.delegated (ack)
+AEP -> to_agent: task.delegated (new assignment)
+to_agent -> AEP: task.delegation.accepted
+to_agent -> AEP: task.running
+```
+
+### Recovery
+
+```text
+AEP -> dead_letter: delivery.failed (after retry policy exhausted)
+Orchestrator -> AEP: delivery.replay.requested (cursor)
+AEP -> Agent: replay stream from cursor
+Agent -> AEP: event.acknowledged (idempotent check on event_id)
 ```
 
 ## Reliability Model
