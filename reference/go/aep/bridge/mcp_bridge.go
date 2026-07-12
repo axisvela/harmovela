@@ -1,9 +1,11 @@
-package aep
+package bridge
 
 import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/axisrobo/aep/aep"
 )
 
 // Sender receives AEP events emitted by tool handlers.
@@ -13,7 +15,7 @@ type Sender interface {
 
 // McpContext is passed to tool handlers.
 type McpContext struct {
-	Harness   *Harness
+	Harness   *aep.Harness
 	Sender    Sender
 	TaskID    string
 	SessionID string
@@ -28,7 +30,7 @@ type McpTool struct {
 
 // McpBridge dispatches JSON-RPC MCP requests to registered AEP-backed tools.
 type McpBridge struct {
-	harness    *Harness
+	harness    *aep.Harness
 	sender     Sender
 	tools      map[string]McpTool
 	serverInfo map[string]any
@@ -36,7 +38,7 @@ type McpBridge struct {
 
 func NewMcpBridge(sender Sender) *McpBridge {
 	return &McpBridge{
-		harness:    NewHarness(),
+		harness:    aep.NewHarness(),
 		sender:     sender,
 		tools:      make(map[string]McpTool),
 		serverInfo: map[string]any{"name": "aep-mcp-bridge", "version": "0.1.0"},
@@ -153,7 +155,7 @@ func (b *McpBridge) errorResponse(id any, code int, message string) map[string]a
 }
 
 // AsyncToolHandler builds a tool whose handler emits AEP task lifecycle events.
-func AsyncToolHandler(name, description string, work func(args map[string]any, tracker *TaskTracker) map[string]any) McpTool {
+func AsyncToolHandler(name, description string, work func(args map[string]any, tracker *aep.TaskTracker) map[string]any) McpTool {
 	return McpTool{
 		Name:   name,
 		Schema: map[string]any{"description": description},
@@ -162,7 +164,7 @@ func AsyncToolHandler(name, description string, work func(args map[string]any, t
 			if taskID == "" {
 				taskID = fmt.Sprintf("task_%d", time.Now().UnixMilli())
 			}
-			tracker := NewTaskTracker(taskID, "tool:"+name, jsonString(args))
+			tracker := aep.NewTaskTracker(taskID, "tool:"+name, jsonString(args))
 			send := func(event map[string]any) {
 				if ctx.Sender != nil {
 					ctx.Sender.Send(event)
@@ -173,7 +175,7 @@ func AsyncToolHandler(name, description string, work func(args map[string]any, t
 			go func() {
 				defer func() {
 					if r := recover(); r != nil {
-						send(tracker.Failed(ErrorCodeToolError, fmt.Sprintf("%v", r)))
+						send(tracker.Failed(aep.ErrorCodeToolError, fmt.Sprintf("%v", r)))
 					}
 				}()
 				send(tracker.Started())
