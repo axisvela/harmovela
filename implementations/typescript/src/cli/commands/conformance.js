@@ -2,7 +2,7 @@ import { runConformance } from "../../conformance.js";
 
 export async function conformanceCommand(options = {}) {
   const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel: options.level });
-  console.log(`AEP conformance target: ${resolvedTarget}`);
+  console.log(`Harmovela conformance target: ${resolvedTarget}`);
   let failed = false;
   for (const result of results) {
     const label = `${result.fixture.level} ${result.fixture.path}`;

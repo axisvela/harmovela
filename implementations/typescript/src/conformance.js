@@ -20,10 +20,10 @@ const PAYLOAD_VALIDATED_TYPES = new Set([
 ]);
 
 const LEVEL_ORDER = new Map([
-  ["AEP-C0", 0],
-  ["AEP-C1", 1],
-  ["AEP-C2", 2],
-  ["AEP-C3", 3]
+  ["HARMOVELA-C0", 0],
+  ["HARMOVELA-C1", 1],
+  ["HARMOVELA-C2", 2],
+  ["HARMOVELA-C3", 3]
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -54,7 +54,7 @@ export function readNdjson(path) {
 
 export function runConformance(options = {}) {
   const manifest = options.manifest ?? loadManifest();
-  const targetLevel = options.targetLevel ?? manifest.default_target_level ?? "AEP-C1";
+  const targetLevel = options.targetLevel ?? manifest.default_target_level ?? "HARMOVELA-C1";
   const results = [];
 
   for (const fixture of manifest.fixtures) {

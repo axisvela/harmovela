@@ -57,10 +57,10 @@ test("aep emit rejects invalid JSON payload", async () => {
   assert.match(result.stderr, /invalid JSON payload/);
 });
 
-test("aep conformance runs conformance command", async () => {
-  const result = await run(["conformance", "--level=AEP-C0"]);
+test("harmovela conformance runs conformance command", async () => {
+  const result = await run(["conformance", "--level=HARMOVELA-C0"]);
   assert.equal(result.code, 0);
-  assert.match(result.stdout, /AEP conformance target/);
+  assert.match(result.stdout, /Harmovela conformance target/);
 });
 
 test("aep dlq list outputs dead-lettered records", async () => {
@@ -180,7 +180,7 @@ test("aep subscriptions stream receives a published event", async () => {
   });
   try {
     await new Promise((r) => setTimeout(r, 300));
-    service.publish({ aep_version: "0.1", id: "evt_stream", type: "task.submitted", source: "t", created_at: new Date().toISOString(), payload: {} });
+    service.publish({ spec_version: "0.2", id: "evt_stream", type: "task.submitted", source: "t", created_at: new Date().toISOString(), payload: {} });
     await Promise.race([gotEvent, new Promise((_, rej) => setTimeout(() => rej(new Error("timed out")), 3000))]);
     assert.match(stdout, /evt_stream/);
   } finally {

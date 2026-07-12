@@ -7,7 +7,7 @@ const targetLevel = targetArg ? targetArg.slice("--level=".length) : undefined;
 try {
   const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel });
 
-  console.log(`AEP conformance target: ${resolvedTarget}`);
+  console.log(`Harmovela conformance target: ${resolvedTarget}`);
 
   let failed = false;
   for (const result of results) {
