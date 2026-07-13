@@ -23,7 +23,7 @@ Closing this gap is the central goal of the 0.2–0.4 releases.
 
 ### 1. Document the L1 policy surface
 
-Bounded autonomy is only real if the boundary is specified. Document what an implementer must supply — budget limits, timeout policy, allowed actions, termination conditions — so an L1 agent is bounded by contract, not by hope. Ships as documentation and negotiated capabilities, not new wire behavior.
+Bounded autonomy is only real if the boundary is specified. At L1, a budget is an advisory, implementer-supplied declaration (for example cost, time, or action count). It may bound one runtime's behavior, but Harmovela does not yet define portable enforcement, authority, violation events, or conformance for it. Those become L3 Adaptation-layer requirements. Document timeout policy, allowed actions, and termination conditions so an L1 agent is bounded by contract, not by hope. Ships as documentation and negotiated capabilities, not new wire behavior.
 
 ### 2. Tighten delegation semantics
 
@@ -49,14 +49,44 @@ Separate the stable core from independently adoptable coordination capabilities.
 | Release | Focus | Target level |
 | --- | --- | --- |
 | **0.2 Core Stabilization** | Freeze the L0–L1 core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics. Document the L1 policy surface. | L1 (frozen) |
-| **0.3 Optional Profiles** | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. | L2 (tightened) |
+| **0.3 Optional Profiles** | Tighten delegation, handoff, escalation, and cancellation propagation into a conformance-tested L2 coordination profile; add missing security-profile declarations and fixtures. Delivery and security profile definitions already exist and are not rescheduled here. | L2 (tightened) |
 | **0.4 Beta** | Prove L2 multi-agent coordination across at least two independent implementations with a public conformance matrix and three documented integration scenarios. | L2 (interoperable) |
 
-## Exit Criteria
+## Release Gates
 
-- L1 bounded-autonomy policy surface is documented and capability-negotiable.
-- Delegation, handoff, escalation, and cancellation-propagation semantics are unambiguous and conformance-tested.
-- At least two independently maintained implementations interoperate at L2 with no unremediated core regressions.
+### 0.2 Core Stabilization
+
+Entry criteria:
+- A public Harmovela identity and compatibility policy for legacy technical identifiers.
+
+Exit criteria:
+- Frozen L0-L1 core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and declared delivery semantics.
+- Shared positive and negative lifecycle fixtures cover acceptance, progress, blocked work, terminal outcomes, cancellation, replay, acknowledgement, and invalid transitions.
+- Conformance levels, manifest expectations, and the default runner target are internally consistent.
+- The L1 advisory policy surface is documented and capability-negotiable.
+
+### 0.3 Optional Profiles
+
+Entry criteria:
+- 0.2 core compatibility policy and lifecycle fixtures are published.
+
+Exit criteria:
+- The L2 coordination profile defines its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.
+- Delegation, ownership transfer, handoff, escalation, and cancellation propagation have positive and negative fixtures.
+- Implementations can declare and filter conformance by profile.
+- Security-profile declarations and fixtures cover authorization, audit, and tenant-isolation behavior already defined by the security profile.
+
+### 0.4 Beta
+
+Entry criteria:
+- 0.3 profile declarations and fixtures are complete.
+- The frozen core has a published compatibility policy.
+
+Exit criteria:
+- At least two independently maintained implementations interoperate at the L2 coordination profile.
+- Passing cross-language conformance covers the declared core and L2 profile.
+- A public conformance matrix and three documented integration scenarios are published.
+- No unremediated core or L2 conformance regressions remain.
 - A community governance proposal is published.
 
 Once coordination is interoperable and stable, effort moves up to the [Adaptation layer](adaptation-layer.md).
