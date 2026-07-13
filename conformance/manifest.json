@@ -94,6 +94,26 @@
       ]
     },
     {
+      "path": "fixtures/event-core.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Event control flow: session open/ready, subscription request/creation, routed heartbeat, and subscription cancellation.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "event",
+        "session",
+        "subscription",
+        "routing"
+      ],
+      "expected_types": [
+        "session.opened",
+        "session.ready",
+        "subscription.requested",
+        "subscription.created",
+        "session.heartbeat",
+        "subscription.cancelled"
+      ]
+    },
+    {
       "path": "fixtures/delivery.ndjson",
       "level": "HARMOVELA-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
