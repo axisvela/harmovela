@@ -3,6 +3,9 @@
   "version": "0.1.0-draft",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/event"
+  ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
   "exports": {
@@ -25,6 +28,7 @@
     "conformance": "node ./src/conformance-cli.js"
   },
   "dependencies": {
+    "@axisrobo/harmovela-event": "file:packages/event",
     "@grpc/grpc-js": "^1.11.0",
     "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",

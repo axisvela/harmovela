@@ -1,8 +1,7 @@
 import { validateEnvelope } from "./validate.js";
 import { isValidBySchema } from "./schema.js";
-import { HarmovelaSession } from "./session.js";
+import { EventRouter, HarmovelaSession } from "@axisrobo/harmovela-event";
 import { TaskTracker } from "./task.js";
-import { EventRouter } from "./router.js";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isStandardEventType } from "./event-types.js";
 import { DeliveryTracker } from "./delivery.js";

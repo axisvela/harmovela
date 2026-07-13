@@ -1,10 +1,10 @@
 export { STANDARD_EVENT_TYPES, isStandardEventType } from "./event-types.js";
 export { validateEnvelope } from "./validate.js";
-export { matchesType, subscriptionMatches } from "./subscription.js";
+export { matchesType, subscriptionMatches } from "@axisrobo/harmovela-event";
 export { HarmovelaHarness } from "./harness.js";
-export { HarmovelaSession } from "./session.js";
+export { HarmovelaSession } from "@axisrobo/harmovela-event";
 export { TaskTracker } from "./task.js";
-export { EventRouter } from "./router.js";
+export { EventRouter } from "@axisrobo/harmovela-event";
 export { ErrorCode, errorPayload, isRetryableCode } from "./errors.js";
 export { Transport } from "./transport/base.js";
 export { StdioTransport, MockStdioTransport } from "./transport/stdio.js";

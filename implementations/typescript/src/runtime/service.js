@@ -1,7 +1,6 @@
-import { EventRouter } from "../router.js";
+import { EventRouter, subscriptionMatches } from "@axisrobo/harmovela-event";
 import { randomUUID } from "node:crypto";
 import { validateEnvelope } from "../validate.js";
-import { subscriptionMatches } from "../subscription.js";
 import { WsServerTransport } from "../transport/websocket.js";
 import { SseServerTransport } from "../transport/sse.js";
 import { createDeliveryStore } from "./config.js";
