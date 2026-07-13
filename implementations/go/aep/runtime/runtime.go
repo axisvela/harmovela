@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/axisrobo/harmovela/aep"
-	"github.com/axisrobo/harmovela/aep/store"
+	"github.com/axisrobo/harmovela/recovery"
 	eventtransport "github.com/axisrobo/harmovela/event/transport"
 	eventcore "github.com/axisrobo/harmovela/event"
 	"github.com/google/uuid"
@@ -117,22 +117,22 @@ func ApplyEnvOverrides(c RuntimeConfig, env map[string]string) RuntimeConfig {
 	return c
 }
 
-func CreateDeliveryStore(c RuntimeConfig) (store.DeliveryStore, error) {
+func CreateDeliveryStore(c RuntimeConfig) (recovery.DeliveryStore, error) {
 	switch c.Delivery.Store {
 	case "memory":
-		return store.NewInMemoryDeliveryStore(0, "stream_01"), nil
+		return recovery.NewInMemoryDeliveryStore(0, "stream_01"), nil
 	case "sqlite":
 		path := ":memory:"
 		if c.Delivery.Sqlite != nil && c.Delivery.Sqlite["path"] != "" {
 			path = c.Delivery.Sqlite["path"]
 		}
-		return store.NewSqliteDeliveryStore(path, "stream_01")
+		return recovery.NewSqliteDeliveryStore(path, "stream_01")
 	case "postgres":
 		url := ""
 		if c.Delivery.Postgres != nil {
 			url = c.Delivery.Postgres["url"]
 		}
-		return store.NewPostgresDeliveryStore(url, "stream_01", store.PostgresOptions{})
+		return recovery.NewPostgresDeliveryStore(url, "stream_01", recovery.PostgresOptions{})
 	}
 	return nil, fmt.Errorf("unsupported delivery store: %s", c.Delivery.Store)
 }
@@ -150,7 +150,7 @@ type registryEntry struct {
 
 type RuntimeService struct {
 	Config        RuntimeConfig
-	store         store.DeliveryStore
+	store         recovery.DeliveryStore
 	subs          []subEntry
 	subscriptions map[string]*registryEntry
 	maxBuffer     int

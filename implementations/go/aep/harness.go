@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep/store"
+	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/governance"
 )
@@ -159,7 +159,7 @@ type Harness struct {
 	tasks         map[string]*TaskTracker
 	router        *event.EventRouter
 	session       *event.HarmovelaSession
-	Delivery      *store.DeliveryTracker
+	Delivery      *recovery.DeliveryTracker
 	Audit         []AuditRecord
 }
 
@@ -169,7 +169,7 @@ func NewHarness() *Harness {
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*TaskTracker),
 		router:        event.NewEventRouter(),
-		Delivery:      store.NewDeliveryTracker(nil, nil),
+		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
 	}
 	h.setupRouter()
