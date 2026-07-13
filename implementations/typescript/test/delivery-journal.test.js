@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DeliveryJournal } from "../src/delivery-journal.js";
+import { DeliveryJournal } from "@axisrobo/harmovela-recovery";
 
 test("DeliveryJournal appends events with sequence", () => {
   const journal = new DeliveryJournal();

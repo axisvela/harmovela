@@ -1,8 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DeliveryTracker, retryDelay } from "../src/index.js";
-import { InMemoryDeliveryStore } from "../src/delivery-store-memory.js";
-import { DeliveryJournal } from "../src/delivery-journal.js";
+import { DeliveryTracker, retryDelay, InMemoryDeliveryStore, DeliveryJournal } from "@axisrobo/harmovela-recovery";
 
 test("DeliveryTracker assigns monotonically increasing sequences", () => {
   const tracker = new DeliveryTracker({ streamId: "test" });

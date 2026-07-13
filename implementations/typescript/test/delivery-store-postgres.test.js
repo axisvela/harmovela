@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { randomBytes } from "node:crypto";
-import { PostgresDeliveryStore } from "../src/delivery-store-postgres.js";
+import { PostgresDeliveryStore } from "@axisrobo/harmovela-recovery";
 
 function pgUrl() {
   return process.env.AEP_POSTGRES_URL ?? "postgres://postgres:postgres@localhost:5433/postgres";

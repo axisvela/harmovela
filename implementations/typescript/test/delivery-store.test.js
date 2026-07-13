@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { InMemoryDeliveryStore } from "../src/delivery-store-memory.js";
+import { InMemoryDeliveryStore } from "@axisrobo/harmovela-recovery";
 
 test("InMemoryDeliveryStore tracks and acknowledges events", () => {
   const store = new InMemoryDeliveryStore();

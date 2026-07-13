@@ -10,8 +10,7 @@ import {
   applyEnvOverrides,
   createDeliveryStore
 } from "../src/runtime/config.js";
-import { InMemoryDeliveryStore } from "../src/delivery-store-memory.js";
-import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
+import { InMemoryDeliveryStore, SqliteDeliveryStore } from "@axisrobo/harmovela-recovery";
 
 test("defaultConfig returns local Harmovela runtime config", () => {
   const config = defaultConfig();

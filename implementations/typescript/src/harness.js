@@ -4,7 +4,7 @@ import { EventRouter, HarmovelaSession } from "@axisrobo/harmovela-event";
 import { TaskTracker } from "./task.js";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isLegacyDimensionEventType } from "./legacy-dimension-types.js";
-import { DeliveryTracker } from "./delivery.js";
+import { DeliveryTracker } from "@axisrobo/harmovela-recovery";
 import { authorize } from "@axisrobo/harmovela-governance";
 
 export class HarmovelaHarness {

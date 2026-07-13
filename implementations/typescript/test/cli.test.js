@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { defaultConfig } from "../src/runtime/config.js";
-import { SqliteDeliveryStore } from "../src/delivery-store-sqlite.js";
+import { SqliteDeliveryStore } from "@axisrobo/harmovela-recovery";
 import { HarmovelaRuntimeService } from "../src/runtime/service.js";
 
 const cli = path.resolve("src/cli/harmovela.js");

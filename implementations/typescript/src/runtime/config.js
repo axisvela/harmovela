@@ -1,8 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { InMemoryDeliveryStore } from "../delivery-store-memory.js";
-import { SqliteDeliveryStore } from "../delivery-store-sqlite.js";
-import { PostgresDeliveryStore } from "../delivery-store-postgres.js";
+import { InMemoryDeliveryStore, SqliteDeliveryStore, PostgresDeliveryStore } from "@axisrobo/harmovela-recovery";
 
 export function defaultConfig() {
   return {
