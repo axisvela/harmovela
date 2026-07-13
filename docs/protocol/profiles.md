@@ -105,6 +105,13 @@ This filtering behavior is available in:
 
 ## Profile Catalog
 
+## Dimension Contract Ownership
+
+| Dimension | Contract document |
+|---|---|
+| Event | [Event contract](event-contract.md) |
+| Governance | [Governance contract](governance-contract.md) |
+
 ### Core Profile
 
 **Identifier:** `harmovela.core.v1`
