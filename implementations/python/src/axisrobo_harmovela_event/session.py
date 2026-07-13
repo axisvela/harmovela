@@ -6,7 +6,7 @@ class HarmovelaSession:
                  version: str = "0.2", heartbeat_interval_ms: int = 0):
         self.id = id or f"sess_{int(datetime.now(timezone.utc).timestamp() * 1000):x}"
         self.source = source
-        self.version = version
+        self.version = "0.2"
         self.capabilities = None
         self.state = "created"
         self.heartbeat_interval = heartbeat_interval_ms
@@ -66,9 +66,12 @@ class HarmovelaSession:
 
     def error(self, code: str, message: str, details: dict | None = None) -> dict:
         self.state = "error"
+        error = {"code": code, "message": message, "retryable": False}
+        if details:
+            error["details"] = details
         return self._event("session.error", self._now(), {
             "session_id": self.id,
-            "error": {"code": code, "message": message, "retryable": False, "details": details or {}},
+            "error": error,
         })
 
     def is_active(self) -> bool:

@@ -12,6 +12,9 @@ def validate_envelope(value: dict) -> list[str]:
     for field in ("spec_version", "id", "type", "source", "created_at"):
         _require_string(value, field, errors)
 
+    if value.get("aep_version"):
+        errors.append("aep_version is not supported; use spec_version instead")
+
     if "payload" not in value:
         errors.append("payload is required")
 
