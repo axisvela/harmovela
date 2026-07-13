@@ -7,6 +7,8 @@
 
 Define how Harmovela versions protocol assets and how implementations negotiate compatibility.
 
+Migration decisions for legacy public identifiers are tracked in the [compatibility matrix](compatibility-matrix.md). That matrix is decision input only and does not authorize identifier changes.
+
 ## Versioned Assets
 
 Harmovela versions four distinct assets independently:
