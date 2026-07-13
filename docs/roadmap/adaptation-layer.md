@@ -47,15 +47,17 @@ These non-goals are load-bearing: they keep the 1.0 promise honest and prevent t
 
 - A feedback/outcome event specification that correlates each outcome to its task, goal, delegation chain, authority, and declared or consumed cost.
 - Budget semantics defining the authority that establishes a budget, the enforcement point, and limit-approaching and limit-exceeded events.
+- Audit semantics that link feedback, adaptation, and budget operations across the goal, task, delegation chain, authority, and budget.
+- Authorization semantics requiring protocol-level checks for feedback and adaptation actions and for budget operations.
 - An L3 adaptation profile defining identifier, dependencies, capability negotiation, versioning, and conformance requirements.
-- Shared positive and negative fixtures for outcome correlation, authorized and unauthorized budget changes, limit approach, limit exceedance, and audit linkage.
+- Shared positive and negative fixtures for outcome correlation; authorized and unauthorized feedback, adaptation, and budget operations; limit approach and exceedance; and audit linkage.
 
 ## Release Mapping
 
 | Release | Focus | Target level |
 | --- | --- | --- |
-| **0.5 Adaptation Preview** | Specify and implement feedback/outcome correlation, budget authority/enforcement/violation semantics, L3 adaptation-profile declaration, and cross-language conformance fixtures. | L3 (specified and testable) |
-| **0.9 Release Candidate** | Validate the complete 0.5 L3 semantics without feature expansion through RC fixtures, compatibility matrix, governance/security/registry processes, and at least one external autonomy pilot. | L3 (validated) |
+| **0.5 Adaptation Preview** | Specify and implement feedback/outcome correlation; budget, audit, and authorization semantics; L3 adaptation-profile declaration; and cross-language conformance fixtures. | L3 (specified and testable) |
+| **0.9 Release Candidate** | Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. | L3 (validated) |
 | **1.0** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. | L3 (stable) |
 
 ## Release Gates
@@ -66,8 +68,9 @@ Entry criteria:
 - The L2 coordination profile is interoperable at 0.4.
 
 Exit criteria:
-- Feedback/outcome and budget specifications, L3 profile declaration, and shared fixtures are published.
-- Budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes.
+- Feedback/outcome, budget, audit, and authorization specifications; L3 profile declaration; and shared fixtures are published.
+- Budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes; audit semantics link feedback, adaptation, and budget operations across goal, task, delegation chain, authority, and budget.
+- Authorization semantics require protocol-level checks for feedback and adaptation actions and for budget operations.
 - Every reference implementation passes the declared L3 fixtures.
 
 ### 0.9 Release Candidate
@@ -77,9 +80,10 @@ Entry criteria:
 - No unresolved breaking core, L2, or L3 semantic changes remain.
 
 Exit criteria:
-- Release-candidate fixtures and a public compatibility matrix pass across declared implementations.
+- Release-candidate fixtures and a public compatibility matrix pass across at least two independently maintained declared implementations using the same named and versioned transport/session topology.
+- Each compatibility-matrix row identifies the implementation and version, declared L3 profile and version, topology ID and version, fixture or scenario IDs and versions, and pass result; all required cells pass with no unresolved blocker or critical conformance issue.
 - Public governance, release, security-response, and registry processes are published.
-- At least one external deployment or interoperability pilot validates the L3 profile.
+- At least one external L3 autonomy pilot exercises feedback/outcome correlation and the budget, audit, and authorization boundaries; a generic interoperability pilot does not satisfy this gate.
 - No new protocol features are added during the RC period.
 
 ### 1.0

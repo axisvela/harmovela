@@ -50,10 +50,10 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 | Attribute | Detail |
 |---|---|
 | **Status** | Planned |
-| **Goal** | Specify and implement normative feedback/outcome correlation, budget authority and enforcement semantics, the L3 adaptation profile, and cross-language conformance fixtures |
+| **Goal** | Specify and implement normative feedback/outcome correlation; budget, audit, and authorization semantics; the L3 adaptation profile; and cross-language conformance fixtures |
 | **Entry criteria** | The L2 coordination profile is interoperable at 0.4 |
-| **Exit criteria** | Feedback/outcome and budget specifications, L3 profile declaration, and shared fixtures published; budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes; every reference implementation passes the declared L3 fixtures |
-| **Scope** | Outcome correlation to task, goal, delegation chain, authority, and declared or consumed cost; budget authority, enforcement, and violation semantics; L3 profile identifier, dependencies, capability negotiation, versioning, and conformance; positive and negative fixtures for outcome correlation, authorized and unauthorized budget changes, limits, and audit linkage |
+| **Exit criteria** | Feedback/outcome, budget, audit, and authorization specifications; L3 profile declaration; and shared fixtures published; budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes; audit semantics link feedback, adaptation, and budget operations across goal, task, delegation chain, authority, and budget; authorization semantics require protocol-level checks for feedback and adaptation actions and for budget operations; every reference implementation passes the declared L3 fixtures |
+| **Scope** | Outcome correlation to task, goal, delegation chain, authority, and declared or consumed cost; budget authority, enforcement, and violation semantics; audit linkage across goal, task, delegation chain, authority, and budget; authorization checks for feedback, adaptation, and budget operations; L3 profile identifier, dependencies, capability negotiation, versioning, and conformance; positive and negative fixtures for outcome correlation, authorized and unauthorized feedback, adaptation, and budget operations, limits, and audit linkage |
 
 ### 0.9 — Release Candidate
 
@@ -62,16 +62,16 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 | **Status** | Planned |
 | **Goal** | Validate the complete 0.5 L3 semantics without feature expansion |
 | **Entry criteria** | 0.5 L3 specifications and fixtures are complete; no unresolved breaking core, L2, or L3 semantic changes remain |
-| **Exit criteria** | Release-candidate fixtures and a public compatibility matrix pass across declared implementations; public governance, release, security-response, and registry processes are published; at least one external deployment or interoperability pilot validates the L3 profile; no new protocol features are added during the RC period |
-| **Scope** | Validation-only RC artifacts, compatibility matrix, governance/security/registry processes, and external L3 pilot |
+| **Exit criteria** | Release-candidate fixtures and a public compatibility matrix pass across at least two independently maintained declared implementations using the same named and versioned transport/session topology; each compatibility-matrix row identifies the implementation and version, declared L3 profile and version, topology ID and version, fixture or scenario IDs and versions, and pass result; all required cells pass with no unresolved blocker or critical conformance issue; public governance, release, security-response, and registry processes are published; at least one external L3 autonomy pilot exercises feedback/outcome correlation and the budget, audit, and authorization boundaries; a generic interoperability pilot does not satisfy this gate; no new protocol features are added during the RC period |
+| **Scope** | Validation-only RC fixtures and reproducible compatibility matrix, governance/security/registry processes, and external L3 autonomy pilot |
 
 ### 1.0
 
 | Attribute | Detail |
 |---|---|
 | **Status** | Planned |
-| **Goal** | Publish a stable, implementable open coordination protocol for autonomous systems |
-| **Entry criteria** | Stable core semantics and version negotiation; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, and trademark policies; clear separation between required core behavior and optional profiles; published upgrade and deprecation policy |
+| **Goal** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals |
+| **Entry criteria** | Stable feedback/outcome correlation and budget, audit, and authorization boundaries; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, trademark, upgrade, and deprecation policies; published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals |
 | **Exit criteria** | 1.0 released |
 
 ## Breaking Changes Policy
