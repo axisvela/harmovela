@@ -4,7 +4,7 @@ from axisrobo_harmovela_event import EventRouter, HarmovelaSession, is_standard_
 from axisrobo_harmovela_governance import authorize
 
 from .legacy_dimension_types import is_legacy_dimension_event_type
-from .task import TaskTracker
+from axisrobo_harmovela_task import TaskTracker
 from .errors import ErrorCode, error_payload
 from axisrobo_harmovela_recovery import DeliveryTracker
 

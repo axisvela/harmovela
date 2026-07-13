@@ -8,7 +8,7 @@ from axisrobo_harmovela_event import (
     subscription_matches,
     validate_envelope,
 )
-from .task import TaskTracker, TaskState
+from axisrobo_harmovela_task import TaskTracker, TaskState
 from .harness import HarmovelaHarness
 from .schema_validator import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
 from axisrobo_harmovela_recovery import (

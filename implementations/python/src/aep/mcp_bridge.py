@@ -2,7 +2,7 @@ import json
 import threading
 
 from .harness import HarmovelaHarness
-from .task import TaskTracker
+from axisrobo_harmovela_task import TaskTracker
 from .errors import ErrorCode
 
 

@@ -1,7 +1,5 @@
 from datetime import datetime, timezone
 
-from .errors import ErrorCode, error_payload
-
 
 class TaskState:
     SUBMITTED = "submitted"
@@ -15,6 +13,8 @@ class TaskState:
     CANCELLED = "cancelled"
     TIMED_OUT = "timed_out"
 
+
+TASK_TIMEOUT = "task_timeout"
 
 TERMINAL_STATES = frozenset({
     TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT
@@ -44,6 +44,13 @@ _EVENT_TO_STATE = {
     "task.cancelled": TaskState.CANCELLED,
     "task.timed_out": TaskState.TIMED_OUT,
 }
+
+
+def _error_payload(code: str, message: str, *, retryable: bool = False, details: dict | None = None) -> dict:
+    payload = {"code": code, "message": message, "retryable": retryable}
+    if details:
+        payload["details"] = details
+    return payload
 
 
 class TaskTracker:
@@ -112,12 +119,12 @@ class TaskTracker:
     def completed(self, result=None) -> dict:
         return self.transition("task.completed", {"result": result} if result is not None else None)
     def failed(self, code: str, message: str, details: dict | None = None) -> dict:
-        return self.transition("task.failed", {"error": error_payload(code, message, details=details or {})})
+        return self.transition("task.failed", {"error": _error_payload(code, message, details=details or {})})
     def cancelled(self, reason: str | None = None) -> dict:
         return self.transition("task.cancelled", {"reason": reason} if reason else None)
     def timed_out(self) -> dict:
         return self.transition("task.timed_out", {
-            "error": error_payload(ErrorCode.TASK_TIMEOUT, f"task {self.id} timed out", retryable=True)
+            "error": _error_payload(TASK_TIMEOUT, f"task {self.id} timed out", retryable=True)
         })
 
     def is_terminal(self) -> bool:
