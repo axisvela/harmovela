@@ -45,15 +45,25 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 | **Exit criteria** | At least two independently maintained interoperable implementations; no unremediated core conformance regressions; community governance proposal published |
 | **Scope** | External implementation support; community governance; scenario expansion |
 
+### 0.5 — Adaptation Preview
+
+| Attribute | Detail |
+|---|---|
+| **Status** | Planned |
+| **Goal** | Specify and implement normative feedback/outcome correlation, budget authority and enforcement semantics, the L3 adaptation profile, and cross-language conformance fixtures |
+| **Entry criteria** | The L2 coordination profile is interoperable at 0.4 |
+| **Exit criteria** | Feedback/outcome and budget specifications, L3 profile declaration, and shared fixtures published; budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes; every reference implementation passes the declared L3 fixtures |
+| **Scope** | Outcome correlation to task, goal, delegation chain, authority, and declared or consumed cost; budget authority, enforcement, and violation semantics; L3 profile identifier, dependencies, capability negotiation, versioning, and conformance; positive and negative fixtures for outcome correlation, authorized and unauthorized budget changes, limits, and audit linkage |
+
 ### 0.9 — Release Candidate
 
 | Attribute | Detail |
 |---|---|
 | **Status** | Planned |
-| **Goal** | Validate the proposed 1.0 core without new feature expansion |
-| **Entry criteria** | No unresolved breaking core semantic changes; release-candidate conformance fixtures and compatibility matrix; public governance, release, security-response, and registry processes; at least one external deployment or interoperability pilot |
-| **Exit criteria** | No new blocking issues during RC period; conformance stable across all implementations |
-| **Scope** | Final polishing; documentation completeness; governance operational |
+| **Goal** | Validate the complete 0.5 L3 semantics without feature expansion |
+| **Entry criteria** | 0.5 L3 specifications and fixtures are complete; no unresolved breaking core, L2, or L3 semantic changes remain |
+| **Exit criteria** | Release-candidate fixtures and a public compatibility matrix pass across declared implementations; public governance, release, security-response, and registry processes are published; at least one external deployment or interoperability pilot validates the L3 profile; no new protocol features are added during the RC period |
+| **Scope** | Validation-only RC artifacts, compatibility matrix, governance/security/registry processes, and external L3 pilot |
 
 ### 1.0
 
