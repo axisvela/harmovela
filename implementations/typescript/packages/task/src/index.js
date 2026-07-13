@@ -1,5 +1,3 @@
-import { ErrorCode, errorPayload } from "./errors.js";
-
 const TaskState = Object.freeze({
   SUBMITTED: "submitted",
   ACCEPTED: "accepted",
@@ -12,6 +10,8 @@ const TaskState = Object.freeze({
   CANCELLED: "cancelled",
   TIMED_OUT: "timed_out"
 });
+
+const TASK_TIMEOUT = "task_timeout";
 
 const terminalStates = new Set([
   TaskState.COMPLETED,
@@ -31,6 +31,10 @@ const allowedTransitions = {
 
 function nowISO() {
   return new Date().toISOString();
+}
+
+function errorPayload(code, message, { retryable = false, details = {} } = {}) {
+  return { code, message, retryable, details };
 }
 
 export class TaskTracker {
@@ -105,7 +109,7 @@ export class TaskTracker {
   }
   timedOut() {
     return this.transition("task.timed_out", {
-      error: errorPayload(ErrorCode.TASK_TIMEOUT, `task ${this.id} timed out`, { retryable: true })
+      error: errorPayload(TASK_TIMEOUT, `task ${this.id} timed out`, { retryable: true })
     });
   }
 

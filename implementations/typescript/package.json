@@ -6,7 +6,8 @@
     "workspaces": [
     "packages/event",
     "packages/governance",
-    "packages/recovery"
+    "packages/recovery",
+    "packages/task"
   ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
@@ -33,6 +34,7 @@
     "@axisrobo/harmovela-event": "file:packages/event",
     "@axisrobo/harmovela-governance": "file:packages/governance",
     "@axisrobo/harmovela-recovery": "file:packages/recovery",
+    "@axisrobo/harmovela-task": "file:packages/task",
     "@grpc/grpc-js": "^1.11.0",
     "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",

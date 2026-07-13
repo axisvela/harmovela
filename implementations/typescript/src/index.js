@@ -2,7 +2,7 @@ export { STANDARD_EVENT_TYPES, isStandardEventType, validateEnvelope } from "@ax
 export { matchesType, subscriptionMatches } from "@axisrobo/harmovela-event";
 export { HarmovelaHarness } from "./harness.js";
 export { HarmovelaSession } from "@axisrobo/harmovela-event";
-export { TaskTracker } from "./task.js";
+export { TaskTracker } from "@axisrobo/harmovela-task";
 export { EventRouter } from "@axisrobo/harmovela-event";
 export { ErrorCode, errorPayload, isRetryableCode } from "./errors.js";
 export { Transport, StdioTransport, MockStdioTransport, WsServerTransport, WsClientTransport, SseServerTransport, SseClientTransport, GrpcServerTransport, GrpcClientTransport, NatsTransport, KafkaTransport, RedisTransport } from "@axisrobo/harmovela-event";

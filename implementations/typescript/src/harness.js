@@ -1,7 +1,7 @@
 import { isStandardEventType, validateEnvelope } from "@axisrobo/harmovela-event";
 import { isValidBySchema } from "./schema.js";
 import { EventRouter, HarmovelaSession } from "@axisrobo/harmovela-event";
-import { TaskTracker } from "./task.js";
+import { TaskTracker } from "@axisrobo/harmovela-task";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isLegacyDimensionEventType } from "./legacy-dimension-types.js";
 import { DeliveryTracker } from "@axisrobo/harmovela-recovery";
