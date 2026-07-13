@@ -72,7 +72,7 @@ The default target level for Harmovela 0.2 reference runners is HARMOVELA-C3.
 
 `stateful_flow` means every fixture event must pass validation and must be accepted by the reference harness without producing `event.rejected`.
 
-`reject_some` means every fixture event must be inspected and the fixture passes only when at least one event is rejected by envelope validation, applicable payload validation, or protocol/harness validation. Invalid events in this fixture do not make the fixture fail.
+`reject_some` means every fixture event must be inspected, including validation of `expected_types` when present, and the fixture passes only when at least one event is rejected by envelope validation, applicable payload validation, or protocol/harness validation. Any harness response whose event type ends in `.rejected` is a protocol/harness rejection. Invalid events in this fixture do not make the fixture fail.
 
 ## Profile Conformance
 

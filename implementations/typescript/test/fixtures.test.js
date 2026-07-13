@@ -24,9 +24,8 @@ for (const fixture of manifest.fixtures) {
       assert.deepEqual(events.map((event) => event.type), fixture.expected_types);
     }
     if (fixture.expectation === "reject_some") {
-      assert.equal(events.some((event) =>
-        validateEnvelope(event).length > 0 || !isValidBySchema(event, "envelope")
-      ), true);
+      const result = verifyFixture(fixture, events);
+      assert.equal(result.status, "passed", result.failures.join("; "));
       return;
     }
     assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);

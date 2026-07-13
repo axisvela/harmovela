@@ -1,10 +1,13 @@
 package aep
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
 var levelOrder = map[string]int{
@@ -70,17 +73,29 @@ func TestConformanceFixtures(t *testing.T) {
 				t.Fatalf("failed to load fixture: %v", err)
 			}
 
+			types := make([]string, len(events))
+			for i, event := range events {
+				types[i], _ = event["type"].(string)
+			}
+			if fixture.ExpectedTypes != nil && !reflect.DeepEqual(types, fixture.ExpectedTypes) {
+				t.Fatalf("expected types %v, got %v", fixture.ExpectedTypes, types)
+			}
+
 			if fixture.Expectation == "reject_some" {
 				rejected := false
 				harness := NewHarness()
 				for _, event := range events {
 					harnessRejected := false
 					for _, response := range harness.Handle(event) {
-						if typ, _ := response["type"].(string); typ == "event.rejected" {
+						if typ, _ := response["type"].(string); len(typ) >= len(".rejected") && typ[len(typ)-len(".rejected"):] == ".rejected" {
 							harnessRejected = true
 						}
 					}
-					if len(ValidateEnvelope(event)) > 0 || harnessRejected {
+					payloadInvalid, err := payloadSchemaInvalid(event)
+					if err != nil {
+						t.Fatalf("payload schema validation: %v", err)
+					}
+					if len(ValidateEnvelope(event)) > 0 || payloadInvalid || harnessRejected {
 						rejected = true
 					}
 				}
@@ -88,14 +103,6 @@ func TestConformanceFixtures(t *testing.T) {
 					t.Fatal("expected at least one event rejection")
 				}
 				return
-			}
-
-			types := make([]string, len(events))
-			for i, event := range events {
-				types[i], _ = event["type"].(string)
-			}
-			if !reflect.DeepEqual(types, fixture.ExpectedTypes) {
-				t.Fatalf("expected types %v, got %v", fixture.ExpectedTypes, types)
 			}
 
 			for i, event := range events {
@@ -152,6 +159,27 @@ func TestConformanceFixtures(t *testing.T) {
 			}
 		})
 	}
+}
+
+func payloadSchemaInvalid(event map[string]any) (bool, error) {
+	path := filepath.Join("../../../schemas", "aep-payloads.schema.json")
+	source, err := os.ReadFile(path)
+	if err != nil {
+		return false, err
+	}
+	document, err := jsonschema.UnmarshalJSON(bytes.NewReader(source))
+	if err != nil {
+		return false, err
+	}
+	compiler := jsonschema.NewCompiler()
+	if err := compiler.AddResource(path, document); err != nil {
+		return false, err
+	}
+	schema, err := compiler.Compile(path)
+	if err != nil {
+		return false, err
+	}
+	return schema.Validate(event) != nil, nil
 }
 
 func toFloat64(v any) (float64, bool) {

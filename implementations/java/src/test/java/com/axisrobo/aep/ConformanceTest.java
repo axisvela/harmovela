@@ -1,6 +1,10 @@
 package com.axisrobo.aep;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
 import org.junit.jupiter.api.Test;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConformanceTest {
 
     private static final Map<String, Integer> LEVEL_ORDER = Map.of("HARMOVELA-C0", 0, "HARMOVELA-C1", 1, "HARMOVELA-C2", 2, "HARMOVELA-C3", 3);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     void manifestDeclaresKnownDraftLevels() throws Exception {
@@ -51,23 +56,24 @@ class ConformanceTest {
 
             var absPath = Path.of("../../conformance", fixture.path()).toString();
             var events = Fixtures.loadFixture(absPath);
+            var types = events.stream().map(e -> (String) e.get("type")).toList();
+            if (fixture.expectedTypes() != null) {
+                assertEquals(fixture.expectedTypes(), types, "type mismatch for " + fixture.path());
+            }
 
             if ("reject_some".equals(fixture.expectation())) {
                 var rejected = false;
                 var harness = new Harness();
                 for (var event : events) {
                     var harnessRejected = harness.handle(event).stream()
-                        .anyMatch(response -> "event.rejected".equals(response.get("type")));
-                    if (!Envelope.validate(event).isEmpty() || harnessRejected) {
+                        .anyMatch(response -> ((String) response.get("type")).endsWith(".rejected"));
+                    if (!Envelope.validate(event).isEmpty() || payloadSchemaInvalid(event) || harnessRejected) {
                         rejected = true;
                     }
                 }
                 assertTrue(rejected, "expected at least one event rejection");
                 continue;
             }
-
-            var types = events.stream().map(e -> (String) e.get("type")).toList();
-            assertEquals(fixture.expectedTypes(), types, "type mismatch for " + fixture.path());
 
             for (int i = 0; i < events.size(); i++) {
                 var errs = Envelope.validate(events.get(i));
@@ -118,5 +124,12 @@ class ConformanceTest {
                 }
             }
         }
+    }
+
+    private static boolean payloadSchemaInvalid(Map<String, Object> event) throws Exception {
+        var path = Path.of("../../schemas/aep-payloads.schema.json");
+        var schemaNode = MAPPER.readTree(Files.readString(path));
+        var schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012).getSchema(schemaNode);
+        return !schema.validate(MAPPER.valueToTree(event)).isEmpty();
     }
 }

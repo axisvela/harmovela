@@ -89,7 +89,7 @@ export function verifyFixture(fixture, events) {
     const harness = new HarmovelaHarness({ useSchemaValidation: true });
     for (const event of events) {
       const payloadInvalid = PAYLOAD_VALIDATED_TYPES.has(event.type) && !isValidBySchema(event, "payloads");
-      const harnessRejected = (harness.handle(event) ?? []).some((response) => response.type === "event.rejected");
+      const harnessRejected = (harness.handle(event) ?? []).some((response) => response.type.endsWith(".rejected"));
       if (validateEnvelope(event).length > 0 || !isValidBySchema(event, "envelope") || payloadInvalid || harnessRejected) {
         rejected = true;
       }

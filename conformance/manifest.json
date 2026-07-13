@@ -18,6 +18,32 @@
       ]
     },
     {
+      "path": "fixtures/reject-some-protocol.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Envelope-valid filterless subscription request rejected by the harness.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative",
+        "subscription"
+      ],
+      "expected_types": [
+        "subscription.requested"
+      ]
+    },
+    {
+      "path": "fixtures/reject-some-payload.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Envelope-valid context invalidation with a payload rejected by the shared payload schema.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative",
+        "context"
+      ],
+      "expected_types": [
+        "context.invalidated"
+      ]
+    },
+    {
       "path": "fixtures/task-lifecycle.ndjson",
       "level": "HARMOVELA-C1",
       "description": "Task submitted, progress, and completion lifecycle flow.",

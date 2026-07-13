@@ -62,18 +62,20 @@ def test_conformance_manifest_declares_known_draft_levels():
 def test_conformance_fixture_validation(fixture: dict):
     events = _read_ndjson(CONFORMANCE_DIR / fixture["path"])
 
+    if "expected_types" in fixture:
+        assert [event["type"] for event in events] == fixture["expected_types"]
+
     if fixture["expectation"] == "reject_some":
         rejected = False
         harness = HarmovelaHarness()
         for event in events:
             payload_invalid = event["type"] in PAYLOAD_VALIDATED_TYPES and not is_valid_by_schema(event, "payloads")
-            harness_rejected = any(response["type"] == "event.rejected" for response in (harness.handle(event) or []))
+            harness_rejected = any(response["type"].endswith(".rejected") for response in (harness.handle(event) or []))
             if validate_envelope(event) or not is_valid_by_schema(event, "envelope") or payload_invalid or harness_rejected:
                 rejected = True
         assert rejected, "expected at least one event rejection"
         return
 
-    assert [event["type"] for event in events] == fixture["expected_types"]
     for event in events:
         assert validate_envelope(event) == []
         assert is_valid_by_schema(event, "envelope") is True
