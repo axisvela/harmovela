@@ -49,8 +49,8 @@ Separate the stable core from independently adoptable coordination capabilities.
 | Release | Focus | Target level |
 | --- | --- | --- |
 | **0.2 Core Stabilization** | Freeze the L0–L1 core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics. Document the L1 policy surface. | L1 (frozen) |
-| **0.3 Optional Profiles** | Tighten delegation, handoff, escalation, and cancellation propagation into a conformance-tested L2 coordination profile; add missing security-profile declarations and fixtures. Delivery and security profile definitions already exist and are not rescheduled here. | L2 (tightened) |
-| **0.4 Beta** | Prove L2 multi-agent coordination across at least two independent implementations with a public conformance matrix and three documented integration scenarios. | L2 (interoperable) |
+| **0.3 Optional Profiles** | Define `harmovela.coordination.v1` as the canonical L2 profile for Task, State, and Delegation semantics, including delegation, handoff, escalation, and cancellation propagation; add missing authorization and tenant-isolation fixtures. `harmovela.runtime-semantics.v1` retains belief, freshness, interruption, compensation, and provenance. Delivery and security profile definitions already exist and are not rescheduled here. | L2 (tightened) |
+| **0.4 Beta** | Prove `harmovela.coordination.v1` across at least two independent implementations running the standard stdio or WebSocket session topology, with a public conformance matrix and three documented integration scenarios. | L2 (interoperable) |
 
 ## Release Gates
 
@@ -61,7 +61,7 @@ Entry criteria:
 
 Exit criteria:
 - Frozen L0-L1 core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and declared delivery semantics.
-- Shared positive and negative lifecycle fixtures cover acceptance, progress, blocked work, terminal outcomes, cancellation, replay, acknowledgement, and invalid transitions.
+- Shared positive and negative lifecycle fixtures cover acceptance, progress, blocked work, terminal outcomes, cancellation, and invalid transitions.
 - Conformance levels, manifest expectations, and the default runner target are internally consistent.
 - The L1 advisory policy surface is documented and capability-negotiable.
 
@@ -71,10 +71,11 @@ Entry criteria:
 - 0.2 core compatibility policy and lifecycle fixtures are published.
 
 Exit criteria:
-- The L2 coordination profile defines its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.
+- The canonical `harmovela.coordination.v1` L2 profile defines Task, State, and Delegation scope, identifier, dependencies, capability negotiation, versioning, and conformance fixtures.
+- `harmovela.runtime-semantics.v1` retains belief, freshness, interruption, compensation, and provenance semantics.
 - Delegation, ownership transfer, handoff, escalation, and cancellation propagation have positive and negative fixtures.
 - Implementations can declare and filter conformance by profile.
-- Security-profile declarations and fixtures cover authorization, audit, and tenant-isolation behavior already defined by the security profile.
+- Security-profile fixtures cover authorization and tenant-isolation behavior already defined by the security profile; audit remains implementation-specific until L3 policy/audit work.
 
 ### 0.4 Beta
 
@@ -83,10 +84,11 @@ Entry criteria:
 - The frozen core has a published compatibility policy.
 
 Exit criteria:
-- At least two independently maintained implementations interoperate at the L2 coordination profile.
-- Passing cross-language conformance covers the declared core and L2 profile.
-- A public conformance matrix and three documented integration scenarios are published.
-- No unremediated core or L2 conformance regressions remain.
+- A named `harmovela.coordination.v1` manifest/profile declaration is published.
+- At least two independently maintained implementations run the standard stdio or WebSocket session topology at the L2 coordination profile.
+- The async task orchestration, shared state/context invalidation, and delegated task handoff scenarios each pass their declared fixture assertions.
+- A public conformance matrix records implementation version, profile, topology, and results.
+- Zero open core or L2 conformance issues are classified blocker or critical.
 - A community governance proposal is published.
 
 Once coordination is interoperable and stable, effort moves up to the [Adaptation layer](adaptation-layer.md).
