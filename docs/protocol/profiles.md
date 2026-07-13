@@ -103,14 +103,14 @@ This filtering behavior is available in:
 - **Go CLI:** `cd implementations/go && go run ./cmd/aep conformance --profile=delivery`
 - **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisrobo.aep.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
 
-## Profile Catalog
-
 ## Dimension Contract Ownership
 
 | Dimension | Contract document |
 |---|---|
 | Event | [Event contract](event-contract.md) |
 | Governance | [Governance contract](governance-contract.md) |
+
+## Profile Catalog
 
 ### Core Profile
 
