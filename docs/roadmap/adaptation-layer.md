@@ -80,11 +80,11 @@ Entry criteria:
 - No unresolved breaking core, L2, or L3 semantic changes remain.
 
 Exit criteria:
-- The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, and an official versioned L3 fixture/scenario suite.
-- Required matrix cells are each implementation x the selected L3 profile x the selected topology x every official fixture/scenario; every cell passes.
+- The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, one named and versioned topology identifier distinct from that transport profile, and an official versioned L3 fixture/scenario suite; each matrix row records both the transport profile and topology identifier with their versions.
+- Required matrix cells are each implementation x the selected L3 profile x the selected topology identifier and version x every official fixture/scenario; every cell passes.
 - A `release-blocker` is an open issue tagged by the designated release maintainer in the public tracker; zero `release-blocker` issues may remain.
 - Public governance, release, security-response, and registry processes are published.
-- An external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation. Its published report names the implementation, L3 profile, transport, topology, and fixture/scenario-suite versions and records pass/fail evidence for feedback/outcome, budget, audit, and authorization; all four pass. A generic interoperability pilot does not satisfy this gate.
+- An external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation. Its published report identifies both implementation names and versions, the L3 profile and version, transport profile and version, topology identifier and version, and official fixture/scenario-suite version; it publishes per-fixture and per-scenario pass/fail results demonstrating the feedback/outcome, budget, audit, and authorization boundaries, all of which pass. A generic interoperability pilot does not satisfy this gate.
 - No new protocol features are added during the RC period.
 
 ### 1.0
