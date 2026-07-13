@@ -1,4 +1,4 @@
-from aep.delivery_journal import DeliveryJournal
+from axisrobo_harmovela_recovery import DeliveryJournal
 
 
 def test_appends_events_with_sequence():

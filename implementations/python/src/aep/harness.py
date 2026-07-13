@@ -6,7 +6,7 @@ from axisrobo_harmovela_governance import authorize
 from .legacy_dimension_types import is_legacy_dimension_event_type
 from .task import TaskTracker
 from .errors import ErrorCode, error_payload
-from .delivery import DeliveryTracker
+from axisrobo_harmovela_recovery import DeliveryTracker
 
 
 class HarmovelaHarness:

@@ -2,8 +2,7 @@ import json
 import os
 import tempfile
 from aep.runtime.config import default_config, write_default_config, load_config, apply_env_overrides, create_delivery_store
-from aep.delivery_store import InMemoryDeliveryStore
-from aep.sqlite_delivery_store import SqliteDeliveryStore
+from axisrobo_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliveryStore
 
 
 def test_default_config():

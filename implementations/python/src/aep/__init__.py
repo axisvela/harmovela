@@ -11,10 +11,11 @@ from axisrobo_harmovela_event import (
 from .task import TaskTracker, TaskState
 from .harness import HarmovelaHarness
 from .schema_validator import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
-from .delivery import DeliveryTracker, retry_delay, DEFAULT_RETRY
-from .delivery_store import InMemoryDeliveryStore
-from .delivery_journal import DeliveryJournal
-from .sqlite_delivery_store import SqliteDeliveryStore
+from axisrobo_harmovela_recovery import (
+    DeliveryTracker, retry_delay, DEFAULT_RETRY,
+    InMemoryDeliveryStore, DeliveryJournal,
+    SqliteDeliveryStore, PostgresDeliveryStore,
+)
 from .mcp_bridge import McpBridge, async_tool_handler
 
 __all__ = [
@@ -31,6 +32,7 @@ __all__ = [
     "InMemoryDeliveryStore",
     "SqliteDeliveryStore",
     "DeliveryJournal",
+    "PostgresDeliveryStore",
     "McpBridge",
     "async_tool_handler",
 ]

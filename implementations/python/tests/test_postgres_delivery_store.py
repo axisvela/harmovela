@@ -1,7 +1,7 @@
 import os
 import uuid
 import pytest
-from aep.postgres_delivery_store import PostgresDeliveryStore
+from axisrobo_harmovela_recovery import PostgresDeliveryStore
 
 
 def _url() -> str:

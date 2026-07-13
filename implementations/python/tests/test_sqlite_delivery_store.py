@@ -1,7 +1,5 @@
 import pytest
-from aep.sqlite_delivery_store import SqliteDeliveryStore
-from aep.delivery import DeliveryTracker
-from aep.delivery_journal import DeliveryJournal
+from axisrobo_harmovela_recovery import SqliteDeliveryStore, DeliveryTracker, DeliveryJournal
 
 
 @pytest.fixture
