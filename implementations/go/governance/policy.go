@@ -1,4 +1,4 @@
-package aep
+package governance
 
 var roleActions = map[string]map[string]bool{
 	"viewer":                {"event.subscribe": true},

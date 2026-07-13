@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { authorize } from "../src/governance.js";
+import { authorize } from "../src/index.js";
 
 const actor = (roles, tenantId = "tenant-a") => ({
   actorId: "agent-1",
