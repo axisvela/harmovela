@@ -5,12 +5,8 @@ import java.util.Set;
 public final class EventTypes {
     private EventTypes() {}
 
-    public static final Set<String> STANDARD_TYPES = Set.of(
-        "session.opened", "session.ready", "session.heartbeat", "session.closed", "session.error",
-        "capabilities.requested", "capabilities.declared", "capabilities.changed",
-        "subscription.requested", "subscription.created", "subscription.rejected",
-        "subscription.cancelled", "subscription.expired",
-        "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
+    private static final Set<String> LEGACY_TYPES = Set.of(
+        "event.redelivered", "event.replayed", "event.dead_lettered",
         "tool.call.requested", "tool.call.accepted", "tool.call.rejected", "tool.call.started",
         "tool.call.progress", "tool.call.output", "tool.call.completed", "tool.call.failed",
         "tool.call.cancel.requested", "tool.call.cancelled", "tool.call.timed_out",
@@ -34,6 +30,7 @@ public final class EventTypes {
     );
 
     public static boolean isStandardEventType(String type) {
-        return STANDARD_TYPES.contains(type);
+        return type != null && (com.axisrobo.harmovela.event.registry.EventTypes.isStandardEventType(type)
+            || LEGACY_TYPES.contains(type));
     }
 }

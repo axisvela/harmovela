@@ -1,5 +1,7 @@
 package com.axisrobo.aep;
 
+import com.axisrobo.harmovela.event.router.EventRouter;
+import com.axisrobo.harmovela.event.session.Session;
 import java.time.Instant;
 import java.util.*;
 
@@ -43,7 +45,7 @@ public class Harness {
     }
 
     public List<Map<String, Object>> handle(Map<String, Object> value) {
-        var errs = Envelope.validate(value);
+        var errs = com.axisrobo.aep.Envelope.validate(value);
         if (!errs.isEmpty()) {
             return List.of(newEvent("event.rejected", value, Map.of(
                 "errors", errs, "error", Errors.errorPayload(Errors.INVALID_ENVELOPE, errs.get(0), false)
@@ -51,7 +53,7 @@ public class Harness {
         }
 
         var type = (String) value.get("type");
-        if (!EventTypes.isStandardEventType(type) && (type == null || !type.startsWith("session."))) {
+        if (!com.axisrobo.aep.EventTypes.isStandardEventType(type) && (type == null || !type.startsWith("session."))) {
             return List.of(newEvent("event.rejected", value, Map.of(
                 "errors", List.of("type not in standard draft registry: " + type),
                 "error", Errors.errorPayload(Errors.INVALID_EVENT_TYPE, "unknown event type: " + type, false)

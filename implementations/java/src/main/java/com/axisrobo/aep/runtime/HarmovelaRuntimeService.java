@@ -2,8 +2,8 @@ package com.axisrobo.aep.runtime;
 
 import com.axisrobo.aep.DeliveryStore;
 import com.axisrobo.aep.Envelope;
-import com.axisrobo.aep.Subscriptions;
 import com.axisrobo.aep.transport.WsServer;
+import com.axisrobo.harmovela.event.subscription.Subscriptions;
 
 import java.io.IOException;
 import java.time.Instant;

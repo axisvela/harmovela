@@ -1,5 +1,6 @@
 package com.axisrobo.aep.runtime;
 
+import com.axisrobo.aep.Envelope;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -86,7 +87,7 @@ public class ApiServer {
             send(exchange, 400, Map.of("accepted", false, "errors", List.of("invalid JSON body")));
             return;
         }
-        var errors = com.axisrobo.aep.Envelope.validate(event);
+        var errors = Envelope.validate(event);
         if (!errors.isEmpty()) {
             send(exchange, 400, Map.of("accepted", false, "errors", errors));
             return;
