@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { WsServerTransport, WsClientTransport } from "../src/transport/websocket.js";
+import { WsServerTransport, WsClientTransport } from "@axisrobo/harmovela-event";
 
 test("WebSocket server starts and accepts connections", async () => {
   const server = new WsServerTransport({ port: 0, host: "127.0.0.1" });

@@ -1,5 +1,5 @@
 import { McpBridge, asyncToolHandler } from "./mcp-bridge.js";
-import { MockStdioTransport } from "../transport/stdio.js";
+import { MockStdioTransport } from "@axisrobo/harmovela-event";
 
 const TERMINAL_TASK_EVENTS = new Set(["task.completed", "task.failed", "task.cancelled", "task.timed_out"]);
 

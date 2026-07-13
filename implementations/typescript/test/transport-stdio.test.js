@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { MockStdioTransport } from "../src/transport/stdio.js";
+import { MockStdioTransport } from "@axisrobo/harmovela-event";
 
 test("MockStdioTransport receives and parses NDJSON events", async () => {
   const transport = new MockStdioTransport();

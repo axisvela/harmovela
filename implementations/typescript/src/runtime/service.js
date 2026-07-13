@@ -1,8 +1,7 @@
 import { EventRouter, isStandardEventType, subscriptionMatches, validateEnvelope } from "@axisrobo/harmovela-event";
 import { randomUUID } from "node:crypto";
 import { isLegacyDimensionEventType } from "../legacy-dimension-types.js";
-import { WsServerTransport } from "../transport/websocket.js";
-import { SseServerTransport } from "../transport/sse.js";
+import { WsServerTransport, SseServerTransport } from "@axisrobo/harmovela-event";
 import { createDeliveryStore } from "./config.js";
 import { startApiServer } from "./api-server.js";
 

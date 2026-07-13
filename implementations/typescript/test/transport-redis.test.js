@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { RedisTransport } from "../src/transport/redis.js";
+import { RedisTransport } from "@axisrobo/harmovela-event";
 
 test("RedisTransport streamKey routing", () => {
   const t = new RedisTransport({ prefix: "aep" });

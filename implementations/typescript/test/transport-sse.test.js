@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import http from "node:http";
-import { SseServerTransport } from "../src/transport/sse.js";
+import { SseServerTransport } from "@axisrobo/harmovela-event";
 
 test("SSE server starts and serves text/event-stream", async () => {
   const server = new SseServerTransport({ port: 0, heartbeatInterval: 0 });
