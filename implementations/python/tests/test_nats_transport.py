@@ -1,5 +1,5 @@
 import pytest
-from aep.transport.nats import NatsTransport
+from axisrobo_harmovela_event.transport.nats import NatsTransport
 
 
 def test_event_subject_topic_priority():

@@ -4,7 +4,7 @@ import time
 import urllib.request
 
 import pytest
-from aep.transport.sse import SseServerTransport
+from axisrobo_harmovela_event.transport.sse import SseServerTransport
 
 
 class TestSseServerTransport:

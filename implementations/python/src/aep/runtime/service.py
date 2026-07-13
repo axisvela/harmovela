@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 from axisrobo_harmovela_event import EventRouter, subscription_matches, validate_envelope
-from ..transport.websocket import WsServerTransport
+from axisrobo_harmovela_event.transport.websocket import WsServerTransport
 from .config import create_delivery_store
 from .api_server import start_api_server
 

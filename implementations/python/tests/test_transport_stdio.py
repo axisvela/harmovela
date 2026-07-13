@@ -1,7 +1,7 @@
 import json
 import pytest
 from io import StringIO
-from aep.transport import Transport, StdioTransport
+from axisrobo_harmovela_event.transport import Transport, StdioTransport
 
 
 class _TestTransport(Transport):

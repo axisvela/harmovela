@@ -3,6 +3,11 @@ from .registry import STANDARD_EVENT_TYPES, is_standard_event_type
 from .router import EventRouter
 from .session import HarmovelaSession
 from .subscription import matches_type, subscription_matches
+from .transport.base import Transport
+from .transport.stdio import StdioTransport
+from .transport.websocket import WsServerTransport, WsClientTransport
+from .transport.sse import SseServerTransport
+from .transport.grpc import GrpcServerTransport, GrpcClientTransport
 
 __all__ = [
     "STANDARD_EVENT_TYPES",
@@ -12,4 +17,11 @@ __all__ = [
     "matches_type",
     "subscription_matches",
     "validate_envelope",
+    "Transport",
+    "StdioTransport",
+    "WsServerTransport",
+    "WsClientTransport",
+    "SseServerTransport",
+    "GrpcServerTransport",
+    "GrpcClientTransport",
 ]

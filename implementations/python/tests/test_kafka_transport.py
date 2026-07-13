@@ -1,6 +1,6 @@
 import json
 import pytest
-from aep.transport.kafka import KafkaTransport
+from axisrobo_harmovela_event.transport.kafka import KafkaTransport
 
 def test_message_key_priority():
     t = KafkaTransport()

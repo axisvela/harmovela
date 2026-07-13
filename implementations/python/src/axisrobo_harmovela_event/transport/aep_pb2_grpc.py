@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from aep.transport import aep_pb2 as aep_dot_transport_dot_aep__pb2
+from . import aep_pb2 as aep_dot_transport_dot_aep__pb2
 
 GRPC_GENERATED_VERSION = '1.82.1'
 GRPC_VERSION = grpc.__version__
