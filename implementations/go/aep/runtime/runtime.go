@@ -14,7 +14,7 @@ import (
 
 	"github.com/axisrobo/harmovela/aep"
 	"github.com/axisrobo/harmovela/aep/store"
-	"github.com/axisrobo/harmovela/aep/transport"
+	eventtransport "github.com/axisrobo/harmovela/event/transport"
 	eventcore "github.com/axisrobo/harmovela/event"
 	"github.com/google/uuid"
 )
@@ -154,7 +154,7 @@ type RuntimeService struct {
 	subs          []subEntry
 	subscriptions map[string]*registryEntry
 	maxBuffer     int
-	ws            *transport.WsBroadcastServer
+	ws            *eventtransport.WsBroadcastServer
 	api           *http.Server
 	apiPort       int
 	mu            sync.Mutex
@@ -217,7 +217,7 @@ func (s *RuntimeService) Start() error {
 		return nil
 	}
 	if s.Config.Transports.WebSocket.Enabled {
-		ws := transport.NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
+		ws := eventtransport.NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
 		ws.OnMessage(func(event map[string]any) { s.Publish(event) })
 		addr := fmt.Sprintf("%s:%d", s.Config.Transports.WebSocket.Host, s.Config.Transports.WebSocket.Port)
 		go ws.Start(addr)

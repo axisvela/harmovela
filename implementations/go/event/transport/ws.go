@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/axisrobo/harmovela/aep"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,7 +14,7 @@ var Upgrader = websocket.Upgrader{
 
 type WsServer struct {
 	httpServer     *http.Server
-	messageHandler aep.MessageHandler
+	messageHandler MessageHandler
 	mu             sync.RWMutex
 }
 
@@ -23,13 +22,13 @@ func NewWsServer() *WsServer {
 	return &WsServer{}
 }
 
-func (s *WsServer) OnMessage(handler aep.MessageHandler) {
+func (s *WsServer) OnMessage(handler MessageHandler) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.messageHandler = handler
 }
 
-func (s *WsServer) getHandler() aep.MessageHandler {
+func (s *WsServer) getHandler() MessageHandler {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.messageHandler
@@ -68,7 +67,7 @@ func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if handler != nil {
-			msg := &aep.HarmovelaMessage{JsonPayload: string(message)}
+			msg := &Message{JsonPayload: string(message)}
 			resp := handler(msg)
 			if resp != nil {
 				if err := conn.WriteMessage(websocket.TextMessage, []byte(resp.JsonPayload)); err != nil {
@@ -81,7 +80,7 @@ func (s *WsServer) handleWs(w http.ResponseWriter, r *http.Request) {
 
 type WsClient struct {
 	conn    *websocket.Conn
-	handler aep.ReceiveHandler
+	handler ReceiveHandler
 	mu      sync.RWMutex
 	done    chan struct{}
 }
@@ -90,13 +89,13 @@ func NewWsClient() *WsClient {
 	return &WsClient{done: make(chan struct{})}
 }
 
-func (c *WsClient) OnMessage(handler aep.ReceiveHandler) {
+func (c *WsClient) OnMessage(handler ReceiveHandler) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.handler = handler
 }
 
-func (c *WsClient) getHandler() aep.ReceiveHandler {
+func (c *WsClient) getHandler() ReceiveHandler {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.handler
@@ -120,12 +119,12 @@ func (c *WsClient) receiveLoop() {
 		}
 		handler := c.getHandler()
 		if handler != nil {
-			handler(&aep.HarmovelaMessage{JsonPayload: string(message)})
+			handler(&Message{JsonPayload: string(message)})
 		}
 	}
 }
 
-func (c *WsClient) Send(msg *aep.HarmovelaMessage) error {
+func (c *WsClient) Send(msg *Message) error {
 	if c.conn == nil {
 		return fmt.Errorf("not connected")
 	}
