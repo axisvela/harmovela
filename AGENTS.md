@@ -10,6 +10,8 @@ Superpowers is enabled through `opencode.json` and project work artifacts live u
 
 Use Superpowers workflows for planning, test-driven development, systematic debugging, verification, and code review.
 
+Before changing any version or delivery-status statement in a roadmap, release record, profile, schema, wire identifier, package, or conformance claim, load and follow `.superpowers/skills/harmovela-version-governance/SKILL.md`. Do not use historical release/status documents as evidence for future version gates.
+
 ## Project Identity
 
 Harmovela Protocol is an open coordination protocol for autonomous systems across all 7 coordination dimensions:
