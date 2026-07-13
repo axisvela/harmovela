@@ -36,6 +36,7 @@ The canonical repository location is `https://github.com/axisrobo/harmovela`.
 - Axisrobo remains the implementation organization and package namespace. Do not replace `axisrobo` package or group namespaces with `harmovela`.
 - Migrate public artifact names, repository paths, wire identifiers, configuration names, and transport defaults only through an explicit versioned compatibility decision.
 - Do not change protocol behavior, delivery guarantees, or conformance claims as a side effect of a naming migration.
+- New domain implementation must live in its Harmovela dimension module (Event, Task, State, Context/Memory, Delegation, Recovery, or Governance), not under a legacy `aep` namespace. Legacy `aep` code may only adapt to public dimension contracts and must not be a dependency of a dimension module.
 
 ## Current Status
 
