@@ -1,4 +1,4 @@
-package com.axisrobo.aep.transport;
+package com.axisrobo.harmovela.event.transport;
 
 import harmovela.v1.Harmovela;
 import harmovela.v1.HarmovelaTransportGrpc;

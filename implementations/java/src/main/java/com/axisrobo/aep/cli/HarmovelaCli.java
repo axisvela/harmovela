@@ -3,7 +3,7 @@ package com.axisrobo.aep.cli;
 import com.axisrobo.aep.DeliveryStore;
 import com.axisrobo.aep.runtime.HarmovelaRuntimeService;
 import com.axisrobo.aep.runtime.Config;
-import com.axisrobo.aep.transport.WsClient;
+import com.axisrobo.harmovela.event.transport.WsClient;
 import com.axisrobo.harmovela.event.subscription.Subscriptions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;

@@ -1,4 +1,4 @@
-package com.axisrobo.aep.transport;
+package com.axisrobo.harmovela.event.transport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.java_websocket.WebSocket;
