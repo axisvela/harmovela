@@ -1,9 +1,9 @@
-import { validateEnvelope } from "./validate.js";
+import { isStandardEventType, validateEnvelope } from "@axisrobo/harmovela-event";
 import { isValidBySchema } from "./schema.js";
 import { EventRouter, HarmovelaSession } from "@axisrobo/harmovela-event";
 import { TaskTracker } from "./task.js";
 import { ErrorCode, errorPayload } from "./errors.js";
-import { isStandardEventType } from "./event-types.js";
+import { isLegacyDimensionEventType } from "./legacy-dimension-types.js";
 import { DeliveryTracker } from "./delivery.js";
 
 export class HarmovelaHarness {
@@ -60,7 +60,7 @@ export class HarmovelaHarness {
       })];
     }
 
-    if (!isStandardEventType(value.type) && !value.type.startsWith("session.")) {
+    if (!isStandardEventType(value.type) && !isLegacyDimensionEventType(value.type)) {
       return [this._event("event.rejected", value, {
         errors: [`type not in standard draft registry: ${value.type}`],
         error: errorPayload(ErrorCode.INVALID_EVENT_TYPE, `unknown event type: ${value.type}`, { retryable: false })

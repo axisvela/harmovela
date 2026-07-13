@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { HarmovelaHarness } from "../src/index.js";
+import { HarmovelaHarness, isStandardEventType, validateEnvelope } from "../src/index.js";
+import {
+  isStandardEventType as isEventRegistryType,
+  validateEnvelope as validateEventEnvelope
+} from "@axisrobo/harmovela-event";
 
 const now = () => "2026-07-09T10:00:01Z";
 
@@ -189,7 +193,7 @@ test("rejects invalid envelopes with standard error", () => {
   const [response] = harness.handle({ type: "unknown.event", payload: {} });
 
   assert.equal(response.type, "event.rejected");
-  assert.equal(response.payload.errors.length, 5);
+  assert.equal(response.payload.errors.length, 4);
   assert.equal(response.payload.error.code, "invalid_envelope");
 });
 
@@ -204,4 +208,17 @@ test("rejects unsupported protocol versions", () => {
 
   assert.equal(response.type, "event.rejected");
   assert.equal(response.payload.error.code, "unsupported_version");
+});
+
+test("uses the Event package registry and preserves legacy dimension handling", () => {
+  const event = { ...validBase, type: "session.opened", payload: {} };
+  const task = { ...validBase, type: "task.submitted", payload: {} };
+  const unknown = { ...validBase, type: "custom.event", payload: {} };
+  const harness = new HarmovelaHarness({ now });
+
+  assert.equal(isStandardEventType(event.type), isEventRegistryType(event.type));
+  assert.equal(isStandardEventType(task.type), isEventRegistryType(task.type));
+  assert.deepEqual(validateEnvelope(event), validateEventEnvelope(event));
+  assert.equal(harness.handle(task)[0].type, "task.accepted");
+  assert.equal(harness.handle(unknown)[0].type, "event.rejected");
 });

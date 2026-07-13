@@ -1,6 +1,6 @@
-import { EventRouter, subscriptionMatches } from "@axisrobo/harmovela-event";
+import { EventRouter, isStandardEventType, subscriptionMatches, validateEnvelope } from "@axisrobo/harmovela-event";
 import { randomUUID } from "node:crypto";
-import { validateEnvelope } from "../validate.js";
+import { isLegacyDimensionEventType } from "../legacy-dimension-types.js";
 import { WsServerTransport } from "../transport/websocket.js";
 import { SseServerTransport } from "../transport/sse.js";
 import { createDeliveryStore } from "./config.js";
@@ -26,6 +26,9 @@ export class HarmovelaRuntimeService {
     const errors = validateEnvelope(event);
     if (errors.length > 0) {
       throw new Error(`invalid Harmovela event: ${errors.join("; ")}`);
+    }
+    if (!isStandardEventType(event.type) && !isLegacyDimensionEventType(event.type)) {
+      throw new Error(`invalid Harmovela event: type is not in the standard draft registry: ${event.type}`);
     }
     this.store.track?.(event.id, event.subscription_id ?? "_runtime");
     this.router.dispatch(event);

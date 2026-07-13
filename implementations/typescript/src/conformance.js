@@ -1,10 +1,9 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { validateEnvelope } from "./validate.js";
+import { validateEnvelope } from "@axisrobo/harmovela-event";
 import { isValidBySchema } from "./schema.js";
 import { HarmovelaHarness } from "./harness.js";
-import { STANDARD_EVENT_TYPES } from "./event-types.js";
 
 const PAYLOAD_VALIDATED_TYPES = new Set([
   "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",

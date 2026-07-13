@@ -27,7 +27,7 @@ test("rejects missing required envelope fields", () => {
   assert.match(errors.join("\n"), /created_at/);
 });
 
-test("rejects event types outside the draft registry", () => {
+test("separates envelope validation from Event registry lookup", () => {
   const errors = validateEnvelope({
     spec_version: "0.2",
     id: "evt_01",
@@ -38,7 +38,7 @@ test("rejects event types outside the draft registry", () => {
   });
 
   assert.equal(isStandardEventType("custom.event.created"), false);
-  assert.match(errors.join("\n"), /standard draft registry/);
+  assert.deepEqual(errors, []);
 });
 
 test("rejects the legacy AEP version field", () => {

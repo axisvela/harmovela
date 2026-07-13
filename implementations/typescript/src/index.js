@@ -1,5 +1,4 @@
-export { STANDARD_EVENT_TYPES, isStandardEventType } from "./event-types.js";
-export { validateEnvelope } from "./validate.js";
+export { STANDARD_EVENT_TYPES, isStandardEventType, validateEnvelope } from "@axisrobo/harmovela-event";
 export { matchesType, subscriptionMatches } from "@axisrobo/harmovela-event";
 export { HarmovelaHarness } from "./harness.js";
 export { HarmovelaSession } from "@axisrobo/harmovela-event";
