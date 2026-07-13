@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/axisrobo/harmovela/aep/store"
+	"github.com/axisrobo/harmovela/event"
 )
 
 type TaskState string
@@ -131,12 +132,12 @@ func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[
 	tk.eventID++
 	return map[string]any{
 		"spec_version": "0.2",
-		"id":          fmt.Sprintf("evt_task_%06d", tk.eventID),
-		"type":        eventType,
-		"source":      tk.Source,
-		"task_id":     tk.ID,
-		"created_at":  time.Now().UTC().Format(time.RFC3339),
-		"payload":     result,
+		"id":           fmt.Sprintf("evt_task_%06d", tk.eventID),
+		"type":         eventType,
+		"source":       tk.Source,
+		"task_id":      tk.ID,
+		"created_at":   time.Now().UTC().Format(time.RFC3339),
+		"payload":      result,
 	}
 }
 
@@ -145,8 +146,8 @@ type Harness struct {
 	sequence      int
 	subscriptions map[string]map[string]any
 	tasks         map[string]*TaskTracker
-	router        *EventRouter
-	session       *HarmovelaSession
+	router        *event.EventRouter
+	session       *event.HarmovelaSession
 	Delivery      *store.DeliveryTracker
 }
 
@@ -155,7 +156,7 @@ func NewHarness() *Harness {
 		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*TaskTracker),
-		router:        NewEventRouter(),
+		router:        event.NewEventRouter(),
 		Delivery:      store.NewDeliveryTracker(nil, nil),
 	}
 	h.setupRouter()
@@ -163,7 +164,7 @@ func NewHarness() *Harness {
 	return h
 }
 
-func (h *Harness) Session() *HarmovelaSession {
+func (h *Harness) Session() *event.HarmovelaSession {
 	return h.session
 }
 
@@ -271,7 +272,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 func (h *Harness) handleCapabilities(event map[string]any) any {
 	return h.newEvent("capabilities.declared", event, map[string]any{
 		"protocol":       "aep",
-		"spec_version":    "0.2",
+		"spec_version":   "0.2",
 		"transports":     []string{"stdio"},
 		"delivery_modes": []string{"best_effort", "at_least_once", "replayable"},
 		"features": []string{
@@ -409,10 +410,10 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	ready := h.newEvent("session.ready", event, map[string]any{
 		"session_id": sessionID,
 		"capabilities": map[string]any{
-			"protocol":    "aep",
+			"protocol":     "aep",
 			"spec_version": "0.2",
-			"transports":  []string{"stdio"},
-			"features":    []string{"envelope", "subscription", "task_lifecycle", "error_model"},
+			"transports":   []string{"stdio"},
+			"features":     []string{"envelope", "subscription", "task_lifecycle", "error_model"},
 		},
 	})
 
@@ -485,7 +486,7 @@ func (h *Harness) newEvent(typ string, input map[string]any, payload map[string]
 	source, _ := input["source"].(string)
 
 	return map[string]any{
-		"spec_version":     aepVer,
+		"spec_version":    aepVer,
 		"id":              fmt.Sprintf("evt_harness_%06d", seq),
 		"type":            typ,
 		"source":          h.Source,

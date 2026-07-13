@@ -15,6 +15,7 @@ import (
 	"github.com/axisrobo/harmovela/aep"
 	"github.com/axisrobo/harmovela/aep/store"
 	"github.com/axisrobo/harmovela/aep/transport"
+	eventcore "github.com/axisrobo/harmovela/event"
 	"github.com/google/uuid"
 )
 
@@ -33,7 +34,7 @@ type DeliveryConfig struct {
 
 type RuntimeConfig struct {
 	SpecVersion string `json:"spec_version"`
-	Runtime    struct {
+	Runtime     struct {
 		ID     string `json:"id"`
 		Source string `json:"source"`
 	} `json:"runtime"`
@@ -184,7 +185,7 @@ func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
 	}
 	typ, _ := event["type"].(string)
 	for _, e := range s.subs {
-		if aep.MatchesType(e.pattern, typ) {
+		if eventcore.MatchesType(e.pattern, typ) {
 			e.handler(event)
 		}
 	}
@@ -194,7 +195,7 @@ func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
 	s.mu.Lock()
 	for _, entry := range s.subscriptions {
 		filter, _ := entry.record["filter"].(map[string]any)
-		if aep.SubscriptionMatches(filter, event) {
+		if eventcore.SubscriptionMatches(filter, event) {
 			entry.buffer = append(entry.buffer, event)
 			if len(entry.buffer) > s.maxBuffer {
 				entry.buffer = entry.buffer[1:]

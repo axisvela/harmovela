@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep"
 	"github.com/axisrobo/harmovela/aep/runtime"
+	eventcore "github.com/axisrobo/harmovela/event"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
 )
@@ -106,7 +106,7 @@ func main() {
 				continue
 			}
 			typ, _ := event["type"].(string)
-			if aep.MatchesType(subType, typ) {
+			if eventcore.MatchesType(subType, typ) {
 				fmt.Println(string(message))
 			}
 		}
