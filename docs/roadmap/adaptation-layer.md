@@ -47,16 +47,16 @@ These non-goals are load-bearing: they keep the 1.0 promise honest and prevent t
 
 - A feedback/outcome event specification that correlates each outcome to its task, goal, delegation chain, authority, and declared or consumed cost.
 - Budget semantics defining the authority that establishes a budget, the enforcement point, and limit-approaching and limit-exceeded events.
-- Audit semantics that link feedback, adaptation, and budget operations across the goal, task, delegation chain, authority, and budget.
-- Authorization semantics requiring protocol-level checks for feedback and adaptation actions and for budget operations.
-- An L3 adaptation profile defining identifier, dependencies, capability negotiation, versioning, and conformance requirements.
-- Shared positive and negative fixtures for outcome correlation; authorized and unauthorized feedback, adaptation, and budget operations; limit approach and exceedance; and audit linkage.
+- The L3 adaptation profile depends on `harmovela.security.v1`, which continues to own base HARMOVELA-C0/C1 identity, authorization, audit, and tenant-isolation behavior; L3 defines only adaptation-operation extensions.
+- Adaptation-operation extensions define authority and audit linkage for feedback/outcome, budget establishment, change, enforcement, and violation, and authorization checks for those operations.
+- An L3 adaptation profile defines identifier, dependencies, capability negotiation, versioning, and conformance requirements.
+- Shared positive and negative L3 fixtures cover outcome correlation; authorized and unauthorized feedback/outcome and budget establishment, change, enforcement, and violation operations; limit approach and exceedance; and adaptation-operation audit linkage.
 
 ## Release Mapping
 
 | Release | Focus | Target level |
 | --- | --- | --- |
-| **0.5 Adaptation Preview** | Specify and implement feedback/outcome correlation; budget, audit, and authorization semantics; L3 adaptation-profile declaration; and cross-language conformance fixtures. | L3 (specified and testable) |
+| **0.5 Adaptation Preview** | Specify and implement feedback/outcome correlation; security-profile-dependent adaptation-operation authority, audit linkage, and authorization checks; L3 adaptation-profile declaration; and cross-language conformance fixtures. | L3 (specified and testable) |
 | **0.9 Release Candidate** | Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. | L3 (validated) |
 | **1.0** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. | L3 (stable) |
 
@@ -68,9 +68,9 @@ Entry criteria:
 - The L2 coordination profile is interoperable at 0.4.
 
 Exit criteria:
-- Feedback/outcome, budget, audit, and authorization specifications; L3 profile declaration; and shared fixtures are published.
-- Budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes; audit semantics link feedback, adaptation, and budget operations across goal, task, delegation chain, authority, and budget.
-- Authorization semantics require protocol-level checks for feedback and adaptation actions and for budget operations.
+- Feedback/outcome and adaptation-operation specifications, an L3 profile declaration that depends on `harmovela.security.v1`, and shared fixtures are published; the existing Security Profile retains base HARMOVELA-C0/C1 identity, authorization, audit, and tenant-isolation behavior.
+- Adaptation-operation semantics identify authority and audit linkage for feedback/outcome and budget establishment, change, enforcement, and violation; budget semantics identify the enforcement point and observable limit-approaching and limit-exceeded outcomes.
+- Authorization checks cover feedback/outcome and budget establishment, change, enforcement, and violation operations.
 - Every reference implementation passes the declared L3 fixtures.
 
 ### 0.9 Release Candidate
@@ -80,10 +80,11 @@ Entry criteria:
 - No unresolved breaking core, L2, or L3 semantic changes remain.
 
 Exit criteria:
-- Release-candidate fixtures and a public compatibility matrix pass across at least two independently maintained declared implementations using the same named and versioned transport/session topology.
-- Each compatibility-matrix row identifies the implementation and version, declared L3 profile and version, topology ID and version, fixture or scenario IDs and versions, and pass result; all required cells pass with no unresolved blocker or critical conformance issue.
+- The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, and an official versioned L3 fixture/scenario suite.
+- Required matrix cells are each implementation x the selected L3 profile x the selected topology x every official fixture/scenario; every cell passes.
+- A `release-blocker` is an open issue tagged by the designated release maintainer in the public tracker; zero `release-blocker` issues may remain.
 - Public governance, release, security-response, and registry processes are published.
-- At least one external L3 autonomy pilot exercises feedback/outcome correlation and the budget, audit, and authorization boundaries; a generic interoperability pilot does not satisfy this gate.
+- An external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation. Its published report names the implementation, L3 profile, transport, topology, and fixture/scenario-suite versions and records pass/fail evidence for feedback/outcome, budget, audit, and authorization; all four pass. A generic interoperability pilot does not satisfy this gate.
 - No new protocol features are added during the RC period.
 
 ### 1.0
