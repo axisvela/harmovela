@@ -31,14 +31,16 @@ The Event layer is the accumulated result of the project's first eight delivery 
 | 2. Transport bindings | stdio, WebSocket, HTTP SSE, gRPC streaming, plus NATS, Kafka, and Redis Streams |
 | 3. Reference implementation | Reference servers/clients, JSON Schema validation, local router, cross-language conformance |
 | 4. MCP bridge | MCP tool-call to task bridge, task-completion events from MCP tools, interop examples |
-| 5. Reliability and production semantics | Replay cursors, acknowledgement protocol, dead-letter events, retry policy, authorization and multi-tenant routing models |
-| 6. Ecosystem and governance | Public spec site, compatibility test suite, conformance levels, event-registry governance, contribution guide, code of conduct |
-| 7. Agent semantics and positioning | Differentiation document, agent-runtime-semantics spec, 15 agent-runtime metadata fields, six new event families, cross-language fixtures |
-| 8. Delivery end-to-end conformance | AEP-C3 level with `delivery_e2e`, full DeliveryTracker traces in all four languages, payload schema validation |
+| 5. Reliability and production semantics | Replay cursors, acknowledgement protocol, dead-letter events, and retry policy |
+| 6. Ecosystem and conformance | Public spec site, compatibility test suite, conformance levels, contribution guide, and code of conduct |
+| 7. Event-family conformance | Differentiation document, six new event families, and cross-language fixtures |
+| 8. Delivery end-to-end conformance | `HARMOVELA-C3` level with `delivery_e2e`, full DeliveryTracker traces in all four languages, payload schema validation |
+
+Identity, authorization, audit, tenant isolation, and registry governance are cross-cutting governance foundations. Delegation and runtime semantics are recorded in the Coordination layer because they establish multi-agent behavior above the event substrate.
 
 ## Current State
 
-The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/harmovela/. The default conformance target is AEP-C3 with DeliveryTracker integration in every language. A networked PostgreSQL delivery-store backend ships in all four languages alongside the in-memory and SQLite backends.
+The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/harmovela/. The default conformance target is `HARMOVELA-C3`. DeliveryTracker integration is available in every language. A networked PostgreSQL delivery-store backend ships in all four languages alongside the in-memory and SQLite backends.
 
 ## Remaining Foundation Work
 
@@ -48,7 +50,7 @@ The Event layer is functionally complete. The only open item is identity, tracke
 - Give legacy technical identifiers (schema URIs, wire version fields, package names, `AEP-C*` levels) an explicit compatibility policy.
 - Document the migration sequence for protocol identity, schema identifiers, package names, and repository paths — without silently changing wire behavior or delivery guarantees.
 
-Real artifact names such as `schemas/aep-envelope.schema.json` and `AEP-C3` remain valid until that versioned migration completes.
+Legacy technical identifiers such as `schemas/aep-envelope.schema.json` and `AEP-C3` remain valid until that versioned migration completes.
 
 ## Exit Criteria
 

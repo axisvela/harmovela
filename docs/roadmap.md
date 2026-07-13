@@ -1,6 +1,6 @@
 # Harmovela Protocol Roadmap
 
-> The protocol's formal working name is **Harmovela Protocol**. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases. Real artifact names such as `schemas/aep-envelope.schema.json` and `AEP-C3` stay valid until that migration completes.
+> The protocol's formal working name is **Harmovela Protocol**. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases. Legacy technical identifiers such as `schemas/aep-envelope.schema.json` and `AEP-C3` stay valid until that migration completes.
 
 ## Direction Of Travel
 
@@ -39,10 +39,11 @@ The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by
 | **0.2 Core Stabilization** | Coordination | L1 (frozen) | Freeze the L0–L1 coordination core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics. |
 | **0.3 Optional Profiles** | Coordination | L2 (tightened) | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. |
 | **0.4 Beta** | Coordination | L2 (interoperable) | Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix. |
+| **0.5 Adaptation Preview** | Adaptation | L3 (specified and testable) | Define feedback/outcome correlation and protocol-level budget authority, enforcement, and violation semantics; publish the L3 profile and cross-language conformance fixtures. |
 | **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate audit, budget, and authorization as protocol-level, conformance-tested behavior; run an external autonomy pilot. |
 | **1.0** | Adaptation | L3 (stable) | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. |
 
-Detailed entry and exit criteria for each release live in the layer document that owns it.
+Layer documents provide release-specific entry and exit gates.
 
 ## Immediate Next Step
 
@@ -54,9 +55,11 @@ The current frontier is the **[Coordination layer](roadmap/coordination-layer.md
 
 ## Layer Documents
 
+Layer documents classify historical work by the capability it enables, not the chronological phase that originally delivered it.
+
 - [Event layer](roadmap/event-layer.md) — foundation; absorbs completed Phases 0–8; stable (L0).
 - [Coordination layer](roadmap/coordination-layer.md) — active work; delegation and shared-truth semantics; releases 0.2–0.4 (L1–L2).
-- [Adaptation layer](roadmap/adaptation-layer.md) — future; feedback and governed production autonomy; releases 0.9–1.0 (L3), with L4/AGI as non-goals.
+- [Adaptation layer](roadmap/adaptation-layer.md) — future; feedback and governed production autonomy; releases 0.5–1.0 (L3), with L4/AGI as non-goals.
 
 ## Design Record
 
