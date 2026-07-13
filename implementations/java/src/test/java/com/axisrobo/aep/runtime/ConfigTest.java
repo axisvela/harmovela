@@ -1,7 +1,7 @@
 package com.axisrobo.aep.runtime;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.InMemoryDeliveryStore;
+import com.axisrobo.harmovela.recovery.DeliveryStore;
+import com.axisrobo.harmovela.recovery.InMemoryDeliveryStore;
 import org.junit.jupiter.api.Test;
 import java.nio.file.*;
 import java.util.Map;

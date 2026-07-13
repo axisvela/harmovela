@@ -1,9 +1,9 @@
 package com.axisrobo.aep.runtime;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.InMemoryDeliveryStore;
-import com.axisrobo.aep.SqliteDeliveryStore;
-import com.axisrobo.aep.PostgresDeliveryStore;
+import com.axisrobo.harmovela.recovery.DeliveryStore;
+import com.axisrobo.harmovela.recovery.InMemoryDeliveryStore;
+import com.axisrobo.harmovela.recovery.SqliteDeliveryStore;
+import com.axisrobo.harmovela.recovery.PostgresDeliveryStore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.file.Files;
