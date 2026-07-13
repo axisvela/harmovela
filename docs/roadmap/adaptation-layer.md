@@ -43,17 +43,49 @@ Open-ended, long-term autonomy where a system rewrites its own coordination beha
 
 These non-goals are load-bearing: they keep the 1.0 promise honest and prevent the protocol from claiming behavior it cannot guarantee.
 
+## 0.5 Adaptation Preview Deliverables
+
+- A feedback/outcome event specification that correlates each outcome to its task, goal, delegation chain, authority, and declared or consumed cost.
+- Budget semantics defining the authority that establishes a budget, the enforcement point, and limit-approaching and limit-exceeded events.
+- An L3 adaptation profile defining identifier, dependencies, capability negotiation, versioning, and conformance requirements.
+- Shared positive and negative fixtures for outcome correlation, authorized and unauthorized budget changes, limit approach, limit exceedance, and audit linkage.
+
 ## Release Mapping
 
 | Release | Focus | Target level |
 | --- | --- | --- |
-| **0.9 Release Candidate** | Validate audit, budget, and authorization as protocol-level, conformance-tested behavior; run at least one external autonomy pilot; no new feature expansion. | L3 (validated) |
+| **0.5 Adaptation Preview** | Specify and implement feedback/outcome correlation, budget authority/enforcement/violation semantics, L3 adaptation-profile declaration, and cross-language conformance fixtures. | L3 (specified and testable) |
+| **0.9 Release Candidate** | Validate the complete 0.5 L3 semantics without feature expansion through RC fixtures, compatibility matrix, governance/security/registry processes, and at least one external autonomy pilot. | L3 (validated) |
 | **1.0** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. | L3 (stable) |
 
-## Exit Criteria (for 1.0)
+## Release Gates
 
-- Feedback and outcome events are stable and correlatable.
-- Budget, audit, and authorization boundaries are protocol-level and pass conformance in every reference implementation.
+### 0.5 Adaptation Preview
+
+Entry criteria:
+- The L2 coordination profile is interoperable at 0.4.
+
+Exit criteria:
+- Feedback/outcome and budget specifications, L3 profile declaration, and shared fixtures are published.
+- Budget semantics identify authority, enforcement point, and observable limit-approaching and limit-exceeded outcomes.
+- Every reference implementation passes the declared L3 fixtures.
+
+### 0.9 Release Candidate
+
+Entry criteria:
+- 0.5 L3 specifications and fixtures are complete.
+- No unresolved breaking core, L2, or L3 semantic changes remain.
+
+Exit criteria:
+- Release-candidate fixtures and a public compatibility matrix pass across declared implementations.
+- Public governance, release, security-response, and registry processes are published.
+- At least one external deployment or interoperability pilot validates the L3 profile.
+- No new protocol features are added during the RC period.
+
+### 1.0
+
+Release criteria:
+- Stable feedback/outcome correlation and budget, audit, and authorization boundaries.
 - Repeatable conformance results across independently maintained implementations.
-- Documented governance, release, licensing, and trademark policies.
+- Documented governance, release, licensing, trademark, upgrade, and deprecation policies.
 - A published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals.

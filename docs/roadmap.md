@@ -40,7 +40,7 @@ The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by
 | **0.3 Optional Profiles** | Coordination | L2 (tightened) | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. |
 | **0.4 Beta** | Coordination | L2 (interoperable) | Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix. |
 | **0.5 Adaptation Preview** | Adaptation | L3 (specified and testable) | Define feedback/outcome correlation and protocol-level budget authority, enforcement, and violation semantics; publish the L3 profile and cross-language conformance fixtures. |
-| **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate audit, budget, and authorization as protocol-level, conformance-tested behavior; run an external autonomy pilot. |
+| **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate the complete 0.5 L3 semantics without feature expansion through RC fixtures, a public compatibility matrix, governance/security/registry processes, and an external autonomy pilot. |
 | **1.0** | Adaptation | L3 (stable) | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. |
 
 Layer documents provide release-specific entry and exit gates.
