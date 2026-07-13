@@ -1,10 +1,9 @@
 from datetime import datetime, timezone
 
-from .envelope import validate_envelope
-from .event_types import is_standard_event_type
-from .session import HarmovelaSession
+from axisrobo_harmovela_event import EventRouter, HarmovelaSession, is_standard_event_type, validate_envelope
+
+from .legacy_dimension_types import is_legacy_dimension_event_type
 from .task import TaskTracker
-from .router import EventRouter
 from .errors import ErrorCode, error_payload
 from .delivery import DeliveryTracker
 
@@ -59,17 +58,10 @@ class HarmovelaHarness:
                 "error": error_payload(ErrorCode.INVALID_ENVELOPE, errors[0]),
             })]
 
-        if not is_standard_event_type(value.get("type", "")) and not value.get("type", "").startswith("session."):
+        if not is_standard_event_type(value.get("type", "")) and not is_legacy_dimension_event_type(value.get("type", "")):
             return [self._event("event.rejected", value, {
                 "errors": [f"type not in standard draft registry: {value.get('type')}"],
                 "error": error_payload(ErrorCode.INVALID_EVENT_TYPE, f"unknown event type: {value.get('type')}", retryable=False),
-            })]
-
-        if value.get("aep_version"):
-            return [self._event("event.rejected", value, {
-                "errors": ["aep_version is not supported; use spec_version instead"],
-                "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, "use spec_version instead of aep_version",
-                                       details={"supported": ["0.2"]}),
             })]
 
         if value.get("spec_version") != "0.2":

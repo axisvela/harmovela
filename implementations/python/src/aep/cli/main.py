@@ -85,7 +85,7 @@ async def _emit_ws(url, event):
 @click.option("--url", default="ws://127.0.0.1:8787/harmovela", help="WebSocket URL")
 def subscribe(pattern, url):
     """Subscribe to Harmovela events over WebSocket."""
-    from ..subscription import matches_type
+    from axisrobo_harmovela_event import matches_type
     asyncio.run(_subscribe_ws(url, pattern, matches_type))
 
 

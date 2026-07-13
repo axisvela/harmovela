@@ -21,14 +21,13 @@ class TestEnvelope:
         assert "source" in joined
         assert "created_at" in joined
 
-    def test_rejects_unknown_type(self):
+    def test_envelope_validation_does_not_own_dimension_type_registry(self):
         errors = validate_envelope({
             "spec_version": "0.2", "id": "evt_01", "type": "custom.event.created",
             "source": "agent:test", "created_at": "2026-07-09T10:00:00Z", "payload": {},
         })
         assert is_standard_event_type("custom.event.created") is False
-        joined = "\n".join(errors)
-        assert "standard draft registry" in joined
+        assert errors == []
 
     def test_rejects_bad_created_at(self):
         errors = validate_envelope({
