@@ -6,6 +6,7 @@ import test from "node:test";
 import { validateEnvelope } from "../src/index.js";
 import { isValidBySchema } from "../src/schema.js";
 import { runConformance, verifyFixture } from "../src/conformance.js";
+import { HarmovelaHarness } from "../src/harness.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const conformanceDir = resolve(here, "../../../conformance");
@@ -14,6 +15,62 @@ const manifest = JSON.parse(readFileSync(resolve(conformanceDir, "manifest.json"
 test("conformance manifest declares Harmovela levels", () => {
   assert.deepEqual(manifest.levels, ["HARMOVELA-C0", "HARMOVELA-C1", "HARMOVELA-C2", "HARMOVELA-C3"]);
   assert.equal(manifest.default_target_level, "HARMOVELA-C3");
+});
+
+test("conformance manifest declares Event and Governance contract fixtures", () => {
+  assert.deepEqual(
+    manifest.fixtures
+      .filter((fixture) => ["fixtures/event-contract.ndjson", "fixtures/governance-contract.ndjson"].includes(fixture.path))
+      .map(({ path, level, expectation, profile }) => ({ path, level, expectation, profile })),
+    [
+      { path: "fixtures/event-contract.ndjson", level: "HARMOVELA-C1", expectation: "stateful_flow", profile: undefined },
+      { path: "fixtures/governance-contract.ndjson", level: "HARMOVELA-C0", expectation: "reject_some", profile: undefined }
+    ]
+  );
+});
+
+test("governance fixture requires the defined authorization outcomes", () => {
+  const events = readNdjson(resolve(conformanceDir, "fixtures/governance-contract.ndjson"));
+  assert.deepEqual(events.flatMap((event) => validateEnvelope(event)), []);
+  assert.equal(events.every((event) => isValidBySchema(event, "envelope")), true);
+
+  const responses = events.map((event) => new HarmovelaHarness().handle(event));
+  assert.deepEqual(
+    responses.map((response) => response.some((event) => event.type === "event.rejected")),
+    [false, true, true, false]
+  );
+  for (const response of responses.slice(1, 3)) {
+    const rejection = response.find((event) => event.type === "event.rejected");
+    assert.equal(rejection?.payload?.error?.code, "unauthorized");
+  }
+});
+
+test("governance fixture requires audit correlation and causation linkage", () => {
+  const events = readNdjson(resolve(conformanceDir, "fixtures/governance-contract.ndjson"));
+  const harness = new HarmovelaHarness();
+  events.forEach((event) => harness.handle(event));
+
+  assert.equal(Array.isArray(harness.audit), true, "expected governance audit records");
+  assert.deepEqual(
+    harness.audit.map(({ actor_id, tenant_id, action, target_tenant_id, allowed, correlation_id, causation_id }) => ({
+      actor_id,
+      tenant_id,
+      action,
+      target_tenant_id,
+      allowed,
+      correlation_id,
+      causation_id
+    })),
+    events.map(({ actor_id, tenant_id, requested_action, target_tenant_id, correlation_id, causation_id }, index) => ({
+      actor_id,
+      tenant_id,
+      action: requested_action,
+      target_tenant_id,
+      allowed: ![1, 2].includes(index),
+      correlation_id,
+      causation_id
+    }))
+  );
 });
 
 for (const fixture of manifest.fixtures) {

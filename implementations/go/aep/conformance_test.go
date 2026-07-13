@@ -31,11 +31,87 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	}
 }
 
+func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *testing.T, manifest *Manifest) {
+	t.Helper()
+	type fixtureDeclaration struct {
+		Path        string
+		Level       string
+		Expectation string
+	}
+	var contractFixtures []fixtureDeclaration
+	for _, fixture := range manifest.Fixtures {
+		if fixture.Path == "fixtures/event-contract.ndjson" || fixture.Path == "fixtures/governance-contract.ndjson" {
+			contractFixtures = append(contractFixtures, fixtureDeclaration{
+				Path:        fixture.Path,
+				Level:       fixture.Level,
+				Expectation: fixture.Expectation,
+			})
+		}
+	}
+
+	expected := []fixtureDeclaration{
+		{Path: "fixtures/event-contract.ndjson", Level: "HARMOVELA-C1", Expectation: "stateful_flow"},
+		{Path: "fixtures/governance-contract.ndjson", Level: "HARMOVELA-C0", Expectation: "reject_some"},
+	}
+	if !reflect.DeepEqual(contractFixtures, expected) {
+		t.Fatalf("expected Event and Governance contract fixture declarations %v, got %v", expected, contractFixtures)
+	}
+}
+
+func TestGovernanceFixtureRequiresDefinedAuthorizationOutcomes(t *testing.T) {
+	events, err := LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	if err != nil {
+		t.Fatalf("failed to load governance fixture: %v", err)
+	}
+	for i, event := range events {
+		if errs := ValidateEnvelope(event); len(errs) > 0 {
+			t.Fatalf("event %d envelope validation: %v", i, errs)
+		}
+	}
+
+	expectedRejected := []bool{false, true, true, false}
+	for i, event := range events {
+		responses := NewHarness().Handle(event)
+		rejected := false
+		for _, response := range responses {
+			if response["type"] == "event.rejected" {
+				rejected = true
+				payload := response["payload"].(map[string]any)
+				errorPayload := payload["error"].(map[string]any)
+				if i == 1 || i == 2 {
+					if errorPayload["code"] != "unauthorized" {
+						t.Fatalf("event %d error code: expected unauthorized, got %v", i, errorPayload["code"])
+					}
+				}
+			}
+		}
+		if rejected != expectedRejected[i] {
+			t.Fatalf("event %d rejected: expected %t, got %t", i, expectedRejected[i], rejected)
+		}
+	}
+}
+
+func TestGovernanceFixtureRequiresAuditCorrelationAndCausationLinkage(t *testing.T) {
+	events, err := LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	if err != nil {
+		t.Fatalf("failed to load governance fixture: %v", err)
+	}
+	harness := NewHarness()
+	for _, event := range events {
+		harness.Handle(event)
+	}
+	audit := reflect.ValueOf(harness).Elem().FieldByName("Audit")
+	if !audit.IsValid() || audit.Len() == 0 {
+		t.Fatal("expected governance audit records")
+	}
+}
+
 func TestConformanceFixtures(t *testing.T) {
 	manifest, err := LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
-		t.Fatalf("failed to load manifest: %v", err)
+		 t.Fatalf("failed to load manifest: %v", err)
 	}
+	assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t, manifest)
 
 	selectedProfile := os.Getenv("HARMOVELA_PROFILE")
 	if selectedProfile != "" {

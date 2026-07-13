@@ -6,6 +6,7 @@ import (
 
 	"github.com/axisrobo/harmovela/aep/store"
 	"github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/governance"
 )
 
 type TaskState string
@@ -141,6 +142,16 @@ func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[
 	}
 }
 
+type AuditRecord struct {
+	ActorID        string
+	TenantID       string
+	Action         string
+	TargetTenantID string
+	Allowed        bool
+	CorrelationID  string
+	CausationID    string
+}
+
 type Harness struct {
 	Source        string
 	sequence      int
@@ -149,6 +160,7 @@ type Harness struct {
 	router        *event.EventRouter
 	session       *event.HarmovelaSession
 	Delivery      *store.DeliveryTracker
+	Audit         []AuditRecord
 }
 
 func NewHarness() *Harness {
@@ -158,6 +170,7 @@ func NewHarness() *Harness {
 		tasks:         make(map[string]*TaskTracker),
 		router:        event.NewEventRouter(),
 		Delivery:      store.NewDeliveryTracker(nil, nil),
+		Audit:         make([]AuditRecord, 0),
 	}
 	h.setupRouter()
 	h.setupDeliveryRouter()
@@ -246,6 +259,45 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 			"errors": []string{"unsupported protocol version: " + v},
 			"error":  ErrorPayload(ErrorCodeUnsupportedVersion, "unsupported version "+v, false),
 		})}
+	}
+
+	if actorID, hasActor := value["actor_id"].(string); hasActor && actorID != "" {
+		if requestedAction, hasAction := value["requested_action"].(string); hasAction {
+			roles := make([]string, 0)
+			if rolesRaw, ok := value["roles"].([]any); ok {
+				for _, r := range rolesRaw {
+					if rs, ok := r.(string); ok {
+						roles = append(roles, rs)
+					}
+				}
+			}
+			tenantID, _ := value["tenant_id"].(string)
+			targetTenantID, _ := value["target_tenant_id"].(string)
+			correlationID, _ := value["correlation_id"].(string)
+			causationID, _ := value["causation_id"].(string)
+
+			decision := governance.Authorize(governance.PolicyRequest{
+				ActorID:      actorID,
+				ActorTenant:  tenantID,
+				Roles:        roles,
+				Action:       requestedAction,
+				TargetTenant: targetTenantID,
+			})
+			h.Audit = append(h.Audit, AuditRecord{
+				ActorID:        actorID,
+				TenantID:       tenantID,
+				Action:         requestedAction,
+				TargetTenantID: targetTenantID,
+				Allowed:        decision.Allowed,
+				CorrelationID:  correlationID,
+				CausationID:    causationID,
+			})
+			if !decision.Allowed {
+				return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
+					"error": ErrorPayload(ErrorCodeUnauthorized, "governance denied: "+decision.Reason, false),
+				})}
+			}
+		}
 	}
 
 	if delivery, ok := value["delivery"].(map[string]any); ok {

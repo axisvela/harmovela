@@ -58,6 +58,62 @@ def test_conformance_manifest_declares_known_draft_levels():
     assert MANIFEST["default_target_level"] == "HARMOVELA-C3"
 
 
+def test_conformance_manifest_declares_event_and_governance_contract_fixtures():
+    contract_fixtures = [
+        {
+            key: fixture[key]
+            for key in ("path", "level", "expectation")
+        }
+        for fixture in MANIFEST["fixtures"]
+        if fixture["path"] in ("fixtures/event-contract.ndjson", "fixtures/governance-contract.ndjson")
+    ]
+    assert contract_fixtures == [
+        {"path": "fixtures/event-contract.ndjson", "level": "HARMOVELA-C1", "expectation": "stateful_flow"},
+        {"path": "fixtures/governance-contract.ndjson", "level": "HARMOVELA-C0", "expectation": "reject_some"},
+    ]
+
+
+def test_governance_fixture_requires_defined_authorization_outcomes():
+    events = _read_ndjson(CONFORMANCE_DIR / "fixtures/governance-contract.ndjson")
+    assert all(validate_envelope(event) == [] for event in events)
+    assert all(is_valid_by_schema(event, "envelope") for event in events)
+
+    responses = [HarmovelaHarness().handle(event) for event in events]
+    assert [any(response["type"] == "event.rejected" for response in result) for result in responses] == [
+        False, True, True, False,
+    ]
+    for result in responses[1:3]:
+        rejection = next(response for response in result if response["type"] == "event.rejected")
+        assert rejection["payload"]["error"]["code"] == "unauthorized"
+
+
+def test_governance_fixture_requires_audit_correlation_and_causation_linkage():
+    events = _read_ndjson(CONFORMANCE_DIR / "fixtures/governance-contract.ndjson")
+    harness = HarmovelaHarness()
+    for event in events:
+        harness.handle(event)
+
+    assert hasattr(harness, "audit"), "expected governance audit records"
+    assert [
+        {
+            key: audit[key]
+            for key in ("actor_id", "tenant_id", "action", "target_tenant_id", "allowed", "correlation_id", "causation_id")
+        }
+        for audit in harness.audit
+    ] == [
+        {
+            "actor_id": event["actor_id"],
+            "tenant_id": event["tenant_id"],
+            "action": event["requested_action"],
+            "target_tenant_id": event["target_tenant_id"],
+            "allowed": index not in (1, 2),
+            "correlation_id": event["correlation_id"],
+            "causation_id": event["causation_id"],
+        }
+        for index, event in enumerate(events)
+    ]
+
+
 @pytest.mark.parametrize("fixture", _target_fixtures(), ids=lambda f: f["path"])
 def test_conformance_fixture_validation(fixture: dict):
     events = _read_ndjson(CONFORMANCE_DIR / fixture["path"])

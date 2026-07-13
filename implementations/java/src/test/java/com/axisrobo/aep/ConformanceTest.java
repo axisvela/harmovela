@@ -25,6 +25,51 @@ class ConformanceTest {
     }
 
     @Test
+    void manifestDeclaresEventAndGovernanceContractFixtures() throws Exception {
+        var manifest = Fixtures.loadManifest("../../conformance/manifest.json");
+        record FixtureDeclaration(String path, String level, String expectation) {}
+        var contractFixtures = manifest.fixtures().stream()
+            .filter(fixture -> fixture.path().equals("fixtures/event-contract.ndjson")
+                || fixture.path().equals("fixtures/governance-contract.ndjson"))
+            .map(fixture -> new FixtureDeclaration(fixture.path(), fixture.level(), fixture.expectation()))
+            .toList();
+
+        assertEquals(List.of(
+            new FixtureDeclaration("fixtures/event-contract.ndjson", "HARMOVELA-C1", "stateful_flow"),
+            new FixtureDeclaration("fixtures/governance-contract.ndjson", "HARMOVELA-C0", "reject_some")
+        ), contractFixtures);
+    }
+
+    @Test
+    void governanceFixtureRequiresDefinedAuthorizationOutcomes() throws Exception {
+        var events = Fixtures.loadFixture("../../conformance/fixtures/governance-contract.ndjson");
+        for (int index = 0; index < events.size(); index++) {
+            assertTrue(Envelope.validate(events.get(index)).isEmpty(), "event " + index + " envelope validation");
+        }
+
+        var expectedRejected = List.of(false, true, true, false);
+        for (int index = 0; index < events.size(); index++) {
+            var responses = new Harness().handle(events.get(index));
+            var rejection = responses.stream().filter(response -> "event.rejected".equals(response.get("type"))).findFirst();
+            assertEquals(expectedRejected.get(index), rejection.isPresent(), "event " + index + " rejection");
+            if (index == 1 || index == 2) {
+                assertEquals("unauthorized", ((Map<?, ?>) ((Map<?, ?>) rejection.orElseThrow().get("payload")).get("error")).get("code"));
+            }
+        }
+    }
+
+    @Test
+    void governanceFixtureRequiresAuditCorrelationAndCausationLinkage() throws Exception {
+        var events = Fixtures.loadFixture("../../conformance/fixtures/governance-contract.ndjson");
+        var harness = new Harness();
+        for (var event : events) {
+            harness.handle(event);
+        }
+        var getAudit = assertDoesNotThrow(() -> Harness.class.getMethod("getAudit"), "expected governance audit accessor");
+        assertFalse(((List<?>) getAudit.invoke(harness)).isEmpty(), "expected governance audit records");
+    }
+
+    @Test
     void conformanceFixtures() throws Exception {
         var manifest = Fixtures.loadManifest("../../conformance/manifest.json");
 

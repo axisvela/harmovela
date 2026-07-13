@@ -94,6 +94,16 @@
       ]
     },
     {
+      "path": "fixtures/event-contract.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Harmovela Event contract: validate, route, and acknowledge.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "event",
+        "contract"
+      ]
+    },
+    {
       "path": "fixtures/event-core.ndjson",
       "level": "HARMOVELA-C1",
       "description": "Event control flow: session open/ready, subscription request/creation, routed heartbeat, and subscription cancellation.",
@@ -111,6 +121,18 @@
         "subscription.created",
         "session.heartbeat",
         "subscription.cancelled"
+      ]
+    },
+    {
+      "path": "fixtures/governance-contract.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Governance RBAC, tenant-isolation, and audit-linkage decisions.",
+      "expectation": "reject_some",
+      "tags": [
+        "governance",
+        "authorization",
+        "tenant-isolation",
+        "audit"
       ]
     },
     {

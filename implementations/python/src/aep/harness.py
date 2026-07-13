@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from axisrobo_harmovela_event import EventRouter, HarmovelaSession, is_standard_event_type, validate_envelope
+from axisrobo_harmovela_governance import authorize
 
 from .legacy_dimension_types import is_legacy_dimension_event_type
 from .task import TaskTracker
@@ -18,6 +19,7 @@ class HarmovelaHarness:
         self._router = EventRouter()
         self._session: HarmovelaSession | None = None
         self._delivery = DeliveryTracker()
+        self._audit: list[dict] = []
         self._setup_router()
         self._setup_delivery_router()
 
@@ -32,6 +34,10 @@ class HarmovelaHarness:
     @property
     def tasks(self) -> dict:
         return dict(self._tasks)
+
+    @property
+    def audit(self) -> list[dict]:
+        return self._audit
 
     def _setup_router(self):
         self._router \
@@ -68,8 +74,32 @@ class HarmovelaHarness:
             return [self._event("event.rejected", value, {
                 "errors": [f"unsupported protocol version: {value.get('spec_version')}"],
                 "error": error_payload(ErrorCode.UNSUPPORTED_VERSION, f"unsupported version {value.get('spec_version')}",
-                                       details={"supported": ["0.2"]}),
+                                        details={"supported": ["0.2"]}),
             })]
+
+        if value.get("actor_id") and value.get("requested_action"):
+            decision = authorize(
+                {
+                    "actor_id": value["actor_id"],
+                    "tenant_id": value.get("tenant_id"),
+                    "roles": value.get("roles", []),
+                },
+                value["requested_action"],
+                value.get("target_tenant_id"),
+            )
+            self._audit.append({
+                "actor_id": value["actor_id"],
+                "tenant_id": value.get("tenant_id"),
+                "action": value["requested_action"],
+                "target_tenant_id": value.get("target_tenant_id"),
+                "allowed": decision["allowed"],
+                "correlation_id": value.get("correlation_id"),
+                "causation_id": value.get("causation_id"),
+            })
+            if not decision["allowed"]:
+                return [self._event("event.rejected", value, {
+                    "error": error_payload(ErrorCode.UNAUTHORIZED, f"governance denied: {decision['reason']}"),
+                })]
 
         delivery = value.get("delivery", {})
         if isinstance(delivery, dict) and delivery.get("mode"):

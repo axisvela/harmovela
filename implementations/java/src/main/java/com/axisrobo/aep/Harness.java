@@ -2,6 +2,7 @@ package com.axisrobo.aep;
 
 import com.axisrobo.harmovela.event.router.EventRouter;
 import com.axisrobo.harmovela.event.session.Session;
+import com.axisrobo.harmovela.governance.GovernancePolicy;
 import java.time.Instant;
 import java.util.*;
 
@@ -13,6 +14,7 @@ public class Harness {
     private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
     private final EventRouter router = new EventRouter();
     private final DeliveryTracker delivery;
+    private final List<Map<String, Object>> audit = new ArrayList<>();
     private Session session;
 
     public Harness() {
@@ -36,6 +38,7 @@ public class Harness {
     public Map<String, Map<String, Object>> getSubscriptions() { return subscriptions; }
     public Map<String, TaskTracker> getTasks() { return tasks; }
     public DeliveryTracker getDelivery() { return delivery; }
+    public List<Map<String, Object>> getAudit() { return audit; }
 
     private void setupDeliveryRouter() {
         router
@@ -65,6 +68,34 @@ public class Harness {
                 "errors", List.of("unsupported protocol version: " + value.get("spec_version")),
                 "error", Errors.errorPayload(Errors.UNSUPPORTED_VERSION, "unsupported version " + value.get("spec_version"), false)
             )));
+        }
+
+        var actorId = (String) value.get("actor_id");
+        var requestedAction = (String) value.get("requested_action");
+        if (actorId != null && requestedAction != null) {
+            var tenantId = (String) value.get("tenant_id");
+            var targetTenantId = (String) value.get("target_tenant_id");
+            var correlationId = (String) value.get("correlation_id");
+            var causationId = (String) value.get("causation_id");
+            @SuppressWarnings("unchecked")
+            var roles = (List<String>) value.getOrDefault("roles", List.of());
+
+            var decision = GovernancePolicy.authorize(actorId, tenantId, roles, requestedAction, targetTenantId);
+            var auditEntry = new LinkedHashMap<String, Object>();
+            auditEntry.put("actor_id", actorId);
+            auditEntry.put("tenant_id", tenantId);
+            auditEntry.put("action", requestedAction);
+            auditEntry.put("target_tenant_id", targetTenantId);
+            auditEntry.put("allowed", decision.allowed());
+            auditEntry.put("correlation_id", correlationId);
+            auditEntry.put("causation_id", causationId);
+            audit.add(auditEntry);
+
+            if (!decision.allowed()) {
+                return List.of(newEvent("event.rejected", value, Map.of(
+                    "error", Errors.errorPayload(Errors.UNAUTHORIZED, "governance denied: " + decision.reason(), false)
+                )));
+            }
         }
 
         var deliveryMeta = value.get("delivery");

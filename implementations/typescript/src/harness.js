@@ -5,6 +5,7 @@ import { TaskTracker } from "./task.js";
 import { ErrorCode, errorPayload } from "./errors.js";
 import { isLegacyDimensionEventType } from "./legacy-dimension-types.js";
 import { DeliveryTracker } from "./delivery.js";
+import { authorize } from "@axisrobo/harmovela-governance";
 
 export class HarmovelaHarness {
   constructor(options = {}) {
@@ -17,10 +18,13 @@ export class HarmovelaHarness {
     this._router = new EventRouter();
     this._session = null;
     this.delivery = new DeliveryTracker(options.delivery);
+    this._audit = [];
 
     this._setupRouter();
     this._setupDeliveryRouter();
   }
+
+  get audit() { return this._audit; }
 
   get session() { return this._session; }
   get subscriptions() { return new Map(this._subscriptions); }
@@ -72,6 +76,32 @@ export class HarmovelaHarness {
         errors: [`unsupported protocol version: ${value.spec_version}`],
         error: errorPayload(ErrorCode.UNSUPPORTED_VERSION, `unsupported version ${value.spec_version}`, { details: { supported: ["0.2"] } })
       })];
+    }
+
+    if (value.actor_id && value.requested_action) {
+      const decision = authorize({
+        actor: {
+          actorId: value.actor_id,
+          tenantId: value.tenant_id,
+          roles: value.roles ?? []
+        },
+        action: value.requested_action,
+        targetTenant: value.target_tenant_id
+      });
+      this._audit.push({
+        actor_id: value.actor_id,
+        tenant_id: value.tenant_id,
+        action: value.requested_action,
+        target_tenant_id: value.target_tenant_id,
+        allowed: decision.allowed,
+        correlation_id: value.correlation_id,
+        causation_id: value.causation_id
+      });
+      if (!decision.allowed) {
+        return [this._event("event.rejected", value, {
+          error: errorPayload(ErrorCode.UNAUTHORIZED, `governance denied: ${decision.reason}`)
+        })];
+      }
     }
 
     if (value.delivery?.mode) {

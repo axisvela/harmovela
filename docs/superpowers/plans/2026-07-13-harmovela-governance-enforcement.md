@@ -39,6 +39,20 @@ Expected: failures identify absent fixture declarations or absent authorization 
 
 Create fixture events that carry `actor_id`, `tenant_id`, `roles`, requested action, target tenant, and correlation identifiers. Declare a new `governance_flow` expectation only after every runner implements it in Task 3.
 
+**Task 1 manifest declaration deferral:** The existing runners cannot safely execute a `governance_flow` expectation: TypeScript rejects it as unsupported, while the other runners have no governance-specific outcome or audit assertions. Task 3 must add this manifest entry only after every runner recognizes `governance_flow` and asserts each record in order:
+
+```json
+{
+  "path": "fixtures/governance-contract.ndjson",
+  "level": "HARMOVELA-C0",
+  "description": "RBAC, tenant-isolation, and audit-linkage decisions.",
+  "expectation": "governance_flow",
+  "tags": ["governance", "authorization", "tenant-isolation", "audit"],
+  "expected_outcomes": ["allowed", "unauthorized", "unauthorized", "allowed"],
+  "audit_fields": ["actor_id", "tenant_id", "action", "target_tenant_id", "allowed", "correlation_id", "causation_id"]
+}
+```
+
 ### Task 2: Add identical RBAC policy contracts
 
 **Files:**
