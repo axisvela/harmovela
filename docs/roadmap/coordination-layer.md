@@ -85,9 +85,9 @@ Entry criteria:
 
 Exit criteria:
 - A named `harmovela.coordination.v1` manifest/profile declaration is published.
-- At least two independently maintained implementations run the standard stdio or WebSocket session topology at the L2 coordination profile.
+- At least two independently maintained implementations run the same declared, named, versioned standard topology (`stdio` or `WebSocket`) at the L2 coordination profile.
 - The async task orchestration, shared state/context invalidation, and delegated task handoff scenarios each pass their declared fixture assertions.
-- A public conformance matrix records implementation version, profile, topology, and results.
+- A public conformance matrix records implementation version, profile, topology identifier and version, and versioned scenario and fixture identifiers and results.
 - Zero open core or L2 conformance issues are classified blocker or critical.
 - A community governance proposal is published.
 
