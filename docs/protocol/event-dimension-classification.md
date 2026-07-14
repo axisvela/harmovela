@@ -12,7 +12,9 @@ Classification of legacy undimensioned event types into Harmovela coordination d
 | `delegation.*` | Delegation | Already in `Delegation` module |
 | `interruption.*`, `compensation.*` | Recovery | In `Recovery` module; spread into legacy registries |
 | `task.*` | Task | Already in `Task` module; may benefit from future spreading |
-| `tool.call.*`, `agent.*`, `environment.*` | — | Domain-level (no dimension module needed) |
+| `tool.call.*` | Tool | In `Tool` module; spread into legacy registries |
+| `agent.*` | — | Domain-level (no dimension module needed) |
+| `environment.*` | — | Domain-level (no dimension module needed) |
 
 ## Rationale
 
@@ -22,4 +24,6 @@ Classification of legacy undimensioned event types into Harmovela coordination d
 
 **Recovery dimension** (`interruption.*`, `compensation.*`): Interruption lifecycle and compensation semantics belong to the Resilience/Recovery dimension. The `Recovery` module owns these and they are spread into legacy registries.
 
-**Domain-level** (`tool.call.*`, `agent.*`, `environment.*`): These describe domain-specific application behavior (tool execution, agent messaging, environment observation). They are not protocol coordination concerns and do not require a dedicated dimension module at this time.
+**Tool dimension** (`tool.call.*`): Covers tool invocation lifecycle (MCP bridge). The `Tool` module owns these and they are spread into legacy registries.
+
+**Domain-level** (`agent.*`, `environment.*`): These describe domain-specific application behavior (agent messaging, environment observation). They are not protocol coordination concerns and do not require a dedicated dimension module at this time.

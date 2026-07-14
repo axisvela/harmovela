@@ -10,7 +10,8 @@
     "packages/task",
     "packages/context",
     "packages/delegation",
-    "packages/state"
+    "packages/state",
+    "packages/tool"
   ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
@@ -41,6 +42,7 @@
     "@axisrobo/harmovela-context": "file:packages/context",
     "@axisrobo/harmovela-delegation": "file:packages/delegation",
     "@axisrobo/harmovela-state": "file:packages/state",
+    "@axisrobo/harmovela-tool": "file:packages/tool",
     "@grpc/grpc-js": "^1.11.0",
     "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",

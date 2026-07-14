@@ -2,6 +2,7 @@ import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisrobo/harmovela-context";
 import { DELEGATION_EVENT_TYPES } from "@axisrobo/harmovela-delegation";
 import { RECOVERY_EVENT_TYPES } from "@axisrobo/harmovela-recovery";
 import { STATE_EVENT_TYPES } from "@axisrobo/harmovela-state";
+import { TOOL_EVENT_TYPES } from "@axisrobo/harmovela-tool";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -9,17 +10,6 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.redelivered",
   "event.replayed",
   "event.dead_lettered",
-  "tool.call.requested",
-  "tool.call.accepted",
-  "tool.call.rejected",
-  "tool.call.started",
-  "tool.call.progress",
-  "tool.call.output",
-  "tool.call.completed",
-  "tool.call.failed",
-  "tool.call.cancel.requested",
-  "tool.call.cancelled",
-  "tool.call.timed_out",
   "task.submitted",
   "task.accepted",
   "task.started",
@@ -35,6 +25,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   ...DELEGATION_EVENT_TYPES,
   ...RECOVERY_EVENT_TYPES,
   ...STATE_EVENT_TYPES,
+  ...TOOL_EVENT_TYPES,
   "agent.message.sent",
   "agent.message.received",
   "agent.message.failed",
