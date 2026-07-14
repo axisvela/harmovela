@@ -4,7 +4,7 @@
 
 **Autonomy mapping:** L0 (event-aware agent).
 
-**Status:** Delivered and stable. This is the frozen baseline of the protocol.
+**Status:** Delivered and stable. This is the frozen baseline of the protocol. 0.1 Transition completed: the public Harmovela identity is established, all wire identity decisions are resolved, the `aep` namespace has been removed from protocol surfaces, and legacy technical identifiers carry an explicit versioned compatibility policy.
 
 ## Purpose
 
@@ -44,18 +44,20 @@ The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-l
 
 ## Remaining Foundation Work
 
-The Event layer is functionally complete. The only open item is identity, tracked as the release-path **0.1 Transition**:
+The Event layer is functionally complete. Identity migration is delivered as the 0.1 Transition — all work items below are complete:
 
-- Establish **Harmovela** as the public protocol identity in all documentation.
-- Give legacy technical identifiers (schema URIs, wire version fields, package names, `AEP-C*` levels) an explicit compatibility policy.
-- Document the migration sequence for protocol identity, schema identifiers, package names, and repository paths — without silently changing wire behavior or delivery guarantees.
+- **Harmovela** established as the public protocol identity in all documentation. ✓
+- Legacy technical identifiers (schema URIs, wire version fields, package names, `AEP-C*` levels) carry an explicit compatibility policy. ✓
+- The migration sequence for protocol identity, schema identifiers, package names, and repository paths is documented — wire behavior and delivery guarantees remain unchanged. ✓
+- The `aep` namespace has been removed from all protocol surfaces; dimension modules are no longer under a legacy `aep` namespace. ✓
 
-Legacy technical identifiers such as `schemas/aep-envelope.schema.json` and `AEP-C3` remain valid until that versioned migration completes.
+No remaining Event-layer work is scheduled.
 
-## Exit Criteria
+## Exit Criteria — All Met
 
-- Public documentation consistently identifies Harmovela as the protocol.
-- Legacy technical identifiers have an explicit, versioned compatibility policy.
-- No regressions in the frozen event substrate.
+- Public documentation consistently identifies Harmovela as the protocol. ✓
+- Legacy technical identifiers have an explicit, versioned compatibility policy. ✓
+- The `aep` namespace is removed from protocol surfaces. ✓
+- No regressions in the frozen event substrate. ✓
 
-Once the identity migration is documented, the Event layer's forward work is done and effort concentrates on the [Coordination layer](coordination-layer.md).
+The Event layer's forward work is done. Effort has moved up to the [Coordination layer](coordination-layer.md) and [Adaptation layer](adaptation-layer.md).

@@ -10,9 +10,9 @@ Harmovela's value grows through a **capability maturity stack**. Each layer depe
 | --- | --- | --- | --- | --- |
 | **Event** | What happened? — typed, correlatable communication substrate | L0 | Delivered / stable | [event-layer.md](roadmap/event-layer.md) |
 | **Coordination** | Who does what, on what shared truth? — delegation, ownership, state agreement | L1–L2 | Active, semantics tightening | [coordination-layer.md](roadmap/coordination-layer.md) |
-| **Adaptation** | How does the system observe, adjust, and evolve? — feedback, production-autonomy boundaries | L3 (in scope); L4/AGI (non-goals) | Future | [adaptation-layer.md](roadmap/adaptation-layer.md) |
+| **Adaptation** | How does the system observe, adjust, and evolve? — feedback, production-autonomy boundaries | L3 (in scope); L4/AGI (non-goals) | Delivered | [adaptation-layer.md](roadmap/adaptation-layer.md) |
 
-**Where we are now:** the Event layer is complete and stable. Active work is tightening the Coordination layer so multiple agents can be delegated to and reconcile shared state interoperably. The Adaptation layer — feedback, then governed production autonomy — is the next horizon.
+**Where we are now:** the Event layer is complete and stable (0.1 delivered). The Coordination layer is delivered and interoperable (0.2–0.4 delivered). The Adaptation layer feedback/outcome and L3 autonomy boundaries are specified and conformance-tested (0.5 delivered). The immediate next step is 0.9 RC validation of the complete L3 semantics.
 
 ## Autonomy Ladder
 
@@ -33,21 +33,21 @@ Harmovela is a coordination protocol, not an intelligence model. Version milesto
 
 The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by the layer it advances and the autonomy level it targets.
 
-| Release | Advances | Target level | Goal |
-| --- | --- | --- | --- |
-| **0.1 Transition** | Event | L0–L1 (documented) | Establish the Harmovela identity and document the L1 policy surface without changing wire behavior. |
-| **0.2 Core Stabilization** | Coordination | L1 (frozen) | Freeze the L0–L1 coordination core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics. |
-| **0.3 Optional Profiles** | Coordination | L2 (tightened) | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. |
-| **0.4 Beta** | Coordination | L2 (interoperable) | Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix. |
-| **0.5 Adaptation Preview** | Adaptation | L3 (specified and testable) | Define feedback/outcome correlation and protocol-level budget, audit, and authorization semantics; publish the L3 profile and cross-language conformance fixtures. |
-| **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. |
-| **1.0** | Adaptation | L3 (stable) | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. |
+| Release | Advances | Target level | Goal | Delivered |
+| --- | --- | --- | --- | --- |
+| **0.1 Transition** | Event | L0–L1 (documented) | Establish the Harmovela identity and document the L1 policy surface without changing wire behavior. | :white_check_mark: |
+| **0.2 Core Stabilization** | Coordination | L1 (frozen) | Freeze the L0–L1 coordination core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics. | :white_check_mark: |
+| **0.3 Optional Profiles** | Coordination | L2 (tightened) | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. | :white_check_mark: |
+| **0.4 Beta** | Coordination | L2 (interoperable) | Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix. | :white_check_mark: |
+| **0.5 Adaptation Preview** | Adaptation | L3 (specified and testable) | Define feedback/outcome correlation and protocol-level budget, audit, and authorization semantics; publish the L3 profile and cross-language conformance fixtures. | :white_check_mark: |
+| **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. | |
+| **1.0** | Adaptation | L3 (stable) | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. | |
 
 Layer documents provide release-specific entry and exit gates.
 
 ## Immediate Next Step
 
-The current frontier is the **[Coordination layer](roadmap/coordination-layer.md)**. With 0.1 identity migration done, the L1 policy surface documented, and delegation semantics tightened, the immediate next-step priorities are:
+The current frontier is the **[Adaptation layer](roadmap/adaptation-layer.md)**. With 0.1 through 0.5 delivered, the immediate next-step priorities are:
 
 1. **0.9 RC validation** — validate the complete 0.5 Adaptation Preview L3 semantics without feature expansion through reproducible RC fixtures, a compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.
 2. **1.0 release preparation** — publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.
@@ -58,7 +58,7 @@ Layer documents classify historical work by the capability it enables, not the c
 
 - [Event layer](roadmap/event-layer.md) — foundation; absorbs completed Phases 0–8; stable (L0).
 - [Coordination layer](roadmap/coordination-layer.md) — active work; delegation and shared-truth semantics; releases 0.2–0.4 (L1–L2).
-- [Adaptation layer](roadmap/adaptation-layer.md) — future; feedback and governed production autonomy; releases 0.5–1.0 (L3), with L4/AGI as non-goals.
+- [Adaptation layer](roadmap/adaptation-layer.md) — delivered; feedback and governed production autonomy; releases 0.5–1.0 (L3), with L4/AGI as non-goals.
 
 ## Design Record
 

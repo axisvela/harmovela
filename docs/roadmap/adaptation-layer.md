@@ -1,10 +1,10 @@
-# Adaptation Layer — Future Horizon
+# Adaptation Layer — Delivered
 
 > Part of the [Harmovela roadmap](../roadmap.md). This layer answers **"How does the system observe outcomes, adjust, and evolve?"** — the semantics that sit above [Coordination](coordination-layer.md) once multiple agents can reliably work together.
 
 **Autonomy mapping:** L3 (production autonomy with audit, budget, and authorization boundaries) is in scope for 1.0. L4 (open-ended long-term autonomy) and AGI (general intelligence) are explicit non-goals.
 
-**Status:** Delivered - 0.5 Adaptation Preview.
+**Status:** Delivered — 0.5 Adaptation Preview. Evidence: 11 adaptation event types defined and registered; budget enforcement semantics integrated with the harness; 4 cross-language adaptation conformance fixtures pass across all reference implementations.
 
 ## Purpose
 
