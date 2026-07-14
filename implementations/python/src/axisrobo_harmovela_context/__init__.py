@@ -14,6 +14,11 @@ CONTEXT_MEMORY_EVENT_TYPES = frozenset({
     "memory.constraint.updated",
     "memory.summary.ready",
     "memory.retrieval.ready",
+    "belief.revised",
+    "belief.conflict.detected",
+    "provenance.attestation.added",
+    "provenance.attestation.revoked",
+    "provenance.chain.truncated",
 })
 
 

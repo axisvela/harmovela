@@ -20,7 +20,12 @@ public final class ContextMemoryTypes {
         "memory.preference.updated",
         "memory.constraint.updated",
         "memory.summary.ready",
-        "memory.retrieval.ready"
+        "memory.retrieval.ready",
+        "belief.revised",
+        "belief.conflict.detected",
+        "provenance.attestation.added",
+        "provenance.attestation.revoked",
+        "provenance.chain.truncated"
     );
 
     public static boolean isContextMemoryEventType(String type) {

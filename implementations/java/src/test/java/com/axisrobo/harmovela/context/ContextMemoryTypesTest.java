@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ContextMemoryTypesTest {
     @Test
-    void includesAll15RegistryEntries() {
-        assertEquals(15, ContextMemoryTypes.EVENT_TYPES.size());
+    void includesAll20RegistryEntries() {
+        assertEquals(20, ContextMemoryTypes.EVENT_TYPES.size());
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("context.updated"));
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("context.invalidated"));
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("context.snapshot.requested"));
@@ -23,6 +23,11 @@ class ContextMemoryTypesTest {
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("memory.constraint.updated"));
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("memory.summary.ready"));
         assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("memory.retrieval.ready"));
+        assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("belief.revised"));
+        assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("belief.conflict.detected"));
+        assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("provenance.attestation.added"));
+        assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("provenance.attestation.revoked"));
+        assertTrue(ContextMemoryTypes.EVENT_TYPES.contains("provenance.chain.truncated"));
     }
 
     @Test
@@ -31,6 +36,11 @@ class ContextMemoryTypesTest {
         assertTrue(ContextMemoryTypes.isContextMemoryEventType("context.invalidated"));
         assertTrue(ContextMemoryTypes.isContextMemoryEventType("memory.fact.added"));
         assertTrue(ContextMemoryTypes.isContextMemoryEventType("memory.retrieval.ready"));
+        assertTrue(ContextMemoryTypes.isContextMemoryEventType("belief.revised"));
+        assertTrue(ContextMemoryTypes.isContextMemoryEventType("belief.conflict.detected"));
+        assertTrue(ContextMemoryTypes.isContextMemoryEventType("provenance.attestation.added"));
+        assertTrue(ContextMemoryTypes.isContextMemoryEventType("provenance.attestation.revoked"));
+        assertTrue(ContextMemoryTypes.isContextMemoryEventType("provenance.chain.truncated"));
     }
 
     @Test

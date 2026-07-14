@@ -16,6 +16,11 @@ var EventTypes = map[string]bool{
 	"memory.constraint.updated":   true,
 	"memory.summary.ready":        true,
 	"memory.retrieval.ready":      true,
+	"belief.revised":              true,
+	"belief.conflict.detected":    true,
+	"provenance.attestation.added": true,
+	"provenance.attestation.revoked": true,
+	"provenance.chain.truncated":  true,
 }
 
 func IsEventType(typ string) bool {

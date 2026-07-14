@@ -2,7 +2,7 @@ package context
 
 import "testing"
 
-func TestContextMemoryEventTypesIncludesAll15RegistryEntries(t *testing.T) {
+func TestContextMemoryEventTypesIncludesAll20RegistryEntries(t *testing.T) {
 	expected := []string{
 		"context.updated",
 		"context.invalidated",
@@ -19,6 +19,11 @@ func TestContextMemoryEventTypesIncludesAll15RegistryEntries(t *testing.T) {
 		"memory.constraint.updated",
 		"memory.summary.ready",
 		"memory.retrieval.ready",
+		"belief.revised",
+		"belief.conflict.detected",
+		"provenance.attestation.added",
+		"provenance.attestation.revoked",
+		"provenance.chain.truncated",
 	}
 	for _, typ := range expected {
 		if !EventTypes[typ] {
@@ -36,6 +41,11 @@ func TestIsEventTypePositives(t *testing.T) {
 		"context.invalidated",
 		"memory.fact.added",
 		"memory.retrieval.ready",
+		"belief.revised",
+		"belief.conflict.detected",
+		"provenance.attestation.added",
+		"provenance.attestation.revoked",
+		"provenance.chain.truncated",
 	} {
 		if !IsEventType(typ) {
 			t.Errorf("expected true for %s", typ)

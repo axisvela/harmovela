@@ -13,7 +13,12 @@ export const CONTEXT_MEMORY_EVENT_TYPES = new Set([
   "memory.preference.updated",
   "memory.constraint.updated",
   "memory.summary.ready",
-  "memory.retrieval.ready"
+  "memory.retrieval.ready",
+  "belief.revised",
+  "belief.conflict.detected",
+  "provenance.attestation.added",
+  "provenance.attestation.revoked",
+  "provenance.chain.truncated"
 ]);
 
 export function isContextMemoryEventType(type) {
