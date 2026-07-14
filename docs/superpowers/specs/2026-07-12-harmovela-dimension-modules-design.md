@@ -78,3 +78,12 @@ This design requires an explicit major-version compatibility decision before imp
 - This design does not promise a universal AGI architecture.
 - This design does not move Adaptation ahead of stable Coordination semantics.
 - This design does not preserve public `aep` compatibility after the designated breaking release.
+
+## Extraction Readiness
+
+Before any dimension package may be extracted from a legacy implementation, the following preconditions must be met:
+
+- Compatibility matrix has an approved decision for every public legacy surface touched by the extraction.
+- Event and Governance contract fixtures pass in all four languages.
+- The dimension's public contract, dependencies, profile relationship, and fixture ownership are documented.
+- The change has a language-specific migration plan and does not infer a Protocol release from package work.

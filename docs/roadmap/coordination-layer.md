@@ -19,6 +19,8 @@ The autonomy ladder places two levels in this layer:
 
 Closing this gap is the central goal of the 0.2–0.4 releases.
 
+No Coordination dimension may be extracted from a legacy implementation until the Event/Governance contract foundation passes its shared fixtures and the compatibility matrix has an approved decision for every touched public surface.
+
 ## Work Items
 
 ### 1. Document the L1 policy surface
