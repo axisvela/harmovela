@@ -29,6 +29,8 @@ No Coordination dimension may be extracted from a legacy implementation until th
 
 Bounded autonomy is only real if the boundary is specified. At L1, a budget is an advisory, implementer-supplied declaration (for example cost, time, or action count). It may bound one runtime's behavior, but Harmovela does not yet define portable enforcement, authority, violation events, or conformance for it. Those become L3 Adaptation-layer requirements. Document timeout policy, allowed actions, and termination conditions so an L1 agent is bounded by contract, not by hope. Ships as documentation and negotiated capabilities, not new wire behavior.
 
+**Delivered:** [`docs/protocol/l1-policy-surface.md`](../protocol/l1-policy-surface.md) — advisory policy surface covering budget limits, timeout policy, allowed actions, termination conditions, and negotiation. Forward-compatible with L3 enforcement.
+
 ### 2. Tighten delegation semantics
 
 Make assignment, acceptance, handoff, escalation, and cancellation propagation unambiguous:
