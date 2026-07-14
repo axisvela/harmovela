@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/axisrobo/harmovela/recovery"
-	"github.com/axisrobo/harmovela/event"
+	eventpkg "github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/governance"
 	"github.com/axisrobo/harmovela/task"
 )
@@ -25,8 +25,8 @@ type Harness struct {
 	sequence      int
 	subscriptions map[string]map[string]any
 	tasks         map[string]*task.Tracker
-	router        *event.EventRouter
-	session       *event.HarmovelaSession
+	router        *eventpkg.EventRouter
+	session       *eventpkg.HarmovelaSession
 	Delivery      *recovery.DeliveryTracker
 	Audit         []AuditRecord
 }
@@ -36,7 +36,7 @@ func NewHarness() *Harness {
 		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*task.Tracker),
-		router:        event.NewEventRouter(),
+		router:        eventpkg.NewEventRouter(),
 		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
 	}
@@ -45,7 +45,7 @@ func NewHarness() *Harness {
 	return h
 }
 
-func (h *Harness) Session() *event.HarmovelaSession {
+func (h *Harness) Session() *eventpkg.HarmovelaSession {
 	return h.session
 }
 
@@ -353,7 +353,7 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	}
 
 	sessionID, _ := event["session_id"].(string)
-	h.session = NewHarmovelaSession(sessionID, h.Source, "0.2")
+	h.session = eventpkg.NewHarmovelaSession(sessionID, h.Source, "0.2")
 	opened, _ := h.session.Opened()
 
 	ready := h.newEvent("session.ready", event, map[string]any{

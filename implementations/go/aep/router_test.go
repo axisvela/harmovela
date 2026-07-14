@@ -2,10 +2,12 @@ package aep
 
 import (
 	"testing"
+
+	"github.com/axisrobo/harmovela/event"
 )
 
 func TestRouterDispatchesToMatchingHandler(t *testing.T) {
-	r := NewEventRouter()
+	r := event.NewEventRouter()
 	called := false
 	r.On(func(event map[string]any) bool {
 		typ, _ := event["type"].(string)
@@ -25,7 +27,7 @@ func TestRouterDispatchesToMatchingHandler(t *testing.T) {
 }
 
 func TestRouterMatchAllHandler(t *testing.T) {
-	r := NewEventRouter()
+	r := event.NewEventRouter()
 	count := 0
 	r.OnAll(func(event map[string]any) any {
 		count++
@@ -40,7 +42,7 @@ func TestRouterMatchAllHandler(t *testing.T) {
 }
 
 func TestRouterCollectsMultipleResponses(t *testing.T) {
-	r := NewEventRouter()
+	r := event.NewEventRouter()
 	r.OnAll(func(event map[string]any) any {
 		return []map[string]any{
 			{"type": "event.acknowledged"},
@@ -55,7 +57,7 @@ func TestRouterCollectsMultipleResponses(t *testing.T) {
 }
 
 func TestRouterHandlesSliceOfAnyResponses(t *testing.T) {
-	r := NewEventRouter()
+	r := event.NewEventRouter()
 	r.OnAll(func(event map[string]any) any {
 		return []any{
 			map[string]any{"type": "event.acknowledged"},
@@ -69,7 +71,7 @@ func TestRouterHandlesSliceOfAnyResponses(t *testing.T) {
 }
 
 func TestRouterNoMatchReturnsEmpty(t *testing.T) {
-	r := NewEventRouter()
+	r := event.NewEventRouter()
 	r.On(func(event map[string]any) bool {
 		return false
 	}, func(event map[string]any) any {
