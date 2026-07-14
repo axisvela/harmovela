@@ -1,0 +1,2 @@
+{"spec_version":"0.2","id":"evt_unknown_001","type":"com.example.custom.event","source":"agent:test","created_at":"2026-07-14T10:00:00Z","payload":{}}
+{"spec_version":"0.2","id":"evt_unknown_002","type":"some.unknown.namespace.event","source":"agent:test","created_at":"2026-07-14T10:00:01Z","payload":{}}

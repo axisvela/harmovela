@@ -15,7 +15,7 @@ Harmovela versions four distinct assets independently:
 
 | Asset | Version Field | Example | Scope | Category |
 |---|---|---|---|---|
-| Protocol envelope | `aep_version` | `"0.1"` | Envelope field set, required fields, semantic rules | core |
+| Protocol envelope | `spec_version` | `"0.2"` | Envelope field set, required fields, semantic rules | core |
 | Event type families | Event type registry | — | Standard event type names and semantics | core |
 | Payload schemas | `payload_schema` (URI) | `https://schemas.axisrobo.com/tool.call.progress.v1.json` | Per-event payload structure | profile |
 | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. | profile |
@@ -26,7 +26,7 @@ Core assets are required by every conformant implementation. Profile assets may 
 
 ### Format
 
-The `aep_version` field uses `MAJOR.MINOR` format (e.g., `"0.1"`).
+The `spec_version` field uses `MAJOR.MINOR` format (e.g., `"0.2"`).
 
 ### Compatibility Rules
 
@@ -43,7 +43,7 @@ Across major versions:
 
 ### Negotiation
 
-During session initialization (`session.opened` / `session.ready`), peers declare their supported protocol version via `capabilities.aep_version`. Both sides must agree on a version before the session becomes ready. A peer that cannot negotiate a compatible version should send `session.error` with code `unsupported_version`.
+During session initialization (`session.opened` / `session.ready`), peers declare their supported protocol version via `capabilities.spec_version`. Both sides must agree on a version before the session becomes ready. A peer that cannot negotiate a compatible version should send `session.error` with code `unsupported_version`.
 
 ## Event Type Registry Versioning
 
@@ -52,7 +52,7 @@ The standard event type registry (the set of `type` string values defined in `do
 - New event types may be added in any minor version.
 - Existing event type names must not be removed within a minor version.
 - Existing event type semantics must not change in incompatible ways within a minor version.
-- Implementations should treat unknown event types as opaque (validate envelope, forward if applicable) rather than reject them.
+- Implementations must reject unknown event types with `event.rejected` (code `unknown_event_type`). This is an intentional divergence from the earlier draft that suggested opaque forwarding.
 
 ## Payload Schema Versioning
 
@@ -88,7 +88,7 @@ Current transport binding documents: see `docs/protocol/transport-stdio.md`, `do
 Implementations should follow these forward-compatibility practices:
 
 1. **Ignore unknown fields** in envelopes and payloads.
-2. **Treat unknown event types** as valid but unhandled (acknowledge if required, do not reject).
+2. **Reject unknown event types** with `event.rejected` (code `unknown_event_type`). Unknown event types are not forwarded.
 3. **Downgrade gracefully** when a peer declares an older version — use only features available in that version.
 4. **Log, don't crash** on protocol features you don't recognize.
 
@@ -104,6 +104,7 @@ Deprecation notices appear in the protocol specification changelog and the relev
 
 ## Implementation Notes
 
-- Implementations must include `aep_version` in every envelope.
+- Implementations must include `spec_version` in every envelope.
+- The legacy field name `aep_version` is rejected everywhere. Implementations must reject envelopes that use `aep_version` instead of `spec_version`.
 - Version mismatch should result in `event.rejected` with code `unsupported_version` and `details.supported` listing accepted versions.
 - Payload schema URIs are not validated by the protocol layer itself; they are metadata for schema-aware consumers.

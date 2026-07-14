@@ -18,6 +18,16 @@
       ]
     },
     {
+      "path": "fixtures/reject-unknown-events.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Unknown event types are rejected (not opaque-forwarded). Intentional divergence from earlier draft.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative",
+        "event-type"
+      ]
+    },
+    {
       "path": "fixtures/reject-some-protocol.ndjson",
       "level": "HARMOVELA-C0",
       "description": "Envelope-valid filterless subscription request rejected by the harness.",
