@@ -1,20 +1,15 @@
-package com.axisrobo.aep.examples;
+package com.axisrobo.harmovela.examples;
 
-import com.axisrobo.aep.runtime.AepRuntimeService;
-import com.axisrobo.aep.runtime.Config;
+import com.axisrobo.harmovela.runtime.HarmovelaRuntimeService;
+import com.axisrobo.harmovela.runtime.Config;
 
-/**
- * Minimal AEP runtime: create service, subscribe, publish, receive.
- * Run from implementations/java with the classpath set:
- * mvn -q compile exec:java -Dexec.mainClass=com.axisrobo.aep.examples.Quickstart
- */
 public class Quickstart {
     public static void main(String[] args) {
         var config = Config.defaultConfig().withStore("memory")
             .withWebsocketEnabled(false).withSseEnabled(false)
-            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/aep/api"));
+            .withApi(new Config.Transport(false, "127.0.0.1", 0, "/harmovela/api"));
 
-        var svc = new AepRuntimeService(config);
+        var svc = new HarmovelaRuntimeService(config);
         svc.subscribe("task.*", e ->
             System.out.println("received " + e.get("type") + " " + e.get("id")));
 

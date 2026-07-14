@@ -1,7 +1,6 @@
 package com.axisrobo.harmovela.event;
 
 import com.axisrobo.harmovela.event.envelope.Envelope;
-import com.axisrobo.harmovela.event.registry.EventTypes;
 import com.axisrobo.harmovela.event.router.EventRouter;
 import com.axisrobo.harmovela.event.session.Session;
 import com.axisrobo.harmovela.event.subscription.Subscriptions;
@@ -18,7 +17,7 @@ class EventCoreTest {
             "source", "agent:test", "created_at", "2026-07-09T10:00:00Z", "payload", Map.of()
         );
         assertTrue(Envelope.validate(event).isEmpty());
-        assertTrue(EventTypes.isStandardEventType("task.submitted"));
+        assertTrue(Envelope.isStandardEventType("task.submitted"));
     }
 
     @Test

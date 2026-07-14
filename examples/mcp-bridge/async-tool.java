@@ -1,15 +1,11 @@
-package com.axisrobo.aep.examples;
+package com.axisrobo.harmovela.examples;
 
-import com.axisrobo.aep.McpBridge;
+import com.axisrobo.harmovela.bridge.McpBridge;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * MCP bridge: register an async tool, call it, observe lifecycle events.
- * Run from implementations/java with the classpath set.
- */
 public class McpBridgeDemo {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
