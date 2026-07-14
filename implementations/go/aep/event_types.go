@@ -72,6 +72,10 @@ var legacyStandardEventTypes = map[string]bool{
 	"provenance.attestation.added":   true,
 	"provenance.attestation.revoked": true,
 	"provenance.chain.truncated":     true,
+	"state.snapshot.requested":       true,
+	"state.snapshot.ready":           true,
+	"state.delta.applied":            true,
+	"state.invalidated":              true,
 }
 
 // IsStandardEventType reports whether a type is supported by the legacy aep adapter.
