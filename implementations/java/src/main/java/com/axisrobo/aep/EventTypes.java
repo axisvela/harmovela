@@ -5,6 +5,7 @@ import com.axisrobo.harmovela.delegation.DelegationTypes;
 import com.axisrobo.harmovela.recovery.RecoveryTypes;
 import com.axisrobo.harmovela.state.StateTypes;
 import com.axisrobo.harmovela.tool.ToolTypes;
+import com.axisrobo.harmovela.agent.AgentTypes;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -18,8 +19,6 @@ public final class EventTypes {
             "event.redelivered", "event.replayed", "event.dead_lettered",
             "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
             "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
-            "agent.message.sent", "agent.message.received", "agent.message.failed",
-            "agent.request.created", "agent.response.created", "agent.decision.recorded",
             "environment.observed", "environment.changed", "environment.alerted", "environment.error"
         ));
         types.addAll(ContextMemoryTypes.EVENT_TYPES);
@@ -27,6 +26,7 @@ public final class EventTypes {
         types.addAll(RecoveryTypes.EVENT_TYPES);
         types.addAll(StateTypes.EVENT_TYPES);
         types.addAll(ToolTypes.EVENT_TYPES);
+        types.addAll(AgentTypes.EVENT_TYPES);
         LEGACY_TYPES = Set.copyOf(types);
     }
 

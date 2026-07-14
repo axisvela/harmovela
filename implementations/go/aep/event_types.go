@@ -1,6 +1,7 @@
 package aep
 
 import (
+	"github.com/axisrobo/harmovela/agent"
 	"github.com/axisrobo/harmovela/context"
 	"github.com/axisrobo/harmovela/delegation"
 	"github.com/axisrobo/harmovela/event"
@@ -25,16 +26,13 @@ var legacyStandardEventTypes = func() map[string]bool {
 		"task.cancel.requested":         true,
 		"task.cancelled":                true,
 		"task.timed_out":                true,
-		"agent.message.sent":            true,
-		"agent.message.received":        true,
-		"agent.message.failed":          true,
-		"agent.request.created":         true,
-		"agent.response.created":        true,
-		"agent.decision.recorded":       true,
 		"environment.observed":          true,
 		"environment.changed":           true,
 		"environment.alerted":           true,
 		"environment.error":             true,
+	}
+	for k, v := range agent.EventTypes {
+		m[k] = v
 	}
 	for k, v := range context.EventTypes {
 		m[k] = v
