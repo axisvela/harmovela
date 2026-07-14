@@ -39,7 +39,7 @@ The source format uses a dotted prefix convention:
 | `memory:` | A memory system | `memory:main` |
 | `context:` | A context provider | `context:browser` |
 | `environment:` | An environment observer | `environment:sensors` |
-| `harness:` | Protocol harness or orchestrator | `harness:aep` |
+| `harness:` | Protocol harness or orchestrator | `harness:harmovela` |
 
 ### Consumer Identity
 

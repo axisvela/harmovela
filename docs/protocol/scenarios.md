@@ -163,4 +163,4 @@ lifecycle events: task.submitted → task.started → task.completed
 - `docs/mcp-relationship.md` — MCP comparison and interop model
 - `docs/protocol/task-lifecycle.md` — task state machine
 - `docs/protocol/reliability.md` — retry and dead-letter for bridge-delegated tasks
-- Implementations: `implementations/typescript/src/bridge/` (TypeScript), `implementations/go/aep/bridge/` (Go), `implementations/python/src/aep/mcp_bridge.py` (Python), `implementations/java/.../McpBridge.java` (Java)
+- Implementations: `implementations/typescript/packages/mcp-bridge/` (TypeScript), `implementations/go/mcp-bridge/` (Go), `implementations/python/src/harmovela_mcp_bridge/` (Python), `implementations/java/src/main/java/com/axisrobo/harmovela/bridge/McpBridge.java` (Java)

@@ -452,7 +452,7 @@ All fields are optional envelope properties. All event types follow the `domain.
 
 Structured payload validation is defined in the shared payloads schema:
 
-`schemas/aep-payloads.schema.json` (`https://schemas.axisrobo.com/aep-payloads.v0.1.schema.json`)
+`schemas/harmovela-payloads.schema.json` (`https://schemas.axisrobo.com/harmovela-payloads.v0.1.schema.json`)
 
 The schema uses `if`/`then` discriminator blocks keyed on the envelope `type` field to validate payloads for the following event types:
 
