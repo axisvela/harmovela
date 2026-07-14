@@ -1,4 +1,5 @@
 import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisrobo/harmovela-context";
+import { DELEGATION_EVENT_TYPES } from "@axisrobo/harmovela-delegation";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -29,6 +30,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "task.cancelled",
   "task.timed_out",
   ...CONTEXT_MEMORY_EVENT_TYPES,
+  ...DELEGATION_EVENT_TYPES,
   "agent.message.sent",
   "agent.message.received",
   "agent.message.failed",
@@ -43,11 +45,6 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "belief.conflict.detected",
   "freshness.expired",
   "freshness.window.changed",
-  "delegation.requested",
-  "delegation.accepted",
-  "delegation.rejected",
-  "delegation.handoff.completed",
-  "delegation.escalated",
   "interruption.requested",
   "interruption.acknowledged",
   "interruption.saved",
