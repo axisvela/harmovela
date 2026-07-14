@@ -12,12 +12,14 @@ from axisrobo_harmovela_recovery import RECOVERY_EVENT_TYPES, DeliveryTracker
 from axisrobo_harmovela_state import STATE_EVENT_TYPES
 from axisrobo_harmovela_task import TaskTracker
 from axisrobo_harmovela_tool import TOOL_EVENT_TYPES
+from axisrobo_harmovela_command import COMMAND_EVENT_TYPES
+from axisrobo_harmovela_query import QUERY_EVENT_TYPES
 
 LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
     "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
     "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
-}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES).union(ADAPTATION_EVENT_TYPES))
+}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES).union(ADAPTATION_EVENT_TYPES).union(COMMAND_EVENT_TYPES).union(QUERY_EVENT_TYPES))
 
 
 def is_legacy_dimension_event_type(type_: str) -> bool:
@@ -31,6 +33,8 @@ class HarmovelaHarness:
         self._sequence = 0
         self._subscriptions: dict[str, dict] = {}
         self._tasks: dict[str, TaskTracker] = {}
+        self._commands: dict[str, dict] = {}
+        self._queries: dict[str, dict] = {}
         self._router = EventRouter()
         self._session: HarmovelaSession | None = None
         self._delivery = DeliveryTracker()
@@ -67,7 +71,13 @@ class HarmovelaHarness:
                 self._handle_task_event) \
             .on("session.opened", self._handle_session_opened) \
             .on("session.closed", self._handle_session_closed) \
-            .on(lambda e: e.get("type", "").startswith("adaptation."), self._handle_adaptation_event)
+            .on(lambda e: e.get("type", "").startswith("adaptation."), self._handle_adaptation_event) \
+            .on("command.requested", self._handle_command_requested) \
+            .on(lambda e: e.get("type", "").startswith("command.") and e.get("type") != "command.requested",
+                self._handle_command_lifecycle) \
+            .on("query.requested", self._handle_query_requested) \
+            .on(lambda e: e.get("type", "").startswith("query.") and e.get("type") != "query.requested",
+                self._handle_query_lifecycle)
 
     def _setup_delivery_router(self):
         self._router \
@@ -310,6 +320,114 @@ class HarmovelaHarness:
         event_id = event.get("payload", {}).get("original_event_id")
         if event_id:
             self._delivery.dead_letter(event_id, event.get("payload", {}).get("error", {"code": "unknown"}))
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
+
+    def _handle_command_requested(self, event: dict) -> dict:
+        correlation_id = event.get("correlation_id") or f"cmd_{self._now()}"
+        target = event.get("target")
+        source = event.get("source")
+        negotiation_window_ms = event.get("payload", {}).get("negotiation_window_ms", 5000)
+
+        if not target:
+            return self._event("command.rejected", event, {
+                "correlation_id": correlation_id,
+                "reason": "missing target agent",
+                "error": error_payload(ErrorCode.INVALID_COMMAND, "command.requested must include target agent"),
+            })
+
+        if correlation_id in self._commands:
+            return self._event("command.rejected", event, {
+                "correlation_id": correlation_id,
+                "reason": "duplicate correlation_id",
+                "error": error_payload(ErrorCode.INVALID_COMMAND, f"duplicate command correlation_id: {correlation_id}"),
+            })
+
+        self._commands[correlation_id] = {
+            "id": correlation_id,
+            "source": source,
+            "target": target,
+            "status": "accepted",
+            "accepted_at": self._now(),
+            "negotiation_window_ms": negotiation_window_ms,
+            "payload": event.get("payload"),
+        }
+
+        return self._event("command.accepted", event, {
+            "correlation_id": correlation_id,
+            "target": target,
+            "negotiation_window_ms": negotiation_window_ms,
+        })
+
+    def _handle_command_lifecycle(self, event: dict) -> list:
+        correlation_id = event.get("correlation_id")
+        if not correlation_id or correlation_id not in self._commands:
+            return [self._event("event.acknowledged", event, {
+                "acknowledged_event_id": event.get("id"),
+            })]
+
+        cmd = self._commands[correlation_id]
+        typ = event.get("type")
+        if typ in ("command.completed", "command.failed"):
+            cmd["status"] = "completed" if typ == "command.completed" else "failed"
+            cmd["completed_at"] = self._now()
+            del self._commands[correlation_id]
+        elif typ == "command.rejected":
+            cmd["status"] = "rejected"
+            del self._commands[correlation_id]
+
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
+
+    def _handle_query_requested(self, event: dict) -> dict:
+        correlation_id = event.get("correlation_id") or f"qry_{self._now()}"
+        target = event.get("target")
+        scope = event.get("payload", {}).get("query_scope")
+
+        if not target:
+            return self._event("query.rejected", event, {
+                "correlation_id": correlation_id,
+                "reason": "missing target agent",
+                "error": error_payload(ErrorCode.INVALID_QUERY, "query.requested must include target agent"),
+            })
+
+        if not scope:
+            return self._event("query.rejected", event, {
+                "correlation_id": correlation_id,
+                "reason": "missing query scope",
+                "error": error_payload(ErrorCode.INVALID_QUERY, "query.requested must include query_scope in payload"),
+            })
+
+        self._sequence += 1
+        snapshot_version = f"snap_{self._now()}_{self._sequence:04d}"
+
+        self._queries[correlation_id] = {
+            "id": correlation_id,
+            "source": event.get("source"),
+            "target": target,
+            "scope": scope,
+            "snapshot_version": snapshot_version,
+            "created_at": self._now(),
+            "freshness": event.get("payload", {}).get("freshness"),
+            "pagination": event.get("payload", {}).get("pagination"),
+        }
+
+        pagination = event.get("payload", {}).get("pagination")
+        return self._event("query.response", event, {
+            "correlation_id": correlation_id,
+            "query_scope": scope,
+            "snapshot_version": snapshot_version,
+            "freshness": event.get("payload", {}).get("freshness"),
+            "pagination": {**pagination, "next_cursor": None} if pagination else None,
+        })
+
+    def _handle_query_lifecycle(self, event: dict) -> list:
+        correlation_id = event.get("correlation_id")
+        if event.get("type") == "query.error":
+            if correlation_id and correlation_id in self._queries:
+                del self._queries[correlation_id]
         return [self._event("event.acknowledged", event, {
             "acknowledged_event_id": event.get("id"),
         })]

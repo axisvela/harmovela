@@ -11,6 +11,8 @@ import { TOOL_EVENT_TYPES } from "@axisrobo/harmovela-tool";
 import { AGENT_EVENT_TYPES } from "@axisrobo/harmovela-agent";
 import { ENVIRONMENT_EVENT_TYPES } from "@axisrobo/harmovela-environment";
 import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
+import { COMMAND_EVENT_TYPES } from "@axisrobo/harmovela-command";
+import { QUERY_EVENT_TYPES } from "@axisrobo/harmovela-query";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -37,6 +39,8 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   ...AGENT_EVENT_TYPES,
   ...ENVIRONMENT_EVENT_TYPES,
   ...ADAPTATION_EVENT_TYPES,
+  ...COMMAND_EVENT_TYPES,
+  ...QUERY_EVENT_TYPES,
 ]);
 
 export function isLegacyDimensionEventType(type) {
@@ -51,6 +55,8 @@ export class HarmovelaHarness {
     this._sequence = 0;
     this._subscriptions = new Map();
     this._tasks = new Map();
+    this._commands = new Map();
+    this._queries = new Map();
     this._router = new EventRouter();
     this._session = null;
     this.delivery = new DeliveryTracker(options.delivery);
@@ -78,7 +84,11 @@ export class HarmovelaHarness {
       .on((event) => event.type.startsWith("task.") && event.type !== "task.submitted" && event.type !== "task.cancel.requested", (event) => this._handleTaskEvent(event))
       .on("session.opened", (event) => this._handleSessionOpened(event))
       .on("session.closed", (event) => this._handleSessionClosed(event))
-      .on((event) => event.type && event.type.startsWith("adaptation."), (event) => this._handleAdaptationEvent(event));
+      .on((event) => event.type && event.type.startsWith("adaptation."), (event) => this._handleAdaptationEvent(event))
+      .on("command.requested", (event) => this._handleCommandRequested(event))
+      .on((event) => event.type && event.type.startsWith("command.") && event.type !== "command.requested", (event) => this._handleCommandLifecycle(event))
+      .on("query.requested", (event) => this._handleQueryRequested(event))
+      .on((event) => event.type && event.type.startsWith("query.") && event.type !== "query.requested", (event) => this._handleQueryLifecycle(event));
   }
 
   _setupDeliveryRouter() {
@@ -377,6 +387,126 @@ export class HarmovelaHarness {
   startSession(options = {}) {
     this._session = new HarmovelaSession(options);
     return this._session.opened();
+  }
+
+  _handleCommandRequested(event) {
+    const correlationId = event.correlation_id ?? `cmd_${Date.now().toString(36)}`;
+    const target = event.target;
+    const source = event.source;
+    const negotiationWindowMs = event.payload?.negotiation_window_ms ?? 5000;
+
+    if (!target) {
+      return this._event("command.rejected", event, {
+        correlation_id: correlationId,
+        reason: "missing target agent",
+        error: errorPayload(ErrorCode.INVALID_COMMAND, "command.requested must include target agent")
+      });
+    }
+
+    if (this._commands.has(correlationId)) {
+      return this._event("command.rejected", event, {
+        correlation_id: correlationId,
+        reason: "duplicate correlation_id",
+        error: errorPayload(ErrorCode.INVALID_COMMAND, `duplicate command correlation_id: ${correlationId}`)
+      });
+    }
+
+    this._commands.set(correlationId, {
+      id: correlationId,
+      source,
+      target,
+      status: "accepted",
+      accepted_at: this.now(),
+      negotiation_window_ms: negotiationWindowMs,
+      payload: event.payload
+    });
+
+    return this._event("command.accepted", event, {
+      correlation_id: correlationId,
+      target: target,
+      negotiation_window_ms: negotiationWindowMs
+    });
+  }
+
+  _handleCommandLifecycle(event) {
+    const correlationId = event.correlation_id;
+    if (!this._commands.has(correlationId)) {
+      return this._event("event.acknowledged", event, {
+        acknowledged_event_id: event.id
+      });
+    }
+
+    const cmd = this._commands.get(correlationId);
+
+    if (event.type === "command.completed" || event.type === "command.failed") {
+      cmd.status = event.type === "command.completed" ? "completed" : "failed";
+      cmd.completed_at = this.now();
+      this._commands.delete(correlationId);
+    } else if (event.type === "command.rejected") {
+      cmd.status = "rejected";
+      this._commands.delete(correlationId);
+    }
+
+    return this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
+    });
+  }
+
+  _handleQueryRequested(event) {
+    const correlationId = event.correlation_id ?? `qry_${Date.now().toString(36)}`;
+    const target = event.target;
+    const scope = event.payload?.query_scope;
+
+    if (!target) {
+      return this._event("query.rejected", event, {
+        correlation_id: correlationId,
+        reason: "missing target agent",
+        error: errorPayload(ErrorCode.INVALID_QUERY, "query.requested must include target agent")
+      });
+    }
+
+    if (!scope) {
+      return this._event("query.rejected", event, {
+        correlation_id: correlationId,
+        reason: "missing query scope",
+        error: errorPayload(ErrorCode.INVALID_QUERY, "query.requested must include query_scope in payload")
+      });
+    }
+
+    const snapshotVersion = `snap_${Date.now().toString(36)}_${String(++this._sequence).padStart(4, "0")}`;
+
+    this._queries.set(correlationId, {
+      id: correlationId,
+      source: event.source,
+      target,
+      scope,
+      snapshot_version: snapshotVersion,
+      created_at: this.now(),
+      freshness: event.payload?.freshness,
+      pagination: event.payload?.pagination
+    });
+
+    return this._event("query.response", event, {
+      correlation_id: correlationId,
+      query_scope: scope,
+      snapshot_version: snapshotVersion,
+      freshness: event.payload?.freshness ?? null,
+      pagination: event.payload?.pagination ? { ...event.payload.pagination, next_cursor: null } : null
+    });
+  }
+
+  _handleQueryLifecycle(event) {
+    const correlationId = event.correlation_id;
+
+    if (event.type === "query.error") {
+      if (this._queries.has(correlationId)) {
+        this._queries.delete(correlationId);
+      }
+    }
+
+    return this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
+    });
   }
 
   _handleAdaptationEvent(event) {

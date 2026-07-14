@@ -40,13 +40,19 @@ public class Harness {
         "adaptation.goal.achieved", "adaptation.goal.abandoned",
         "adaptation.cost.exceeded",
         "adaptation.budget.established", "adaptation.budget.adjusted",
-        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted"
+        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted",
+        "command.requested", "command.accepted", "command.rejected",
+        "command.completed", "command.failed",
+        "query.requested", "query.response", "query.rejected",
+        "query.error"
     );
 
     private static final String SOURCE = "harness:harmovela";
     private int sequence;
     private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
     private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
+    private final Map<String, Map<String, Object>> commands = new LinkedHashMap<>();
+    private final Map<String, Map<String, Object>> queries = new LinkedHashMap<>();
     private final EventRouter router = new EventRouter();
     private final DeliveryTracker delivery;
     private final List<Map<String, Object>> audit = new ArrayList<>();
@@ -73,7 +79,17 @@ public class Harness {
             .on(e -> {
                 var t = (String) e.get("type");
                 return t != null && t.startsWith("adaptation.");
-            }, this::handleAdaptationEvent);
+            }, this::handleAdaptationEvent)
+            .on(e -> "command.requested".equals(e.get("type")), this::handleCommandRequested)
+            .on(e -> {
+                var t = (String) e.get("type");
+                return t != null && t.startsWith("command.") && !"command.requested".equals(t);
+            }, this::handleCommandLifecycle)
+            .on(e -> "query.requested".equals(e.get("type")), this::handleQueryRequested)
+            .on(e -> {
+                var t = (String) e.get("type");
+                return t != null && t.startsWith("query.") && !"query.requested".equals(t);
+            }, this::handleQueryLifecycle);
     }
 
     public Session getSession() { return session; }
@@ -378,6 +394,128 @@ public class Harness {
     }
 
     private int nextSeq() { return ++sequence; }
+
+    @SuppressWarnings("unchecked")
+    private Object handleCommandRequested(Map<String, Object> event) {
+        var correlationId = (String) event.getOrDefault("correlation_id", "cmd_" + System.currentTimeMillis());
+        var target = (String) event.get("target");
+        var source = (String) event.get("source");
+        var payload = (Map<String, Object>) event.getOrDefault("payload", Map.of());
+        var negotiationMs = payload.get("negotiation_window_ms");
+        var window = negotiationMs instanceof Number n ? n.intValue() : 5000;
+
+        if (target == null || target.isEmpty()) {
+            return newEvent("command.rejected", event, Map.of(
+                "correlation_id", correlationId,
+                "reason", "missing target agent",
+                "error", Errors.errorPayload(Errors.INVALID_COMMAND, "command.requested must include target agent", false)
+            ));
+        }
+
+        if (commands.containsKey(correlationId)) {
+            return newEvent("command.rejected", event, Map.of(
+                "correlation_id", correlationId,
+                "reason", "duplicate correlation_id",
+                "error", Errors.errorPayload(Errors.INVALID_COMMAND, "duplicate command correlation_id: " + correlationId, false)
+            ));
+        }
+
+        var cmd = new LinkedHashMap<String, Object>();
+        cmd.put("id", correlationId);
+        cmd.put("source", source);
+        cmd.put("target", target);
+        cmd.put("status", "accepted");
+        cmd.put("accepted_at", Instant.now().toString());
+        cmd.put("negotiation_window_ms", window);
+        cmd.put("payload", payload);
+        commands.put(correlationId, cmd);
+
+        return newEvent("command.accepted", event, Map.of(
+            "correlation_id", correlationId,
+            "target", target,
+            "negotiation_window_ms", window
+        ));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleCommandLifecycle(Map<String, Object> event) {
+        var correlationId = (String) event.get("correlation_id");
+        if (correlationId == null || !commands.containsKey(correlationId)) {
+            return List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id"))));
+        }
+
+        var cmd = commands.get(correlationId);
+        var type = (String) event.get("type");
+        if ("command.completed".equals(type) || "command.failed".equals(type)) {
+            cmd.put("status", "command.completed".equals(type) ? "completed" : "failed");
+            cmd.put("completed_at", Instant.now().toString());
+            commands.remove(correlationId);
+        } else if ("command.rejected".equals(type)) {
+            cmd.put("status", "rejected");
+            commands.remove(correlationId);
+        }
+
+        return List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id"))));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleQueryRequested(Map<String, Object> event) {
+        var correlationId = (String) event.getOrDefault("correlation_id", "qry_" + System.currentTimeMillis());
+        var target = (String) event.get("target");
+        var payload = (Map<String, Object>) event.getOrDefault("payload", Map.of());
+        var scope = (String) payload.get("query_scope");
+
+        if (target == null || target.isEmpty()) {
+            return newEvent("query.rejected", event, Map.of(
+                "correlation_id", correlationId,
+                "reason", "missing target agent",
+                "error", Errors.errorPayload(Errors.INVALID_QUERY, "query.requested must include target agent", false)
+            ));
+        }
+
+        if (scope == null || scope.isEmpty()) {
+            return newEvent("query.rejected", event, Map.of(
+                "correlation_id", correlationId,
+                "reason", "missing query scope",
+                "error", Errors.errorPayload(Errors.INVALID_QUERY, "query.requested must include query_scope in payload", false)
+            ));
+        }
+
+        var snapshotVersion = "snap_" + System.currentTimeMillis() + "_" + String.format("%04d", nextSeq());
+
+        var qry = new LinkedHashMap<String, Object>();
+        qry.put("id", correlationId);
+        qry.put("source", event.get("source"));
+        qry.put("target", target);
+        qry.put("scope", scope);
+        qry.put("snapshot_version", snapshotVersion);
+        qry.put("created_at", Instant.now().toString());
+        qry.put("freshness", payload.get("freshness"));
+        qry.put("pagination", payload.get("pagination"));
+        queries.put(correlationId, qry);
+
+        var pagination = payload.containsKey("pagination") ? payload.get("pagination") : null;
+        var pag = pagination != null ? new LinkedHashMap<>((Map<String, Object>) pagination) : null;
+        if (pag != null) pag.put("next_cursor", null);
+
+        var responsePayload = new LinkedHashMap<String, Object>();
+        responsePayload.put("correlation_id", correlationId);
+        responsePayload.put("query_scope", scope);
+        responsePayload.put("snapshot_version", snapshotVersion);
+        responsePayload.put("freshness", payload.get("freshness"));
+        responsePayload.put("pagination", pag);
+
+        return newEvent("query.response", event, responsePayload);
+    }
+
+    private Object handleQueryLifecycle(Map<String, Object> event) {
+        var correlationId = (String) event.get("correlation_id");
+        var type = (String) event.get("type");
+        if ("query.error".equals(type) && correlationId != null) {
+            queries.remove(correlationId);
+        }
+        return List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id"))));
+    }
 
     @SuppressWarnings("unchecked")
     private Object handleAdaptationEvent(Map<String, Object> event) {

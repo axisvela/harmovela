@@ -17,6 +17,8 @@
 | 9 | Agent | `agent.*` | Agent-to-agent messaging, request/response, decision recording |
 | 10 | Environment | `environment.*` | Environment observation, change detection, alerting |
 | 11 | Adaptation | `adaptation.*` | Budget enforcement, feedback correlation, outcome tracking |
+| 12 | Command | `command.*` | Directed instruction: command requested, accepted, rejected, completed, failed with negotiation window |
+| 13 | Query | `query.*` | Directed information request: query requested, response, rejected, error with snapshot versioning |
 
 ## Public Contracts
 
@@ -35,6 +37,8 @@ Each dimension module publishes a language-neutral contract boundary. Dimensions
 | Agent | [event-dimension-classification.md](event-dimension-classification.md) |
 | Environment | [event-dimension-classification.md](event-dimension-classification.md) |
 | Adaptation | [adaptation-budget.md](adaptation-budget.md), [adaptation-feedback.md](adaptation-feedback.md) |
+| Command | [command-query.md](command-query.md) |
+| Query | [command-query.md](command-query.md) |
 
 ## Infrastructure Modules
 
@@ -63,6 +67,8 @@ Infrastructure modules are not dimension-specific and provide cross-cutting buil
 | Agent | `packages/agent/` | `axisrobo_harmovela_agent/` | `agent/` | `harmovela/agent/` |
 | Environment | `packages/environment/` | `axisrobo_harmovela_environment/` | `environment/` | `harmovela/environment/` |
 | Adaptation | `packages/adaptation/` | `axisrobo_harmovela_adaptation/` | `adaptation/` | `harmovela/adaptation/` |
+| Command | `packages/command/` | `axisrobo_harmovela_command/` | `command/` | `harmovela/command/` |
+| Query | `packages/query/` | `axisrobo_harmovela_query/` | `query/` | `harmovela/query/` |
 
 ## Dependencies
 

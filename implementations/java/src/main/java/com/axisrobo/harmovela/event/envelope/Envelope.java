@@ -41,7 +41,11 @@ public final class Envelope {
         "adaptation.goal.achieved", "adaptation.goal.abandoned",
         "adaptation.cost.exceeded",
         "adaptation.budget.established", "adaptation.budget.adjusted",
-        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted"
+        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted",
+        "command.requested", "command.accepted", "command.rejected",
+        "command.completed", "command.failed",
+        "query.requested", "query.response", "query.rejected",
+        "query.error"
     );
 
     public static boolean isStandardEventType(String type) {

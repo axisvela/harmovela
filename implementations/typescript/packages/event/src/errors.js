@@ -15,7 +15,9 @@ export const ErrorCode = Object.freeze({
   TOOL_ERROR: "tool_error",
   TOOL_TIMEOUT: "tool_timeout",
   INTERNAL_ERROR: "internal_error",
-  BUDGET_EXCEEDED: "budget_exceeded"
+  BUDGET_EXCEEDED: "budget_exceeded",
+  INVALID_COMMAND: "invalid_command",
+  INVALID_QUERY: "invalid_query"
 });
 
 export function errorPayload(code, message, { retryable = false, details = {} } = {}) {

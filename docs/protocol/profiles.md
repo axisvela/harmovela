@@ -120,6 +120,8 @@ This filtering behavior is available in:
 | Agent | [Event dimension classification](event-dimension-classification.md#agent-dimension) |
 | Environment | [Event dimension classification](event-dimension-classification.md#environment-dimension) |
 | Adaptation | [Adaptation feedback](adaptation-feedback.md) + [Adaptation budget](adaptation-budget.md) + [Governance contract](governance-contract.md#authorization-checks) |
+| Command | [Command and Query](command-query.md#command) |
+| Query | [Command and Query](command-query.md#query) |
 
 ## Profile Catalog
 
@@ -196,7 +198,7 @@ This filtering behavior is available in:
 
 **Dependencies:** `harmovela.core.v1` + `harmovela.security.v1`
 
-**Scope:** Task lifecycle state-machine enforcement, State freshness and invalidation semantics, and Delegation ownership, handoff, escalation, and cancellation propagation.
+**Scope:** Task lifecycle state-machine enforcement, State freshness and invalidation semantics, Delegation ownership, handoff, escalation, and cancellation propagation, Command directed instruction lifecycle with negotiation windows, and Query directed information requests with snapshot-versioned responses.
 
 This profile exists alongside `harmovela.runtime-semantics.v1`, which retains agent-oriented belief, freshness, interruption, compensation, and provenance semantics. Where runtime-semantics covers cognitive and epistemic concerns, coordination covers operational multi-agent collaboration: who owns work, how work transfers between agents, how stale state is detected and invalidated, and how cancellation cascades through a delegation tree.
 
@@ -206,6 +208,8 @@ This profile exists alongside `harmovela.runtime-semantics.v1`, which retains ag
 - Delegation ownership: a task may be delegated from one agent to another via `delegation.requested` → `delegation.accepted` → `delegation.handoff.completed`. Ownership transfer is atomic and trackable through a delegation chain. Handoff rejects (`delegation.rejected`) terminate the delegation flow for that target.
 - Delegation escalation: a delegate may escalate a task to a supervisor via `delegation.escalated`. Escalation is only valid while the delegation is active (not after rejection).
 - Cancellation propagation: when a parent task is cancelled, all child tasks must also be cancelled. The runtime emits `task.cancelled` for each child referencing the parent via `causation_id`. Cancellation is irreversible; a completed task cannot be cancelled.
+- Command directed instructions: `command.requested` → `command.accepted`/`command.rejected` → `command.completed`/`command.failed`. Commands carry target agent, correlation_id, delegation chain, and authorization scope. Accepted commands must ack within negotiation window. Specified in [command-query.md](command-query.md).
+- Query directed information requests: `query.requested` → `query.response`/`query.rejected` → `query.error`. Queries carry target, query scope, freshness requirements, and pagination hint. Responses carry snapshot version for idempotent re-query. Specified in [command-query.md](command-query.md).
 
 ### Adaptation Profile (L3 Production Autonomy)
 

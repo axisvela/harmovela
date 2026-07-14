@@ -13,6 +13,8 @@ Classification of legacy undimensioned event types into Harmovela coordination d
 | `interruption.*`, `compensation.*` | Recovery | In `Recovery` module; spread into legacy registries |
 | `task.*` | Task | Already in `Task` module; may benefit from future spreading |
 | `tool.call.*` | Tool | In `Tool` module; spread into legacy registries |
+| `command.*` | Command | In `Command` module |
+| `query.*` | Query | In `Query` module |
 | `agent.*` | Agent | In `Agent` module; spread into legacy registries |
 | `environment.*` | Environment | In `Environment` module; spread into legacy registries |
 

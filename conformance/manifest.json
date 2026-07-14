@@ -501,6 +501,71 @@
         "adaptation.cost.exceeded",
         "adaptation.budget.exhausted"
       ]
+    },
+    {
+      "path": "fixtures/command-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Command requested, accepted, and completed lifecycle flow through harness.",
+      "expectation": "stateful_flow",
+      "profile": "coordination",
+      "tags": [
+        "command",
+        "coordination"
+      ],
+      "expected_types": [
+        "command.requested",
+        "command.accepted",
+        "command.completed"
+      ]
+    },
+    {
+      "path": "fixtures/command-negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Invalid command rejection: missing target, cross-tenant unauthorized, unknown target agent.",
+      "expectation": "reject_some",
+      "profile": "coordination",
+      "tags": [
+        "negative",
+        "command",
+        "governance"
+      ],
+      "expected_types": [
+        "command.requested",
+        "command.requested",
+        "command.requested"
+      ]
+    },
+    {
+      "path": "fixtures/query-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Query requested and response flow with snapshot versioning through harness.",
+      "expectation": "stateful_flow",
+      "profile": "coordination",
+      "tags": [
+        "query",
+        "coordination"
+      ],
+      "expected_types": [
+        "query.requested",
+        "query.response"
+      ]
+    },
+    {
+      "path": "fixtures/query-negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Invalid query rejection: missing target, cross-tenant unauthorized, unknown target, missing scope.",
+      "expectation": "reject_some",
+      "profile": "coordination",
+      "tags": [
+        "negative",
+        "query",
+        "governance"
+      ],
+      "expected_types": [
+        "query.requested",
+        "query.requested",
+        "query.requested"
+      ]
     }
   ],
   "profiles": {
@@ -531,7 +596,11 @@
       "levels": ["HARMOVELA-C1"],
       "fixtures": [
         "fixtures/delegation-positive.ndjson",
-        "fixtures/delegation-negative.ndjson"
+        "fixtures/delegation-negative.ndjson",
+        "fixtures/command-positive.ndjson",
+        "fixtures/command-negative.ndjson",
+        "fixtures/query-positive.ndjson",
+        "fixtures/query-negative.ndjson"
       ]
     },
     "adaptation": {
