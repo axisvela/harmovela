@@ -108,7 +108,9 @@
       "type": "string"
     },
     "handoff_token": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "description": "Opaque bearer token proving ownership transfer from delegating agent to delegate. Issued on delegation.handoff.completed. Structured tokens encode issuer, delegate, task_id, parent_task_id, expiry, and nonce claims. See agent-runtime-semantics.md for validation requirements."
     },
     "checkpoint_id": {
       "type": "string"

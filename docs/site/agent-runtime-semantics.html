@@ -181,6 +181,37 @@
 <li><code>handoff_token</code> MUST be treated as opaque. Consumers MUST NOT parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.</li>
 <li>On <code>delegation.escalated</code>, consumers tracking the original task SHOULD route further status queries through the new delegate (<code>delegated_to</code>).</li>
 </ul>
+<h3>Handoff Token Semantics</h3>
+<p>A <code>handoff_token</code> is an opaque bearer token that proves ownership transfer from the delegating agent to the delegate. It is emitted on <code>delegation.handoff.completed</code> and MUST be validated by any runtime that receives a status query or subsequent delegation event for the transferred task.</p>
+<h4>Token Structure</h4>
+<p>Handoff tokens are opaque strings as transmitted on the wire. Implementations that produce structured tokens SHOULD encode the following claims:</p>
+<p>| Claim | Required | Description | |---|---|---| | <code>iss</code> | yes | Issuer identifier (the delegating agent, matching <code>delegated_by</code> on the event) | | <code>sub</code> | yes | Delegate identifier (the receiving agent, matching <code>delegated_to</code> on the event) | | <code>task_id</code> | yes | The task whose ownership is being transferred | | <code>parent_task_id</code> | yes | The parent delegating task | | <code>iat</code> | yes | Issued-at timestamp (RFC 3339) | | <code>exp</code> | yes | Expiration timestamp (RFC 3339). Tokens without expiry MUST be rejected. | | <code>jti</code> | yes | Unique token identifier (nonce) for replay protection | | <code>sig</code> | no | Cryptographic signature. Advanced feature reserved for <code>harmovela.security.v2</code> profile work (see below). |</p>
+<h4>Validation Requirements</h4>
+<p>A runtime receiving a <code>handoff_token</code> MUST perform the following checks before accepting it as proof of ownership transfer:</p>
+<ol>
+<li><b>Issuer match:</b> The <code>iss</code> claim MUST match the <code>delegated_by</code> field on the accompanying event.</li>
+<li><b>Delegate match:</b> The <code>sub</code> claim MUST match the <code>delegated_to</code> field on the event.</li>
+<li><b>Task binding:</b> The <code>task_id</code> and <code>parent_task_id</code> claims MUST match the corresponding fields on the event.</li>
+<li><b>Expiry check:</b> The current time MUST be before the <code>exp</code> claim. Expired tokens MUST be rejected.</li>
+<li><b>Replay protection:</b> The <code>jti</code> claim MUST NOT have been observed by this runtime before. Runtimes SHOULD maintain a token replay cache.</li>
+<li><b>Timeliness:</b> The <code>iat</code> claim MUST NOT be in the future (with reasonable clock-skew tolerance).</li>
+<li><b>Opaqueness:</b> Consumers that cannot validate token internals MUST treat the token as opaque.</li>
+</ol>
+<h4>Delegation Event Binding</h4>
+<ul>
+<li>A token is issued on <code>delegation.handoff.completed</code>.</li>
+<li>The token binds exactly one <code>delegated_by</code> / <code>delegated_to</code> / <code>task_id</code> / <code>parent_task_id</code> tuple.</li>
+<li>A token MUST NOT be reused across multiple delegation events.</li>
+<li>When a task is escalated, the previous <code>handoff_token</code> is superseded.</li>
+<li>On <code>delegation.rejected</code>, any pending handoff token is invalidated.</li>
+</ul>
+<h4>Future Profile Work</h4>
+<ul>
+<li><b>Cryptographic signature:</b> <code>sig</code> claim for token authenticity verification (<code>harmovela.security.v2</code>).</li>
+<li><b>Revocation list:</b> Token revocation endpoint or event (<code>harmovela.security.v2</code>).</li>
+<li><b>Audience restriction:</b> <code>aud</code> claim restricting runtime acceptance (<code>harmovela.security.v2</code>).</li>
+<li><b>Token chaining:</b> Linking handoff tokens across delegation chains (<code>harmovela.coordination.v2</code>).</li>
+</ul>
 <h2>Interruption And Cancellation Safety</h2>
 <h3>Fields</h3>
 <p>| Field | Type | Description | |---|---|---| | <code>checkpoint_id</code> | string | Identifier for saved execution state | | <code>checkpoint_at</code> | RFC 3339 | Timestamp when the checkpoint was saved | | <code>interruption_policy</code> | string | <code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code> | | <code>compensation_id</code> | string | Links a compensation task to the task it compensates for |</p>

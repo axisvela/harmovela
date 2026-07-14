@@ -223,6 +223,56 @@ Emitted when a delegated task is escalated to a supervisor or higher-authority a
 - `handoff_token` MUST be treated as opaque. Consumers MUST NOT parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.
 - On `delegation.escalated`, consumers tracking the original task SHOULD route further status queries through the new delegate (`delegated_to`).
 
+### Handoff Token Semantics
+
+A `handoff_token` is an opaque bearer token that proves ownership transfer from the delegating agent to the delegate. It is emitted on `delegation.handoff.completed` and MUST be validated by any runtime that receives a status query or subsequent delegation event for the transferred task.
+
+#### Token Structure
+
+Handoff tokens are opaque strings as transmitted on the wire. Implementations that produce structured tokens SHOULD encode the following claims:
+
+| Claim | Required | Description |
+|---|---|---|
+| `iss` | yes | Issuer identifier (the delegating agent, matching `delegated_by` on the event) |
+| `sub` | yes | Delegate identifier (the receiving agent, matching `delegated_to` on the event) |
+| `task_id` | yes | The task whose ownership is being transferred |
+| `parent_task_id` | yes | The parent delegating task |
+| `iat` | yes | Issued-at timestamp (RFC 3339) |
+| `exp` | yes | Expiration timestamp (RFC 3339). Tokens without expiry MUST be rejected. |
+| `jti` | yes | Unique token identifier (nonce) for replay protection |
+| `sig` | no | Cryptographic signature. Advanced feature reserved for `harmovela.security.v2` profile work (see below). |
+
+#### Validation Requirements
+
+A runtime receiving a `handoff_token` MUST perform the following checks before accepting it as proof of ownership transfer:
+
+1. **Issuer match:** The `iss` claim MUST match the `delegated_by` field on the accompanying `delegation.handoff.completed` event.
+2. **Delegate match:** The `sub` claim MUST match the `delegated_to` field on the event.
+3. **Task binding:** The `task_id` and `parent_task_id` claims MUST match the corresponding fields on the event.
+4. **Expiry check:** The current time MUST be before the `exp` claim. Expired tokens MUST be rejected.
+5. **Replay protection:** The `jti` claim MUST NOT have been observed by this runtime before. Runtimes SHOULD maintain a token replay cache with a retention period not shorter than the maximum token expiry window.
+6. **Timeliness:** The `iat` claim MUST NOT be in the future (with a reasonable clock-skew tolerance of up to 60 seconds).
+7. **Opaqueness:** Consumers that cannot validate token internals MUST treat the token as opaque and MUST NOT rely on it for authorization decisions beyond "the delegating runtime issued this token."
+
+#### Delegation Event Binding
+
+The `handoff_token` exists only within the context of a specific delegation flow:
+
+- A token is issued on `delegation.handoff.completed`.
+- The token binds exactly one `delegated_by` / `delegated_to` / `task_id` / `parent_task_id` tuple.
+- A token MUST NOT be reused across multiple delegation events.
+- When a task is escalated via `delegation.escalated`, the previous `handoff_token` is superseded and MUST NOT be accepted for operations on the escalated task.
+- On `delegation.rejected`, any pending handoff token for that delegation is invalidated.
+
+#### Future Profile Work
+
+The following handoff token features are reserved for future security profiles and are NOT part of the current `harmovela.runtime-semantics.v1` specification:
+
+- **Cryptographic signature:** The `sig` claim for token authenticity verification (`harmovela.security.v2`).
+- **Revocation list:** A token revocation endpoint or event for invalidating tokens before expiry (`harmovela.security.v2`).
+- **Audience restriction:** An `aud` claim restricting which runtimes may accept the token (`harmovela.security.v2`).
+- **Token chaining:** Linking handoff tokens across a delegation chain for end-to-end provenance (`harmovela.coordination.v2`).
+
 ## Interruption And Cancellation Safety
 
 ### Fields
