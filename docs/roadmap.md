@@ -40,7 +40,7 @@ The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by
 | **0.3 Optional Profiles** | Coordination | L2 (tightened) | Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles. | :white_check_mark: |
 | **0.4 Beta** | Coordination | L2 (interoperable) | Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix. | :white_check_mark: |
 | **0.5 Adaptation Preview** | Adaptation | L3 (specified and testable) | Define feedback/outcome correlation and protocol-level budget, audit, and authorization semantics; publish the L3 profile and cross-language conformance fixtures. | :white_check_mark: |
-| **0.9 Release Candidate** | Adaptation | L3 (validated) | Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. | |
+| **0.9 Release Candidate** | Adaptation | L3 (validated) | Preparation in progress; external evidence pending. Validate the complete 0.5 L3 semantics without feature expansion through the [RC validation kit](release/rc-validation.md), reproducible compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. | |
 | **1.0** | Adaptation | L3 (stable) | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals. | |
 
 Layer documents provide release-specific entry and exit gates.
@@ -49,7 +49,7 @@ Layer documents provide release-specific entry and exit gates.
 
 The current frontier is the **[Adaptation layer](roadmap/adaptation-layer.md)**. With 0.1 through 0.5 delivered, the immediate next-step priorities are:
 
-1. **0.9 RC validation** — validate the complete 0.5 Adaptation Preview L3 semantics without feature expansion through reproducible RC fixtures, a compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.
+1. **0.9 RC validation** — Preparation in progress; external evidence pending. Use the [RC validation kit](release/rc-validation.md) to validate the complete 0.5 Adaptation Preview L3 semantics without feature expansion through reproducible RC fixtures, a compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.
 2. **1.0 release preparation** — publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.
 
 ## Layer Documents
