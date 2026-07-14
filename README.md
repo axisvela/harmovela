@@ -18,7 +18,7 @@ Harmovela complements MCP. MCP remains the synchronous capability invocation lay
 
 ## About
 
-The current 0.2 draft is a multi-language protocol repository with:
+The current 0.5 Adaptation Preview is a multi-language protocol repository with:
 
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
 - **4 productized implementations** (TypeScript, Python, Go, Java) — each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
@@ -74,10 +74,10 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 ### Core (English)
 
-- `docs/vision.md` -- project vision, goals, non-goals, and principles ([����](docs/zh/vision.md))
-- `docs/architecture.md` -- system architecture and major protocol layers ([����](docs/zh/architecture.md))
+- `docs/vision.md` -- project vision, goals, non-goals, and principles ([中文](docs/zh/vision.md))
+- `docs/architecture.md` -- system architecture and major protocol layers ([中文](docs/zh/architecture.md))
 - `docs/differentiation.md` -- non-normative positioning and comparison material
-- `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([����](docs/zh/protocol-design.md))
+- `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([中文](docs/zh/protocol-design.md))
 - `docs/mcp-relationship.md` -- detailed comparison and interop model with MCP
 - `docs/roadmap.md` -- proposed phases toward a usable open protocol
 
@@ -101,6 +101,15 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 - `docs/protocol/conformance.md` -- draft conformance levels and shared fixture manifest rules
 - `docs/protocol/event-registry-governance.md` -- event type registry governance and versioning
 - `docs/protocol/agent-runtime-semantics.md` -- belief, freshness, delegation, interruption, and provenance metadata
+- `docs/protocol/adaptation-budget.md` -- adaptation budget specification
+- `docs/protocol/adaptation-feedback.md` -- adaptation feedback specification
+- `docs/protocol/compatibility-matrix.md` -- migration compatibility matrix
+- `docs/protocol/event-contract.md` -- event contract boundary
+- `docs/protocol/event-dimension-classification.md` -- event type dimension classification
+- `docs/protocol/governance-contract.md` -- governance contract boundary
+- `docs/protocol/l1-policy-surface.md` -- L1 advisory policy surface
+- `docs/protocol/profiles.md` -- protocol profiles
+- `docs/protocol/scenarios.md` -- integration scenarios
 
 ### Design Documents (`docs/design/`)
 
@@ -140,6 +149,8 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 - `implementations/java/` -- Java implementation (SDK, daemon, CLI, HTTP API, JDK 21)
 - `.github/workflows/` -- repository CI
 - `tools/` -- development tools (conformance runner, spec site generator)
+- `.superpowers/` -- Superpowers-backed specs, plans, skills, and notes
+- `.opencode/` -- OpenCode agent configuration
 
 ## Development Harness
 

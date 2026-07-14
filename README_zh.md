@@ -30,7 +30,7 @@ Harmovela 融合了三种相互交织的品质：
 
 ## 关于协议
 
-当前 0.2 草案是一个多语言协议仓库，包含：
+当前 0.5 Adaptation Preview 是一个多语言协议仓库，包含：
 
 - **17 份协议规范**：涵盖会话、订阅、任务、错误、版本、交付、可靠性、安全、一致性和传输层
 - **4 个产品级实现**（TypeScript、Python、Go、Java）——每个均包含运行时守护进程、CLI、HTTP API、订阅、MCP 桥接和交付存储
@@ -77,13 +77,80 @@ Harmovela 是包含四个活跃参考实现（TypeScript、Python、Go、Java）
 
 ## 文档
 
-- `docs/vision.md`：愿景、目标、非目标和原则
-- `docs/architecture.md`：系统架构和协议层
-- `docs/protocol-design.md`：协议模型、envelope、事件和生命周期
+### 核心文档
+
+- `docs/vision.md`：愿景、目标、非目标和原则 (中文翻译：[docs/zh/vision.md](docs/zh/vision.md))
+- `docs/architecture.md`：系统架构和协议层 (中文翻译：[docs/zh/architecture.md](docs/zh/architecture.md))
+- `docs/differentiation.md`：定位与对比材料
+- `docs/protocol-design.md`：协议模型、envelope、事件和生命周期 (中文翻译：[docs/zh/protocol-design.md](docs/zh/protocol-design.md))
 - `docs/mcp-relationship.md`：与 MCP 的互操作模型
-- `docs/roadmap.md`：版本路线与 beta、RC、1.0 门槛
+- `docs/roadmap.md`：版本路线与里程碑
+
+### 协议规范 (`docs/protocol/`)
+
+- `docs/protocol/session.md`：会话生命周期规范
+- `docs/protocol/subscription.md`：订阅模型规范
+- `docs/protocol/task-lifecycle.md`：任务生命周期规范
+- `docs/protocol/error-model.md`：错误模型规范
+- `docs/protocol/versioning.md`：版本管理规范
+- `docs/protocol/transport-stdio.md`：stdio 传输规范
+- `docs/protocol/transport-websocket.md`：WebSocket 传输规范
+- `docs/protocol/transport-sse.md`：HTTP SSE 传输规范
+- `docs/protocol/transport-grpc.md`：gRPC 流式传输规范
+- `docs/protocol/transport-kafka.md`：Kafka 传输规范
+- `docs/protocol/transport-nats.md`：NATS 传输规范
+- `docs/protocol/transport-redis-streams.md`：Redis Streams 传输规范
+- `docs/protocol/delivery.md`：交付语义、确认和重放规范
+- `docs/protocol/reliability.md`：重试、持久化和死信处理规范
+- `docs/protocol/security.md`：身份、授权、审计和租户隔离规范
+- `docs/protocol/conformance.md`：一致性级别和共享fixture清单规范
+- `docs/protocol/event-registry-governance.md`：事件类型注册治理和版本管理
+- `docs/protocol/agent-runtime-semantics.md`：信念、新鲜度、委派、中断和溯源元数据
+- `docs/protocol/adaptation-budget.md`：适应性预算规范
+- `docs/protocol/adaptation-feedback.md`：适应性反馈规范
+- `docs/protocol/compatibility-matrix.md`：迁移兼容性矩阵
+- `docs/protocol/event-contract.md`：事件契约边界
+- `docs/protocol/event-dimension-classification.md`：事件类型维度分类
+- `docs/protocol/governance-contract.md`：治理契约边界
+- `docs/protocol/l1-policy-surface.md`：L1 咨询策略表面
+- `docs/protocol/profiles.md`：协议配置文件
+- `docs/protocol/scenarios.md`：集成场景
+
+### 设计文档 (`docs/design/`)
+
+- `docs/design/`：设计记录与执行计划
+
+### 治理
+
+- `GOVERNANCE.md`：项目治理与决策
+- `RELEASES.md`：发布阶段、版本管理与制品
+- `TRADEMARKS.md`：名称和商标使用指南
+- `LICENSE`：Apache License 2.0
+
+### 指南
+
+- `CONTRIBUTING.md`：贡献指南与仓库约定
+- `CODE_OF_CONDUCT.md`：贡献者行为准则
+
+## 仓库结构
+
+- `docs/`：协议愿景、架构、设计草案、规范、路线图
 - `docs/protocol/`：分层协议规范
 - `docs/design/`：设计记录与执行计划
+- `docs/zh/`：核心文档的中文翻译
+- `docs/site/`：生成的规范站点（HTML）
+- `schemas/`：共享 JSON Schema 资产
+- `conformance/`：跨语言一致性的共享 fixtures
+- `examples/`：基于场景的示例：quickstart、service-client、mcp-bridge、scenarios
+- `implementations/`：各语言实现
+- `implementations/typescript/`：TypeScript 实现
+- `implementations/python/`：Python 实现
+- `implementations/go/`：Go 实现
+- `implementations/java/`：Java 实现
+- `.github/workflows/`：仓库 CI
+- `tools/`：开发工具
+- `.superpowers/`：Superpowers 规格、计划、技能与笔记
+- `.opencode/`：OpenCode 智能体配置
 
 ## 验证
 
