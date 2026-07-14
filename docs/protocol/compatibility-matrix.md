@@ -51,13 +51,13 @@ rg -n "\baep\b|\bharmovela\b|\baepd\b|\bharmovelad\b|AEPD_|AEP_|HARMOVELA_|aep_v
 | Unknown event handling | versioning opaque-forwarding rule vs. registry validators rejecting unknown types | Approved Event contract and cross-language fixture results |
 | Runtime naming surfaces | Harmovela runtime defaults vs. legacy commands, paths, environment variables, and subprotocols | Approved breaking-release migration table |
 
-No blocking decision is resolved by this milestone record. The dimension migration evidence below documents that all seven Harmovela coordination dimensions have been extracted into independent modules, but the blocking compatibility decisions themselves remain open. In particular, this inventory does not authorize wire, package, CLI, endpoint, environment-variable, schema, or transport-subprotocol renames.
+No blocking decision is resolved by this milestone record. The dimension migration evidence below documents that all ten Harmovela coordination dimensions have been extracted into independent modules, but the blocking compatibility decisions themselves remain open. In particular, this inventory does not authorize wire, package, CLI, endpoint, environment-variable, schema, or transport-subprotocol renames.
 
 ## Dimension Migration Evidence
 
-All seven Harmovela coordination dimensions have been extracted from legacy `aep` namespaces into independent dimension modules across TypeScript, Python, Go, and Java. This section records module locations, legacy adapter state, test evidence, and 1.0 removal gates per dimension per language (7 dimensions x 4 languages = 28 entries).
+All ten Harmovela coordination dimensions have been extracted from legacy `aep` namespaces into independent dimension modules across TypeScript, Python, Go, and Java. This section records module locations, legacy adapter state, test evidence, and 1.0 removal gates per dimension per language (10 dimensions x 4 languages = 40 entries).
 
-Evidence collection date: 2026-07-14. Commit range: `88f9aad` (Event core extraction start) through `ef7b3a0` (Delegation completion). Untracked plan files verify planned migration steps.
+Evidence collection date: 2026-07-14. Commit range: `88f9aad` (Event core extraction start) through `53fb09b` (Environment dimension completion). All dimension migration plan files are complete and archived.
 
 ### 1. Event
 
@@ -111,10 +111,10 @@ Evidence collection date: 2026-07-14. Commit range: `88f9aad` (Event core extrac
 
 | Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
 | --- | --- | --- | --- | --- |
-| TypeScript | `implementations/typescript/packages/state/src/index.js` (package `@axisrobo/harmovela-state`) — exports `STATE_EVENT_TYPES`, `isStateEventType` | State types remain inline in `src/legacy-dimension-types.js` (pending wire adapter extraction); `src/index.js` does not yet re-export state module | `packages/state/test/state.test.js` | Register `@axisrobo/harmovela-state` in legacy-dimension-types.js when non-dimension legacy types are extracted; remove hardcoded state types from legacy adapter |
-| Python | `implementations/python/src/axisrobo_harmovela_state/__init__.py` — exports `STATE_EVENT_TYPES`, `is_state_event_type` | State types remain inline in `aep/legacy_dimension_types.py` (pending adapter extraction) | `tests/test_state_module.py` | Register `axisrobo_harmovela_state` in legacy_dimension_types.py; remove hardcoded state types from legacy adapter |
-| Go | `implementations/go/state/state.go` — package `state`, exports `EventTypes`, `IsEventType` | State types remain inline in `aep/event_types.go` (pending adapter extraction) | `state/state_test.go` | Register `state.EventTypes` in `aep/event_types.go` merge loop; remove hardcoded state types from legacy adapter |
-| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/state/StateTypes.java` | State types remain inline in `aep/EventTypes.java` (pending adapter extraction) | `src/test/java/com/axisrobo/harmovela/state/StateTypesTest.java` | Register `StateTypes.EVENT_TYPES` in `aep/EventTypes.java`; remove hardcoded state types from legacy adapter |
+| TypeScript | `implementations/typescript/packages/state/src/index.js` (package `@axisrobo/harmovela-state`) — exports `STATE_EVENT_TYPES`, `isStateEventType` | `src/legacy-dimension-types.js` imports `STATE_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES`; `src/index.js` re-exports from `@axisrobo/harmovela-state` | `packages/state/test/state.test.js` | Remove legacy adapter import; state types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_state/__init__.py` — exports `STATE_EVENT_TYPES`, `is_state_event_type` | `aep/legacy_dimension_types.py` imports `STATE_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_state_module.py` | Remove legacy adapter import; state types served directly from module |
+| Go | `implementations/go/state/state.go` — package `state`, exports `EventTypes`, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/state"` and merges `state.EventTypes` into `legacyStandardEventTypes` via `for` loop | `state/state_test.go` | Remove legacy adapter merge loop; state types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/state/StateTypes.java` | `aep/EventTypes.java` imports `StateTypes` and calls `types.addAll(StateTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/state/StateTypesTest.java` | Remove legacy adapter `addAll` call; state types served directly from module |
 
 ### 6. Context / Memory
 
@@ -138,23 +138,63 @@ Evidence collection date: 2026-07-14. Commit range: `88f9aad` (Event core extrac
 | Go | `implementations/go/delegation/delegation.go` — package `delegation`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/delegation"` and merges `delegation.EventTypes` into `legacyStandardEventTypes` via `for` loop | `delegation/delegation_test.go` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter merge loop; delegation types served directly from module |
 | Java | `implementations/java/src/main/java/com/axisrobo/harmovela/delegation/DelegationTypes.java` — exports `EVENT_TYPES` set, `isDelegationEventType` | `aep/EventTypes.java` imports `DelegationTypes` and calls `types.addAll(DelegationTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/delegation/DelegationTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; delegation types served directly from module |
 
+### 8. Tool
+
+**Scope:** 8 tool.call.* event types, `isToolEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/tool/src/index.js` (package `@axisrobo/harmovela-tool`) — exports `TOOL_EVENT_TYPES`, `isToolEventType` | `src/legacy-dimension-types.js` imports `TOOL_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES` | `packages/tool/test/tool.test.js` — 3 tests: all 8 types, positives, negatives | Remove legacy adapter import; tool types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_tool/__init__.py` — exports `TOOL_EVENT_TYPES`, `is_tool_event_type` | `aep/legacy_dimension_types.py` imports `TOOL_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_tool_module.py` — 3 tests: all 8 types, positives, negatives | Remove legacy adapter import; tool types served directly from module |
+| Go | `implementations/go/tool/tool.go` — package `tool`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/tool"` and merges `tool.EventTypes` into `legacyStandardEventTypes` via `for` loop | `tool/tool_test.go` — 3 tests: all 8 types, positives, negatives | Remove legacy adapter merge loop; tool types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/tool/ToolTypes.java` — exports `EVENT_TYPES` set, `isToolEventType` | `aep/EventTypes.java` imports `ToolTypes` and calls `types.addAll(ToolTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/tool/ToolTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; tool types served directly from module |
+
+### 9. Agent
+
+**Scope:** 5 agent.* event types, `isAgentEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/agent/src/index.js` (package `@axisrobo/harmovela-agent`) — exports `AGENT_EVENT_TYPES`, `isAgentEventType` | `src/legacy-dimension-types.js` imports `AGENT_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES` | `packages/agent/test/agent.test.js` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter import; agent types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_agent/__init__.py` — exports `AGENT_EVENT_TYPES`, `is_agent_event_type` | `aep/legacy_dimension_types.py` imports `AGENT_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_agent_module.py` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter import; agent types served directly from module |
+| Go | `implementations/go/agent/agent.go` — package `agent`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/agent"` and merges `agent.EventTypes` into `legacyStandardEventTypes` via `for` loop | `agent/agent_test.go` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter merge loop; agent types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/agent/AgentTypes.java` — exports `EVENT_TYPES` set, `isAgentEventType` | `aep/EventTypes.java` imports `AgentTypes` and calls `types.addAll(AgentTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/agent/AgentTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; agent types served directly from module |
+
+### 10. Environment
+
+**Scope:** 4 environment.* event types, `isEnvironmentEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/environment/src/index.js` (package `@axisrobo/harmovela-environment`) — exports `ENVIRONMENT_EVENT_TYPES`, `isEnvironmentEventType` | `src/legacy-dimension-types.js` imports `ENVIRONMENT_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES` | `packages/environment/test/environment.test.js` — 3 tests: all 4 types, positives, negatives | Remove legacy adapter import; environment types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_environment/__init__.py` — exports `ENVIRONMENT_EVENT_TYPES`, `is_environment_event_type` | `aep/legacy_dimension_types.py` imports `ENVIRONMENT_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_environment_module.py` — 3 tests: all 4 types, positives, negatives | Remove legacy adapter import; environment types served directly from module |
+| Go | `implementations/go/environment/environment.go` — package `environment`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/environment"` and merges `environment.EventTypes` into `legacyStandardEventTypes` via `for` loop | `environment/environment_test.go` — 3 tests: all 4 types, positives, negatives | Remove legacy adapter merge loop; environment types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/environment/EnvironmentTypes.java` — exports `EVENT_TYPES` set, `isEnvironmentEventType` | `aep/EventTypes.java` imports `EnvironmentTypes` and calls `types.addAll(EnvironmentTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/environment/EnvironmentTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; environment types served directly from module |
+
 ### Architecture Compliance
 
 | Rule | Status |
 | --- | --- |
-| No dimension module imports legacy `aep` package code | **PASS** — All 28 modules (7 x 4) verified zero `aep` package imports. Wire identifiers (`aep` default prefix, topic, subprotocol) are transport configuration strings, not package imports. |
+| No dimension module imports legacy `aep` package code | **PASS** — All 40 modules (10 x 4) verified zero `aep` package imports. Wire identifiers (`aep` default prefix, topic, subprotocol) are transport configuration strings, not package imports. |
 | Legacy `aep` may only adapt through dimension public APIs | **PASS** — `src/harness.js`, `aep/harness.go`, `aep/Harness.java`, `aep/harness.py` all import from dimension module public exports. `EventTypes.java`, `event_types.go`, `legacy-dimension-types.js`, `legacy_dimension_types.py` delegate to dimension registries. |
-| Every dimension module has independent tests | **PASS** — 28 test modules verified across 7 dimensions x 4 languages |
+| Every dimension module has independent tests | **PASS** — 40 test modules verified across 10 dimensions x 4 languages |
 | Migration is one-way (move, not copy) | **PASS** — Git history confirms files were moved from `aep` namespace to dimension modules via `refactor:` and `feat:` commits |
 | Remaining wire `aep` identifiers are documented | **PASS** — Compatibility matrix rows for WebSocket, SSE, gRPC, NATS, Kafka, Redis, package identifiers cover all remaining `aep` wire surfaces |
 
 ### Remaining Wire Adaptation Scope
 
-The following event type families remain hardcoded in legacy adapters and have not yet been extracted to dimension modules:
+All event type families have been classified and extracted into dimension modules. The following classification is recorded in `docs/protocol/event-dimension-classification.md`:
 
-**State** (6 types): Module exists; not yet wired as adapter import. Types still hardcoded in legacy-dimension-types.js / legacy_dimension_types.py / event_types.go / EventTypes.java.
+- **State** (`state.*`, `freshness.*`): Fully migrated with adapter wiring.
+- **Context / Memory** (`context.*`, `memory.*`, `belief.*`, `provenance.*`): Fully migrated with adapter wiring.
+- **Recovery** (`interruption.*`, `compensation.*`): Fully migrated as Recovery types alongside DeliveryTracker infrastructure.
+- **Tool** (`tool.call.*`): Fully migrated with adapter wiring.
+- **Agent** (`agent.*`): Fully migrated with adapter wiring.
+- **Environment** (`environment.*`): Fully migrated with adapter wiring.
+- **Delegation** (`delegation.*`): Fully migrated with adapter wiring.
+- **Task** (`task.*`): Fully migrated with adapter wiring.
 
-**Undimensioned legacy types** (~45 types across tool.call.*, agent.*, environment.*, belief.*, freshness.*, interruption.*, compensation.*, provenance.*): Remain in legacy adapter inline. These represent cross-cutting or under-specified event families that may be assigned to future dimensions (Tool/Action, Agent, Environment, Provenance) or remain as non-dimension adapter entries.
+No undimensioned legacy types remain. All ~45 previously undimensioned event types across 7 families have been assigned to dimension modules.
 
 **Shared contracts** (envelope schemas, error helpers, gRPC proto): Not moved into dimension modules — documented as shared contracts in compatibility matrix pending explicit compatibility decisions.
 
@@ -162,8 +202,7 @@ The following event type families remain hardcoded in legacy adapters and have n
 
 | Blocker | Status |
 | --- | --- |
-| State dimension adapter wiring (4 languages) | Remaining — module exists, adapter extraction pending across remaining ~45 undimensioned types |
-| Undimensioned legacy type families extraction or retirement | Remaining — ~45 event types cross 7 families not yet assigned to target dimensions |
+| Dimension migration (10 dimensions, 4 languages) | **COMPLETE** — All 40 modules exist, adapter wiring verified, tests present |
 | Wire identifier compatibility decisions (endpoints, subprotocols, transport prefixes, schema IDs) | Remaining — all documented in compatibility matrix as Undecided |
 | Package/CLI/config rename decisions | Remaining — four language packages retain `@axisrobo/aep` top-level identity |
 | Shared schema and error contract decisions | Remaining — documented as shared contracts in compatibility matrix |

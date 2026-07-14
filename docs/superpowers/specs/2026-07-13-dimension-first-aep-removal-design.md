@@ -20,7 +20,10 @@ Migrate all legacy `aep` implementation code into independent Harmovela dimensio
 5. State
 6. Context / Memory
 7. Delegation
-8. Adaptation after its 0.5 semantics stabilize
+8. Tool
+9. Agent
+10. Environment
+11. Adaptation after its 0.5 semantics stabilize
 
 ## Boundaries
 
@@ -42,7 +45,7 @@ Migrate all legacy `aep` implementation code into independent Harmovela dimensio
 
 ## Migration Status (2026-07-14)
 
-All seven dimensions have been extracted from the legacy `aep` namespace into independent Harmovela dimension modules across all four languages. Evidence recorded in `docs/protocol/compatibility-matrix.md` Dimension Migration Evidence section.
+All ten dimensions have been extracted from the legacy `aep` namespace into independent Harmovela dimension modules across all four languages. Evidence recorded in `docs/protocol/compatibility-matrix.md` Dimension Migration Evidence section. No undimensioned legacy event types remain.
 
 ### Completed Dimensions
 
@@ -52,13 +55,16 @@ All seven dimensions have been extracted from the legacy `aep` namespace into in
 | 2 | Recovery | `@axisrobo/harmovela-recovery` | `axisrobo_harmovela_recovery` | `github.com/axisrobo/harmovela/recovery` | `com.axisrobo.harmovela.recovery.*` | Yes (harness + config + barrel) | Yes (5 test modules per language) |
 | 3 | Governance | `@axisrobo/harmovela-governance` | `axisrobo_harmovela_governance` | `github.com/axisrobo/harmovela/governance` | `com.axisrobo.harmovela.governance.GovernancePolicy` | Yes (harness) | Yes (1 test module per language) |
 | 4 | Task | `@axisrobo/harmovela-task` | `axisrobo_harmovela_task` | `github.com/axisrobo/harmovela/task` | `com.axisrobo.harmovela.task.TaskTracker` | Yes (harness + barrel) | Yes (1 test module per language) |
-| 5 | State | `@axisrobo/harmovela-state` | `axisrobo_harmovela_state` | `github.com/axisrobo/harmovela/state` | `com.axisrobo.harmovela.state.StateTypes` | No (module exists; types still hardcoded in legacy adapter) | Yes (1 test module per language) |
+| 5 | State | `@axisrobo/harmovela-state` | `axisrobo_harmovela_state` | `github.com/axisrobo/harmovela/state` | `com.axisrobo.harmovela.state.StateTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
 | 6 | Context/Memory | `@axisrobo/harmovela-context` | `axisrobo_harmovela_context` | `github.com/axisrobo/harmovela/context` | `com.axisrobo.harmovela.context.ContextMemoryTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
 | 7 | Delegation | `@axisrobo/harmovela-delegation` | `axisrobo_harmovela_delegation` | `github.com/axisrobo/harmovela/delegation` | `com.axisrobo.harmovela.delegation.DelegationTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 8 | Tool | `@axisrobo/harmovela-tool` | `axisrobo_harmovela_tool` | `github.com/axisrobo/harmovela/tool` | `com.axisrobo.harmovela.tool.ToolTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 9 | Agent | `@axisrobo/harmovela-agent` | `axisrobo_harmovela_agent` | `github.com/axisrobo/harmovela/agent` | `com.axisrobo.harmovela.agent.AgentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 10 | Environment | `@axisrobo/harmovela-environment` | `axisrobo_harmovela_environment` | `github.com/axisrobo/harmovela/environment` | `com.axisrobo.harmovela.environment.EnvironmentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
 
 ### Architecture Compliance
 
-- **Zero reverse dependencies:** All 28 dimension modules (7 x 4) verified — no dimension module imports from any `aep` package/namespace.
+- **Zero reverse dependencies:** All 40 dimension modules (10 x 4) verified — no dimension module imports from any `aep` package/namespace.
 - **One-way adapter direction:** Legacy `aep` harnesses, barrels, runtime, and CLI import from dimension public APIs only.
 - **Wire identifiers preserved:** Event transport modules retain legacy `aep` wire defaults (endpoint paths, subprotocols, NATS/Kafka/Redis prefixes, headers, proto filename) pending explicit compatibility decisions documented in the compatibility matrix.
 
@@ -66,8 +72,7 @@ All seven dimensions have been extracted from the legacy `aep` namespace into in
 
 | Item | Scope | Status |
 | --- | --- | --- |
-| State dimension adapter wiring | 4 languages | Module exists; inline types in legacy adapter need replacement with import |
-| Undimensioned legacy type extraction or retirement | ~45 types across 7 families (tool.call, agent, environment, belief, freshness, interruption, compensation, provenance) | Not yet assigned to dimension modules |
+| Dimension migration (10 dimensions, 4 languages) | Event, Recovery, Governance, Task, State, Context/Memory, Delegation, Tool, Agent, Environment | **COMPLETE** — All 40 modules exist with adapter wiring and tests |
 | Wire identifier compatibility decisions | Endpoints, subprotocols, transport prefixes, schema IDs, proto filenames | Pending explicit Protocol/Profile decisions |
 | Package/CLI/config rename | 4 languages | `@axisrobo/aep` top-level identity retained |
 | Shared contract decisions | Envelope schemas, error helpers, gRPC proto | Pending explicit Protocol decisions |
