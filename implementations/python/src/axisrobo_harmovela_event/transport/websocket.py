@@ -30,7 +30,7 @@ class WsServerTransport(Transport):
             self._handle_client,
             self.host,
             self.port,
-            subprotocols=["aep-0.1"],
+            subprotocols=["harmovela-0.2"],
         )
         sockets = self._server.sockets
         if sockets:
@@ -105,7 +105,7 @@ class WsClientTransport(Transport):
     async def _connect(self):
         self._ws = await websockets.connect(
             self.url,
-            subprotocols=["aep-0.1"],
+            subprotocols=["harmovela-0.2"],
         )
         asyncio.ensure_future(self._listen())
 

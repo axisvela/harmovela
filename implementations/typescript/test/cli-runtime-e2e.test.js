@@ -39,7 +39,7 @@ test("aep emit delivers event through running aepd websocket runtime", async () 
 
   try {
     await waitForOutput(daemon.stdout, /harmovelad started/);
-    const ws = new WebSocket("ws://127.0.0.1:18987/harmovela", ["aep-0.1"]);
+    const ws = new WebSocket("ws://127.0.0.1:18987/harmovela", ["harmovela-0.2"]);
     await once(ws, "open");
     const received = once(ws, "message");
     const emitted = await runCli([
@@ -146,7 +146,7 @@ function waitForJsonLine(stream, expectedId) {
 }
 
 async function waitForWebSocketConnection(port) {
-  const ws = new WebSocket(`ws://127.0.0.1:${port}/harmovela`, ["aep-0.1"]);
+  const ws = new WebSocket(`ws://127.0.0.1:${port}/harmovela`, ["harmovela-0.2"]);
   await once(ws, "open");
   ws.close();
 }

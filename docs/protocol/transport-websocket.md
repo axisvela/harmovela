@@ -19,21 +19,21 @@ The reference runtime defaults its WebSocket path to `/harmovela`. Deployments m
 
 ### Subprotocol
 
-The WebSocket handshake must request the subprotocol `aep-0.1`:
+The WebSocket handshake must request the subprotocol `harmovela-0.2`:
 
 ```
-GET /aep HTTP/1.1
+GET /harmovela HTTP/1.1
 Upgrade: websocket
-Sec-WebSocket-Protocol: aep-0.1
+Sec-WebSocket-Protocol: harmovela-0.2
 ```
 
-The server must respond with `Sec-WebSocket-Protocol: aep-0.1` on success.
+The server must respond with `Sec-WebSocket-Protocol: harmovela-0.2` on success.
 
-Future protocol versions use distinct subprotocol strings (e.g., `aep-0.2`). The server may advertise supported versions, and the client selects one.
+Future protocol versions use distinct subprotocol strings (e.g., `harmovela-0.3`). The server may advertise supported versions, and the client selects one.
 
 ### Connection Parameters
 
-Path and query string may carry initialization parameters (e.g., `ws://host/aep?session_id=sess_01`). This is transport-level metadata and not part of the protocol envelope.
+Path and query string may carry initialization parameters (e.g., `ws://host/harmovela?session_id=sess_01`). This is transport-level metadata and not part of the protocol envelope.
 
 ## Framing
 

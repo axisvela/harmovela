@@ -11,7 +11,7 @@ export class WsServerTransport extends Transport {
     super();
     this.port = options.port ?? 0;
     this.host = options.host ?? "127.0.0.1";
-    this.path = options.path ?? "/aep";
+    this.path = options.path ?? "/harmovela";
     this.httpServer = options.httpServer ?? null;
   }
 
@@ -25,7 +25,7 @@ export class WsServerTransport extends Transport {
         path: this.path,
         handleProtocols: (protocols) => {
           const requested = new Set(protocols);
-          if (requested.has("aep-0.1")) return "aep-0.1";
+          if (requested.has("harmovela-0.2")) return "harmovela-0.2";
           return false;
         }
       });
@@ -151,7 +151,7 @@ export class WsClientTransport extends Transport {
 
   #connect() {
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(this.url, ["aep-0.1"]);
+      const ws = new WebSocket(this.url, ["harmovela-0.2"]);
       this.#ws = ws;
 
       ws.on("open", () => {

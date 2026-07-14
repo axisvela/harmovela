@@ -78,7 +78,7 @@ def emit(event_type, payload, url, event_id, source):
 
 async def _emit_ws(url, event):
     import websockets
-    async with websockets.connect(url, subprotocols=["aep-0.1"]) as ws:
+    async with websockets.connect(url, subprotocols=["harmovela-0.2"]) as ws:
         await ws.send(json.dumps(event))
 
 
@@ -93,7 +93,7 @@ def subscribe(pattern, url):
 
 async def _subscribe_ws(url, pattern, matches_type):
     import websockets
-    async with websockets.connect(url, subprotocols=["aep-0.1"]) as ws:
+    async with websockets.connect(url, subprotocols=["harmovela-0.2"]) as ws:
         async for message in ws:
             event = json.loads(message)
             if matches_type(pattern, event.get("type")):

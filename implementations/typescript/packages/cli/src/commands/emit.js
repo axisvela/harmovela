@@ -9,17 +9,17 @@ export async function emitCommand(type, options = {}) {
     spec_version: "0.2",
     id: options.id ?? randomUUID(),
     type,
-    source: options.source ?? "cli:aep",
+    source: options.source ?? "cli:harmovela",
     created_at: new Date().toISOString(),
     payload
   };
-  await sendWs(options.url ?? "ws://127.0.0.1:8787/aep", event);
+  await sendWs(options.url ?? "ws://127.0.0.1:8787/harmovela", event);
   console.log(JSON.stringify(event));
 }
 
 function sendWs(url, event) {
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(url, ["aep-0.1"]);
+    const ws = new WebSocket(url, ["harmovela-0.2"]);
     ws.on("open", () => { ws.send(JSON.stringify(event)); ws.close(); resolve(); });
     ws.on("error", reject);
   });
