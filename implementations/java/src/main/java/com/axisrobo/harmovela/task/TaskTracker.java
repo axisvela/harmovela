@@ -1,4 +1,4 @@
-package com.axisrobo.aep;
+package com.axisrobo.harmovela.task;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Set;
 
 public class TaskTracker {
     public enum TaskState { SUBMITTED, ACCEPTED, STARTED, PROGRESS, BLOCKED, OUTPUT, COMPLETED, FAILED, CANCELLED, TIMED_OUT }
+
+    public static final String TASK_TIMEOUT = "task_timeout";
 
     private static final Map<String, TaskState> EVENT_TO_STATE = Map.ofEntries(
         Map.entry("task.submitted", TaskState.SUBMITTED), Map.entry("task.accepted", TaskState.ACCEPTED),
@@ -26,6 +28,15 @@ public class TaskTracker {
         TaskState.PROGRESS, Set.of(TaskState.PROGRESS, TaskState.OUTPUT, TaskState.BLOCKED, TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT),
         TaskState.OUTPUT, Set.of(TaskState.PROGRESS, TaskState.OUTPUT, TaskState.BLOCKED, TaskState.COMPLETED, TaskState.FAILED, TaskState.CANCELLED, TaskState.TIMED_OUT)
     );
+
+    private static Map<String, Object> errorPayload(String code, String message, boolean retryable) {
+        return Map.of(
+            "code", code,
+            "message", message,
+            "retryable", retryable,
+            "details", Map.of()
+        );
+    }
 
     private final String id;
     private final String source;
@@ -48,7 +59,7 @@ public class TaskTracker {
     public Map<String, Object> progress(Map<String, Object> payload) { return transition("task.progress", payload); }
     public Map<String, Object> completed(Map<String, Object> result) { return transition("task.completed", result); }
     public Map<String, Object> failed(String code, String message) {
-        return transition("task.failed", Map.of("error", Errors.errorPayload(code, message, false)));
+        return transition("task.failed", Map.of("error", errorPayload(code, message, false)));
     }
 
     public Map<String, Object> transition(String eventType, Map<String, Object> payload) {
