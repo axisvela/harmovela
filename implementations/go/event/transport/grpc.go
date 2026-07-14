@@ -12,13 +12,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type MessageHandler func(msg *event.HarmovelaMessage) *event.HarmovelaMessage
+type GrpcMessageHandler func(msg *event.HarmovelaMessage) *event.HarmovelaMessage
 
-type ReceiveHandler func(msg *event.HarmovelaMessage)
+type GrpcReceiveHandler func(msg *event.HarmovelaMessage)
 
 type GrpcServer struct {
 	grpcServer    *grpc.Server
-	messageHandler MessageHandler
+	messageHandler GrpcMessageHandler
 	mu            sync.RWMutex
 }
 
@@ -26,13 +26,13 @@ func NewGrpcServer() *GrpcServer {
 	return &GrpcServer{}
 }
 
-func (s *GrpcServer) OnMessage(handler MessageHandler) {
+func (s *GrpcServer) OnMessage(handler GrpcMessageHandler) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.messageHandler = handler
 }
 
-func (s *GrpcServer) getHandler() MessageHandler {
+func (s *GrpcServer) getHandler() GrpcMessageHandler {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.messageHandler
@@ -76,7 +76,7 @@ func (s *GrpcServer) Stream(stream event.HarmovelaTransport_StreamServer) error 
 type GrpcClient struct {
 	conn    *grpc.ClientConn
 	stream  event.HarmovelaTransport_StreamClient
-	handler ReceiveHandler
+	handler GrpcReceiveHandler
 	mu      sync.RWMutex
 }
 
@@ -84,13 +84,13 @@ func NewGrpcClient() *GrpcClient {
 	return &GrpcClient{}
 }
 
-func (c *GrpcClient) OnMessage(handler ReceiveHandler) {
+func (c *GrpcClient) OnMessage(handler GrpcReceiveHandler) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.handler = handler
 }
 
-func (c *GrpcClient) getHandler() ReceiveHandler {
+func (c *GrpcClient) getHandler() GrpcReceiveHandler {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.handler

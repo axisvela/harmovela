@@ -11,7 +11,7 @@ class ConfigTest {
     @Test
     void defaultConfigHasApiTransport() {
         var c = Config.defaultConfig();
-        assertEquals("0.2", c.aepVersion());
+        assertEquals("0.2", c.specVersion());
         assertEquals(8790, c.api().port());
         assertEquals("sqlite", c.delivery().store());
     }
