@@ -20,12 +20,29 @@ Harmovela complements MCP. MCP remains the synchronous capability invocation lay
 
 The current 0.5 Adaptation Preview is a multi-language protocol repository with:
 
+- **11 dimension modules** (Event, Task, State, Context/Memory, Delegation, Recovery, Governance, Tool, Agent, Environment, Adaptation)
+- **5 infrastructure modules** (Harness, Runtime, CLI, Conformance, MCP Bridge)
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
 - **4 productized implementations** (TypeScript, Python, Go, Java) — each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
+- **28 conformance fixtures** with cross-language validation
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance
 - **Spec site** at [axisrobo.github.io/harmovela](https://axisrobo.github.io/harmovela/)
+
+```mermaid
+graph LR
+    subgraph evt["Event Layer (L0)"]
+        E["Envelope · Session · Subscription<br/>Routing · 7 Transport Bindings"]
+    end
+    subgraph coord["Coordination Layer (L1–L2)"]
+        C["Task · State · Delegation<br/>Context/Memory · RBAC Governance<br/>Recovery · Tenant Isolation"]
+    end
+    subgraph adp["Adaptation Layer (L3)"]
+        A["Feedback · Budget Enforcement<br/>Audit · Authorization · Profiles"]
+    end
+    evt --> coord --> adp
+```
 
 ## Vision
 
@@ -133,6 +150,31 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 
 ## Repository Layout
+
+```mermaid
+graph TB
+    subgraph dim["11 Dimension Modules"]
+        direction LR
+        EVENT["Event"] --- RECOVERY["Recovery"]
+        TASK["Task"] --- STATE["State"]
+        CONTEXT["Context/Memory"] --- DELEGATION["Delegation"]
+        GOVERNANCE["Governance"] --- TOOL["Tool"]
+        AGENT["Agent"] --- ENV["Environment"]
+        ADAPTATION["Adaptation"]
+    end
+    subgraph infra["5 Infrastructure Modules"]
+        direction LR
+        HARNESS["Harness"] --- RUNTIME["Runtime/Daemon"]
+        CLI["CLI"] --- CONFORM["Conformance"]
+        MCP["MCP Bridge"]
+    end
+    subgraph shared["Shared"]
+        direction LR
+        SCHEMAS["JSON Schemas"] --- FIXTURES["28 Fixtures"]
+        SPECS["27 Protocol Specs"] --- TOOLS["Conformance Runner"]
+    end
+    dim --> infra --> shared
+```
 
 - `docs/` -- protocol vision, architecture, design drafts, specifications, roadmap
 - `docs/protocol/` -- per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning, transports)
