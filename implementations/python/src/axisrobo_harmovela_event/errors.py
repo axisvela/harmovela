@@ -18,6 +18,7 @@ class ErrorCode(StrEnum):
     TOOL_ERROR = "tool_error"
     TOOL_TIMEOUT = "tool_timeout"
     INTERNAL_ERROR = "internal_error"
+    BUDGET_EXCEEDED = "budget_exceeded"
 
 
 RETRYABLE_CODES = frozenset({

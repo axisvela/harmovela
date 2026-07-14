@@ -1,0 +1,5 @@
+{"spec_version":"0.2","id":"evt_adapt_pos_001","type":"adaptation.budget.established","source":"agent:budget-manager","created_at":"2026-07-14T10:00:00Z","tenant_id":"tenant-alpha","actor_id":"actor_admin","payload":{"budget_id":"budget-pos-01","limit":100.0}}
+{"spec_version":"0.2","id":"evt_adapt_pos_002","type":"adaptation.goal.created","source":"agent:planner","created_at":"2026-07-14T10:00:05Z","payload":{"goal_id":"goal-01","description":"reduce latency","target":95}}
+{"spec_version":"0.2","id":"evt_adapt_pos_003","type":"adaptation.outcome.correlated","source":"agent:worker","created_at":"2026-07-14T10:00:10Z","tenant_id":"tenant-alpha","actor_id":"actor_worker","budget_id":"budget-pos-01","budget_cost":25.0,"payload":{"outcome":"latency_reduced","goal_id":"goal-01"}}
+{"spec_version":"0.2","id":"evt_adapt_pos_004","type":"adaptation.goal.updated","source":"agent:planner","created_at":"2026-07-14T10:00:15Z","payload":{"goal_id":"goal-01","new_target":98}}
+{"spec_version":"0.2","id":"evt_adapt_pos_005","type":"adaptation.goal.achieved","source":"agent:worker","created_at":"2026-07-14T10:00:20Z","payload":{"goal_id":"goal-01","result":"target met"}}

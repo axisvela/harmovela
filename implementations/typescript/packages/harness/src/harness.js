@@ -10,6 +10,7 @@ import { STATE_EVENT_TYPES } from "@axisrobo/harmovela-state";
 import { TOOL_EVENT_TYPES } from "@axisrobo/harmovela-tool";
 import { AGENT_EVENT_TYPES } from "@axisrobo/harmovela-agent";
 import { ENVIRONMENT_EVENT_TYPES } from "@axisrobo/harmovela-environment";
+import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -35,6 +36,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   ...TOOL_EVENT_TYPES,
   ...AGENT_EVENT_TYPES,
   ...ENVIRONMENT_EVENT_TYPES,
+  ...ADAPTATION_EVENT_TYPES,
 ]);
 
 export function isLegacyDimensionEventType(type) {
@@ -53,6 +55,8 @@ export class HarmovelaHarness {
     this._session = null;
     this.delivery = new DeliveryTracker(options.delivery);
     this._audit = [];
+    this._budget = {};
+    this._budgetLimits = {};
 
     this._setupRouter();
     this._setupDeliveryRouter();
@@ -73,7 +77,8 @@ export class HarmovelaHarness {
       .on("task.cancel.requested", (event) => this._handleTaskCancelRequested(event))
       .on((event) => event.type.startsWith("task.") && event.type !== "task.submitted" && event.type !== "task.cancel.requested", (event) => this._handleTaskEvent(event))
       .on("session.opened", (event) => this._handleSessionOpened(event))
-      .on("session.closed", (event) => this._handleSessionClosed(event));
+      .on("session.closed", (event) => this._handleSessionClosed(event))
+      .on((event) => event.type && event.type.startsWith("adaptation."), (event) => this._handleAdaptationEvent(event));
   }
 
   _setupDeliveryRouter() {
@@ -136,6 +141,36 @@ export class HarmovelaHarness {
         return [this._event("event.rejected", value, {
           error: errorPayload(ErrorCode.UNAUTHORIZED, `governance denied: ${decision.reason}`)
         })];
+      }
+    }
+
+    if (typeof value.budget_cost === "number" && value.budget_cost > 0) {
+      const budgetId = value.budget_id;
+      const tenantId = value.tenant_id;
+      if (budgetId && tenantId) {
+        const remaining = (this._budget[tenantId] && this._budget[tenantId][budgetId]) || 0;
+        if (remaining < value.budget_cost) {
+          this._audit.push({
+            actor_id: value.actor_id,
+            tenant_id: tenantId,
+            action: "adaptation.budget.limit_exceeded",
+            correlation_id: value.correlation_id,
+            causation_id: value.causation_id,
+            allowed: false,
+          });
+          return [
+            this._event("event.rejected", value, {
+              error: errorPayload(ErrorCode.BUDGET_EXCEEDED, `budget limit exceeded for ${budgetId}`),
+            }),
+            this._event("adaptation.budget.limit_exceeded", value, {
+              budget_id: budgetId,
+              tenant_id: tenantId,
+              cost: value.budget_cost,
+              remaining,
+              limit: this._budgetLimits[budgetId],
+            }),
+          ];
+        }
       }
     }
 
@@ -342,6 +377,42 @@ export class HarmovelaHarness {
   startSession(options = {}) {
     this._session = new HarmovelaSession(options);
     return this._session.opened();
+  }
+
+  _handleAdaptationEvent(event) {
+    const payload = event.payload || {};
+    const type = event.type;
+
+    if (type === "adaptation.budget.established") {
+      const budgetId = payload.budget_id;
+      const limit = payload.limit;
+      const tenantId = event.tenant_id;
+      if (budgetId && typeof limit === "number" && limit > 0) {
+        this._budgetLimits[budgetId] = limit;
+        if (tenantId) {
+          if (!this._budget[tenantId]) this._budget[tenantId] = {};
+          this._budget[tenantId][budgetId] = limit;
+        }
+      }
+    } else if (type === "adaptation.budget.adjusted") {
+      const budgetId = payload.budget_id;
+      const newLimit = payload.new_limit;
+      const tenantId = event.tenant_id;
+      if (budgetId && typeof newLimit === "number") {
+        const oldLimit = this._budgetLimits[budgetId] || 0;
+        const delta = newLimit - oldLimit;
+        this._budgetLimits[budgetId] = newLimit;
+        if (tenantId) {
+          if (!this._budget[tenantId]) this._budget[tenantId] = {};
+          if (!this._budget[tenantId][budgetId]) this._budget[tenantId][budgetId] = 0;
+          this._budget[tenantId][budgetId] += delta;
+        }
+      }
+    }
+
+    return [this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id,
+    })];
   }
 
   _event(type, input, payload) {

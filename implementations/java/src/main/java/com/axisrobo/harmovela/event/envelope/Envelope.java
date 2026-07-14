@@ -35,7 +35,13 @@ public final class Envelope {
         "compensation.requested", "compensation.completed",
         "freshness.expired",
         "delegation.requested", "delegation.accepted", "delegation.rejected",
-        "delegation.escalated", "delegation.handoff.completed"
+        "delegation.escalated", "delegation.handoff.completed",
+        "adaptation.outcome.correlated",
+        "adaptation.goal.created", "adaptation.goal.updated",
+        "adaptation.goal.achieved", "adaptation.goal.abandoned",
+        "adaptation.cost.exceeded",
+        "adaptation.budget.established", "adaptation.budget.adjusted",
+        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted"
     );
 
     public static boolean isStandardEventType(String type) {

@@ -3,6 +3,7 @@ package harness
 import (
 	"time"
 
+	"github.com/axisrobo/harmovela/adaptation"
 	"github.com/axisrobo/harmovela/agent"
 	"github.com/axisrobo/harmovela/context"
 	"github.com/axisrobo/harmovela/delegation"
@@ -53,6 +54,9 @@ var legacyStandardEventTypes = func() map[string]bool {
 		m[k] = v
 	}
 	for k, v := range environment.EventTypes {
+		m[k] = v
+	}
+	for k, v := range adaptation.EventTypes {
 		m[k] = v
 	}
 	return m

@@ -1,4 +1,5 @@
 from harmovela_harness import HarmovelaHarness
+from axisrobo_harmovela_event import ErrorCode
 
 _now = "2026-07-09T10:00:01Z"
 _valid_base = {
@@ -89,3 +90,54 @@ class TestHarness:
         [resp] = h.handle({**_valid_base, "spec_version": "9.9", "type": "task.progress", "payload": {}})
         assert resp["type"] == "event.rejected"
         assert resp["payload"]["error"]["code"] == "unsupported_version"
+
+
+def test_budget_established_and_enforced():
+    harness = HarmovelaHarness()
+
+    budget_established = {
+        "spec_version": "0.2",
+        "id": "evt_adapt_001",
+        "type": "adaptation.budget.established",
+        "source": "agent:budget-manager",
+        "created_at": "2026-07-14T10:00:00Z",
+        "tenant_id": "tenant-alpha",
+        "actor_id": "actor_admin",
+        "payload": {"budget_id": "budget-01", "limit": 100.0},
+    }
+    harness.handle(budget_established)
+    assert harness._budget_limits.get("budget-01") == 100.0
+
+    within_budget = {
+        "spec_version": "0.2",
+        "id": "evt_adapt_002",
+        "type": "adaptation.outcome.correlated",
+        "source": "agent:worker",
+        "created_at": "2026-07-14T10:01:00Z",
+        "tenant_id": "tenant-alpha",
+        "actor_id": "actor_worker",
+        "budget_id": "budget-01",
+        "budget_cost": 50.0,
+        "payload": {},
+    }
+    responses = harness.handle(within_budget)
+    assert any(r["type"] == "event.acknowledged" for r in responses)
+
+    exceed_budget = {
+        "spec_version": "0.2",
+        "id": "evt_adapt_003",
+        "type": "adaptation.outcome.correlated",
+        "source": "agent:worker",
+        "created_at": "2026-07-14T10:02:00Z",
+        "tenant_id": "tenant-alpha",
+        "actor_id": "actor_worker",
+        "budget_id": "budget-01",
+        "budget_cost": 200.0,
+        "payload": {},
+    }
+    responses = harness.handle(exceed_budget)
+    rejected = [r for r in responses if r["type"] == "event.rejected"]
+    assert len(rejected) == 1
+    assert rejected[0]["payload"]["error"]["code"] == ErrorCode.BUDGET_EXCEEDED
+    limit_exceeded = [r for r in responses if r["type"] == "adaptation.budget.limit_exceeded"]
+    assert len(limit_exceeded) == 1

@@ -29,6 +29,8 @@ type Harness struct {
 	session       *event.HarmovelaSession
 	Delivery      *recovery.DeliveryTracker
 	Audit         []AuditRecord
+	Budget        map[string]map[string]float64
+	BudgetLimits  map[string]float64
 }
 
 func NewHarness() *Harness {
@@ -39,6 +41,8 @@ func NewHarness() *Harness {
 		router:        event.NewEventRouter(),
 		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
+		Budget:        make(map[string]map[string]float64),
+		BudgetLimits:  make(map[string]float64),
 	}
 	h.setupRouter()
 	h.setupDeliveryRouter()
@@ -90,7 +94,11 @@ func (h *Harness) setupRouter() {
 		On(func(evt map[string]any) bool {
 			typ, _ := evt["type"].(string)
 			return typ == "session.closed"
-		}, h.handleSessionClosed)
+		}, h.handleSessionClosed).
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
+			return len(typ) > 10 && typ[:10] == "adaptation"
+		}, h.handleAdaptationEvent)
 }
 
 func (h *Harness) setupDeliveryRouter() {
@@ -168,6 +176,47 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 				return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
 					"error": event.ErrorPayload(event.ErrorCodeUnauthorized, "governance denied: "+decision.Reason, false),
 				})}
+			}
+		}
+	}
+
+	if costRaw, ok := value["budget_cost"]; ok {
+		var cost float64
+		switch v := costRaw.(type) {
+		case float64:
+			cost = v
+		case int:
+			cost = float64(v)
+		}
+		if cost > 0 {
+			budgetID, _ := value["budget_id"].(string)
+			tenantID, _ := value["tenant_id"].(string)
+			if budgetID != "" && tenantID != "" {
+				remaining := h.getRemainingBudget(tenantID, budgetID)
+				if remaining < cost {
+					bid, _ := value["actor_id"].(string)
+					cid, _ := value["correlation_id"].(string)
+					causid, _ := value["causation_id"].(string)
+					h.Audit = append(h.Audit, AuditRecord{
+						ActorID:       bid,
+						TenantID:      tenantID,
+						Action:        "adaptation.budget.limit_exceeded",
+						CorrelationID: cid,
+						CausationID:   causid,
+					})
+					return []map[string]any{
+						h.newEvent("event.rejected", value, map[string]any{
+							"error": event.ErrorPayload(event.ErrorCodeBudgetExceeded, "budget limit exceeded for "+budgetID, false),
+						}),
+						h.newEvent("adaptation.budget.limit_exceeded", value, map[string]any{
+							"budget_id": budgetID,
+							"tenant_id": tenantID,
+							"cost":      cost,
+							"remaining": remaining,
+							"limit":     h.BudgetLimits[budgetID],
+						}),
+					}
+				}
 			}
 		}
 	}
@@ -424,6 +473,69 @@ func (h *Harness) handleInboundDeadLetter(evt map[string]any) any {
 func (h *Harness) nextSeq() int {
 	h.sequence++
 	return h.sequence
+}
+
+func (h *Harness) getRemainingBudget(tenantID, budgetID string) float64 {
+	if budget, ok := h.Budget[tenantID]; ok {
+		return budget[budgetID]
+	}
+	return 0
+}
+
+func (h *Harness) handleAdaptationEvent(evt map[string]any) any {
+	payload, _ := evt["payload"].(map[string]any)
+	if payload == nil {
+		payload = map[string]any{}
+	}
+	typ, _ := evt["type"].(string)
+
+	switch typ {
+	case "adaptation.budget.established":
+		budgetID, _ := payload["budget_id"].(string)
+		tenantID, _ := evt["tenant_id"].(string)
+		var limit float64
+		switch v := payload["limit"].(type) {
+		case float64:
+			limit = v
+		case int:
+			limit = float64(v)
+		}
+		if budgetID != "" && limit > 0 {
+			h.BudgetLimits[budgetID] = limit
+			if h.Budget[tenantID] == nil {
+				h.Budget[tenantID] = make(map[string]float64)
+			}
+			h.Budget[tenantID][budgetID] = limit
+		}
+		return h.newEvent("event.acknowledged", evt, map[string]any{
+			"acknowledged_event_id": evt["id"],
+		})
+	case "adaptation.budget.adjusted":
+		budgetID, _ := payload["budget_id"].(string)
+		tenantID, _ := evt["tenant_id"].(string)
+		var newLimit float64
+		switch v := payload["new_limit"].(type) {
+		case float64:
+			newLimit = v
+		case int:
+			newLimit = float64(v)
+		}
+		if budgetID != "" {
+			oldLimit := h.BudgetLimits[budgetID]
+			delta := newLimit - oldLimit
+			h.BudgetLimits[budgetID] = newLimit
+			if h.Budget[tenantID] != nil {
+				h.Budget[tenantID][budgetID] += delta
+			}
+		}
+		return h.newEvent("event.acknowledged", evt, map[string]any{
+			"acknowledged_event_id": evt["id"],
+		})
+	default:
+		return h.newEvent("event.acknowledged", evt, map[string]any{
+			"acknowledged_event_id": evt["id"],
+		})
+	}
 }
 
 func (h *Harness) newEvent(typ string, input map[string]any, payload map[string]any) map[string]any {

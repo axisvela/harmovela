@@ -17,6 +17,7 @@ const (
 	ErrorCodeToolError            = "tool_error"
 	ErrorCodeToolTimeout          = "tool_timeout"
 	ErrorCodeInternalError        = "internal_error"
+	ErrorCodeBudgetExceeded       = "budget_exceeded"
 )
 
 func ErrorPayload(code, message string, retryable bool) map[string]any {

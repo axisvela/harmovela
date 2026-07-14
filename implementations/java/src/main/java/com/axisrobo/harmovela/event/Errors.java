@@ -21,6 +21,7 @@ public final class Errors {
     public static final String TOOL_ERROR = "tool_error";
     public static final String TOOL_TIMEOUT = "tool_timeout";
     public static final String INTERNAL_ERROR = "internal_error";
+    public static final String BUDGET_EXCEEDED = "budget_exceeded";
 
     public static Map<String, Object> errorPayload(String code, String message, boolean retryable) {
         return Map.of(

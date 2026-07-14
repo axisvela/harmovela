@@ -34,7 +34,13 @@ public class Harness {
         "compensation.requested", "compensation.completed",
         "freshness.expired",
         "delegation.requested", "delegation.accepted", "delegation.rejected",
-        "delegation.escalated", "delegation.handoff.completed"
+        "delegation.escalated", "delegation.handoff.completed",
+        "adaptation.outcome.correlated",
+        "adaptation.goal.created", "adaptation.goal.updated",
+        "adaptation.goal.achieved", "adaptation.goal.abandoned",
+        "adaptation.cost.exceeded",
+        "adaptation.budget.established", "adaptation.budget.adjusted",
+        "adaptation.budget.limit_exceeded", "adaptation.budget.exhausted"
     );
 
     private static final String SOURCE = "harness:harmovela";
@@ -44,6 +50,8 @@ public class Harness {
     private final EventRouter router = new EventRouter();
     private final DeliveryTracker delivery;
     private final List<Map<String, Object>> audit = new ArrayList<>();
+    private final Map<String, Map<String, Double>> budget = new LinkedHashMap<>();
+    private final Map<String, Double> budgetLimits = new LinkedHashMap<>();
     private Session session;
 
     public Harness() {
@@ -61,7 +69,11 @@ public class Harness {
             }, this::handleTaskEvent)
             .on(e -> "session.opened".equals(e.get("type")), this::handleSessionOpened)
             .on(e -> "session.closed".equals(e.get("type")), this::handleSessionClosed)
-            .on(e -> "session.error".equals(e.get("type")), this::handleSessionError);
+            .on(e -> "session.error".equals(e.get("type")), this::handleSessionError)
+            .on(e -> {
+                var t = (String) e.get("type");
+                return t != null && t.startsWith("adaptation.");
+            }, this::handleAdaptationEvent);
     }
 
     public Session getSession() { return session; }
@@ -125,6 +137,37 @@ public class Harness {
                 return List.of(newEvent("event.rejected", value, Map.of(
                     "error", Errors.errorPayload(Errors.UNAUTHORIZED, "governance denied: " + decision.reason(), false)
                 )));
+            }
+        }
+
+        // Budget enforcement for adaptation operations
+        if (value.get("budget_cost") instanceof Number num && num.doubleValue() > 0) {
+            double cost = num.doubleValue();
+            String budgetId = (String) value.get("budget_id");
+            String tenantId = (String) value.get("tenant_id");
+            if (budgetId != null && tenantId != null) {
+                var tenantMap = budget.get(tenantId);
+                double remaining = tenantMap != null && tenantMap.containsKey(budgetId)
+                    ? tenantMap.get(budgetId) : 0.0;
+                if (remaining < cost) {
+                    var auditEntry = new LinkedHashMap<String, Object>();
+                    auditEntry.put("actor_id", value.get("actor_id"));
+                    auditEntry.put("tenant_id", tenantId);
+                    auditEntry.put("action", "adaptation.budget.limit_exceeded");
+                    auditEntry.put("correlation_id", value.get("correlation_id"));
+                    auditEntry.put("causation_id", value.get("causation_id"));
+                    auditEntry.put("allowed", false);
+                    audit.add(auditEntry);
+                    return List.of(
+                        newEvent("event.rejected", value, Map.of(
+                            "error", Errors.errorPayload(Errors.BUDGET_EXCEEDED, "budget limit exceeded for " + budgetId, false)
+                        )),
+                        newEvent("adaptation.budget.limit_exceeded", value, Map.of(
+                            "budget_id", budgetId, "tenant_id", tenantId, "cost", cost,
+                            "remaining", remaining, "limit", budgetLimits.getOrDefault(budgetId, 0.0)
+                        ))
+                    );
+                }
             }
         }
 
@@ -335,6 +378,42 @@ public class Harness {
     }
 
     private int nextSeq() { return ++sequence; }
+
+    @SuppressWarnings("unchecked")
+    private Object handleAdaptationEvent(Map<String, Object> event) {
+        var payload = (Map<String, Object>) event.getOrDefault("payload", Map.of());
+        var type = (String) event.get("type");
+
+        if ("adaptation.budget.established".equals(type)) {
+            var budgetId = (String) payload.get("budget_id");
+            if (payload.get("limit") instanceof Number num) {
+                double limit = num.doubleValue();
+                if (budgetId != null && limit > 0) {
+                    budgetLimits.put(budgetId, limit);
+                    var tenantId = (String) event.get("tenant_id");
+                    if (tenantId != null) {
+                        budget.computeIfAbsent(tenantId, k -> new LinkedHashMap<>()).put(budgetId, limit);
+                    }
+                }
+            }
+        } else if ("adaptation.budget.adjusted".equals(type)) {
+            var budgetId = (String) payload.get("budget_id");
+            if (payload.get("new_limit") instanceof Number num) {
+                double newLimit = num.doubleValue();
+                if (budgetId != null) {
+                    double oldLimit = budgetLimits.getOrDefault(budgetId, 0.0);
+                    budgetLimits.put(budgetId, newLimit);
+                    var tenantId = (String) event.get("tenant_id");
+                    if (tenantId != null) {
+                        var tenantMap = budget.computeIfAbsent(tenantId, k -> new LinkedHashMap<>());
+                        tenantMap.merge(budgetId, newLimit - oldLimit, Double::sum);
+                    }
+                }
+            }
+        }
+
+        return List.of(newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id"))));
+    }
 
     private Map<String, Object> newEvent(String type, Map<String, Object> input, Map<String, Object> payload) {
         var seq = nextSeq();

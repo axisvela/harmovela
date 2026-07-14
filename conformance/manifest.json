@@ -454,6 +454,43 @@
         "task.completed",
         "task.cancelled"
       ]
+    },
+    {
+      "path": "fixtures/adaptation-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Adaptation budget established, goal lifecycle, and outcome correlated within budget.",
+      "expectation": "stateful_flow",
+      "profile": "adaptation",
+      "tags": [
+        "adaptation",
+        "budget",
+        "goal"
+      ],
+      "expected_types": [
+        "adaptation.budget.established",
+        "adaptation.goal.created",
+        "adaptation.outcome.correlated",
+        "adaptation.goal.updated",
+        "adaptation.goal.achieved"
+      ]
+    },
+    {
+      "path": "fixtures/adaptation-negative.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Adaptation budget limit exceeded rejection and cost exceeded flow.",
+      "expectation": "reject_some",
+      "profile": "adaptation",
+      "tags": [
+        "negative",
+        "adaptation",
+        "budget"
+      ],
+      "expected_types": [
+        "adaptation.budget.established",
+        "adaptation.outcome.correlated",
+        "adaptation.cost.exceeded",
+        "adaptation.budget.exhausted"
+      ]
     }
   ],
   "profiles": {
@@ -485,6 +522,16 @@
       "fixtures": [
         "fixtures/delegation-positive.ndjson",
         "fixtures/delegation-negative.ndjson"
+      ]
+    },
+    "adaptation": {
+      "display_name": "Autonomous Adaptation",
+      "description": "Budget-controlled autonomous adaptation with goal tracking, outcome correlation, and cost enforcement.",
+      "required_core_level": "HARMOVELA-C1",
+      "levels": ["HARMOVELA-C1"],
+      "fixtures": [
+        "fixtures/adaptation-positive.ndjson",
+        "fixtures/adaptation-negative.ndjson"
       ]
     }
   }

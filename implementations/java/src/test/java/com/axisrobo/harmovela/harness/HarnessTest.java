@@ -1,6 +1,8 @@
 package com.axisrobo.harmovela.harness;
 
+import com.axisrobo.harmovela.event.Errors;
 import org.junit.jupiter.api.Test;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -115,5 +117,69 @@ class HarnessTest {
         );
         var responses = h.handle(event);
         assertEquals("event.rejected", responses.get(0).get("type"));
+    }
+
+    @Test
+    void budgetEstablishedAndEnforced() {
+        var h = new Harness();
+        var tenantId = "tenant-alpha";
+        var budgetId = "budget-01";
+
+        var established = new LinkedHashMap<String, Object>();
+        established.put("spec_version", "0.2");
+        established.put("id", "evt_adapt_001");
+        established.put("type", "adaptation.budget.established");
+        established.put("source", "agent:budget-manager");
+        established.put("created_at", "2026-07-14T10:00:00Z");
+        established.put("tenant_id", tenantId);
+        established.put("actor_id", "actor_admin");
+        established.put("payload", Map.of("budget_id", budgetId, "limit", 100.0));
+
+        var responses = h.handle(established);
+        assertNotNull(responses);
+
+        var withinBudget = new LinkedHashMap<String, Object>();
+        withinBudget.put("spec_version", "0.2");
+        withinBudget.put("id", "evt_adapt_002");
+        withinBudget.put("type", "adaptation.outcome.correlated");
+        withinBudget.put("source", "agent:worker");
+        withinBudget.put("created_at", "2026-07-14T10:01:00Z");
+        withinBudget.put("tenant_id", tenantId);
+        withinBudget.put("actor_id", "actor_worker");
+        withinBudget.put("budget_id", budgetId);
+        withinBudget.put("budget_cost", 50.0);
+        withinBudget.put("payload", Map.of());
+
+        responses = h.handle(withinBudget);
+        assertFalse(responses.isEmpty());
+
+        var exceedBudget = new LinkedHashMap<String, Object>();
+        exceedBudget.put("spec_version", "0.2");
+        exceedBudget.put("id", "evt_adapt_003");
+        exceedBudget.put("type", "adaptation.outcome.correlated");
+        exceedBudget.put("source", "agent:worker");
+        exceedBudget.put("created_at", "2026-07-14T10:02:00Z");
+        exceedBudget.put("tenant_id", tenantId);
+        exceedBudget.put("actor_id", "actor_worker");
+        exceedBudget.put("budget_id", budgetId);
+        exceedBudget.put("budget_cost", 200.0);
+        exceedBudget.put("payload", Map.of());
+
+        responses = h.handle(exceedBudget);
+        var rejected = responses.stream()
+            .filter(r -> "event.rejected".equals(r.get("type")))
+            .findFirst();
+        assertTrue(rejected.isPresent());
+        @SuppressWarnings("unchecked")
+        var rejPayload = (Map<String, Object>) rejected.get().get("payload");
+        assertNotNull(rejPayload);
+        @SuppressWarnings("unchecked")
+        var rejError = (Map<String, Object>) rejPayload.get("error");
+        assertEquals(Errors.BUDGET_EXCEEDED, rejError.get("code"));
+
+        var limitExceeded = responses.stream()
+            .filter(r -> "adaptation.budget.limit_exceeded".equals(r.get("type")))
+            .findFirst();
+        assertTrue(limitExceeded.isPresent());
     }
 }

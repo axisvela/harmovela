@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from axisrobo_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
 from axisrobo_harmovela_agent import AGENT_EVENT_TYPES
 from axisrobo_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES
 from axisrobo_harmovela_delegation import DELEGATION_EVENT_TYPES
@@ -16,7 +17,7 @@ LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
     "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
     "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
-}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES))
+}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES).union(ADAPTATION_EVENT_TYPES))
 
 
 def is_legacy_dimension_event_type(type_: str) -> bool:
@@ -34,6 +35,8 @@ class HarmovelaHarness:
         self._session: HarmovelaSession | None = None
         self._delivery = DeliveryTracker()
         self._audit: list[dict] = []
+        self._budget: dict[str, dict[str, float]] = {}
+        self._budget_limits: dict[str, float] = {}
         self._setup_router()
         self._setup_delivery_router()
 
@@ -63,7 +66,8 @@ class HarmovelaHarness:
             .on(lambda e: e.get("type", "").startswith("task.") and e.get("type") not in ("task.submitted", "task.cancel.requested"),
                 self._handle_task_event) \
             .on("session.opened", self._handle_session_opened) \
-            .on("session.closed", self._handle_session_closed)
+            .on("session.closed", self._handle_session_closed) \
+            .on(lambda e: e.get("type", "").startswith("adaptation."), self._handle_adaptation_event)
 
     def _setup_delivery_router(self):
         self._router \
@@ -115,6 +119,34 @@ class HarmovelaHarness:
                 return [self._event("event.rejected", value, {
                     "error": error_payload(ErrorCode.UNAUTHORIZED, f"governance denied: {decision['reason']}"),
                 })]
+
+        if isinstance(value.get("budget_cost"), (int, float)) and value["budget_cost"] > 0:
+            budget_id = value.get("budget_id")
+            tenant_id = value.get("tenant_id")
+            if budget_id and tenant_id:
+                remaining = self._budget.get(tenant_id, {}).get(budget_id, 0.0)
+                cost = float(value["budget_cost"])
+                if remaining < cost:
+                    self._audit.append({
+                        "actor_id": value.get("actor_id"),
+                        "tenant_id": tenant_id,
+                        "action": "adaptation.budget.limit_exceeded",
+                        "correlation_id": value.get("correlation_id"),
+                        "causation_id": value.get("causation_id"),
+                        "allowed": False,
+                    })
+                    return [
+                        self._event("event.rejected", value, {
+                            "error": error_payload(ErrorCode.BUDGET_EXCEEDED, f"budget limit exceeded for {budget_id}"),
+                        }),
+                        self._event("adaptation.budget.limit_exceeded", value, {
+                            "budget_id": budget_id,
+                            "tenant_id": tenant_id,
+                            "cost": cost,
+                            "remaining": remaining,
+                            "limit": self._budget_limits.get(budget_id),
+                        }),
+                    ]
 
         delivery = value.get("delivery", {})
         if isinstance(delivery, dict) and delivery.get("mode"):
@@ -278,6 +310,41 @@ class HarmovelaHarness:
         event_id = event.get("payload", {}).get("original_event_id")
         if event_id:
             self._delivery.dead_letter(event_id, event.get("payload", {}).get("error", {"code": "unknown"}))
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
+
+    def _handle_adaptation_event(self, event: dict) -> list:
+        payload = event.get("payload", {})
+        typ = event.get("type", "")
+
+        if typ == "adaptation.budget.established":
+            budget_id = payload.get("budget_id")
+            limit = payload.get("limit")
+            tenant_id = event.get("tenant_id")
+            if budget_id and isinstance(limit, (int, float)) and limit > 0:
+                self._budget_limits[budget_id] = float(limit)
+                if tenant_id:
+                    self._budget.setdefault(tenant_id, {})[budget_id] = float(limit)
+            return [self._event("event.acknowledged", event, {
+                "acknowledged_event_id": event.get("id"),
+            })]
+
+        if typ == "adaptation.budget.adjusted":
+            budget_id = payload.get("budget_id")
+            new_limit = payload.get("new_limit")
+            tenant_id = event.get("tenant_id")
+            if budget_id and isinstance(new_limit, (int, float)):
+                old_limit = self._budget_limits.get(budget_id, 0.0)
+                delta = new_limit - old_limit
+                self._budget_limits[budget_id] = float(new_limit)
+                if tenant_id:
+                    self._budget.setdefault(tenant_id, {}).setdefault(budget_id, 0.0)
+                    self._budget[tenant_id][budget_id] += delta
+            return [self._event("event.acknowledged", event, {
+                "acknowledged_event_id": event.get("id"),
+            })]
+
         return [self._event("event.acknowledged", event, {
             "acknowledged_event_id": event.get("id"),
         })]

@@ -14,7 +14,8 @@ export const ErrorCode = Object.freeze({
   TASK_CANCELLED: "task_cancelled",
   TOOL_ERROR: "tool_error",
   TOOL_TIMEOUT: "tool_timeout",
-  INTERNAL_ERROR: "internal_error"
+  INTERNAL_ERROR: "internal_error",
+  BUDGET_EXCEEDED: "budget_exceeded"
 });
 
 export function errorPayload(code, message, { retryable = false, details = {} } = {}) {
