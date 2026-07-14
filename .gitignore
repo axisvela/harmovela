@@ -40,3 +40,6 @@ implementations/python/dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Paper drafts (not part of the protocol repository)
+paper-harmovela/
