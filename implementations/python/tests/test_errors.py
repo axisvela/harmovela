@@ -1,4 +1,4 @@
-from aep import ErrorCode, error_payload, is_retryable
+from axisrobo_harmovela_event import ErrorCode, error_payload, is_retryable
 
 
 class TestErrors:

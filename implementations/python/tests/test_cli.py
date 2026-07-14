@@ -10,7 +10,7 @@ def _run(args, env=None):
     if env:
         full_env.update(env)
     proc = subprocess.run(
-        [sys.executable, "-m", "aep.cli.main", *args],
+        [sys.executable, "-m", "harmovela_cli.main", *args],
         capture_output=True, text=True, env=full_env,
     )
     return proc.returncode, proc.stdout, proc.stderr

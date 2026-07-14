@@ -6,8 +6,8 @@ import tempfile
 import time
 import urllib.request
 
-from aep.runtime.config import default_config, write_default_config, load_config
-from aep.runtime.server import start_daemon
+from harmovela_runtime.config import default_config, write_default_config, load_config
+from harmovela_runtime.server import start_daemon
 
 
 def test_emit_via_http_api_reaches_pending():

@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
-from aep import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
-from aep import validate_envelope
+from axisrobo_harmovela_event import validate_envelope_schema, validate_subscription_schema, is_valid_by_schema
+from axisrobo_harmovela_event import validate_envelope
 
 FIXTURE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance" / "fixtures"
 

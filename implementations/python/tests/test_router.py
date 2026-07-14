@@ -1,4 +1,4 @@
-from aep import EventRouter
+from axisrobo_harmovela_event import EventRouter
 
 
 def _make_event(type_: str, **kwargs) -> dict:

@@ -1,4 +1,4 @@
-from aep.mcp_bridge import McpBridge
+from harmovela_mcp_bridge import McpBridge
 
 
 def test_initialize_returns_server_info():
@@ -89,7 +89,7 @@ def _wait_for_type(sink, event_type, timeout=2.0):
 
 
 def test_async_tool_handler_emits_lifecycle():
-    from aep.mcp_bridge import McpBridge, async_tool_handler
+    from harmovela_mcp_bridge import McpBridge, async_tool_handler
     sink = _Sink()
     bridge = McpBridge(transport=sink)
     bridge.register_tool(async_tool_handler("build", {
@@ -109,7 +109,7 @@ def test_async_tool_handler_emits_lifecycle():
 
 
 def test_async_tool_handler_emits_failed_on_error():
-    from aep.mcp_bridge import McpBridge, async_tool_handler
+    from harmovela_mcp_bridge import McpBridge, async_tool_handler
     sink = _Sink()
     bridge = McpBridge(transport=sink)
     def boom(args, ctx):

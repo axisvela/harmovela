@@ -1,9 +1,9 @@
 import json
 import threading
 
-from .harness import HarmovelaHarness
+from harmovela_harness import HarmovelaHarness
 from axisrobo_harmovela_task import TaskTracker
-from .errors import ErrorCode
+from axisrobo_harmovela_event import ErrorCode
 
 
 class McpBridge:

@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [project.scripts]
-aep = "aep.cli.main:cli"
-aepd = "aep.runtime.server:main"
+harmovela = "harmovela_cli.main:cli"
+harmovelad = "harmovela_runtime.server:main"
 
 [project.optional-dependencies]
 test = [

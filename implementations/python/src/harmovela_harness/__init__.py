@@ -1,12 +1,26 @@
 from datetime import datetime, timezone
 
+from axisrobo_harmovela_agent import AGENT_EVENT_TYPES
+from axisrobo_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES
+from axisrobo_harmovela_delegation import DELEGATION_EVENT_TYPES
+from axisrobo_harmovela_environment import ENVIRONMENT_EVENT_TYPES
 from axisrobo_harmovela_event import EventRouter, HarmovelaSession, is_standard_event_type, validate_envelope
+from axisrobo_harmovela_event import ErrorCode, error_payload
 from axisrobo_harmovela_governance import authorize
-
-from .legacy_dimension_types import is_legacy_dimension_event_type
+from axisrobo_harmovela_recovery import RECOVERY_EVENT_TYPES, DeliveryTracker
+from axisrobo_harmovela_state import STATE_EVENT_TYPES
 from axisrobo_harmovela_task import TaskTracker
-from .errors import ErrorCode, error_payload
-from axisrobo_harmovela_recovery import DeliveryTracker
+from axisrobo_harmovela_tool import TOOL_EVENT_TYPES
+
+LEGACY_DIMENSION_EVENT_TYPES = frozenset({
+    "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
+    "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
+    "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
+}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES))
+
+
+def is_legacy_dimension_event_type(type_: str) -> bool:
+    return type_ in LEGACY_DIMENSION_EVENT_TYPES
 
 
 class HarmovelaHarness:

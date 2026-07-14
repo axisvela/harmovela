@@ -7,8 +7,8 @@ import urllib.request
 
 import click
 
-from ..runtime.config import write_default_config, load_config, create_delivery_store
-from ..runtime.server import start_daemon
+from harmovela_runtime.config import write_default_config, load_config, create_delivery_store
+from harmovela_runtime.server import start_daemon
 
 
 @click.group()
@@ -53,6 +53,8 @@ def status(url):
 @click.argument("event_type")
 @click.option("--payload", default="{}", help="event payload JSON")
 @click.option("--url", default="ws://127.0.0.1:8787/harmovela", help="WebSocket URL")
+@click.option("--event-id", default=None, help="event id")
+@click.option("--source", default="cli:emit", help="event source")
 def emit(event_type, payload, url, event_id, source):
     """Emit one Harmovela event over WebSocket."""
     import uuid

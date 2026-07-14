@@ -1,5 +1,5 @@
-from aep.runtime.config import default_config
-from aep.runtime.service import HarmovelaRuntimeService
+from harmovela_runtime.config import default_config
+from harmovela_runtime.service import HarmovelaRuntimeService
 
 
 def _event(**overrides):

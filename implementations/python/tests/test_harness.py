@@ -1,4 +1,4 @@
-from aep import HarmovelaHarness
+from harmovela_harness import HarmovelaHarness
 
 _now = "2026-07-09T10:00:01Z"
 _valid_base = {

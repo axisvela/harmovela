@@ -4,9 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from aep import validate_envelope
-from aep.harness import HarmovelaHarness
-from aep.schema_validator import is_valid_by_schema
+from axisrobo_harmovela_event import validate_envelope, is_valid_by_schema
+from harmovela_harness import HarmovelaHarness
 
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"
 LEVEL_ORDER = {"HARMOVELA-C0": 0, "HARMOVELA-C1": 1, "HARMOVELA-C2": 2, "HARMOVELA-C3": 3}

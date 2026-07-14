@@ -1,5 +1,5 @@
-from aep.runtime.config import default_config
-from aep.runtime.server import start_daemon
+from harmovela_runtime.config import default_config
+from harmovela_runtime.server import start_daemon
 
 
 def test_start_daemon_returns_service():
