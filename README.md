@@ -156,10 +156,10 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 This project uses Superpowers as its agent development harness. OpenCode loads it through `opencode.json`; durable specs and plans live under `.superpowers/`.
 
-- `AGENTS.md` �-OpenCode project rules
-- `CLAUDE.md` �-Claude Code project rules
-- `.superpowers/specs/` �-Superpowers-backed design specs
-- `.superpowers/plans/` �-Superpowers-backed execution plans
+- `AGENTS.md` — OpenCode project rules
+- `CLAUDE.md` — Claude Code project rules
+- `.superpowers/specs/` — Superpowers-backed design specs
+- `.superpowers/plans/` — Superpowers-backed execution plans
 
 ## Harmovela Harness
 
