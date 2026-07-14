@@ -1,6 +1,7 @@
 package com.axisrobo.aep;
 
 import com.axisrobo.harmovela.context.ContextMemoryTypes;
+import com.axisrobo.harmovela.delegation.DelegationTypes;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -22,8 +23,6 @@ public final class EventTypes {
             "environment.observed", "environment.changed", "environment.alerted", "environment.error",
             "belief.revised", "belief.conflict.detected",
             "freshness.expired", "freshness.window.changed",
-            "delegation.requested", "delegation.accepted", "delegation.rejected",
-            "delegation.handoff.completed", "delegation.escalated",
             "interruption.requested", "interruption.acknowledged", "interruption.saved",
             "interruption.resumed", "interruption.cancelled",
             "compensation.requested", "compensation.completed",
@@ -31,6 +30,7 @@ public final class EventTypes {
             "state.snapshot.requested", "state.snapshot.ready", "state.delta.applied", "state.invalidated"
         ));
         types.addAll(ContextMemoryTypes.EVENT_TYPES);
+        types.addAll(DelegationTypes.EVENT_TYPES);
         LEGACY_TYPES = Set.copyOf(types);
     }
 
