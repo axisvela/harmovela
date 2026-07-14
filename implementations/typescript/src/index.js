@@ -11,3 +11,4 @@ export { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema } f
 export { DeliveryTracker, retryDelay, InMemoryDeliveryStore, SqliteDeliveryStore, PostgresDeliveryStore } from "@axisrobo/harmovela-recovery";
 export { defaultConfig, writeDefaultConfig, loadConfig, applyEnvOverrides, createDeliveryStore } from "./runtime/config.js";
 export { HarmovelaRuntimeService } from "./runtime/service.js";
+export { CONTEXT_MEMORY_EVENT_TYPES, isContextMemoryEventType } from "@axisrobo/harmovela-context";

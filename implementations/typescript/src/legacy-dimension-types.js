@@ -1,3 +1,5 @@
+import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisrobo/harmovela-context";
+
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
   "event.rejected",
@@ -26,21 +28,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "task.cancel.requested",
   "task.cancelled",
   "task.timed_out",
-  "context.updated",
-  "context.invalidated",
-  "context.snapshot.requested",
-  "context.snapshot.ready",
-  "context.retrieval.started",
-  "context.retrieval.completed",
-  "context.retrieval.failed",
-  "memory.fact.added",
-  "memory.fact.updated",
-  "memory.fact.invalidated",
-  "memory.episode.stored",
-  "memory.preference.updated",
-  "memory.constraint.updated",
-  "memory.summary.ready",
-  "memory.retrieval.ready",
+  ...CONTEXT_MEMORY_EVENT_TYPES,
   "agent.message.sent",
   "agent.message.received",
   "agent.message.failed",
