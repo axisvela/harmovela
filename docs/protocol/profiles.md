@@ -22,6 +22,7 @@ A profile may declare dependencies on other profiles or on core conformance leve
 | `harmovela.security.v1` | Core HARMOVELA-C0 + HARMOVELA-C1 |
 | `harmovela.runtime-semantics.v1` | Core HARMOVELA-C0 + HARMOVELA-C1 |
 | `harmovela.coordination.v1` | `harmovela.core.v1` + `harmovela.security.v1` |
+| `harmovela.adaptation.v1` | `harmovela.coordination.v1` + `harmovela.security.v1` |
 | `harmovela.transport.websocket.v1` | Core HARMOVELA-C0 |
 | `harmovela.transport.sse.v1` | Core HARMOVELA-C0 |
 | `harmovela.transport.grpc.v1` | Core HARMOVELA-C0 |
@@ -197,6 +198,28 @@ This profile exists alongside `harmovela.runtime-semantics.v1`, which retains ag
 - Delegation ownership: a task may be delegated from one agent to another via `delegation.requested` → `delegation.accepted` → `delegation.handoff.completed`. Ownership transfer is atomic and trackable through a delegation chain. Handoff rejects (`delegation.rejected`) terminate the delegation flow for that target.
 - Delegation escalation: a delegate may escalate a task to a supervisor via `delegation.escalated`. Escalation is only valid while the delegation is active (not after rejection).
 - Cancellation propagation: when a parent task is cancelled, all child tasks must also be cancelled. The runtime emits `task.cancelled` for each child referencing the parent via `causation_id`. Cancellation is irreversible; a completed task cannot be cancelled.
+
+### Adaptation Profile (L3 Production Autonomy)
+
+**Identifier:** `harmovela.adaptation.v1`
+
+**Conformance:** HARMOVELA-C1
+
+**Dependencies:** `harmovela.coordination.v1` + `harmovela.security.v1`
+
+**Scope:** Feedback/outcome correlation, protocol-level budget authority and enforcement, and adaptation-operation authorization and audit linkage. This is a C1-level optional profile that depends on both the coordination profile (for delegation and task-ownership semantics) and the security profile (for identity, authorization, audit, and tenant-isolation boundaries).
+
+The adaptation profile extends the coordination layer with the capability to observe outcomes, enforce resource boundaries, and link adaptation operations to authority and audit records. It does not duplicate coordination, security, or event envelope behavior; it defines only the adaptation-specific extensions.
+
+**Covered specifications:**
+- Feedback correlation: outcome events that correlate each task outcome to its goal, delegation chain, authority, and declared and consumed cost. Event types: `adaptation.outcome.correlated`, `adaptation.goal.achieved`, `adaptation.goal.blocked`, `adaptation.cost.exceeded`. Specified in [adaptation feedback](adaptation-feedback.md).
+- Budget authority: who may establish and change a budget (`budget.establish` capability), the enforcement point (harness-level check before each action dispatch), and structured events for budget lifecycle. Event types: `adaptation.budget.established`, `adaptation.budget.limit_approaching`, `adaptation.budget.limit_exceeded`. Specified in [adaptation budget](adaptation-budget.md).
+- Authorization checks: the governance dimension enforces `budget.establish` and `budget.enforce` actions against the capability-based authorization model. No agent may establish a budget or trigger enforcement without the corresponding capability. Specified in [governance contract](governance-contract.md).
+- Audit linkage: all adaptation feedback and budget events carry the standard audit metadata (actor identity, timestamp, affected resource, granted authority) and are subject to the same audit trail requirements as other governance-audited events. Specified in [security model](security.md).
+
+**Negotiation:** An implementation declares adaptation support by including `harmovela.adaptation.v1` in `capabilities.profiles`. Because the adaptation profile depends on `harmovela.coordination.v1` and `harmovela.security.v1`, both must also be present in the negotiated profile set. If either dependency is absent, the session must not become ready.
+
+**Profile family:** Adaptation feedback and budget events use the `adaptation.*` event family prefix, owned by the Governance dimension under the [event registry governance](event-registry-governance.md) model.
 
 ### Transport Profiles
 
