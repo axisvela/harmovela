@@ -505,6 +505,54 @@ Emitted when a runtime detects that earlier links in an evidence chain are no lo
 
 All fields are optional envelope properties. All event types follow the `domain.object.action` naming convention. No existing required fields or event types change.
 
+## Profile-Level Conditional Requiredness
+
+All runtime-semantics fields are envelope-level optional properties with `additionalProperties: true` enabled. When a session declares a profile during capability negotiation, specific fields become conditionally REQUIRED or SHOULD-level based on the event type and profile scope.
+
+### Profile: `harmovela.runtime-semantics.v1`
+
+When this profile is negotiated, the following fields become conditionally required:
+
+| Event type | Conditionally required fields | Level |
+|---|---|---|
+| `belief.revised` | `belief_status`, `belief_scope` | REQUIRED |
+| `belief.conflict.detected` | `belief_status` | REQUIRED |
+| `freshness.expired` | `valid_until` or `stale_after` | REQUIRED (at least one) |
+| `freshness.window.changed` | `valid_until` (as `new_valid_until` in payload) | REQUIRED |
+| `delegation.requested` | `delegated_by`, `delegated_to`, `parent_task_id` | REQUIRED |
+| `delegation.accepted` | `delegated_by`, `delegated_to`, `parent_task_id` | REQUIRED |
+| `delegation.rejected` | `delegated_by`, `delegated_to`, `parent_task_id` | REQUIRED |
+| `delegation.handoff.completed` | `delegated_by`, `delegated_to`, `parent_task_id`, `handoff_token` | REQUIRED |
+| `delegation.escalated` | `delegated_by`, `delegated_to`, `parent_task_id` | REQUIRED |
+| `interruption.requested` | `interruption_policy` | REQUIRED |
+| `interruption.saved` | `checkpoint_id`, `checkpoint_at` | REQUIRED |
+| `interruption.resumed` | `checkpoint_id` | REQUIRED |
+| `compensation.requested` | `compensation_id` | REQUIRED |
+| `compensation.completed` | `compensation_id` | REQUIRED |
+| `provenance.attestation.added` | `evidence_chain` or `causation_id` | REQUIRED (at least one) |
+
+Non-event-specific envelope fields (`delegated_by`, `delegated_to`, `parent_task_id`, `checkpoint_id`, `checkpoint_at`, `interruption_policy`, `compensation_id`) are REQUIRED only on the event types listed above. They MAY be present on other event types but carry no normative weight.
+
+### Profile: `harmovela.coordination.v1`
+
+When this profile is negotiated in addition to `harmovela.runtime-semantics.v1`, the following additional constraints apply:
+
+| Event type | Conditionally required fields | Level |
+|---|---|---|
+| `delegation.handoff.completed` | `handoff_token` expiry MUST be checked (see Handoff Token Semantics) | REQUIRED |
+| `task.cancelled` (child) | `causation_id` MUST reference parent `task.cancelled` or `task.cancelled` event | REQUIRED |
+| Any task event on a task with `parent_task_id` | Parent task MUST exist and MUST NOT be in terminal state unless this event itself is a terminal transition (cancellation propagation) | REQUIRED |
+
+Additionally, `delegated_by`, `delegated_to`, and `parent_task_id` on delegation events become REQUIRED (enforced at the `runtime-semantics.v1` level above). The coordination profile adds orchestration-level validation (cancellation cascade, parent-child terminal ordering) that builds on these fields.
+
+### Profile: `harmovela.security.v1`
+
+When this profile is negotiated, `source_trust: "signed"` assertions on provenance events MUST carry a verifiable signature. The `handoff_token` validation checks defined in the Handoff Token Semantics section become REQUIRED rather than RECOMMENDED.
+
+### Conformance Validation
+
+Implementations MAY validate conditional requiredness at envelope validation time by examining the negotiated profile set. A fixture that passes core envelope validation (HARMOVELA-C0) MAY fail profile-level validation if conditionally required fields are missing. Conformance fixtures for profile validation are tagged with the corresponding profile identifier in the manifest.
+
 ## Payload Schemas
 
 Structured payload validation is defined in the shared payloads schema:
