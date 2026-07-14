@@ -153,6 +153,11 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 ```mermaid
 graph TB
+    subgraph shared["Shared Assets"]
+        direction LR
+        SCHEMAS["JSON Schemas"] --- FIXTURES["28 Fixtures"]
+        SPECS["27 Protocol Specs"] --- TOOLS["Conformance Runner"]
+    end
     subgraph dim["11 Dimension Modules"]
         direction LR
         EVENT["Event"] --- RECOVERY["Recovery"]
@@ -162,18 +167,14 @@ graph TB
         AGENT["Agent"] --- ENV["Environment"]
         ADAPTATION["Adaptation"]
     end
-    subgraph infra["5 Infrastructure Modules"]
+    subgraph infra["5 Infrastructure Modules<br/><i>consumes dimension modules</i>"]
         direction LR
-        HARNESS["Harness"] --- RUNTIME["Runtime/Daemon"]
-        CLI["CLI"] --- CONFORM["Conformance"]
-        MCP["MCP Bridge"]
+        HARNESS["Harness"] --> RUNTIME["Runtime/Daemon"]
+        RUNTIME --> CLI["CLI"]
+        HARNESS --> CONFORM["Conformance"]
+        HARNESS --> MCP["MCP Bridge"]
     end
-    subgraph shared["Shared"]
-        direction LR
-        SCHEMAS["JSON Schemas"] --- FIXTURES["28 Fixtures"]
-        SPECS["27 Protocol Specs"] --- TOOLS["Conformance Runner"]
-    end
-    dim --> infra --> shared
+    shared --> dim --> infra
 ```
 
 - `docs/` -- protocol vision, architecture, design drafts, specifications, roadmap
