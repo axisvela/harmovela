@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { McpBridge, asyncToolHandler } from "../../src/bridge/mcp-bridge.js";
 import { runMcpBridge } from "../../src/bridge/stdio.js";
-import { MockStdioTransport } from "../../src/transport/stdio.js";
+import { MockStdioTransport } from "@axisrobo/harmovela-event";
 
 const transport = new MockStdioTransport();
 const bridge = new McpBridge({ transport });

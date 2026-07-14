@@ -3,8 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema, HarmovelaHarness } from "../src/index.js";
-import { validateEnvelope } from "../src/validate.js";
+import { validateEnvelopeSchema, validateSubscriptionSchema, isValidBySchema, HarmovelaHarness, validateEnvelope } from "../src/index.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = resolve(here, "../../../conformance/fixtures");
