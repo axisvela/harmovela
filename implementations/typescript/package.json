@@ -12,7 +12,8 @@
     "packages/delegation",
     "packages/state",
     "packages/tool",
-    "packages/agent"
+    "packages/agent",
+    "packages/environment"
   ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
@@ -45,6 +46,7 @@
     "@axisrobo/harmovela-state": "file:packages/state",
     "@axisrobo/harmovela-tool": "file:packages/tool",
     "@axisrobo/harmovela-agent": "file:packages/agent",
+    "@axisrobo/harmovela-environment": "file:packages/environment",
     "@grpc/grpc-js": "^1.11.0",
     "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",

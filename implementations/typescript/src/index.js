@@ -14,3 +14,4 @@ export { HarmovelaRuntimeService } from "./runtime/service.js";
 export { CONTEXT_MEMORY_EVENT_TYPES, isContextMemoryEventType } from "@axisrobo/harmovela-context";
 export { TOOL_EVENT_TYPES, isToolEventType } from "@axisrobo/harmovela-tool";
 export { AGENT_EVENT_TYPES, isAgentEventType } from "@axisrobo/harmovela-agent";
+export { ENVIRONMENT_EVENT_TYPES, isEnvironmentEventType } from "@axisrobo/harmovela-environment";

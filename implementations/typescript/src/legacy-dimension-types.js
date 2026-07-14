@@ -4,6 +4,7 @@ import { RECOVERY_EVENT_TYPES } from "@axisrobo/harmovela-recovery";
 import { STATE_EVENT_TYPES } from "@axisrobo/harmovela-state";
 import { TOOL_EVENT_TYPES } from "@axisrobo/harmovela-tool";
 import { AGENT_EVENT_TYPES } from "@axisrobo/harmovela-agent";
+import { ENVIRONMENT_EVENT_TYPES } from "@axisrobo/harmovela-environment";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -28,10 +29,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   ...STATE_EVENT_TYPES,
   ...TOOL_EVENT_TYPES,
   ...AGENT_EVENT_TYPES,
-  "environment.observed",
-  "environment.changed",
-  "environment.alerted",
-  "environment.error",
+  ...ENVIRONMENT_EVENT_TYPES,
 ]);
 
 export function isLegacyDimensionEventType(type) {

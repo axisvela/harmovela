@@ -14,7 +14,7 @@ Classification of legacy undimensioned event types into Harmovela coordination d
 | `task.*` | Task | Already in `Task` module; may benefit from future spreading |
 | `tool.call.*` | Tool | In `Tool` module; spread into legacy registries |
 | `agent.*` | Agent | In `Agent` module; spread into legacy registries |
-| `environment.*` | — | Domain-level (no dimension module needed) |
+| `environment.*` | Environment | In `Environment` module; spread into legacy registries |
 
 ## Rationale
 
@@ -28,4 +28,4 @@ Classification of legacy undimensioned event types into Harmovela coordination d
 
 **Agent dimension** (`agent.*`): Covers agent-to-agent messaging, request/response creation, and decision recording. The `Agent` module owns these and they are spread into legacy registries.
 
-**Domain-level** (`environment.*`): These describe domain-specific application behavior (environment observation). They are not protocol coordination concerns and do not require a dedicated dimension module at this time.
+**Environment dimension** (`environment.*`): Covers environment observation, change detection, alerting, and error reporting. The `Environment` module owns these and they are spread into legacy registries.

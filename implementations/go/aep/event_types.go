@@ -4,6 +4,7 @@ import (
 	"github.com/axisrobo/harmovela/agent"
 	"github.com/axisrobo/harmovela/context"
 	"github.com/axisrobo/harmovela/delegation"
+	"github.com/axisrobo/harmovela/environment"
 	"github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/state"
@@ -26,10 +27,6 @@ var legacyStandardEventTypes = func() map[string]bool {
 		"task.cancel.requested":         true,
 		"task.cancelled":                true,
 		"task.timed_out":                true,
-		"environment.observed":          true,
-		"environment.changed":           true,
-		"environment.alerted":           true,
-		"environment.error":             true,
 	}
 	for k, v := range agent.EventTypes {
 		m[k] = v
@@ -47,6 +44,9 @@ var legacyStandardEventTypes = func() map[string]bool {
 		m[k] = v
 	}
 	for k, v := range tool.EventTypes {
+		m[k] = v
+	}
+	for k, v := range environment.EventTypes {
 		m[k] = v
 	}
 	return m
