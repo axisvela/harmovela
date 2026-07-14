@@ -136,6 +136,42 @@
       ]
     },
     {
+      "path": "fixtures/tenant-isolation-negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Cross-tenant authorization rejections: event publish, subscription request, and task access across tenant boundaries.",
+      "expectation": "reject_some",
+      "expected_types": [
+        "session.heartbeat",
+        "subscription.requested",
+        "task.submitted"
+      ],
+      "tags": [
+        "negative",
+        "governance",
+        "authorization",
+        "tenant-isolation"
+      ]
+    },
+    {
+      "path": "fixtures/tenant-isolation-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Same-tenant authorization: publish, subscribe, and task lifecycle within a single tenant.",
+      "expectation": "stateful_flow",
+      "expected_types": [
+        "session.heartbeat",
+        "subscription.requested",
+        "task.submitted",
+        "task.started",
+        "task.completed"
+      ],
+      "tags": [
+        "governance",
+        "authorization",
+        "tenant-isolation",
+        "task"
+      ]
+    },
+    {
       "path": "fixtures/delivery.ndjson",
       "level": "HARMOVELA-C2",
       "description": "Delivery acknowledgement, redelivery, and dead-letter event sequence.",
