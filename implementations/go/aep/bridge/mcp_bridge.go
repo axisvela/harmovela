@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/task"
 )
 
 // Sender receives AEP events emitted by tool handlers.
@@ -155,7 +156,7 @@ func (b *McpBridge) errorResponse(id any, code int, message string) map[string]a
 }
 
 // AsyncToolHandler builds a tool whose handler emits AEP task lifecycle events.
-func AsyncToolHandler(name, description string, work func(args map[string]any, tracker *aep.TaskTracker) map[string]any) McpTool {
+func AsyncToolHandler(name, description string, work func(args map[string]any, tracker *task.Tracker) map[string]any) McpTool {
 	return McpTool{
 		Name:   name,
 		Schema: map[string]any{"description": description},
@@ -164,7 +165,7 @@ func AsyncToolHandler(name, description string, work func(args map[string]any, t
 			if taskID == "" {
 				taskID = fmt.Sprintf("task_%d", time.Now().UnixMilli())
 			}
-			tracker := aep.NewTaskTracker(taskID, "tool:"+name, jsonString(args))
+			tracker := task.NewTracker(taskID, "tool:"+name, jsonString(args))
 			send := func(event map[string]any) {
 				if ctx.Sender != nil {
 					ctx.Sender.Send(event)

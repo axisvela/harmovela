@@ -7,140 +7,8 @@ import (
 	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/governance"
+	"github.com/axisrobo/harmovela/task"
 )
-
-type TaskState string
-
-const (
-	TaskSubmitted TaskState = "submitted"
-	TaskAccepted  TaskState = "accepted"
-	TaskStarted   TaskState = "started"
-	TaskProgress  TaskState = "progress"
-	TaskBlocked   TaskState = "blocked"
-	TaskOutput    TaskState = "output"
-	TaskCompleted TaskState = "completed"
-	TaskFailed    TaskState = "failed"
-	TaskCancelled TaskState = "cancelled"
-	TaskTimedOut  TaskState = "timed_out"
-)
-
-var taskEventToState = map[string]TaskState{
-	"task.submitted": TaskSubmitted,
-	"task.accepted":  TaskAccepted,
-	"task.started":   TaskStarted,
-	"task.progress":  TaskProgress,
-	"task.blocked":   TaskBlocked,
-	"task.output":    TaskOutput,
-	"task.completed": TaskCompleted,
-	"task.failed":    TaskFailed,
-	"task.cancelled": TaskCancelled,
-	"task.timed_out": TaskTimedOut,
-}
-
-var terminalTaskStates = map[TaskState]bool{
-	TaskCompleted: true,
-	TaskFailed:    true,
-	TaskCancelled: true,
-	TaskTimedOut:  true,
-}
-
-var taskTransitions = map[TaskState]map[TaskState]bool{
-	TaskSubmitted: {TaskAccepted: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-	TaskAccepted:  {TaskStarted: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-	TaskStarted:   {TaskProgress: true, TaskOutput: true, TaskBlocked: true, TaskCompleted: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-	TaskBlocked:   {TaskStarted: true, TaskProgress: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-	TaskProgress:  {TaskProgress: true, TaskOutput: true, TaskBlocked: true, TaskCompleted: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-	TaskOutput:    {TaskProgress: true, TaskOutput: true, TaskBlocked: true, TaskCompleted: true, TaskFailed: true, TaskCancelled: true, TaskTimedOut: true},
-}
-
-type TaskTracker struct {
-	ID          string
-	State       TaskState
-	Source      string
-	Description string
-	eventID     int
-}
-
-func NewTaskTracker(id, source, description string) *TaskTracker {
-	return &TaskTracker{
-		ID:          id,
-		State:       TaskSubmitted,
-		Source:      source,
-		Description: description,
-	}
-}
-
-func (tk *TaskTracker) Accept() map[string]any {
-	return tk.transition("task.accepted", nil)
-}
-
-func (tk *TaskTracker) Accepted() map[string]any {
-	return tk.transition("task.accepted", nil)
-}
-
-func (tk *TaskTracker) Started() map[string]any {
-	return tk.transition("task.started", nil)
-}
-
-func (tk *TaskTracker) Progress(payload map[string]any) map[string]any {
-	return tk.transition("task.progress", payload)
-}
-
-func (tk *TaskTracker) Completed(result map[string]any) map[string]any {
-	return tk.transition("task.completed", result)
-}
-
-func (tk *TaskTracker) Failed(code, message string) map[string]any {
-	return tk.transition("task.failed", map[string]any{
-		"error": ErrorPayload(code, message, false),
-	})
-}
-
-func (tk *TaskTracker) IsTerminal() bool {
-	return terminalTaskStates[tk.State]
-}
-
-func (tk *TaskTracker) transition(eventType string, payload map[string]any) map[string]any {
-	nextState, ok := taskEventToState[eventType]
-	if !ok {
-		return nil
-	}
-
-	if nextState != tk.State {
-		allowed, hasAllowed := taskTransitions[tk.State]
-		if !hasAllowed || !allowed[nextState] {
-			return nil
-		}
-	}
-
-	tk.State = nextState
-
-	result := make(map[string]any, len(payload)+2)
-	if payload != nil {
-		for k, v := range payload {
-			result[k] = v
-		}
-	}
-	result["task_id"] = tk.ID
-	result["state"] = string(tk.State)
-
-	if terminalTaskStates[tk.State] {
-		if _, ok := result["result"]; !ok {
-			result["result"] = string(tk.State)
-		}
-	}
-
-	tk.eventID++
-	return map[string]any{
-		"spec_version": "0.2",
-		"id":           fmt.Sprintf("evt_task_%06d", tk.eventID),
-		"type":         eventType,
-		"source":       tk.Source,
-		"task_id":      tk.ID,
-		"created_at":   time.Now().UTC().Format(time.RFC3339),
-		"payload":      result,
-	}
-}
 
 type AuditRecord struct {
 	ActorID        string
@@ -156,7 +24,7 @@ type Harness struct {
 	Source        string
 	sequence      int
 	subscriptions map[string]map[string]any
-	tasks         map[string]*TaskTracker
+	tasks         map[string]*task.Tracker
 	router        *event.EventRouter
 	session       *event.HarmovelaSession
 	Delivery      *recovery.DeliveryTracker
@@ -167,7 +35,7 @@ func NewHarness() *Harness {
 	h := &Harness{
 		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
-		tasks:         make(map[string]*TaskTracker),
+		tasks:         make(map[string]*task.Tracker),
 		router:        event.NewEventRouter(),
 		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
@@ -185,7 +53,7 @@ func (h *Harness) Subscriptions() map[string]map[string]any {
 	return h.subscriptions
 }
 
-func (h *Harness) Tasks() map[string]*TaskTracker {
+func (h *Harness) Tasks() map[string]*task.Tracker {
 	return h.tasks
 }
 
@@ -397,7 +265,7 @@ func (h *Harness) handleTaskSubmitted(event map[string]any) any {
 		description, _ = payload["description"].(string)
 	}
 	source, _ := event["source"].(string)
-	tracker := NewTaskTracker(taskID, source, description)
+	tracker := task.NewTracker(taskID, source, description)
 	tracker.Accept()
 	h.tasks[taskID] = tracker
 
@@ -427,7 +295,7 @@ func (h *Harness) handleTaskEvent(event map[string]any) any {
 
 	eventType, _ := event["type"].(string)
 	payload, _ := event["payload"].(map[string]any)
-	taskEvent := tracker.transition(eventType, payload)
+	taskEvent := tracker.Transition(eventType, payload)
 	if taskEvent == nil {
 		return h.newEvent("event.rejected", event, map[string]any{
 			"error": ErrorPayload(ErrorCodeTaskError, "illegal task transition: "+string(tracker.State)+" for task "+taskID, false),

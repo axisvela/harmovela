@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/task"
 )
 
 func TestMcpInitialize(t *testing.T) {
@@ -121,7 +121,7 @@ func (s *collectSink) types() []string {
 func TestMcpAsyncToolHandlerLifecycle(t *testing.T) {
 	sink := newCollectSink()
 	bridge := NewMcpBridge(sink)
-	bridge.RegisterTool(AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *aep.TaskTracker) map[string]any {
+	bridge.RegisterTool(AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *task.Tracker) map[string]any {
 		return map[string]any{"artifact": "app.bin"}
 	}))
 	resp := bridge.HandleRequest(map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/call",
@@ -143,7 +143,7 @@ func TestMcpAsyncToolHandlerLifecycle(t *testing.T) {
 func TestMcpAsyncToolHandlerFailure(t *testing.T) {
 	sink := newCollectSink()
 	bridge := NewMcpBridge(sink)
-	bridge.RegisterTool(AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *aep.TaskTracker) map[string]any {
+	bridge.RegisterTool(AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *task.Tracker) map[string]any {
 		panic("build failed")
 	}))
 	bridge.HandleRequest(map[string]any{"jsonrpc": "2.0", "id": 1, "method": "tools/call",

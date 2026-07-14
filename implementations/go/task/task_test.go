@@ -1,9 +1,9 @@
-package aep
+package task
 
 import "testing"
 
-func TestTaskTrackerLifecycleMethods(t *testing.T) {
-	tk := NewTaskTracker("task_1", "tool:build", "build app")
+func TestTrackerLifecycleMethods(t *testing.T) {
+	tk := NewTracker("task_1", "tool:build", "build app")
 
 	accepted := tk.Accepted()
 	if accepted["type"] != "task.accepted" {
@@ -33,17 +33,24 @@ func TestTaskTrackerLifecycleMethods(t *testing.T) {
 	}
 }
 
-func TestTaskTrackerFailed(t *testing.T) {
-	tk := NewTaskTracker("task_2", "tool:build", "build app")
+func TestTrackerIllegalTransition(t *testing.T) {
+	tk := NewTracker("task_3", "tool:build", "build app")
+	if result := tk.Transition("task.completed", nil); result != nil {
+		t.Fatalf("expected nil for illegal transition, got %v", result)
+	}
+}
+
+func TestTrackerFailed(t *testing.T) {
+	tk := NewTracker("task_2", "tool:build", "build app")
 	tk.Accepted()
 	tk.Started()
-	failed := tk.Failed(ErrorCodeToolError, "boom")
+	failed := tk.Failed("tool_error", "boom")
 	if failed["type"] != "task.failed" {
 		t.Fatalf("expected task.failed, got %v", failed["type"])
 	}
 	payload := failed["payload"].(map[string]any)
 	errObj := payload["error"].(map[string]any)
-	if errObj["code"] != ErrorCodeToolError {
+	if errObj["code"] != "tool_error" {
 		t.Fatalf("expected tool_error, got %v", errObj["code"])
 	}
 }
