@@ -9,15 +9,15 @@ Define how Harmovela runs over gRPC, supporting bidirectional event streams usin
 ## Service Definition
 
 ```
-service AepTransport {
-  rpc Stream(stream AepMessage) returns (stream AepMessage);
+service HarmovelaTransport {
+  rpc Stream(stream HarmovelaMessage) returns (stream HarmovelaMessage);
 }
 ```
 
 ### Message
 
 ```protobuf
-message AepMessage {
+message HarmovelaMessage {
   string json_payload = 1;
 }
 ```
@@ -38,7 +38,7 @@ For TLS-secured connections:
 grpcs://host:port/servicePath
 ```
 
-The default service path is `/aep.v1.AepTransport/Stream`.
+The default service path is `/harmovela.v1.HarmovelaTransport/Stream`.
 
 ### Connection Negotiation
 
@@ -46,7 +46,7 @@ The gRPC transport uses standard gRPC channel establishment:
 
 1. Client creates a gRPC channel to the server address.
 2. Client invokes the `Stream` bidirectional RPC, receiving a call object.
-3. Both peers may immediately begin writing `AepMessage` frames.
+3. Both peers may immediately begin writing `HarmovelaMessage` frames.
 4. The stream is long-lived; there is no per-event request/response cycle.
 
 ### Metadata
@@ -55,10 +55,10 @@ gRPC metadata (headers and trailers) may carry transport-level parameters:
 
 | Metadata Key | Direction | Description |
 |---|---|---|
-| `aep-session-id` | Client → Server | Session identifier for connection binding |
-| `aep-version` | Client → Server | Harmovela protocol version (e.g., `0.1`) |
-| `aep-agent-id` | Client → Server | Optional agent identity |
-| `x-aep-cursor` | Server → Client (trailer) | Last committed event cursor on stream close |
+| `harmovela-session-id` | Client → Server | Session identifier for connection binding |
+| `harmovela-version` | Client → Server | Harmovela protocol version (e.g., `0.2`) |
+| `harmovela-agent-id` | Client → Server | Optional agent identity |
+| `x-harmovela-cursor` | Server → Client (trailer) | Last committed event cursor on stream close |
 
 Metadata is not part of the Harmovela event envelope and must not be used to carry event semantics.
 
@@ -70,7 +70,7 @@ Metadata is not part of the Harmovela event envelope and must not be used to car
 | Message format | One complete JSON Harmovela event in `json_payload` per message |
 | Encoding | UTF-8 for the JSON payload; standard protobuf framing |
 | Flow control | Managed by gRPC/HTTP/2 flow control |
-| Message boundaries | Each `AepMessage` is one Harmovela event |
+| Message boundaries | Each `HarmovelaMessage` is one Harmovela event |
 
 ## Session Lifecycle
 
@@ -104,7 +104,7 @@ A disconnected client may reconnect and resume the event stream:
 3. Client sends `subscription.requested` with `from_cursor` set to the last received cursor value.
 4. Server replays events from the cursor position.
 
-The cursor value may also be communicated in the server's response trailer under the `x-aep-cursor` metadata key to allow the client to persist the last known position for recovery.
+The cursor value may also be communicated in the server's response trailer under the `x-harmovela-cursor` metadata key to allow the client to persist the last known position for recovery.
 
 ## Status Code Mapping
 

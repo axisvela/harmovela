@@ -68,8 +68,8 @@ Sent when the handshake completes and both sides agree on capabilities. A sessio
   "payload": {
     "session_id": "sess_01",
     "capabilities": {
-      "protocol": "aep",
-      "aep_version": "0.1",
+      "protocol": "harmovela",
+      "spec_version": "0.2",
       "transports": ["stdio", "websocket"],
       "delivery_modes": ["best_effort", "at_least_once", "replayable"],
       "features": ["envelope", "subscription", "task_lifecycle", "error_model"],
@@ -87,8 +87,8 @@ Capability fields:
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `protocol` | string | yes | `"aep"` |
-| `aep_version` | string | yes | Protocol version string |
+| `protocol` | string | yes | `"harmovela"` |
+| `spec_version` | string | yes | Protocol version string |
 | `transports` | string[] | yes | Supported transport names |
 | `delivery_modes` | string[] | no | Supported delivery guarantees |
 | `features` | string[] | no | Supported protocol features |

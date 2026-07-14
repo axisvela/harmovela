@@ -198,6 +198,40 @@ AEP -> Agent: replay stream from cursor
 Agent -> AEP: event.acknowledged (idempotent check on event_id)
 ```
 
+## Module Architecture
+
+Harmovela ships with 10+ dimension modules and 5 infrastructure modules:
+
+### Dimension Modules
+
+Each dimension module owns its event type registry and the public contracts for its coordination concern. Dimension modules are independently publishable and have no imports from other dimension internals.
+
+| Dimension | Concern |
+|---|---|
+| Event | Envelope validation, sessions, subscriptions, routing, transport contracts |
+| Recovery | Delivery tracker, delivery journal, retry policy, dead-letter, durability stores |
+| Governance | RBAC authorization policy, capability-based access control, audit trail |
+| Task | Task state machine, lifecycle transitions, task event types |
+| State | State snapshots, incremental deltas, freshness window metadata |
+| Context / Memory | Facts, episodes, preferences, invalidation, belief revision |
+| Delegation | Ownership transfer, handoff, escalation, cancellation propagation |
+| Tool | Tool invocation lifecycle, MCP bridge integration |
+| Agent | Agent-to-agent messaging, request/response, decision recording |
+| Environment | Environment observation, change detection, alerting |
+| Adaptation | Feedback/outcome correlation, budget authority and enforcement |
+
+### Infrastructure Modules
+
+Infrastructure modules provide cross-cutting runtime support and are not dimension-specific.
+
+| Module | Concern |
+|---|---|
+| Harness | Runtime ingress/egress enforcement, dimension wiring, policy dispatch |
+| Runtime | Daemon process, HTTP API, transport lifecycle, configuration management |
+| CLI | Command-line interface for publish, subscribe, conformance, and administration |
+| Conformance | Cross-language test runner, profile fixtures, compliance verification |
+| MCP Bridge | Protocol bridge between MCP synchronous calls and Harmovela async events |
+
 ## Reliability Model
 
 AEP should support multiple reliability levels:

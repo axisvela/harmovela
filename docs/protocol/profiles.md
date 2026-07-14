@@ -101,17 +101,25 @@ This filtering behavior is available in:
 
 - **Cross-language runner:** `node tools/conformance-runner.js --profile=delivery`
 - **TypeScript CLI:** `node implementations/typescript/src/cli/harmovela.js conformance --profile=delivery`
-- **Python CLI:** `cd implementations/python && python -m aep.cli.main conformance --profile=delivery`
-- **Go CLI:** `cd implementations/go && go run ./cmd/aep conformance --profile=delivery`
-- **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisrobo.aep.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
+- **Python CLI:** `cd implementations/python && python -m axisrobo_harmovela.cli.main conformance --profile=delivery`
+- **Go CLI:** `cd implementations/go && go run ./cmd/harmovela conformance --profile=delivery`
+- **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
 
 ## Dimension Contract Ownership
 
 | Dimension | Contract document |
-|---|---|---|
+|---|---|
 | Event | [Event contract](event-contract.md) |
-| Governance | [Governance contract](governance-contract.md) |
-| Coordination | [Task lifecycle](task-lifecycle.md) + [Delegation and handoff](agent-runtime-semantics.md#delegation-and-handoff) |
+| Recovery | [Delivery](delivery.md) + [Reliability](reliability.md) |
+| Governance | [Governance contract](governance-contract.md) + [Security](security.md) |
+| Task | [Task lifecycle](task-lifecycle.md) |
+| State | [Event dimension classification](event-dimension-classification.md#state-dimension) |
+| Context / Memory | [Event dimension classification](event-dimension-classification.md#context--memory-dimension) |
+| Delegation | [Agent runtime semantics](agent-runtime-semantics.md#delegation-and-handoff) + [Coordination profile](profiles.md#coordination-profile-l2-multi-agent-collaboration-and-delegation) |
+| Tool | [Event dimension classification](event-dimension-classification.md#tool-dimension) |
+| Agent | [Event dimension classification](event-dimension-classification.md#agent-dimension) |
+| Environment | [Event dimension classification](event-dimension-classification.md#environment-dimension) |
+| Adaptation | [Adaptation feedback](adaptation-feedback.md) + [Adaptation budget](adaptation-budget.md) + [Governance contract](governance-contract.md#authorization-checks) |
 
 ## Profile Catalog
 
