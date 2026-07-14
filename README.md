@@ -194,7 +194,7 @@ cd implementations/typescript && npm run harness < ../../conformance/fixtures/ta
 
 Run examples:
 
-See `examples/` �-organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
+See `examples/` — organized by scene: quickstart, service-client, mcp-bridge, scenarios. Each file is language-suffixed.
 
 ```sh
 # TypeScript quickstart
