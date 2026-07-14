@@ -41,5 +41,6 @@ implementations/python/dist/
 .DS_Store
 Thumbs.db
 
-# Paper drafts (not part of the protocol repository)
+# Non-repository artifacts (not part of the protocol)
 paper-harmovela/
+promo/
