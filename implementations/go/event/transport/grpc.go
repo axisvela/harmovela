@@ -1,4 +1,4 @@
-package aep
+package transport
 
 import (
 	"fmt"
@@ -7,13 +7,14 @@ import (
 	"net"
 	"sync"
 
+	"github.com/axisrobo/harmovela/event"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type MessageHandler func(msg *HarmovelaMessage) *HarmovelaMessage
+type MessageHandler func(msg *event.HarmovelaMessage) *event.HarmovelaMessage
 
-type ReceiveHandler func(msg *HarmovelaMessage)
+type ReceiveHandler func(msg *event.HarmovelaMessage)
 
 type GrpcServer struct {
 	grpcServer    *grpc.Server
@@ -39,7 +40,7 @@ func (s *GrpcServer) getHandler() MessageHandler {
 
 func (s *GrpcServer) Start(lis net.Listener) error {
 	s.grpcServer = grpc.NewServer()
-	RegisterHarmovelaTransportServer(s.grpcServer, s)
+	event.RegisterHarmovelaTransportServer(s.grpcServer, s)
 	return s.grpcServer.Serve(lis)
 }
 
@@ -49,7 +50,7 @@ func (s *GrpcServer) Stop() {
 	}
 }
 
-func (s *GrpcServer) Stream(stream HarmovelaTransport_StreamServer) error {
+func (s *GrpcServer) Stream(stream event.HarmovelaTransport_StreamServer) error {
 	handler := s.getHandler()
 
 	for {
@@ -74,7 +75,7 @@ func (s *GrpcServer) Stream(stream HarmovelaTransport_StreamServer) error {
 
 type GrpcClient struct {
 	conn    *grpc.ClientConn
-	stream  HarmovelaTransport_StreamClient
+	stream  event.HarmovelaTransport_StreamClient
 	handler ReceiveHandler
 	mu      sync.RWMutex
 }
@@ -104,7 +105,7 @@ func (c *GrpcClient) Connect(addr string) error {
 	}
 	c.conn = conn
 
-	stream, err := NewHarmovelaTransportClient(conn).Stream(context.Background())
+	stream, err := event.NewHarmovelaTransportClient(conn).Stream(context.Background())
 	if err != nil {
 		conn.Close()
 		return fmt.Errorf("grpc stream: %w", err)
@@ -129,7 +130,7 @@ func (c *GrpcClient) receiveLoop() {
 	}
 }
 
-func (c *GrpcClient) Send(msg *HarmovelaMessage) error {
+func (c *GrpcClient) Send(msg *event.HarmovelaMessage) error {
 	if c.stream == nil {
 		return fmt.Errorf("not connected")
 	}

@@ -1,4 +1,4 @@
-package aep
+package event
 
 import (
 	"encoding/json"

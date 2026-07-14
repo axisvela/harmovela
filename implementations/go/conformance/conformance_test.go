@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/harness"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
@@ -20,7 +20,7 @@ var levelOrder = map[string]int{
 }
 
 func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
-	manifest, err := aep.LoadManifest("../../../conformance/manifest.json")
+	manifest, err := event.LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
 	}
@@ -33,7 +33,7 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	}
 }
 
-func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *testing.T, manifest *aep.Manifest) {
+func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *testing.T, manifest *event.Manifest) {
 	t.Helper()
 	type fixtureDeclaration struct {
 		Path        string
@@ -61,7 +61,7 @@ func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *test
 }
 
 func TestGovernanceFixtureRequiresDefinedAuthorizationOutcomes(t *testing.T) {
-	events, err := aep.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	events, err := event.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
 	if err != nil {
 		t.Fatalf("failed to load governance fixture: %v", err)
 	}
@@ -94,7 +94,7 @@ func TestGovernanceFixtureRequiresDefinedAuthorizationOutcomes(t *testing.T) {
 }
 
 func TestGovernanceFixtureRequiresAuditCorrelationAndCausationLinkage(t *testing.T) {
-	events, err := aep.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	events, err := event.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
 	if err != nil {
 		t.Fatalf("failed to load governance fixture: %v", err)
 	}
@@ -109,7 +109,7 @@ func TestGovernanceFixtureRequiresAuditCorrelationAndCausationLinkage(t *testing
 }
 
 func TestConformanceFixtures(t *testing.T) {
-	manifest, err := aep.LoadManifest("../../../conformance/manifest.json")
+	manifest, err := event.LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
 	}
@@ -123,7 +123,7 @@ func TestConformanceFixtures(t *testing.T) {
 				profileFixturePaths[fp] = true
 			}
 		}
-		filtered := make([]aep.ManifestFixture, 0)
+		filtered := make([]event.ManifestFixture, 0)
 		for _, f := range manifest.Fixtures {
 			if f.Profile == "" || profileFixturePaths[f.Path] {
 				filtered = append(filtered, f)
@@ -146,7 +146,7 @@ func TestConformanceFixtures(t *testing.T) {
 
 		t.Run(fixture.Level+" "+fixture.Path, func(t *testing.T) {
 			absPath := filepath.Join("../../../conformance", fixture.Path)
-			events, err := aep.LoadFixture(absPath)
+			events, err := event.LoadFixture(absPath)
 			if err != nil {
 				t.Fatalf("failed to load fixture: %v", err)
 			}

@@ -1,4 +1,4 @@
-package aep
+package transport
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/axisrobo/harmovela/event"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -47,7 +48,7 @@ func TestGrpcClientConnectsAndExchangesMessages(t *testing.T) {
 	}
 
 	srv := NewGrpcServer()
-	srv.OnMessage(func(msg *HarmovelaMessage) *HarmovelaMessage {
+	srv.OnMessage(func(msg *event.HarmovelaMessage) *event.HarmovelaMessage {
 		return msg
 	})
 
@@ -62,12 +63,12 @@ func TestGrpcClientConnectsAndExchangesMessages(t *testing.T) {
 	}
 	defer client.Close()
 
-	received := make(chan *HarmovelaMessage, 1)
-	client.OnMessage(func(msg *HarmovelaMessage) {
+	received := make(chan *event.HarmovelaMessage, 1)
+	client.OnMessage(func(msg *event.HarmovelaMessage) {
 		received <- msg
 	})
 
-	testMsg := &HarmovelaMessage{JsonPayload: `{"type":"test","id":"001"}`}
+	testMsg := &event.HarmovelaMessage{JsonPayload: `{"type":"test","id":"001"}`}
 	if err := client.Send(testMsg); err != nil {
 		t.Fatalf("failed to send: %v", err)
 	}
@@ -89,13 +90,13 @@ func TestGrpcBidirectionalStreaming(t *testing.T) {
 	}
 
 	srv := NewGrpcServer()
-	var serverReceived []*HarmovelaMessage
+	var serverReceived []*event.HarmovelaMessage
 	var mu sync.Mutex
-	srv.OnMessage(func(msg *HarmovelaMessage) *HarmovelaMessage {
+	srv.OnMessage(func(msg *event.HarmovelaMessage) *event.HarmovelaMessage {
 		mu.Lock()
 		serverReceived = append(serverReceived, msg)
 		mu.Unlock()
-		return &HarmovelaMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
+		return &event.HarmovelaMessage{JsonPayload: fmt.Sprintf(`{"echo":"%s"}`, msg.JsonPayload)}
 	})
 
 	go srv.Start(lis)
@@ -109,19 +110,19 @@ func TestGrpcBidirectionalStreaming(t *testing.T) {
 	}
 	defer client.Close()
 
-	clientReceived := make([]*HarmovelaMessage, 0)
+	clientReceived := make([]*event.HarmovelaMessage, 0)
 	var clientMu sync.Mutex
 	var wg sync.WaitGroup
 	wg.Add(3)
 
-	client.OnMessage(func(msg *HarmovelaMessage) {
+	client.OnMessage(func(msg *event.HarmovelaMessage) {
 		clientMu.Lock()
 		clientReceived = append(clientReceived, msg)
 		clientMu.Unlock()
 		wg.Done()
 	})
 
-	messages := []*HarmovelaMessage{
+	messages := []*event.HarmovelaMessage{
 		{JsonPayload: `{"type":"msg1"}`},
 		{JsonPayload: `{"type":"msg2"}`},
 		{JsonPayload: `{"type":"msg3"}`},
@@ -165,7 +166,7 @@ func TestGrpcServerShutdownStopsCleanly(t *testing.T) {
 	}
 
 	srv := NewGrpcServer()
-	srv.OnMessage(func(msg *HarmovelaMessage) *HarmovelaMessage {
+	srv.OnMessage(func(msg *event.HarmovelaMessage) *event.HarmovelaMessage {
 		return msg
 	})
 
@@ -178,7 +179,7 @@ func TestGrpcServerShutdownStopsCleanly(t *testing.T) {
 		t.Fatalf("failed to connect: %v", err)
 	}
 
-	if err := client.Send(&HarmovelaMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
+	if err := client.Send(&event.HarmovelaMessage{JsonPayload: `{"type":"before_stop"}`}); err != nil {
 		t.Fatalf("failed to send before stop: %v", err)
 	}
 	time.Sleep(50 * time.Millisecond)
@@ -197,4 +198,3 @@ func TestGrpcServerShutdownStopsCleanly(t *testing.T) {
 		t.Fatal("expected connection failure after shutdown")
 	}
 }
-

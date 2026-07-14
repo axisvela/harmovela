@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
+	"time"
 
-	"github.com/axisrobo/harmovela/aep"
-	"github.com/axisrobo/harmovela/aep/runtime"
+	"github.com/axisrobo/harmovela/runtime"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 		"id":          "evt_embed",
 		"type":        "task.submitted",
 		"source":      "example:quickstart",
-		"created_at":  aep.Now(),
+		"created_at":  time.Now().UTC().Format(time.RFC3339),
 		"payload":     map[string]any{"task_id": "task_01"},
 	})
 }

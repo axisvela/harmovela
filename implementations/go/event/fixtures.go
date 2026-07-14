@@ -1,4 +1,4 @@
-package aep
+package event
 
 import (
 	"encoding/json"
@@ -26,10 +26,10 @@ type ProfileDef struct {
 }
 
 type Manifest struct {
-	SpecVersion        string            `json:"spec_version"`
-	DefaultTargetLevel string            `json:"default_target_level"`
-	Levels             []string          `json:"levels"`
-	Fixtures           []ManifestFixture `json:"fixtures"`
+	SpecVersion        string               `json:"spec_version"`
+	DefaultTargetLevel string               `json:"default_target_level"`
+	Levels             []string             `json:"levels"`
+	Fixtures           []ManifestFixture    `json:"fixtures"`
 	Profiles           map[string]ProfileDef `json:"profiles,omitempty"`
 }
 

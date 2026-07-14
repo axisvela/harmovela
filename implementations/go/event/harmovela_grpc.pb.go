@@ -1,4 +1,4 @@
-package aep
+package event
 
 import (
 	"context"
@@ -41,7 +41,7 @@ func RegisterHarmovelaTransportServer(s *grpc.Server, srv HarmovelaTransportServ
 				ClientStreams: true,
 			},
 		},
-		Metadata: "aep.proto",
+		Metadata: "harmovela.proto",
 	}, srv)
 }
 

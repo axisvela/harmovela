@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep"
-	"github.com/axisrobo/harmovela/aep/bridge"
+	bridge "github.com/axisrobo/harmovela/mcp-bridge"
+	"github.com/axisrobo/harmovela/task"
 )
 
 type sink struct {
@@ -22,7 +22,7 @@ func main() {
 	events := &sink{}
 	b := bridge.NewMcpBridge(events)
 
-	b.RegisterTool(bridge.AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *aep.TaskTracker) map[string]any {
+	b.RegisterTool(bridge.AsyncToolHandler("build", "build tool", func(args map[string]any, tracker *task.TaskTracker) map[string]any {
 		return map[string]any{"artifact": "app.bin"}
 	}))
 
