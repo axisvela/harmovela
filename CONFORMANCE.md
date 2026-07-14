@@ -11,7 +11,7 @@
 | HARMOVELA-C2 | PASS | PASS | PASS | PASS |
 | HARMOVELA-C3 | PASS | PASS | PASS | PASS |
 
-**HARMOVELA-C0 (Envelope and Schema):** Parse envelopes, validate shared schema assets (`schemas/aep-envelope.schema.json`, `schemas/aep-payloads.schema.json`), reject invalid envelopes and unknown event types.
+**HARMOVELA-C0 (Envelope and Schema):** Parse envelopes, validate shared schema assets (`schemas/harmovela-envelope.schema.json`, `schemas/harmovela-payloads.schema.json`), reject invalid envelopes and unknown event types.
 
 **HARMOVELA-C1 (Core Runtime):** Session lifecycle (open, ready, heartbeat, error, close), subscription creation/validation/cancellation, event routing by type/source/target/topic/session/task/metadata, task lifecycle (submitted → accepted → started → progress → blocked → resumed → output → completed/failed/cancelled/timed_out), standard error payloads.
 
@@ -54,10 +54,10 @@ Conformance: HARMOVELA-C1. Task lifecycle state-machine enforcement, state fresh
 
 | Language | Package | Test Files | Conformance Runner |
 |----------|---------|-----------|-------------------|
-| TypeScript | `@axisrobo/aep` (v0.1.0-draft) | 42 | `node implementations/typescript/src/conformance-cli.js` |
-| Python | `aep-reference-python` | 45 | `cd implementations/python && python -m aep.cli.main conformance` |
-| Go | `github.com/axisrobo/harmovela/aep` | 37 | `cd implementations/go && go run ./cmd/aep conformance` |
-| Java | `com.axisrobo.aep` (JDK 21) | 38 | `cd implementations/java && mvn exec:java -Dexec.mainClass=com.axisrobo.aep.cli.HarmovelaCli -Dexec.args="conformance"` |
+| TypeScript | `@axisrobo/harmovela-event` (v0.1.0-draft) | 42 | `cd implementations/typescript && npm run conformance` |
+| Python | `harmovela-reference-python` | 45 | `cd implementations/python && python -m harmovela_cli.main conformance` |
+| Go | `github.com/axisrobo/harmovela` | 37 | `cd implementations/go && go run ./cmd/harmovela conformance` |
+| Java | `com.axisrobo.harmovela` (JDK 21) | 38 | `cd implementations/java && mvn exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance"` |
 
 ## Conformance Fixtures
 

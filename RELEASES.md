@@ -71,8 +71,8 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 |---|---|
 | **Status** | Planned |
 | **Goal** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals |
-| **Entry criteria** | Stable feedback/outcome correlation and budget, audit, and authorization boundaries; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, trademark, upgrade, and deprecation policies; published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals |
-| **Exit criteria** | 1.0 released |
+| **Entry criteria** | 0.9 RC exit criteria satisfied: compatibility matrix covers two independently maintained implementations, one declared versioned L3 profile, one named and versioned transport profile, one named and versioned topology identifier, and the official versioned L3 fixture/scenario suite; every required matrix cell passes; zero `release-blocker` issues; public governance, release, security-response, and registry processes published; external L3 autonomy pilot published with all fixtures and scenarios passing; stable feedback/outcome correlation and budget, audit, and authorization boundaries; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, trademark, upgrade, and deprecation policies; published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals |
+| **Exit criteria** | 1.0 released; stable L3 coordination semantics frozen with interop guarantees and a non-goal boundary that excludes L4 open-ended autonomy and AGI |
 
 ## Breaking Changes Policy
 
@@ -99,7 +99,7 @@ Each versioned release produces the following artifacts:
 
 ## Versioning
 
-Protocol versioning follows `docs/protocol/versioning.md`. The protocol envelope `aep_version` field uses `MAJOR.MINOR` format. Release phase numbers correspond to the protocol version.
+Protocol versioning follows `docs/protocol/versioning.md`. The protocol envelope `spec_version` field uses `MAJOR.MINOR` format. Release phase numbers correspond to the protocol version.
 
 ## Related Documents
 

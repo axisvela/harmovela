@@ -52,7 +52,7 @@ const LANGUAGES = {
   Go: {
     cwd: "implementations/go",
     cmd: "go",
-    args: ["test", "./aep/", "-run", "TestConformance", "-v"],
+    args: ["test", "./...", "-run", "TestConformance", "-v"],
   },
   Java: {
     cwd: "implementations/java",

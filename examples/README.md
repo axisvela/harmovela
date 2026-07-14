@@ -30,7 +30,7 @@ Connect to a running `harmovelad` over its HTTP API or WebSocket.
 
 Start `harmovelad` first:
 ```bash
-npm run harmovelad --workspace @axisrobo/aep
+npm run harmovelad
 ```
 
 ## MCP Bridge (`examples/mcp-bridge/`)
@@ -59,7 +59,7 @@ End-to-end domain patterns.
 
 ## Prerequisites
 
-- TypeScript: `npm install` at repo root (establishes `@axisrobo/aep` workspace link).
+- TypeScript: `npm install` at repo root (establishes workspace links for `@axisrobo/harmovela-*` packages).
 - Python: `pip install -e implementations/python/` or set `PYTHONPATH=implementations/python/src`.
 - Go: compile from the module root (`implementations/go/`).
 - Java: compile with Maven classpath from `implementations/java/`.

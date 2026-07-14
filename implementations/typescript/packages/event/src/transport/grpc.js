@@ -5,7 +5,7 @@ import protoLoader from "@grpc/proto-loader";
 import { Transport } from "./base.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PROTO_PATH = path.join(__dirname, "aep.proto");
+const PROTO_PATH = path.join(__dirname, "harmovela.proto");
 
 let _cachedPackageDefinition = null;
 

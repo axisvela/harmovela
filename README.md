@@ -134,7 +134,7 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 - `conformance/` -- shared fixtures for cross-language conformance
 - `examples/` -- scene-based examples: quickstart, service-client, mcp-bridge, scenarios
 - `implementations/` -- language-specific implementations
-- `implementations/typescript/` -- TypeScript implementation (SDK, aepd daemon, aep CLI, HTTP API)
+- `implementations/typescript/` -- TypeScript implementation (SDK, harmovelad daemon, harmovela CLI, HTTP API)
 - `implementations/python/` -- Python implementation (SDK, daemon, CLI, HTTP API)
 - `implementations/go/` -- Go implementation (SDK, daemon, CLI, HTTP API, sub-package layout)
 - `implementations/java/` -- Java implementation (SDK, daemon, CLI, HTTP API, JDK 21)

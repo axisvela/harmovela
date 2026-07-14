@@ -41,7 +41,7 @@ Harmovela is a draft open coordination protocol. Contributions that refine the s
 
 1. Create `implementations/<language>/` with a `README.md`.
 2. Implement at minimum: envelope validation, event type registry, error model.
-3. Load and pass the shared `conformance/manifest.json` fixtures at AEP-C0 and AEP-C1.
+3. Load and pass the shared `conformance/manifest.json` fixtures at HARMOVELA-C0 and HARMOVELA-C1.
 4. Follow the pattern established by the TypeScript reference.
 
 ### Bug Fixes and Improvements
@@ -60,7 +60,7 @@ cd implementations/typescript && npm test && npm run conformance
 cd implementations/python && python -m pytest --tb=short -q
 
 # Go
-cd implementations/go && go test ./aep/ -v
+cd implementations/go && go test ./... -v
 
 # Java
 cd implementations/java && mvn test -q
