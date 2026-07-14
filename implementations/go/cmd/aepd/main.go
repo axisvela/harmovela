@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/axisrobo/harmovela/aep/runtime"
+	"github.com/axisrobo/harmovela/runtime"
 )
 
 func main() {

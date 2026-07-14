@@ -1,9 +1,7 @@
-package aep
+package event
 
 import (
 	"testing"
-
-	"github.com/axisrobo/harmovela/event"
 )
 
 func TestMatchesType(t *testing.T) {
@@ -21,7 +19,7 @@ func TestMatchesType(t *testing.T) {
 		{"task.*.done", "task.build.failed", false},
 	}
 	for _, c := range cases {
-		if got := event.MatchesType(c.pattern, c.value); got != c.want {
+		if got := MatchesType(c.pattern, c.value); got != c.want {
 			t.Fatalf("MatchesType(%q,%q)=%v want %v", c.pattern, c.value, got, c.want)
 		}
 	}
@@ -29,19 +27,19 @@ func TestMatchesType(t *testing.T) {
 
 func TestSubscriptionMatches(t *testing.T) {
 	evt := map[string]any{"type": "task.submitted", "source": "agent:x"}
-	if !event.SubscriptionMatches(map[string]any{"types": "task.*"}, evt) {
+	if !SubscriptionMatches(map[string]any{"types": "task.*"}, evt) {
 		t.Fatal("expected type match")
 	}
-	if event.SubscriptionMatches(map[string]any{"types": "memory.*"}, evt) {
+	if SubscriptionMatches(map[string]any{"types": "memory.*"}, evt) {
 		t.Fatal("expected type mismatch")
 	}
-	if !event.SubscriptionMatches(map[string]any{"types": "task.*", "source": "agent:x"}, evt) {
+	if !SubscriptionMatches(map[string]any{"types": "task.*", "source": "agent:x"}, evt) {
 		t.Fatal("expected source match")
 	}
-	if event.SubscriptionMatches(map[string]any{"source": "agent:y"}, evt) {
+	if SubscriptionMatches(map[string]any{"source": "agent:y"}, evt) {
 		t.Fatal("expected source mismatch")
 	}
-	if !event.SubscriptionMatches(map[string]any{}, evt) {
+	if !SubscriptionMatches(map[string]any{}, evt) {
 		t.Fatal("empty filter should match")
 	}
 }

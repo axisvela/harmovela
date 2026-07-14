@@ -1,4 +1,4 @@
-package bridge
+package mcpbridge
 
 import (
 	"sync"
@@ -101,10 +101,10 @@ func newCollectSink() *collectSink {
 	return &collectSink{}
 }
 
-func (s *collectSink) Send(event map[string]any) error {
+func (s *collectSink) Send(evt map[string]any) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.events = append(s.events, event)
+	s.events = append(s.events, evt)
 	return nil
 }
 

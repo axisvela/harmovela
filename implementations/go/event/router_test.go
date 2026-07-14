@@ -1,18 +1,16 @@
-package aep
+package event
 
 import (
 	"testing"
-
-	"github.com/axisrobo/harmovela/event"
 )
 
 func TestRouterDispatchesToMatchingHandler(t *testing.T) {
-	r := event.NewEventRouter()
+	r := NewEventRouter()
 	called := false
-	r.On(func(event map[string]any) bool {
-		typ, _ := event["type"].(string)
+	r.On(func(evt map[string]any) bool {
+		typ, _ := evt["type"].(string)
 		return typ == "task.started"
-	}, func(event map[string]any) any {
+	}, func(evt map[string]any) any {
 		called = true
 		return map[string]any{"type": "event.acknowledged"}
 	})
@@ -27,9 +25,9 @@ func TestRouterDispatchesToMatchingHandler(t *testing.T) {
 }
 
 func TestRouterMatchAllHandler(t *testing.T) {
-	r := event.NewEventRouter()
+	r := NewEventRouter()
 	count := 0
-	r.OnAll(func(event map[string]any) any {
+	r.OnAll(func(evt map[string]any) any {
 		count++
 		return nil
 	})
@@ -42,8 +40,8 @@ func TestRouterMatchAllHandler(t *testing.T) {
 }
 
 func TestRouterCollectsMultipleResponses(t *testing.T) {
-	r := event.NewEventRouter()
-	r.OnAll(func(event map[string]any) any {
+	r := NewEventRouter()
+	r.OnAll(func(evt map[string]any) any {
 		return []map[string]any{
 			{"type": "event.acknowledged"},
 			{"type": "session.ready"},
@@ -57,8 +55,8 @@ func TestRouterCollectsMultipleResponses(t *testing.T) {
 }
 
 func TestRouterHandlesSliceOfAnyResponses(t *testing.T) {
-	r := event.NewEventRouter()
-	r.OnAll(func(event map[string]any) any {
+	r := NewEventRouter()
+	r.OnAll(func(evt map[string]any) any {
 		return []any{
 			map[string]any{"type": "event.acknowledged"},
 			map[string]any{"type": "task.completed"},
@@ -71,10 +69,10 @@ func TestRouterHandlesSliceOfAnyResponses(t *testing.T) {
 }
 
 func TestRouterNoMatchReturnsEmpty(t *testing.T) {
-	r := event.NewEventRouter()
-	r.On(func(event map[string]any) bool {
+	r := NewEventRouter()
+	r.On(func(evt map[string]any) bool {
 		return false
-	}, func(event map[string]any) any {
+	}, func(evt map[string]any) any {
 		return map[string]any{"type": "event.acknowledged"}
 	})
 

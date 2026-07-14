@@ -1,4 +1,4 @@
-package aep
+package harness
 
 import (
 	"testing"
@@ -6,15 +6,15 @@ import (
 
 func TestHarnessDeclaresCapabilities(t *testing.T) {
 	h := NewHarness()
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "capabilities.requested",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"payload":     map[string]any{},
+		"id":           "evt_001",
+		"type":         "capabilities.requested",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"payload":      map[string]any{},
 	}
-	responses := h.Handle(event)
+	responses := h.Handle(evt)
 	if len(responses) == 0 {
 		t.Fatal("expected response for capabilities.requested")
 	}
@@ -26,17 +26,17 @@ func TestHarnessDeclaresCapabilities(t *testing.T) {
 
 func TestHarnessCreatesSubscription(t *testing.T) {
 	h := NewHarness()
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "subscription.requested",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
+		"id":           "evt_001",
+		"type":         "subscription.requested",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
 		"payload": map[string]any{
 			"types": []any{"task.*"},
 		},
 	}
-	responses := h.Handle(event)
+	responses := h.Handle(evt)
 	resp := responses[0]
 	if resp["type"] != "subscription.created" {
 		t.Fatalf("expected subscription.created, got %v", resp["type"])
@@ -45,15 +45,15 @@ func TestHarnessCreatesSubscription(t *testing.T) {
 
 func TestHarnessRejectsSubscriptionWithNoFilter(t *testing.T) {
 	h := NewHarness()
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "subscription.requested",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"payload":     map[string]any{},
+		"id":           "evt_001",
+		"type":         "subscription.requested",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"payload":      map[string]any{},
 	}
-	responses := h.Handle(event)
+	responses := h.Handle(evt)
 	if len(responses) == 0 {
 		t.Fatal("expected rejection response")
 	}
@@ -67,10 +67,10 @@ func TestHarnessSessionOpenAndClose(t *testing.T) {
 	h := NewHarness()
 	open := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_sess_001",
-		"type":        "session.opened",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
+		"id":           "evt_sess_001",
+		"type":         "session.opened",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
 		"payload": map[string]any{
 			"session_id": "sess_01",
 			"version":    "0.2",
@@ -100,10 +100,10 @@ func TestHarnessSessionOpenAndClose(t *testing.T) {
 
 	close := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_close_001",
-		"type":        "session.closed",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:05:00Z",
+		"id":           "evt_close_001",
+		"type":         "session.closed",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:05:00Z",
 		"payload": map[string]any{
 			"session_id": "sess_01",
 			"reason":     "done",
@@ -126,11 +126,11 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 	h := NewHarness()
 	submitted := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_task_001",
-		"type":        "task.submitted",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"task_id":     "task_01",
+		"id":           "evt_task_001",
+		"type":         "task.submitted",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"task_id":      "task_01",
 		"payload": map[string]any{
 			"task_id":     "task_01",
 			"description": "crawl example.org",
@@ -144,12 +144,12 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 
 	started := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_task_002",
-		"type":        "task.started",
-		"source":      "tool:crawl",
-		"created_at":  "2026-07-09T10:00:05Z",
-		"task_id":     "task_01",
-		"payload":     map[string]any{"task_id": "task_01", "state": "started"},
+		"id":           "evt_task_002",
+		"type":         "task.started",
+		"source":       "tool:crawl",
+		"created_at":   "2026-07-09T10:00:05Z",
+		"task_id":      "task_01",
+		"payload":      map[string]any{"task_id": "task_01", "state": "started"},
 	}
 	responses = h.Handle(started)
 	hasAck := false
@@ -164,12 +164,12 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 
 	completed := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_task_005",
-		"type":        "task.completed",
-		"source":      "tool:crawl",
-		"created_at":  "2026-07-09T10:01:00Z",
-		"task_id":     "task_01",
-		"payload":     map[string]any{"task_id": "task_01", "state": "completed", "result": "done"},
+		"id":           "evt_task_005",
+		"type":         "task.completed",
+		"source":       "tool:crawl",
+		"created_at":   "2026-07-09T10:01:00Z",
+		"task_id":      "task_01",
+		"payload":      map[string]any{"task_id": "task_01", "state": "completed", "result": "done"},
 	}
 	responses = h.Handle(completed)
 	hasCompleted := false
@@ -185,16 +185,16 @@ func TestHarnessTaskLifecycle(t *testing.T) {
 
 func TestHarnessTaskRejectsUnknownTask(t *testing.T) {
 	h := NewHarness()
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "task.progress",
-		"source":      "tool:crawl",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"task_id":     "task_unknown",
-		"payload":     map[string]any{"message": "progress"},
+		"id":           "evt_001",
+		"type":         "task.progress",
+		"source":       "tool:crawl",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"task_id":      "task_unknown",
+		"payload":      map[string]any{"message": "progress"},
 	}
-	responses := h.Handle(event)
+	responses := h.Handle(evt)
 	if len(responses) == 0 {
 		t.Fatal("expected rejection for unknown task")
 	}

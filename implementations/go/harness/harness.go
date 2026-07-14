@@ -1,12 +1,12 @@
-package aep
+package harness
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/harmovela/recovery"
-	eventpkg "github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/event"
 	"github.com/axisrobo/harmovela/governance"
+	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/task"
 )
 
@@ -25,8 +25,8 @@ type Harness struct {
 	sequence      int
 	subscriptions map[string]map[string]any
 	tasks         map[string]*task.Tracker
-	router        *eventpkg.EventRouter
-	session       *eventpkg.HarmovelaSession
+	router        *event.EventRouter
+	session       *event.HarmovelaSession
 	Delivery      *recovery.DeliveryTracker
 	Audit         []AuditRecord
 }
@@ -36,7 +36,7 @@ func NewHarness() *Harness {
 		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*task.Tracker),
-		router:        eventpkg.NewEventRouter(),
+		router:        event.NewEventRouter(),
 		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
 	}
@@ -45,7 +45,7 @@ func NewHarness() *Harness {
 	return h
 }
 
-func (h *Harness) Session() *eventpkg.HarmovelaSession {
+func (h *Harness) Session() *event.HarmovelaSession {
 	return h.session
 }
 
@@ -59,52 +59,52 @@ func (h *Harness) Tasks() map[string]*task.Tracker {
 
 func (h *Harness) setupRouter() {
 	h.router.
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "capabilities.requested"
 		}, h.handleCapabilities).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "subscription.requested"
 		}, h.handleSubscriptionRequested).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "subscription.cancelled"
 		}, h.handleSubscriptionCancelled).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "task.submitted"
 		}, h.handleTaskSubmitted).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "task.cancel.requested"
 		}, h.handleTaskCancelRequested).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return len(typ) > 5 && typ[:5] == "task." && typ != "task.submitted" && typ != "task.cancel.requested"
 		}, h.handleTaskEvent).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "session.opened"
 		}, h.handleSessionOpened).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "session.closed"
 		}, h.handleSessionClosed)
 }
 
 func (h *Harness) setupDeliveryRouter() {
 	h.router.
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "event.acknowledged"
 		}, h.handleInboundAck).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "event.redelivered"
 		}, h.handleInboundRedeliver).
-		On(func(event map[string]any) bool {
-			typ, _ := event["type"].(string)
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
 			return typ == "event.dead_lettered"
 		}, h.handleInboundDeadLetter)
 }
@@ -114,7 +114,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 	if len(errs) > 0 {
 		return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
 			"errors": errs,
-			"error":  ErrorPayload(ErrorCodeInvalidEnvelope, errs[0], false),
+			"error":  event.ErrorPayload(event.ErrorCodeInvalidEnvelope, errs[0], false),
 		})}
 	}
 
@@ -122,14 +122,14 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 	if !IsStandardEventType(typ) && (len(typ) < 8 || typ[:8] != "session.") {
 		return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
 			"errors": []string{"type not in standard draft registry: " + typ},
-			"error":  ErrorPayload(ErrorCodeInvalidEventType, "unknown event type: "+typ, false),
+			"error":  event.ErrorPayload(event.ErrorCodeInvalidEventType, "unknown event type: "+typ, false),
 		})}
 	}
 
 	if v, _ := value["spec_version"].(string); v != "0.2" {
 		return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
 			"errors": []string{"unsupported protocol version: " + v},
-			"error":  ErrorPayload(ErrorCodeUnsupportedVersion, "unsupported version "+v, false),
+			"error":  event.ErrorPayload(event.ErrorCodeUnsupportedVersion, "unsupported version "+v, false),
 		})}
 	}
 
@@ -166,7 +166,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 			})
 			if !decision.Allowed {
 				return []map[string]any{h.newEvent("event.rejected", value, map[string]any{
-					"error": ErrorPayload(ErrorCodeUnauthorized, "governance denied: "+decision.Reason, false),
+					"error": event.ErrorPayload(event.ErrorCodeUnauthorized, "governance denied: "+decision.Reason, false),
 				})}
 			}
 		}
@@ -193,8 +193,8 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 	})}
 }
 
-func (h *Harness) handleCapabilities(event map[string]any) any {
-	return h.newEvent("capabilities.declared", event, map[string]any{
+func (h *Harness) handleCapabilities(evt map[string]any) any {
+	return h.newEvent("capabilities.declared", evt, map[string]any{
 		"protocol":       "aep",
 		"spec_version":   "0.2",
 		"transports":     []string{"stdio"},
@@ -206,8 +206,8 @@ func (h *Harness) handleCapabilities(event map[string]any) any {
 	})
 }
 
-func (h *Harness) handleSubscriptionRequested(event map[string]any) any {
-	payload, _ := event["payload"].(map[string]any)
+func (h *Harness) handleSubscriptionRequested(evt map[string]any) any {
+	payload, _ := evt["payload"].(map[string]any)
 	if payload == nil {
 		payload = map[string]any{}
 	}
@@ -216,10 +216,10 @@ func (h *Harness) handleSubscriptionRequested(event map[string]any) any {
 
 	hasFilter := payload["types"] != nil || payload["source"] != nil || payload["target"] != nil || payload["topic"] != nil
 	if !hasFilter {
-		return h.newEvent("subscription.rejected", event, map[string]any{
+		return h.newEvent("subscription.rejected", evt, map[string]any{
 			"subscription_id": subID,
 			"filter":          payload,
-			"error":           ErrorPayload(ErrorCodeSubscriptionRejected, "subscription must include at least one filter criterion", false),
+			"error":           event.ErrorPayload(event.ErrorCodeSubscriptionRejected, "subscription must include at least one filter criterion", false),
 		})
 	}
 
@@ -229,28 +229,28 @@ func (h *Harness) handleSubscriptionRequested(event map[string]any) any {
 		"created_at": time.Now().UTC().Format(time.RFC3339),
 	}
 
-	return h.newEvent("subscription.created", event, map[string]any{
+	return h.newEvent("subscription.created", evt, map[string]any{
 		"subscription_id": subID,
 		"filter":          payload,
 	})
 }
 
-func (h *Harness) handleSubscriptionCancelled(event map[string]any) any {
-	payload, _ := event["payload"].(map[string]any)
+func (h *Harness) handleSubscriptionCancelled(evt map[string]any) any {
+	payload, _ := evt["payload"].(map[string]any)
 	if payload != nil {
 		if subID, ok := payload["subscription_id"].(string); ok {
 			delete(h.subscriptions, subID)
 		}
 	}
-	return h.newEvent("event.acknowledged", event, map[string]any{
-		"acknowledged_event_id": event["id"],
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
 	})
 }
 
-func (h *Harness) handleTaskSubmitted(event map[string]any) any {
-	taskID, _ := event["task_id"].(string)
+func (h *Harness) handleTaskSubmitted(evt map[string]any) any {
+	taskID, _ := evt["task_id"].(string)
 	if taskID == "" {
-		if payload, ok := event["payload"].(map[string]any); ok {
+		if payload, ok := evt["payload"].(map[string]any); ok {
 			taskID, _ = payload["task_id"].(string)
 		}
 	}
@@ -259,30 +259,30 @@ func (h *Harness) handleTaskSubmitted(event map[string]any) any {
 	}
 
 	if _, exists := h.tasks[taskID]; exists {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeTaskError, "duplicate task id: "+taskID, false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError, "duplicate task id: "+taskID, false),
 		})
 	}
 
 	description := ""
-	if payload, ok := event["payload"].(map[string]any); ok {
+	if payload, ok := evt["payload"].(map[string]any); ok {
 		description, _ = payload["description"].(string)
 	}
-	source, _ := event["source"].(string)
+	source, _ := evt["source"].(string)
 	tracker := task.NewTracker(taskID, source, description)
 	tracker.Accept()
 	h.tasks[taskID] = tracker
 
-	return h.newEvent("task.accepted", event, map[string]any{
+	return h.newEvent("task.accepted", evt, map[string]any{
 		"task_id": taskID,
 		"status":  "accepted",
 	})
 }
 
-func (h *Harness) handleTaskEvent(event map[string]any) any {
-	taskID, _ := event["task_id"].(string)
+func (h *Harness) handleTaskEvent(evt map[string]any) any {
+	taskID, _ := evt["task_id"].(string)
 	if taskID == "" {
-		if payload, ok := event["payload"].(map[string]any); ok {
+		if payload, ok := evt["payload"].(map[string]any); ok {
 			taskID, _ = payload["task_id"].(string)
 		}
 	}
@@ -292,23 +292,23 @@ func (h *Harness) handleTaskEvent(event map[string]any) any {
 
 	tracker, ok := h.tasks[taskID]
 	if !ok {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeTaskError, "unknown task: "+taskID, false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError, "unknown task: "+taskID, false),
 		})
 	}
 
-	eventType, _ := event["type"].(string)
-	payload, _ := event["payload"].(map[string]any)
+	eventType, _ := evt["type"].(string)
+	payload, _ := evt["payload"].(map[string]any)
 	taskEvent := tracker.Transition(eventType, payload)
 	if taskEvent == nil {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeTaskError, "illegal task transition: "+string(tracker.State)+" for task "+taskID, false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError, "illegal task transition: "+string(tracker.State)+" for task "+taskID, false),
 		})
 	}
 
 	responses := []map[string]any{
-		h.newEvent("event.acknowledged", event, map[string]any{
-			"acknowledged_event_id": event["id"],
+		h.newEvent("event.acknowledged", evt, map[string]any{
+			"acknowledged_event_id": evt["id"],
 		}),
 		taskEvent,
 	}
@@ -320,43 +320,43 @@ func (h *Harness) handleTaskEvent(event map[string]any) any {
 	return responses
 }
 
-func (h *Harness) handleTaskCancelRequested(event map[string]any) any {
-	taskID, _ := event["task_id"].(string)
+func (h *Harness) handleTaskCancelRequested(evt map[string]any) any {
+	taskID, _ := evt["task_id"].(string)
 	if taskID == "" {
-		if payload, ok := event["payload"].(map[string]any); ok {
+		if payload, ok := evt["payload"].(map[string]any); ok {
 			taskID, _ = payload["task_id"].(string)
 		}
 	}
 	if taskID == "" {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeTaskError, "unknown task: missing", false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError, "unknown task: missing", false),
 		})
 	}
 
 	_, ok := h.tasks[taskID]
 	if !ok {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeTaskError, "unknown task: "+taskID, false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError, "unknown task: "+taskID, false),
 		})
 	}
 
-	return h.newEvent("event.acknowledged", event, map[string]any{
-		"acknowledged_event_id": event["id"],
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
 	})
 }
 
-func (h *Harness) handleSessionOpened(event map[string]any) any {
+func (h *Harness) handleSessionOpened(evt map[string]any) any {
 	if h.session != nil && h.session.IsActive() {
-		return h.newEvent("event.rejected", event, map[string]any{
-			"error": ErrorPayload(ErrorCodeSessionError, "session already active", false),
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeSessionError, "session already active", false),
 		})
 	}
 
-	sessionID, _ := event["session_id"].(string)
-	h.session = eventpkg.NewHarmovelaSession(sessionID, h.Source, "0.2")
+	sessionID, _ := evt["session_id"].(string)
+	h.session = event.NewHarmovelaSession(sessionID, h.Source, "0.2")
 	opened, _ := h.session.Opened()
 
-	ready := h.newEvent("session.ready", event, map[string]any{
+	ready := h.newEvent("session.ready", evt, map[string]any{
 		"session_id": sessionID,
 		"capabilities": map[string]any{
 			"protocol":     "aep",
@@ -369,10 +369,10 @@ func (h *Harness) handleSessionOpened(event map[string]any) any {
 	return []map[string]any{opened, ready}
 }
 
-func (h *Harness) handleSessionClosed(event map[string]any) any {
+func (h *Harness) handleSessionClosed(evt map[string]any) any {
 	responses := []map[string]any{
-		h.newEvent("event.acknowledged", event, map[string]any{
-			"acknowledged_event_id": event["id"],
+		h.newEvent("event.acknowledged", evt, map[string]any{
+			"acknowledged_event_id": evt["id"],
 		}),
 	}
 	if h.session != nil && h.session.IsOpen() {
@@ -384,30 +384,30 @@ func (h *Harness) handleSessionClosed(event map[string]any) any {
 	return responses
 }
 
-func (h *Harness) handleInboundAck(event map[string]any) any {
-	if payload, ok := event["payload"].(map[string]any); ok {
+func (h *Harness) handleInboundAck(evt map[string]any) any {
+	if payload, ok := evt["payload"].(map[string]any); ok {
 		if eventID, ok := payload["acknowledged_event_id"].(string); ok && eventID != "" {
 			h.Delivery.Ack(eventID)
 		}
 	}
-	return h.newEvent("event.acknowledged", event, map[string]any{
-		"acknowledged_event_id": event["id"],
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
 	})
 }
 
-func (h *Harness) handleInboundRedeliver(event map[string]any) any {
-	if payload, ok := event["payload"].(map[string]any); ok {
+func (h *Harness) handleInboundRedeliver(evt map[string]any) any {
+	if payload, ok := evt["payload"].(map[string]any); ok {
 		if eventID, ok := payload["original_event_id"].(string); ok && eventID != "" {
 			h.Delivery.Nack(eventID)
 		}
 	}
-	return h.newEvent("event.acknowledged", event, map[string]any{
-		"acknowledged_event_id": event["id"],
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
 	})
 }
 
-func (h *Harness) handleInboundDeadLetter(event map[string]any) any {
-	if payload, ok := event["payload"].(map[string]any); ok {
+func (h *Harness) handleInboundDeadLetter(evt map[string]any) any {
+	if payload, ok := evt["payload"].(map[string]any); ok {
 		if eventID, ok := payload["original_event_id"].(string); ok && eventID != "" {
 			reason := map[string]any{"code": "unknown"}
 			if err, ok := payload["error"].(map[string]any); ok {
@@ -416,8 +416,8 @@ func (h *Harness) handleInboundDeadLetter(event map[string]any) any {
 			h.Delivery.DeadLetter(eventID, reason)
 		}
 	}
-	return h.newEvent("event.acknowledged", event, map[string]any{
-		"acknowledged_event_id": event["id"],
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
 	})
 }
 

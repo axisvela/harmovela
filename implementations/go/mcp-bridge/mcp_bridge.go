@@ -1,37 +1,34 @@
-package bridge
+package mcpbridge
 
 import (
 	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/harness"
 	"github.com/axisrobo/harmovela/task"
 )
 
-// Sender receives AEP events emitted by tool handlers.
 type Sender interface {
-	Send(event map[string]any) error
+	Send(evt map[string]any) error
 }
 
-// McpContext is passed to tool handlers.
 type McpContext struct {
-	Harness   *aep.Harness
+	Harness   *harness.Harness
 	Sender    Sender
 	TaskID    string
 	SessionID string
 }
 
-// McpTool is a registered MCP tool.
 type McpTool struct {
 	Name    string
 	Schema  map[string]any
 	Handler func(args map[string]any, ctx McpContext) map[string]any
 }
 
-// McpBridge dispatches JSON-RPC MCP requests to registered AEP-backed tools.
 type McpBridge struct {
-	harness    *aep.Harness
+	harness    *harness.Harness
 	sender     Sender
 	tools      map[string]McpTool
 	serverInfo map[string]any
@@ -39,7 +36,7 @@ type McpBridge struct {
 
 func NewMcpBridge(sender Sender) *McpBridge {
 	return &McpBridge{
-		harness:    aep.NewHarness(),
+		harness:    harness.NewHarness(),
 		sender:     sender,
 		tools:      make(map[string]McpTool),
 		serverInfo: map[string]any{"name": "aep-mcp-bridge", "version": "0.1.0"},
@@ -155,7 +152,6 @@ func (b *McpBridge) errorResponse(id any, code int, message string) map[string]a
 	}
 }
 
-// AsyncToolHandler builds a tool whose handler emits AEP task lifecycle events.
 func AsyncToolHandler(name, description string, work func(args map[string]any, tracker *task.Tracker) map[string]any) McpTool {
 	return McpTool{
 		Name:   name,
@@ -166,9 +162,9 @@ func AsyncToolHandler(name, description string, work func(args map[string]any, t
 				taskID = fmt.Sprintf("task_%d", time.Now().UnixMilli())
 			}
 			tracker := task.NewTracker(taskID, "tool:"+name, jsonString(args))
-			send := func(event map[string]any) {
+			send := func(evt map[string]any) {
 				if ctx.Sender != nil {
-					ctx.Sender.Send(event)
+					ctx.Sender.Send(evt)
 				}
 			}
 			send(tracker.Accepted())
@@ -176,7 +172,7 @@ func AsyncToolHandler(name, description string, work func(args map[string]any, t
 			go func() {
 				defer func() {
 					if r := recover(); r != nil {
-						send(tracker.Failed(aep.ErrorCodeToolError, fmt.Sprintf("%v", r)))
+						send(tracker.Failed(event.ErrorCodeToolError, fmt.Sprintf("%v", r)))
 					}
 				}()
 				send(tracker.Started())

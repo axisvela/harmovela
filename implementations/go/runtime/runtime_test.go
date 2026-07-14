@@ -42,7 +42,7 @@ func TestRuntimePublishToSubscriber(t *testing.T) {
 	c.Transports.API.Enabled = false
 	svc := NewRuntimeService(c)
 	seen := 0
-	svc.Subscribe("task.*", func(event map[string]any) { seen++ })
+	svc.Subscribe("task.*", func(evt map[string]any) { seen++ })
 	svc.Start()
 	defer svc.Stop()
 	if _, err := svc.Publish(map[string]any{

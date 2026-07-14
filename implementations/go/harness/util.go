@@ -1,4 +1,4 @@
-package aep
+package harness
 
 import (
 	"time"
@@ -76,9 +76,9 @@ func ValidateEnvelope(value map[string]any) []string {
 		adapted[key] = item
 	}
 	adapted["type"] = "event.acknowledged"
-	errors := event.ValidateEnvelope(adapted)
+	errs := event.ValidateEnvelope(adapted)
 	if !IsStandardEventType(typ) {
-		errors = append(errors, "type is not in the standard draft registry: "+typ)
+		errs = append(errs, "type is not in the standard draft registry: "+typ)
 	}
-	return errors
+	return errs
 }

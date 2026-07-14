@@ -1,4 +1,4 @@
-package aep
+package conformance
 
 import (
 	"bytes"
@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/axisrobo/harmovela/aep"
+	"github.com/axisrobo/harmovela/harness"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
@@ -18,7 +20,7 @@ var levelOrder = map[string]int{
 }
 
 func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
-	manifest, err := LoadManifest("../../../conformance/manifest.json")
+	manifest, err := aep.LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
 		t.Fatalf("failed to load manifest: %v", err)
 	}
@@ -31,7 +33,7 @@ func TestConformanceManifestDeclaresKnownDraftLevels(t *testing.T) {
 	}
 }
 
-func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *testing.T, manifest *Manifest) {
+func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *testing.T, manifest *aep.Manifest) {
 	t.Helper()
 	type fixtureDeclaration struct {
 		Path        string
@@ -59,19 +61,19 @@ func assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t *test
 }
 
 func TestGovernanceFixtureRequiresDefinedAuthorizationOutcomes(t *testing.T) {
-	events, err := LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	events, err := aep.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
 	if err != nil {
 		t.Fatalf("failed to load governance fixture: %v", err)
 	}
-	for i, event := range events {
-		if errs := ValidateEnvelope(event); len(errs) > 0 {
+	for i, evt := range events {
+		if errs := harness.ValidateEnvelope(evt); len(errs) > 0 {
 			t.Fatalf("event %d envelope validation: %v", i, errs)
 		}
 	}
 
 	expectedRejected := []bool{false, true, true, false}
-	for i, event := range events {
-		responses := NewHarness().Handle(event)
+	for i, evt := range events {
+		responses := harness.NewHarness().Handle(evt)
 		rejected := false
 		for _, response := range responses {
 			if response["type"] == "event.rejected" {
@@ -92,24 +94,24 @@ func TestGovernanceFixtureRequiresDefinedAuthorizationOutcomes(t *testing.T) {
 }
 
 func TestGovernanceFixtureRequiresAuditCorrelationAndCausationLinkage(t *testing.T) {
-	events, err := LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
+	events, err := aep.LoadFixture("../../../conformance/fixtures/governance-contract.ndjson")
 	if err != nil {
 		t.Fatalf("failed to load governance fixture: %v", err)
 	}
-	harness := NewHarness()
-	for _, event := range events {
-		harness.Handle(event)
+	h := harness.NewHarness()
+	for _, evt := range events {
+		h.Handle(evt)
 	}
-	audit := reflect.ValueOf(harness).Elem().FieldByName("Audit")
+	audit := reflect.ValueOf(h).Elem().FieldByName("Audit")
 	if !audit.IsValid() || audit.Len() == 0 {
 		t.Fatal("expected governance audit records")
 	}
 }
 
 func TestConformanceFixtures(t *testing.T) {
-	manifest, err := LoadManifest("../../../conformance/manifest.json")
+	manifest, err := aep.LoadManifest("../../../conformance/manifest.json")
 	if err != nil {
-		 t.Fatalf("failed to load manifest: %v", err)
+		t.Fatalf("failed to load manifest: %v", err)
 	}
 	assertConformanceManifestDeclaresEventAndGovernanceContractFixtures(t, manifest)
 
@@ -121,7 +123,7 @@ func TestConformanceFixtures(t *testing.T) {
 				profileFixturePaths[fp] = true
 			}
 		}
-		filtered := make([]ManifestFixture, 0)
+		filtered := make([]aep.ManifestFixture, 0)
 		for _, f := range manifest.Fixtures {
 			if f.Profile == "" || profileFixturePaths[f.Path] {
 				filtered = append(filtered, f)
@@ -144,14 +146,14 @@ func TestConformanceFixtures(t *testing.T) {
 
 		t.Run(fixture.Level+" "+fixture.Path, func(t *testing.T) {
 			absPath := filepath.Join("../../../conformance", fixture.Path)
-			events, err := LoadFixture(absPath)
+			events, err := aep.LoadFixture(absPath)
 			if err != nil {
 				t.Fatalf("failed to load fixture: %v", err)
 			}
 
 			types := make([]string, len(events))
-			for i, event := range events {
-				types[i], _ = event["type"].(string)
+			for i, evt := range events {
+				types[i], _ = evt["type"].(string)
 			}
 			if fixture.ExpectedTypes != nil && !reflect.DeepEqual(types, fixture.ExpectedTypes) {
 				t.Fatalf("expected types %v, got %v", fixture.ExpectedTypes, types)
@@ -159,19 +161,19 @@ func TestConformanceFixtures(t *testing.T) {
 
 			if fixture.Expectation == "reject_some" {
 				rejected := false
-				harness := NewHarness()
-				for _, event := range events {
+				h := harness.NewHarness()
+				for _, evt := range events {
 					harnessRejected := false
-					for _, response := range harness.Handle(event) {
+					for _, response := range h.Handle(evt) {
 						if typ, _ := response["type"].(string); len(typ) >= len(".rejected") && typ[len(typ)-len(".rejected"):] == ".rejected" {
 							harnessRejected = true
 						}
 					}
-					payloadInvalid, err := payloadSchemaInvalid(event)
+					payloadInvalid, err := payloadSchemaInvalid(evt)
 					if err != nil {
 						t.Fatalf("payload schema validation: %v", err)
 					}
-					if len(ValidateEnvelope(event)) > 0 || payloadInvalid || harnessRejected {
+					if len(harness.ValidateEnvelope(evt)) > 0 || payloadInvalid || harnessRejected {
 						rejected = true
 					}
 				}
@@ -181,17 +183,17 @@ func TestConformanceFixtures(t *testing.T) {
 				return
 			}
 
-			for i, event := range events {
-				errs := ValidateEnvelope(event)
+			for i, evt := range events {
+				errs := harness.ValidateEnvelope(evt)
 				if len(errs) > 0 {
 					t.Fatalf("event %d envelope validation: %v", i, errs)
 				}
 			}
 
 			if fixture.Expectation == "stateful_flow" {
-				harness := NewHarness()
-				for i, event := range events {
-					responses := harness.Handle(event)
+				h := harness.NewHarness()
+				for i, evt := range events {
+					responses := h.Handle(evt)
 					for _, resp := range responses {
 						if typ, _ := resp["type"].(string); typ == "event.rejected" {
 							errMsg := "unknown"
@@ -207,9 +209,9 @@ func TestConformanceFixtures(t *testing.T) {
 			}
 
 			if fixture.Expectation == "delivery_e2e" {
-				harness := NewHarness()
-				for i, event := range events {
-					responses := harness.Handle(event)
+				h := harness.NewHarness()
+				for i, evt := range events {
+					responses := h.Handle(evt)
 					for _, resp := range responses {
 						if typ, _ := resp["type"].(string); typ == "event.rejected" {
 							errMsg := "unknown"
@@ -223,7 +225,7 @@ func TestConformanceFixtures(t *testing.T) {
 					}
 				}
 				if fixture.ExpectedStats != nil {
-					stats := harness.Delivery.GetStats()
+					stats := h.Delivery.GetStats()
 					for key, expected := range fixture.ExpectedStats {
 						expectedNum, expOk := toFloat64(expected)
 						actualNum, actOk := toFloat64(stats[key])
@@ -237,7 +239,7 @@ func TestConformanceFixtures(t *testing.T) {
 	}
 }
 
-func payloadSchemaInvalid(event map[string]any) (bool, error) {
+func payloadSchemaInvalid(evt map[string]any) (bool, error) {
 	path := filepath.Join("../../../schemas", "aep-payloads.schema.json")
 	source, err := os.ReadFile(path)
 	if err != nil {
@@ -255,7 +257,7 @@ func payloadSchemaInvalid(event map[string]any) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return schema.Validate(event) != nil, nil
+	return schema.Validate(evt) != nil, nil
 }
 
 func toFloat64(v any) (float64, bool) {

@@ -1,57 +1,57 @@
-package aep
+package harness
 
 import (
 	"testing"
 )
 
 func TestValidateEnvelopeAcceptsValid(t *testing.T) {
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "task.submitted",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"payload":     map[string]any{},
+		"id":           "evt_001",
+		"type":         "task.submitted",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"payload":      map[string]any{},
 	}
-	errs := ValidateEnvelope(event)
+	errs := ValidateEnvelope(evt)
 	if len(errs) != 0 {
 		t.Fatalf("expected no errors, got %v", errs)
 	}
 }
 
 func TestValidateEnvelopeRejectsMissingFields(t *testing.T) {
-	event := map[string]any{}
-	errs := ValidateEnvelope(event)
+	evt := map[string]any{}
+	errs := ValidateEnvelope(evt)
 	if len(errs) == 0 {
 		t.Fatal("expected errors for missing fields")
 	}
 }
 
 func TestValidateEnvelopeRejectsUnknownType(t *testing.T) {
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "0.2",
-		"id":          "evt_001",
-		"type":        "not.a.real.type",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"payload":     map[string]any{},
+		"id":           "evt_001",
+		"type":         "not.a.real.type",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"payload":      map[string]any{},
 	}
-	errs := ValidateEnvelope(event)
+	errs := ValidateEnvelope(evt)
 	if len(errs) == 0 {
 		t.Fatal("expected error for unknown type")
 	}
 }
 
 func TestValidateEnvelopeRejectsUnsupportedVersion(t *testing.T) {
-	event := map[string]any{
+	evt := map[string]any{
 		"spec_version": "99.9",
-		"id":          "evt_001",
-		"type":        "task.submitted",
-		"source":      "agent:test",
-		"created_at":  "2026-07-09T10:00:00Z",
-		"payload":     map[string]any{},
+		"id":           "evt_001",
+		"type":         "task.submitted",
+		"source":       "agent:test",
+		"created_at":   "2026-07-09T10:00:00Z",
+		"payload":      map[string]any{},
 	}
-	errs := ValidateEnvelope(event)
+	errs := ValidateEnvelope(evt)
 	if len(errs) == 0 {
 		t.Fatal("expected error for unsupported version")
 	}

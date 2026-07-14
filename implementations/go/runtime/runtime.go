@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/axisrobo/harmovela/aep"
-	"github.com/axisrobo/harmovela/recovery"
+	"github.com/axisrobo/harmovela/event"
 	eventtransport "github.com/axisrobo/harmovela/event/transport"
-	eventcore "github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/harness"
+	"github.com/axisrobo/harmovela/recovery"
 	"github.com/google/uuid"
 )
 
@@ -139,7 +139,7 @@ func CreateDeliveryStore(c RuntimeConfig) (recovery.DeliveryStore, error) {
 
 type subEntry struct {
 	pattern string
-	handler func(event map[string]any)
+	handler func(evt map[string]any)
 }
 
 type registryEntry struct {
@@ -166,50 +166,50 @@ func NewRuntimeService(c RuntimeConfig) *RuntimeService {
 	return &RuntimeService{Config: c, store: store, subscriptions: make(map[string]*registryEntry), maxBuffer: 1000}
 }
 
-func (s *RuntimeService) Subscribe(pattern string, handler func(event map[string]any)) {
+func (s *RuntimeService) Subscribe(pattern string, handler func(evt map[string]any)) {
 	s.subs = append(s.subs, subEntry{pattern: pattern, handler: handler})
 }
 
-func (s *RuntimeService) Publish(event map[string]any) (map[string]any, error) {
-	errs := aep.ValidateEnvelope(event)
+func (s *RuntimeService) Publish(evt map[string]any) (map[string]any, error) {
+	errs := harness.ValidateEnvelope(evt)
 	if len(errs) > 0 {
 		return nil, fmt.Errorf("invalid AEP event: %s", strings.Join(errs, "; "))
 	}
-	id, _ := event["id"].(string)
-	sub, _ := event["subscription_id"].(string)
+	id, _ := evt["id"].(string)
+	sub, _ := evt["subscription_id"].(string)
 	if sub == "" {
 		sub = "_runtime"
 	}
 	if s.store != nil {
 		s.store.Track(id, sub)
 	}
-	typ, _ := event["type"].(string)
+	typ, _ := evt["type"].(string)
 	for _, e := range s.subs {
-		if eventcore.MatchesType(e.pattern, typ) {
-			e.handler(event)
+		if event.MatchesType(e.pattern, typ) {
+			e.handler(evt)
 		}
 	}
 	if s.ws != nil {
-		s.ws.Broadcast(event)
+		s.ws.Broadcast(evt)
 	}
 	s.mu.Lock()
 	for _, entry := range s.subscriptions {
 		filter, _ := entry.record["filter"].(map[string]any)
-		if eventcore.SubscriptionMatches(filter, event) {
-			entry.buffer = append(entry.buffer, event)
+		if event.SubscriptionMatches(filter, evt) {
+			entry.buffer = append(entry.buffer, evt)
 			if len(entry.buffer) > s.maxBuffer {
 				entry.buffer = entry.buffer[1:]
 			}
 			for sink := range entry.sinks {
 				select {
-				case sink <- event:
+				case sink <- evt:
 				default:
 				}
 			}
 		}
 	}
 	s.mu.Unlock()
-	return event, nil
+	return evt, nil
 }
 
 func (s *RuntimeService) Start() error {
@@ -218,7 +218,7 @@ func (s *RuntimeService) Start() error {
 	}
 	if s.Config.Transports.WebSocket.Enabled {
 		ws := eventtransport.NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
-		ws.OnMessage(func(event map[string]any) { s.Publish(event) })
+		ws.OnMessage(func(evt map[string]any) { s.Publish(evt) })
 		addr := fmt.Sprintf("%s:%d", s.Config.Transports.WebSocket.Host, s.Config.Transports.WebSocket.Port)
 		go ws.Start(addr)
 		s.ws = ws
@@ -307,17 +307,17 @@ func (s *RuntimeService) handleAPI(route string, w http.ResponseWriter, r *http.
 
 func (s *RuntimeService) handleIngest(w http.ResponseWriter, r *http.Request) {
 	raw, _ := io.ReadAll(r.Body)
-	var event map[string]any
-	if err := json.Unmarshal(raw, &event); err != nil {
+	var evt map[string]any
+	if err := json.Unmarshal(raw, &evt); err != nil {
 		sendJSON(w, 400, map[string]any{"accepted": false, "errors": []string{"invalid JSON body"}})
 		return
 	}
-	if errs := aep.ValidateEnvelope(event); len(errs) > 0 {
+	if errs := harness.ValidateEnvelope(evt); len(errs) > 0 {
 		sendJSON(w, 400, map[string]any{"accepted": false, "errors": errs})
 		return
 	}
-	s.Publish(event)
-	sendJSON(w, 202, map[string]any{"accepted": true, "id": event["id"]})
+	s.Publish(evt)
+	sendJSON(w, 202, map[string]any{"accepted": true, "id": evt["id"]})
 }
 
 func sendJSON(w http.ResponseWriter, status int, body map[string]any) {
