@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
-import { validateEnvelope } from "@axisrobo/harmovela-event";
-import { isValidBySchema } from "./schema.js";
-import { HarmovelaHarness } from "./harness.js";
+import { validateEnvelope, isValidBySchema } from "@axisrobo/harmovela-event";
+import { HarmovelaHarness } from "@axisrobo/harmovela-harness";
 
 const PAYLOAD_VALIDATED_TYPES = new Set([
   "context.invalidated", "context.updated", "context.snapshot.requested", "context.snapshot.ready",
@@ -26,7 +25,7 @@ const LEVEL_ORDER = new Map([
 ]);
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, "../../..");
+const repoRoot = resolve(here, "../../../../..");
 const conformanceDir = resolve(repoRoot, "conformance");
 
 export function loadManifest(path = resolve(conformanceDir, "manifest.json")) {

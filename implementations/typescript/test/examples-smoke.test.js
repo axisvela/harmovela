@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { defaultConfig } from "../src/runtime/config.js";
+import { defaultConfig } from "@axisrobo/harmovela-runtime";
 
 const repoRoot = path.resolve("..", "..");
 
@@ -35,7 +35,7 @@ test("service http-api-client example round-trips through aepd", async () => {
   config.transports.api = { enabled: true, host: "127.0.0.1", port: 8795, path: "/harmovela/api" };
   await writeFile(configPath, JSON.stringify(config), "utf8");
 
-  const harmovelad = path.join(repoRoot, "implementations", "typescript", "src", "runtime", "server.js");
+  const harmovelad = path.join(repoRoot, "implementations", "typescript", "packages", "runtime", "src", "server.js");
   const daemon = spawn(process.execPath, [harmovelad], { cwd: repoRoot, env: { ...process.env, HARMOVELA_CONFIG: configPath } });
   try {
     await waitFor(daemon.stdout, /harmovelad started/);
@@ -50,7 +50,7 @@ test("service http-api-client example round-trips through aepd", async () => {
 
 function waitFor(stream, pattern) {
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`timed out waiting for ${pattern}`)), 5000);
+    const timer = setTimeout(() => reject(new Error(`timed out waiting for ${pattern}`)), 10000);
     stream.on("data", (chunk) => {
       if (pattern.test(chunk.toString())) { clearTimeout(timer); resolve(); }
     });

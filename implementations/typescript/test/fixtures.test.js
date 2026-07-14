@@ -4,9 +4,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { validateEnvelope } from "../src/index.js";
-import { isValidBySchema } from "../src/schema.js";
-import { runConformance, verifyFixture } from "../src/conformance.js";
-import { HarmovelaHarness } from "../src/harness.js";
+import { isValidBySchema } from "@axisrobo/harmovela-event";
+import { runConformance, verifyFixture } from "@axisrobo/harmovela-conformance";
+import { HarmovelaHarness } from "@axisrobo/harmovela-harness";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const conformanceDir = resolve(here, "../../../conformance");

@@ -4,11 +4,11 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { defaultConfig } from "../src/runtime/config.js";
+import { defaultConfig } from "@axisrobo/harmovela-runtime";
 import { SqliteDeliveryStore } from "@axisrobo/harmovela-recovery";
-import { HarmovelaRuntimeService } from "../src/runtime/service.js";
+import { HarmovelaRuntimeService } from "@axisrobo/harmovela-runtime";
 
-const cli = path.resolve("src/cli/harmovela.js");
+const cli = path.resolve("packages/cli/src/harmovela.js");
 
 function run(args, options = {}) {
   return new Promise((resolve) => {

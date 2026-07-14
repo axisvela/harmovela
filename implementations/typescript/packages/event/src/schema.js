@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import Ajv from "ajv/dist/2020.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const schemasDir = resolve(here, "../../../schemas");
+const schemasDir = resolve(here, "../../../../../schemas");
 
 function loadSchema(filename) {
   return JSON.parse(readFileSync(resolve(schemasDir, filename), "utf8"));

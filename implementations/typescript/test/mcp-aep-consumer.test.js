@@ -5,7 +5,7 @@ import {
   groupEventsByTask,
   parseTaskResult,
   runMcpAepConsumerDemo
-} from "../src/bridge/mcp-aep-consumer.js";
+} from "@axisrobo/harmovela-mcp-bridge";
 
 test("parseTaskResult extracts task_id from MCP tool response", () => {
   const result = parseTaskResult({

@@ -1,4 +1,6 @@
-import { HarmovelaHarness, TaskTracker, ErrorCode, errorPayload } from "../index.js";
+import { HarmovelaHarness } from "@axisrobo/harmovela-harness";
+import { TaskTracker } from "@axisrobo/harmovela-task";
+import { ErrorCode } from "@axisrobo/harmovela-event";
 
 export class McpBridge {
   constructor(options = {}) {
@@ -120,7 +122,6 @@ export function asyncToolHandler(name, { description, inputSchema = {}, work }) 
       const accepted = tracker.accepted();
       ctx.transport?.send(accepted);
 
-      // Execute in background
       setImmediate(async () => {
         try {
           const started = tracker.started();

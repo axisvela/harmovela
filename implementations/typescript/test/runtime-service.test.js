@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { once } from "node:events";
 import { WebSocket } from "ws";
-import { HarmovelaRuntimeService } from "../src/runtime/service.js";
-import { defaultConfig } from "../src/runtime/config.js";
+import { HarmovelaRuntimeService } from "@axisrobo/harmovela-runtime";
+import { defaultConfig } from "@axisrobo/harmovela-runtime";
 
 function event(overrides = {}) {
   return {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { McpBridge, asyncToolHandler } from "../src/bridge/mcp-bridge.js";
+import { McpBridge, asyncToolHandler } from "@axisrobo/harmovela-mcp-bridge";
 import { MockStdioTransport } from "@axisrobo/harmovela-event";
 
 test("McpBridge responds to initialize", async () => {
@@ -63,7 +63,6 @@ test("McpBridge tools/call returns task_id and emits AEP lifecycle events", asyn
   assert.equal(resultText.status, "accepted");
   assert.ok(resultText.task_id);
 
-  // Wait for background AEP events
   await new Promise((r) => setTimeout(r, 200));
 
   const events = transport.sent
@@ -98,7 +97,6 @@ test("McpBridge tools/call handles errors gracefully", async () => {
     params: { name: "bad_tool", arguments: {} }
   });
 
-  // MCP response should still succeed (task accepted), background emits task.failed
   const resultText = JSON.parse(response.result.content[0].text);
   assert.equal(resultText.status, "accepted");
 

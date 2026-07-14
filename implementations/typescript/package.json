@@ -13,7 +13,12 @@
     "packages/state",
     "packages/tool",
     "packages/agent",
-    "packages/environment"
+    "packages/environment",
+    "packages/harness",
+    "packages/runtime",
+    "packages/cli",
+    "packages/conformance",
+    "packages/mcp-bridge"
   ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
@@ -22,19 +27,19 @@
   },
   "bin": {
     "harmovela-harness": "./src/stdio.js",
-    "harmovela": "./src/cli/aep.js",
-    "harmovelad": "./src/runtime/server.js"
+    "harmovela": "./packages/cli/src/harmovela.js",
+    "harmovelad": "./packages/runtime/src/server.js"
   },
   "scripts": {
-    "harmovela": "node ./src/cli/aep.js",
-    "harmovelad": "node ./src/runtime/server.js",
+    "harmovela": "node ./packages/cli/src/harmovela.js",
+    "harmovelad": "node ./packages/runtime/src/server.js",
     "harness": "node ./src/stdio.js",
     "demo:mcp-bridge": "node ./examples/mcp-bridge/demo.js",
     "demo:mcp-aep-consumer": "node ./examples/mcp-aep-consumer.js",
     "demo:async-tool": "node ./examples/async-tool-producer.js",
     "demo:production-e2e": "node ./examples/production-e2e.js",
     "test": "node --test",
-    "conformance": "node ./src/conformance-cli.js"
+    "conformance": "node ./packages/conformance/src/conformance-cli.js"
   },
   "dependencies": {
     "@axisrobo/harmovela-event": "file:packages/event",
@@ -47,6 +52,11 @@
     "@axisrobo/harmovela-tool": "file:packages/tool",
     "@axisrobo/harmovela-agent": "file:packages/agent",
     "@axisrobo/harmovela-environment": "file:packages/environment",
+    "@axisrobo/harmovela-harness": "file:packages/harness",
+    "@axisrobo/harmovela-runtime": "file:packages/runtime",
+    "@axisrobo/harmovela-cli": "file:packages/cli",
+    "@axisrobo/harmovela-conformance": "file:packages/conformance",
+    "@axisrobo/harmovela-mcp-bridge": "file:packages/mcp-bridge",
     "@grpc/grpc-js": "^1.11.0",
     "@grpc/proto-loader": "^0.7.0",
     "ajv": "^8.20.0",

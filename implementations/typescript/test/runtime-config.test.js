@@ -9,7 +9,7 @@ import {
   loadConfig,
   applyEnvOverrides,
   createDeliveryStore
-} from "../src/runtime/config.js";
+} from "@axisrobo/harmovela-runtime";
 import { InMemoryDeliveryStore, SqliteDeliveryStore } from "@axisrobo/harmovela-recovery";
 
 test("defaultConfig returns local Harmovela runtime config", () => {

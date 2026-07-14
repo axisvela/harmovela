@@ -1,4 +1,4 @@
-import { runConformance } from "../../conformance.js";
+import { runConformance } from "@axisrobo/harmovela-conformance";
 
 export async function conformanceCommand(options = {}) {
   const { targetLevel: resolvedTarget, results } = runConformance({ targetLevel: options.level, profile: options.profile });

@@ -11,3 +11,5 @@ export { GrpcServerTransport, GrpcClientTransport } from "./transport/grpc.js";
 export { NatsTransport } from "./transport/nats.js";
 export { KafkaTransport } from "./transport/kafka.js";
 export { RedisTransport } from "./transport/redis.js";
+export { ErrorCode, errorPayload, isRetryableCode } from "./errors.js";
+export { validateEnvelopeSchema, validateSubscriptionSchema, validatePayloadsSchema, isValidBySchema } from "./schema.js";

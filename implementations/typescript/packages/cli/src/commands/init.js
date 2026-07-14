@@ -1,4 +1,4 @@
-import { writeDefaultConfig } from "../../runtime/config.js";
+import { writeDefaultConfig } from "@axisrobo/harmovela-runtime";
 
 export async function initCommand(options = {}) {
   const file = options.config ?? "aep.config.json";

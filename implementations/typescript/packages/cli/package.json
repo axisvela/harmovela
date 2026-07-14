@@ -1,0 +1,9 @@
+{
+  "name": "@axisrobo/harmovela-cli",
+  "version": "0.1.0-draft",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/harmovela.js"
+  }
+}

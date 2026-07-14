@@ -6,10 +6,10 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { WebSocket } from "ws";
-import { defaultConfig } from "../src/runtime/config.js";
+import { defaultConfig } from "@axisrobo/harmovela-runtime";
 
-const cli = path.resolve("src/cli/harmovela.js");
-const harmovelad = path.resolve("src/runtime/server.js");
+const cli = path.resolve("packages/cli/src/harmovela.js");
+const harmovelad = path.resolve("packages/runtime/src/server.js");
 
 function runCli(args) {
   return new Promise((resolve) => {
