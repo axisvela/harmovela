@@ -1,7 +1,7 @@
 package com.axisrobo.aep.runtime;
 
 import com.axisrobo.harmovela.recovery.DeliveryStore;
-import com.axisrobo.aep.Envelope;
+import com.axisrobo.harmovela.event.envelope.Envelope;
 import com.axisrobo.harmovela.event.transport.WsServer;
 import com.axisrobo.harmovela.event.subscription.Subscriptions;
 

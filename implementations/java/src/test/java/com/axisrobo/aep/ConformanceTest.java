@@ -1,5 +1,6 @@
 package com.axisrobo.aep;
 
+import com.axisrobo.harmovela.event.envelope.Envelope;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;

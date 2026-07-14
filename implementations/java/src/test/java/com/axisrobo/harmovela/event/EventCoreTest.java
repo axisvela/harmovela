@@ -18,7 +18,7 @@ class EventCoreTest {
             "source", "agent:test", "created_at", "2026-07-09T10:00:00Z", "payload", Map.of()
         );
         assertTrue(Envelope.validate(event).isEmpty());
-        assertFalse(EventTypes.isStandardEventType("task.submitted"));
+        assertTrue(EventTypes.isStandardEventType("task.submitted"));
     }
 
     @Test

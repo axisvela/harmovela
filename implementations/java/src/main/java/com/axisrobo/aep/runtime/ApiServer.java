@@ -1,6 +1,6 @@
 package com.axisrobo.aep.runtime;
 
-import com.axisrobo.aep.Envelope;
+import com.axisrobo.harmovela.event.envelope.Envelope;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
