@@ -174,7 +174,7 @@ class ConformanceTest {
     }
 
     private static boolean payloadSchemaInvalid(Map<String, Object> event) throws Exception {
-        var path = Path.of("../../schemas/aep-payloads.schema.json");
+        var path = Path.of("../../schemas/harmovela-payloads.schema.json");
         var schemaNode = MAPPER.readTree(Files.readString(path));
         var schema = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012).getSchema(schemaNode);
         return !schema.validate(MAPPER.valueToTree(event)).isEmpty();

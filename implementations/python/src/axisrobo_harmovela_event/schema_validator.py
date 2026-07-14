@@ -4,13 +4,13 @@ from jsonschema import validate as _validate, ValidationError
 
 _SCHEMA_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent / "schemas"
 
-with open(_SCHEMA_DIR / "aep-envelope.schema.json", encoding="utf-8") as f:
+with open(_SCHEMA_DIR / "harmovela-envelope.schema.json", encoding="utf-8") as f:
     ENVELOPE_SCHEMA = json.load(f)
 
 with open(_SCHEMA_DIR / "subscription-filter.schema.json", encoding="utf-8") as f:
     SUBSCRIPTION_SCHEMA = json.load(f)
 
-with open(_SCHEMA_DIR / "aep-payloads.schema.json", encoding="utf-8") as f:
+with open(_SCHEMA_DIR / "harmovela-payloads.schema.json", encoding="utf-8") as f:
     PAYLOADS_SCHEMA = json.load(f)
 
 

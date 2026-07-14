@@ -1,4 +1,4 @@
-# AEP Schemas
+# Harmovela Schemas
 
 This directory contains draft JSON Schema assets for shared protocol validation.
 
@@ -6,5 +6,6 @@ Schemas are normative only when a document explicitly marks them stable. Until t
 
 ## Files
 
-- `aep-envelope.schema.json` — draft event envelope schema
+- `harmovela-envelope.schema.json` — draft event envelope schema
+- `harmovela-payloads.schema.json` — draft payload validation schema
 - `subscription-filter.schema.json` — draft subscription filter schema

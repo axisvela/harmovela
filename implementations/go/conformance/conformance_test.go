@@ -240,7 +240,7 @@ func TestConformanceFixtures(t *testing.T) {
 }
 
 func payloadSchemaInvalid(evt map[string]any) (bool, error) {
-	path := filepath.Join("../../../schemas", "aep-payloads.schema.json")
+	path := filepath.Join("../../../schemas", "harmovela-payloads.schema.json")
 	source, err := os.ReadFile(path)
 	if err != nil {
 		return false, err

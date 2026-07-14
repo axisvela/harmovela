@@ -197,7 +197,7 @@ const homeContent = `<h1>Harmovela Protocol</h1>
 <ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <h2>Project</h2>
 <ul>${rootDocFiles.filter((f) => existsSync(resolve(root, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}
-<li><a href="schemas/aep-envelope.schema.json">Envelope Schema</a></li></ul>
+<li><a href="schemas/harmovela-envelope.schema.json">Envelope Schema</a></li></ul>
 <p>Generated from <code>docs/protocol/</code> and <code>docs/</code>.</p>`;
 
 writeFileSync(resolve(outDir, "index.html"), pageTemplate("Home", homeContent, navLinks));

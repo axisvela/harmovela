@@ -21,9 +21,9 @@ let _payloadsValidate = null;
 function ensureLoaded() {
   if (_ajv) return;
   _ajv = new Ajv({ allErrors: true, strict: false });
-  _envelopeSchema = loadSchema("aep-envelope.schema.json");
+  _envelopeSchema = loadSchema("harmovela-envelope.schema.json");
   _subscriptionSchema = loadSchema("subscription-filter.schema.json");
-  _payloadsSchema = loadSchema("aep-payloads.schema.json");
+  _payloadsSchema = loadSchema("harmovela-payloads.schema.json");
   _ajv.addSchema(_envelopeSchema, _envelopeSchema.$id);
   _ajv.addSchema(_subscriptionSchema, _subscriptionSchema.$id);
   _ajv.addSchema(_payloadsSchema, _payloadsSchema.$id);

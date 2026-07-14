@@ -18,7 +18,7 @@ Required behavior:
 - Reject envelopes missing required fields.
 - Reject unsupported protocol versions.
 - Reject unknown or malformed standard event types with `event.rejected` (code `unknown_event_type`). Unknown event types are not forwarded. This is an intentional divergence from the earlier opaque-forwarding draft.
-- Validate `schemas/aep-envelope.schema.json`.
+- Validate `schemas/harmovela-envelope.schema.json`.
 - Validate `schemas/subscription-filter.schema.json` when checking subscription filters.
 
 ### HARMOVELA-C1: Core Runtime (core)
