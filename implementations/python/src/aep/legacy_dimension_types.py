@@ -12,7 +12,8 @@ LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "belief.revised", "belief.conflict.detected", "freshness.expired", "freshness.window.changed", "delegation.requested",
     "delegation.accepted", "delegation.rejected", "delegation.handoff.completed", "delegation.escalated", "interruption.requested",
     "interruption.acknowledged", "interruption.saved", "interruption.resumed", "interruption.cancelled", "compensation.requested",
-    "compensation.completed", "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
+    "compensation.completed",     "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
+    "state.snapshot.requested", "state.snapshot.ready", "state.delta.applied", "state.invalidated",
 })
 
 
