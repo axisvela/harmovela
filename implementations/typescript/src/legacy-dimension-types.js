@@ -69,7 +69,11 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "compensation.completed",
   "provenance.attestation.added",
   "provenance.attestation.revoked",
-  "provenance.chain.truncated"
+  "provenance.chain.truncated",
+  "state.snapshot.requested",
+  "state.snapshot.ready",
+  "state.delta.applied",
+  "state.invalidated"
 ]);
 
 export function isLegacyDimensionEventType(type) {
