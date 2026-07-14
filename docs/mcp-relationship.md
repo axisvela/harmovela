@@ -1,10 +1,10 @@
-# AEP And MCP
+# Harmovela And MCP
 
 ## Summary
 
-AEP is the asynchronous counterpart to MCP.
+Harmovela is the asynchronous counterpart to MCP.
 
-MCP standardizes how a model or agent synchronously invokes capabilities. AEP standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.
+MCP standardizes how a model or agent synchronously invokes capabilities. Harmovela standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.
 
 They should be complementary protocols.
 
@@ -40,15 +40,15 @@ For a long-running operation, submission and acceptance are distinct from progre
 ```text
 Agent --MCP/HTTPS--> submit ingest_document
 Tool  --MCP/HTTPS--> accepted (task_id)
-Tool  --AEP--------> task.progress (task_id)
-Tool  --AEP--------> task.completed | task.failed | task.cancelled (task_id)
+Tool  --Harmovela--------> task.progress (task_id)
+Tool  --Harmovela--------> task.completed | task.failed | task.cancelled (task_id)
 ```
 
-The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft AEP lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.
+The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft Harmovela lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.
 
 ## Correspondence Table
 
-| MCP Capability | AEP Counterpart |
+| MCP Capability | Harmovela Counterpart |
 | --- | --- |
 | `initialize` | `session.opened`, `session.ready`, capability negotiation |
 | `tools/list` | `capabilities.requested`, `capabilities.declared` |
@@ -60,23 +60,23 @@ The same async layer lets a producer report external state changes, such as a me
 
 ## Interop Model
 
-### MCP Tool Calls Producing AEP Events
+### MCP Tool Calls Producing Harmovela Events
 
-A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing AEP events later.
+A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing Harmovela events later.
 
 Example:
 
 ```text
 Agent --MCP--> call tool: ingest_document
 Tool --MCP--> returns accepted result
-Tool --AEP--> task.progress
-Tool --AEP--> memory.summary.ready
-Tool --AEP--> task.completed
+Tool --Harmovela--> task.progress
+Tool --Harmovela--> memory.summary.ready
+Tool --Harmovela--> task.completed
 ```
 
-### AEP Events Requesting MCP Tool Calls
+### Harmovela Events Requesting MCP Tool Calls
 
-AEP can carry an event that asks a runtime to execute an MCP tool asynchronously.
+Harmovela can carry an event that asks a runtime to execute an MCP tool asynchronously.
 
 ```json
 {
@@ -92,22 +92,22 @@ AEP can carry an event that asks a runtime to execute an MCP tool asynchronously
 }
 ```
 
-The result is emitted as AEP lifecycle events rather than returned synchronously.
+The result is emitted as Harmovela lifecycle events rather than returned synchronously.
 
-### MCP For Current State, AEP For Change Over Time
+### MCP For Current State, Harmovela For Change Over Time
 
-MCP can read a current resource snapshot. AEP can notify agents that the snapshot changed.
+MCP can read a current resource snapshot. Harmovela can notify agents that the snapshot changed.
 
 ```text
 MCP: read current context
-AEP: context.updated / context.invalidated
+Harmovela: context.updated / context.invalidated
 ```
 
 ## Design Boundary
 
-AEP should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.
+Harmovela should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.
 
-AEP should define:
+Harmovela should define:
 
 - Event envelope
 - Subscription model
@@ -129,6 +129,6 @@ Avoid calling the project "Async MCP".
 
 Recommended framing:
 
-> AEP is the event layer for agent systems. MCP is the call layer.
+> Harmovela is the event layer for agent systems. MCP is the call layer.
 
 This keeps the protocol independent, general, and useful beyond the MCP ecosystem while still allowing first-class MCP integration.

@@ -60,7 +60,7 @@ An agent is a producer and consumer of events. It may publish messages, subscrib
 
 ### Tool
 
-A tool may expose synchronous MCP calls, asynchronous AEP tasks, or both. A slow tool can accept work quickly and emit task lifecycle events over AEP.
+A tool may expose synchronous MCP calls, asynchronous Harmovela tasks, or both. A slow tool can accept work quickly and emit task lifecycle events over Harmovela.
 
 ### Memory System
 
@@ -72,7 +72,7 @@ A context provider emits updates, invalidations, snapshots, and readiness events
 
 ### Environment Observer
 
-An observer watches external state such as browsers, files, robots, APIs, sensors, logs, or user activity and emits events into AEP.
+An observer watches external state such as browsers, files, robots, APIs, sensors, logs, or user activity and emits events into Harmovela.
 
 ### Orchestrator
 
@@ -82,7 +82,7 @@ An orchestrator coordinates subscriptions, routes events, tracks task lifecycle,
 
 ### 1. Transport Binding
 
-AEP should support several transports:
+Harmovela should support several transports:
 
 - `stdio` for local process integration
 - `WebSocket` for bidirectional local or remote streams
@@ -151,13 +151,13 @@ The core protocol should define common domain families but allow extension.
 ### Async Tool Call
 
 ```text
-Agent -> AEP: tool.call.requested
-AEP -> Tool: tool.call.requested
-Tool -> AEP: tool.call.accepted
-Tool -> AEP: tool.call.progress
-Tool -> AEP: tool.call.output
-Tool -> AEP: tool.call.completed
-AEP -> Agent: task result events
+Agent -> Harmovela: tool.call.requested
+Harmovela -> Tool: tool.call.requested
+Tool -> Harmovela: tool.call.accepted
+Tool -> Harmovela: tool.call.progress
+Tool -> Harmovela: tool.call.output
+Tool -> Harmovela: tool.call.completed
+Harmovela -> Agent: task result events
 ```
 
 ### Memory Update
@@ -165,37 +165,37 @@ AEP -> Agent: task result events
 ```text
 Agent -> Tool: synchronous MCP call
 Tool -> Memory: stores new fact
-Memory -> AEP: memory.fact.added
-AEP -> subscribed agents: memory.fact.added
-Agent -> AEP: event.acknowledged
+Memory -> Harmovela: memory.fact.added
+Harmovela -> subscribed agents: memory.fact.added
+Agent -> Harmovela: event.acknowledged
 ```
 
 ### Context Invalidation
 
 ```text
-Context provider -> AEP: context.invalidated
-AEP -> Agent: context.invalidated
-Agent -> MCP or AEP: requests fresh context
-Context provider -> AEP: context.snapshot.ready
+Context provider -> Harmovela: context.invalidated
+Harmovela -> Agent: context.invalidated
+Agent -> MCP or Harmovela: requests fresh context
+Context provider -> Harmovela: context.snapshot.ready
 ```
 
 ### Delegation
 
 ```text
-Orchestrator -> AEP: task.delegated (task_id, from_agent, to_agent)
-AEP -> from_agent: task.delegated (ack)
-AEP -> to_agent: task.delegated (new assignment)
-to_agent -> AEP: task.delegation.accepted
-to_agent -> AEP: task.running
+Orchestrator -> Harmovela: task.delegated (task_id, from_agent, to_agent)
+Harmovela -> from_agent: task.delegated (ack)
+Harmovela -> to_agent: task.delegated (new assignment)
+to_agent -> Harmovela: task.delegation.accepted
+to_agent -> Harmovela: task.running
 ```
 
 ### Recovery
 
 ```text
-AEP -> dead_letter: delivery.failed (after retry policy exhausted)
-Orchestrator -> AEP: delivery.replay.requested (cursor)
-AEP -> Agent: replay stream from cursor
-Agent -> AEP: event.acknowledged (idempotent check on event_id)
+Harmovela -> dead_letter: delivery.failed (after retry policy exhausted)
+Orchestrator -> Harmovela: delivery.replay.requested (cursor)
+Harmovela -> Agent: replay stream from cursor
+Agent -> Harmovela: event.acknowledged (idempotent check on event_id)
 ```
 
 ## Module Architecture
@@ -234,7 +234,7 @@ Infrastructure modules provide cross-cutting runtime support and are not dimensi
 
 ## Reliability Model
 
-AEP should support multiple reliability levels:
+Harmovela should support multiple reliability levels:
 
 - **Best effort**: transient events, no replay guarantee.
 - **At least once**: durable delivery with possible duplicates.
@@ -245,7 +245,7 @@ The protocol should require globally unique event IDs and recommend idempotent c
 
 ## Security Model
 
-AEP needs security at the identity, subscription, and payload levels.
+Harmovela needs security at the identity, subscription, and payload levels.
 
 Required concepts:
 

@@ -1,18 +1,18 @@
-# AEP Protocol Design Draft
+# Harmovela Protocol Design Draft
 
 ## Protocol Name
 
-Working name: **AEP — Agent Event Protocol**.
+Working name: **Harmovela Protocol**.
 
 Expanded scope: asynchronous events, async tool lifecycle, context events, memory events, and agent coordination messages.
 
 ## Core Message Envelope
 
-Every AEP event uses a common envelope.
+Every Harmovela event uses a common envelope.
 
 ```json
 {
-  "aep_version": "0.1",
+  "spec_version": "0.1",
   "id": "evt_01JZ0000000000000000000000",
   "type": "tool.call.progress",
   "source": "tool:web_crawler",
@@ -40,7 +40,7 @@ Every AEP event uses a common envelope.
 
 ## Required Envelope Fields
 
-- `aep_version`: protocol version
+- `spec_version`: protocol version
 - `id`: globally unique event ID
 - `type`: event type using dotted naming
 - `source`: event producer identity
@@ -280,7 +280,7 @@ Valid modes:
 - `at_least_once`
 - `replayable`
 
-AEP should avoid promising strict exactly-once delivery. Instead, every event has a stable ID so consumers can deduplicate.
+Harmovela should avoid promising strict exactly-once delivery. Instead, every event has a stable ID so consumers can deduplicate.
 
 ## Error Model
 
@@ -299,7 +299,7 @@ Standard error payload:
 
 ## Versioning
 
-AEP should version:
+Harmovela should version:
 
 - Protocol envelope
 - Event type families
