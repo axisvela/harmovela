@@ -1,1 +1,0 @@
-from axisrobo_harmovela_event import validate_envelope
