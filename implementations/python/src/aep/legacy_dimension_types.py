@@ -1,5 +1,6 @@
 from axisrobo_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES
 from axisrobo_harmovela_delegation import DELEGATION_EVENT_TYPES
+from axisrobo_harmovela_state import STATE_EVENT_TYPES
 
 LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
@@ -9,12 +10,9 @@ LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
     "agent.message.sent", "agent.message.received", "agent.message.failed", "agent.request.created", "agent.response.created",
     "agent.decision.recorded", "environment.observed", "environment.changed", "environment.alerted", "environment.error",
-    "belief.revised", "belief.conflict.detected", "freshness.expired", "freshness.window.changed",
     "interruption.requested", "interruption.acknowledged", "interruption.saved", "interruption.resumed", "interruption.cancelled",
     "compensation.requested", "compensation.completed",
-    "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
-    "state.snapshot.requested", "state.snapshot.ready", "state.delta.applied", "state.invalidated",
-}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES))
+}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(STATE_EVENT_TYPES))
 
 
 def is_legacy_dimension_event_type(type_: str) -> bool:

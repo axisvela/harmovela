@@ -1,5 +1,6 @@
 import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisrobo/harmovela-context";
 import { DELEGATION_EVENT_TYPES } from "@axisrobo/harmovela-delegation";
+import { STATE_EVENT_TYPES } from "@axisrobo/harmovela-state";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -31,6 +32,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "task.timed_out",
   ...CONTEXT_MEMORY_EVENT_TYPES,
   ...DELEGATION_EVENT_TYPES,
+  ...STATE_EVENT_TYPES,
   "agent.message.sent",
   "agent.message.received",
   "agent.message.failed",
@@ -41,10 +43,6 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "environment.changed",
   "environment.alerted",
   "environment.error",
-  "belief.revised",
-  "belief.conflict.detected",
-  "freshness.expired",
-  "freshness.window.changed",
   "interruption.requested",
   "interruption.acknowledged",
   "interruption.saved",
@@ -52,13 +50,6 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "interruption.cancelled",
   "compensation.requested",
   "compensation.completed",
-  "provenance.attestation.added",
-  "provenance.attestation.revoked",
-  "provenance.chain.truncated",
-  "state.snapshot.requested",
-  "state.snapshot.ready",
-  "state.delta.applied",
-  "state.invalidated"
 ]);
 
 export function isLegacyDimensionEventType(type) {
