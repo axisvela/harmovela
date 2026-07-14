@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Define how AEP runs over WebSocket, supporting bidirectional event streams over TCP with optional TLS.
+Define how Harmovela runs over WebSocket, supporting bidirectional event streams over TCP with optional TLS.
 
 ## Connection
 
@@ -40,7 +40,7 @@ Path and query string may carry initialization parameters (e.g., `ws://host/aep?
 | Aspect | Specification |
 |---|---|
 | Frame type | Text frames only (opcode `0x1`) |
-| Message format | One complete JSON AEP event per message |
+| Message format | One complete JSON Harmovela event per message |
 | Encoding | UTF-8 |
 | Multi-frame | Not used. Each event is a single text frame. |
 | Control frames | Ping/Pong used for heartbeat (see below) |
@@ -85,9 +85,9 @@ evt_01JZ0000000000000000000000:42
 
 ## Close Codes
 
-Standard WebSocket close codes are mapped to AEP semantics:
+Standard WebSocket close codes are mapped to Harmovela semantics:
 
-| Code | Meaning | AEP Mapping |
+| Code | Meaning | Harmovela Mapping |
 |---|---|---|
 | 1000 | Normal closure | `session.closed` with reason `"normal"` |
 | 1001 | Going away | `session.closed` with reason `"peer_disconnected"` |
@@ -99,5 +99,5 @@ Standard WebSocket close codes are mapped to AEP semantics:
 
 - Implementations should set a maximum message size. Messages exceeding the limit should trigger a close (1009 — message too big).
 - TLS (`wss://`) is strongly recommended for any network-exposed deployment.
-- The WebSocket transport may coexist with other transports in the same AEP runtime.
+- The WebSocket transport may coexist with other transports in the same Harmovela runtime.
 - See the [session lifecycle specification](../session.md) for session state machine details.

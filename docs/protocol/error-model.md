@@ -5,11 +5,11 @@
 
 ## Purpose
 
-Define the standard error structure, error code taxonomy, and retryability rules used across all AEP events.
+Define the standard error structure, error code taxonomy, and retryability rules used across all Harmovela events.
 
 ## Standard Error Payload
 
-Every AEP error uses the same structure:
+Every Harmovela error uses the same structure:
 
 ```json
 {

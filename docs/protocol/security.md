@@ -4,18 +4,18 @@
 
 ## Purpose
 
-Define the identity, authorization, and audit boundaries for AEP communication. AEP does not prescribe a specific authentication protocol; this document defines the security metadata hooks that transports and implementations must respect.
+Define the identity, authorization, and audit boundaries for Harmovela communication. Harmovela does not prescribe a specific authentication protocol; this document defines the security metadata hooks that transports and implementations must respect.
 
 ## Design Principle
 
-AEP security is **defense in layers**:
+Harmovela security is **defense in layers**:
 
-1. **Transport-level security** (TLS, mTLS, SSH tunnels) — handled by the transport binding, not AEP.
-2. **AEP-level identity** — who is sending and receiving events.
-3. **AEP-level authorization** — what a given identity is allowed to send, subscribe to, or receive.
-4. **AEP-level audit** — what happened, recorded for inspection.
+1. **Transport-level security** (TLS, mTLS, SSH tunnels) — handled by the transport binding, not Harmovela.
+2. **Harmovela-level identity** — who is sending and receiving events.
+3. **Harmovela-level authorization** — what a given identity is allowed to send, subscribe to, or receive.
+4. **Harmovela-level audit** — what happened, recorded for inspection.
 
-AEP layer 2-4 are the scope of this specification.
+Harmovela layers 2-4 are the scope of this specification.
 
 ## Identity Model
 
@@ -59,7 +59,7 @@ Missing `target` means the event is broadcast (subject to subscription matching)
 Identity claims in `source` and `target` must be verifiable. The verification mechanism is transport-specific:
 
 - **stdio**: The process identity is the transport identity (OS-level process). The transport provides the identity claim.
-- **WebSocket**: TLS client certificates provide transport-level identity. The AEP identity is mapped from the certificate.
+- **WebSocket**: TLS client certificates provide transport-level identity. The Harmovela identity is mapped from the certificate.
 - **HTTP SSE**: HTTP headers (e.g., `Authorization: Bearer`) or mTLS provide identity.
 
 A transport that cannot verify identity must reject events with a falsified `source` field.
@@ -139,7 +139,7 @@ A producer that does not support the requested scheme must reject the event with
 
 ## Payload Redaction
 
-Sensitive data in event payloads may be redacted before delivery to unauthorized consumers. The redaction policy is implementation-defined, but AEP defines metadata for declaring sensitivity:
+Sensitive data in event payloads may be redacted before delivery to unauthorized consumers. The redaction policy is implementation-defined, but Harmovela defines metadata for declaring sensitivity:
 
 ```json
 {
@@ -154,7 +154,7 @@ The `_redacted` key (reserved, prefix `_`) declares that specific fields in the 
 
 ## Audit Trail
 
-Productions deployments should maintain an audit trail of all AEP events. The minimum audit record for each event includes:
+Productions deployments should maintain an audit trail of all Harmovela events. The minimum audit record for each event includes:
 
 | Field | Source |
 |---|---|
@@ -167,7 +167,7 @@ Productions deployments should maintain an audit trail of all AEP events. The mi
 | Auth identity (if different from source) | Transport or envelope `authorization` |
 | Delivery status | Delivery tracker |
 
-Audit records are implementation-specific and not defined by the AEP wire protocol. A conformant implementation may expose audit events as AEP events (e.g., `audit.event.delivered`), but this is not required.
+Audit records are implementation-specific and not defined by the Harmovela wire protocol. A conformant implementation may expose audit events as Harmovela events (e.g., `audit.event.delivered`), but this is not required.
 
 ## Threat Model Summary
 
@@ -179,7 +179,7 @@ Audit records are implementation-specific and not defined by the AEP wire protoc
 | Eavesdropping | Transport-level encryption (TLS) |
 | Payload data leak | Payload redaction before delivery |
 | Replay attacks | Event `id` idempotency + idempotent consumers |
-| Audit tampering | Append-only audit log, external to AEP |
+| Audit tampering | Append-only audit log, external to Harmovela |
 
 ## Multi-Tenant Isolation
 
@@ -202,7 +202,7 @@ Tenant isolation is enforced by the producer/orchestrator, not by the protocol w
 
 ## Implementation Notes
 
-- The `authorization` envelope field is defined by this spec but no mandatory scheme is defined in AEP 0.1. Implementations may use `bearer` tokens, capability URLs, or custom schemes.
+- The `authorization` envelope field is defined by this spec but no mandatory scheme is defined in Harmovela 0.1. Implementations may use `bearer` tokens, capability URLs, or custom schemes.
 - The `_redacted` payload prefix is reserved. Implementations must not use this prefix for application data.
 - Capability scopes use glob-style pattern matching (same as event type matching).
 - Transport bindings may define additional security requirements (e.g., WebSocket mandates TLS for `wss://`).

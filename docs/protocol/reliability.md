@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Define retry policies, dead-letter handling, and durability guarantees for AEP event delivery.
+Define retry policies, dead-letter handling, and durability guarantees for Harmovela event delivery.
 
 ## Retry Policy
 

@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Define the session lifecycle that governs protocol-level communication between an AEP producer and consumer. A session represents an established bidirectional event stream.
+Define the session lifecycle that governs protocol-level communication between a Harmovela producer and consumer. A session represents an established bidirectional event stream.
 
 ## State Machine
 

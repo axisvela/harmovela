@@ -95,7 +95,7 @@ Agent subscriber output (abridged):
   [ack] memory.fact.added → fact_101
   [ack] context.snapshot.ready → /results
   [reject] task.progress — subscription filter mismatch
-  [ack] memory.retrieval.ready → AEP events
+  [ack] memory.retrieval.ready → Harmovela events
 [agent] Closing session...
   ← session.closed
 ```
@@ -127,7 +127,7 @@ Memory producer output (abridged):
 
 ## 3. MCP Bridge with Async Feedback
 
-**Narrative:** A synchronous MCP `tools/call` request arrives at the bridge. The bridge delegates the work to an async AEP task handler, returns an MCP `accepted` response immediately, and emits `task.submitted`, `task.started`, and `task.completed` lifecycle events through the transport as the work progresses — all within the same process.
+**Narrative:** A synchronous MCP `tools/call` request arrives at the bridge. The bridge delegates the work to an async Harmovela task handler, returns an MCP `accepted` response immediately, and emits `task.submitted`, `task.started`, and `task.completed` lifecycle events through the transport as the work progresses — all within the same process.
 
 **Coordination Dimensions:** Event, Task, Recovery
 

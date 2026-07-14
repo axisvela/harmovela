@@ -4,13 +4,13 @@
 
 ## Purpose
 
-Define how AEP runs over standard input / standard output, supporting local process integration with no network dependency.
+Define how Harmovela runs over standard input / standard output, supporting local process integration with no network dependency.
 
 ## Framing
 
-AEP over stdio uses **newline-delimited JSON (NDJSON)**:
+Harmovela over stdio uses **newline-delimited JSON (NDJSON)**:
 
-- Each line is a complete, valid JSON-encoded AEP event.
+- Each line is a complete, valid JSON-encoded Harmovela event.
 - Lines are separated by `\n` (LF).
 - Empty lines are ignored.
 - Neither side should emit partial or multi-line JSON.

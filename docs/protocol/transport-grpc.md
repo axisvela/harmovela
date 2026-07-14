@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Define how AEP runs over gRPC, supporting bidirectional event streams using a single bidirectional RPC with JSON-encoded payloads carried in protobuf messages.
+Define how Harmovela runs over gRPC, supporting bidirectional event streams using a single bidirectional RPC with JSON-encoded payloads carried in protobuf messages.
 
 ## Service Definition
 
@@ -22,7 +22,7 @@ message AepMessage {
 }
 ```
 
-The `json_payload` field carries a JSON-encoded AEP event envelope. Protobuf is used only for framing; the AEP event schema remains JSON-defined. This avoids duplicating the AEP envelope schema in protobuf and keeps the transport layer independent of protocol evolution.
+The `json_payload` field carries a JSON-encoded Harmovela event envelope. Protobuf is used only for framing; the Harmovela event schema remains JSON-defined. This avoids duplicating the Harmovela envelope schema in protobuf and keeps the transport layer independent of protocol evolution.
 
 ## Connection
 
@@ -56,21 +56,21 @@ gRPC metadata (headers and trailers) may carry transport-level parameters:
 | Metadata Key | Direction | Description |
 |---|---|---|
 | `aep-session-id` | Client → Server | Session identifier for connection binding |
-| `aep-version` | Client → Server | AEP protocol version (e.g., `0.1`) |
+| `aep-version` | Client → Server | Harmovela protocol version (e.g., `0.1`) |
 | `aep-agent-id` | Client → Server | Optional agent identity |
 | `x-aep-cursor` | Server → Client (trailer) | Last committed event cursor on stream close |
 
-Metadata is not part of the AEP event envelope and must not be used to carry event semantics.
+Metadata is not part of the Harmovela event envelope and must not be used to carry event semantics.
 
 ## Framing
 
 | Aspect | Specification |
 |---|---|
 | Frame type | gRPC protobuf messages (binary) |
-| Message format | One complete JSON AEP event in `json_payload` per message |
+| Message format | One complete JSON Harmovela event in `json_payload` per message |
 | Encoding | UTF-8 for the JSON payload; standard protobuf framing |
 | Flow control | Managed by gRPC/HTTP/2 flow control |
-| Message boundaries | Each `AepMessage` is one AEP event |
+| Message boundaries | Each `AepMessage` is one Harmovela event |
 
 ## Session Lifecycle
 
@@ -108,9 +108,9 @@ The cursor value may also be communicated in the server's response trailer under
 
 ## Status Code Mapping
 
-gRPC status codes are mapped to AEP semantics:
+gRPC status codes are mapped to Harmovela semantics:
 
-| gRPC Status Code | Code | AEP Mapping |
+| gRPC Status Code | Code | Harmovela Mapping |
 |---|---|---|
 | OK | 0 | `session.closed` with reason `"normal"` |
 | CANCELLED | 1 | `session.closed` with reason `"cancelled"` |
@@ -137,7 +137,7 @@ gRPC status codes are mapped to AEP semantics:
 
 - Implementations should set a reasonable maximum message size. Messages exceeding the limit will trigger a `RESOURCE_EXHAUSTED` gRPC error.
 - TLS (`grpcs://`) is strongly recommended for any network-exposed deployment.
-- The gRPC transport may coexist with other transports in the same AEP runtime.
+- The gRPC transport may coexist with other transports in the same Harmovela runtime.
 - gRPC bidirectional streaming provides native multiplexing without requiring a separate ingest endpoint (unlike SSE).
 - Service reflection may be enabled to allow tools like `grpcurl` to inspect the service definition.
 - See the [session lifecycle specification](../session.md) for session state machine details.

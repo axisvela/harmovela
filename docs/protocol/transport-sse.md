@@ -4,11 +4,11 @@
 
 ## Purpose
 
-Define how AEP runs over HTTP Server-Sent Events (SSE), supporting server-to-client event streams with a separate HTTP endpoint for client-to-server messages.
+Define how Harmovela runs over HTTP Server-Sent Events (SSE), supporting server-to-client event streams with a separate HTTP endpoint for client-to-server messages.
 
 ## Model
 
-SSE is a unidirectional transport (server → client). AEP over SSE uses two HTTP channels:
+SSE is a unidirectional transport (server → client). Harmovela over SSE uses two HTTP channels:
 
 | Channel | Method | Direction | Content-Type |
 |---|---|---|---|
@@ -17,7 +17,7 @@ SSE is a unidirectional transport (server → client). AEP over SSE uses two HTT
 
 ## Event Stream (GET)
 
-The client opens a long-lived GET request to receive AEP events as SSE.
+The client opens a long-lived GET request to receive Harmovela events as SSE.
 
 ### Request
 
@@ -39,7 +39,7 @@ Connection: keep-alive
 
 ### SSE Event Format
 
-Each AEP event is sent as an SSE message:
+Each Harmovela event is sent as an SSE message:
 
 ```
 id: evt_01JZ0000000000000000000000
@@ -49,11 +49,11 @@ data: {"aep_version":"0.1","id":"evt_01JZ0000000000000000000000","type":"task.pr
 ```
 
 Rules:
-- `id` — the AEP event `id`.
-- `event` — the AEP event `type`.
+- `id` — the Harmovela event `id`.
+- `event` — the Harmovela event `type`.
 - `data` — the full JSON event envelope on a single line.
 - Messages are separated by a blank line (`\n\n`).
-- The `event` field is optional; if omitted, the SSE event type defaults to `"message"` but the AEP `type` is always available in the JSON data.
+- The `event` field is optional; if omitted, the SSE event type defaults to `"message"` but the Harmovela `type` is always available in the JSON data.
 
 ### Reconnection
 
@@ -65,7 +65,7 @@ The SSE `Last-Event-ID` mechanism supports cursor recovery:
 
 ### Heartbeat
 
-The server sends SSE comments as keep-alive when no AEP events are generated within a negotiated interval:
+The server sends SSE comments as keep-alive when no Harmovela events are generated within a negotiated interval:
 
 ```
 : heartbeat
@@ -76,7 +76,7 @@ Comment lines start with `:` and are ignored by SSE clients. A client that recei
 
 ## Ingest Endpoint (POST)
 
-The client sends AEP events to the server via HTTP POST.
+The client sends Harmovela events to the server via HTTP POST.
 
 ### Request
 

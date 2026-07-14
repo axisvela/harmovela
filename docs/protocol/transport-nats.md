@@ -4,21 +4,21 @@
 
 ## Purpose
 
-Define how AEP runs over NATS, supporting subject-based publish/subscribe with optional JetStream durability.
+Define how Harmovela runs over NATS, supporting subject-based publish/subscribe with optional JetStream durability.
 
 ## Framing
 
-AEP over NATS uses JSON-encoded AEP events as NATS message bodies:
+Harmovela over NATS uses JSON-encoded Harmovela events as NATS message bodies:
 
-- Each NATS message body is a complete, valid JSON-encoded AEP event.
+- Each NATS message body is a complete, valid JSON-encoded Harmovela event.
 - Messages are delivered via NATS subject-based routing.
 - The transport does not fragment events across multiple messages.
 
 ## Subject Mapping
 
-AEP topics map to NATS subjects using a configurable prefix:
+Harmovela topics map to NATS subjects using a configurable prefix:
 
-| AEP context | NATS subject pattern | Example |
+| Harmovela context | NATS subject pattern | Example |
 |---|---|---|
 | Topic `tasks.task_01` | `aep.tasks.task_01` | `aep.tasks.task_01` |
 | Source `agent:researcher` | `aep.agent.researcher` | `aep.agent.researcher` |
@@ -33,7 +33,7 @@ The default subject prefix is `aep`. Implementations should make this configurab
 |---|---|
 | `aep.type.<type>` | Route by event type (e.g. `aep.type.task.progress`) |
 | `aep.source.<source>` | Route by event source |
-| `aep.topic.<topic>` | Route by explicit AEP topic |
+| `aep.topic.<topic>` | Route by explicit Harmovela topic |
 | `aep.sess.<session_id>` | Route to all events for a session |
 | `aep.conv.<conversation_id>` | Route to all events for a conversation |
 
@@ -53,7 +53,7 @@ Producers should publish on the most specific subject. Consumers subscribe with 
 
 ### Delivery Mode Selection
 
-| AEP Delivery Mode | NATS Mechanism |
+| Harmovela Delivery Mode | NATS Mechanism |
 |---|---|
 | `best_effort` | Core NATS publish |
 | `at_least_once` | JetStream push consumer with `AckWait` |
@@ -84,7 +84,7 @@ The transport should support:
 
 - Use `nats.Conn.Subscribe(subject, handler)` for inbound.
 - Use `nats.Conn.Publish(subject, data)` for outbound.
-- Each inbound NATS message is parsed as JSON into an AEP envelope.
+- Each inbound NATS message is parsed as JSON into a Harmovela envelope.
 - Malformed JSON should emit an error event but not crash the subscription.
 
 ### JetStream

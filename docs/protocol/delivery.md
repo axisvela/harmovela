@@ -26,7 +26,7 @@ Every event has a globally unique `id`. Consumers use the `id` for idempotent pr
 
 ## Acknowledgement Protocol
 
-### AEP-level Acknowledgement
+### Harmovela-level Acknowledgement
 
 When a consumer has successfully processed an event, it sends:
 

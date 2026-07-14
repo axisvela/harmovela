@@ -4,19 +4,19 @@
 
 ## Purpose
 
-Define how AEP runs over Apache Kafka, supporting topic-based publish/subscribe with partition-based ordering and offset-based replay.
+Define how Harmovela runs over Apache Kafka, supporting topic-based publish/subscribe with partition-based ordering and offset-based replay.
 
 ## Framing
 
-AEP over Kafka uses JSON-encoded AEP events as Kafka message values:
+Harmovela over Kafka uses JSON-encoded Harmovela events as Kafka message values:
 
-- Each Kafka record value is a complete, valid JSON-encoded AEP event.
+- Each Kafka record value is a complete, valid JSON-encoded Harmovela event.
 - Records are published to Kafka topics and consumed by consumer groups.
 - The transport does not fragment events across multiple records.
 
 ### Message Key
 
-The Kafka record key is derived from one of the following AEP envelope fields, in priority order:
+The Kafka record key is derived from one of the following Harmovela envelope fields, in priority order:
 
 | Priority | Field | Purpose |
 |---|---|---|
@@ -28,7 +28,7 @@ The Kafka record key is derived from one of the following AEP envelope fields, i
 
 ### Message Headers
 
-| Header | AEP Field | Type |
+| Header | Harmovela Field | Type |
 |---|---|---|
 | `aep-type` | `type` | string |
 | `aep-source` | `source` | string |
@@ -43,7 +43,7 @@ Headers enable consumers to filter and route without deserializing the message b
 
 ## Topic Mapping
 
-| AEP context | Kafka topic pattern | Example |
+| Harmovela context | Kafka topic pattern | Example |
 |---|---|---|
 | Topic `tasks.task_01` | `aep.topic.tasks.task_01` | `aep.topic.tasks.task_01` |
 | Source `agent:researcher` | `aep.source.agent.researcher` | `aep.source.agent.researcher` |
@@ -55,7 +55,7 @@ The default topic prefix is `aep`. Implementations should allow per-envelope top
 
 ## Delivery Modes
 
-| AEP Delivery Mode | Kafka Mechanism |
+| Harmovela Delivery Mode | Kafka Mechanism |
 |---|---|
 | `best_effort` | Fire-and-forget producer with `acks=0` |
 | `at_least_once` | Producer with `acks=1` or `acks=all`, consumer with manual commit after processing |
@@ -64,7 +64,7 @@ The default topic prefix is `aep`. Implementations should allow per-envelope top
 ### At-Least-Once
 
 - Producer: `enable.idempotence=true`, `acks=all` prevents duplicates from producer retries.
-- Consumer: commit offset only after AEP `event.acknowledged` is emitted. On rebalance, uncommitted offsets are redelivered.
+- Consumer: commit offset only after Harmovela `event.acknowledged` is emitted. On rebalance, uncommitted offsets are redelivered.
 
 ### Replayable
 
@@ -74,7 +74,7 @@ The default topic prefix is `aep`. Implementations should allow per-envelope top
 
 ## Consumer Groups
 
-AEP sessions map to Kafka consumer groups:
+Harmovela sessions map to Kafka consumer groups:
 
 | Session | Consumer Group |
 |---|---|
@@ -112,4 +112,4 @@ For strict ordering, route all events through a single partition (`num.partition
 ## References
 
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
-- Key-based partitioning, consumer groups, offset management, and transactional producers are Kafka-native concepts mapped to AEP semantics.
+- Key-based partitioning, consumer groups, offset management, and transactional producers are Kafka-native concepts mapped to Harmovela semantics.

@@ -4,21 +4,21 @@
 
 ## Purpose
 
-Define how AEP runs over Redis Streams, supporting append-only event logs with consumer-group delivery, per-entry acknowledgement, and entry-ID-based replay.
+Define how Harmovela runs over Redis Streams, supporting append-only event logs with consumer-group delivery, per-entry acknowledgement, and entry-ID-based replay.
 
 ## Framing
 
-AEP over Redis Streams stores each AEP event as one stream entry:
+Harmovela over Redis Streams stores each Harmovela event as one stream entry:
 
-- Each entry is appended with `XADD` and carries the AEP envelope as entry fields.
-- The full JSON-encoded AEP event is stored in the `body` field; selected envelope fields are stored as flat fields for server-side filtering and inspection.
+- Each entry is appended with `XADD` and carries the Harmovela envelope as entry fields.
+- The full JSON-encoded Harmovela event is stored in the `body` field; selected envelope fields are stored as flat fields for server-side filtering and inspection.
 - The transport does not fragment events across multiple entries.
 
 ### Entry Fields
 
 `XADD` entries carry the following fields, in addition to the `body` field holding the complete JSON-encoded event:
 
-| Field | AEP Field | Type |
+| Field | Harmovela Field | Type |
 |---|---|---|
 | `body` | (entire envelope) | JSON string |
 | `aep-type` | `type` | string |
@@ -34,7 +34,7 @@ Flat fields let consumers route or filter without deserializing `body`.
 
 ## Stream Key Mapping
 
-| AEP context | Redis stream key | Example |
+| Harmovela context | Redis stream key | Example |
 |---|---|---|
 | Type pattern `task.*` | `aep.type.<type>` | `aep.type.task.progress` |
 | Source `agent:researcher` | `aep.source.<source>` | `aep.source.agent:researcher` |
@@ -49,17 +49,17 @@ In Redis Cluster, a stream key hashes to one slot. To co-locate related events o
 
 ## Delivery Modes
 
-| AEP Delivery Mode | Redis Streams Mechanism |
+| Harmovela Delivery Mode | Redis Streams Mechanism |
 |---|---|
 | `best_effort` | `XADD` with `MAXLEN` capped; consumers read the tail with `XREAD` and do not track a group |
-| `at_least_once` | Consumer group with `XREADGROUP`; `XACK` only after AEP `event.acknowledged` is emitted |
+| `at_least_once` | Consumer group with `XREADGROUP`; `XACK` only after Harmovela `event.acknowledged` is emitted |
 | `replayable` | Consumers store a cursor entry ID and replay with `XRANGE`/`XREAD` from that ID |
 
 ### At-Least-Once
 
 - Consumers read with `XREADGROUP GROUP <group> <consumer> COUNT n STREAMS <key> >`.
 - An entry stays in the group Pending Entries List (PEL) until `XACK`.
-- Emit `XACK` only after the AEP `event.acknowledged` event is produced.
+- Emit `XACK` only after the Harmovela `event.acknowledged` event is produced.
 - On consumer failure, `XAUTOCLAIM` (or `XCLAIM`) reassigns idle pending entries to another consumer.
 
 ### Replayable
@@ -71,7 +71,7 @@ In Redis Cluster, a stream key hashes to one slot. To co-locate related events o
 
 ## Consumer Groups
 
-AEP sessions map to Redis Stream consumer groups:
+Harmovela sessions map to Redis Stream consumer groups:
 
 | Session | Consumer Group |
 |---|---|
@@ -110,4 +110,4 @@ Entries within a single stream key are totally ordered by entry ID:
 ## References
 
 - [Redis Streams Introduction](https://redis.io/docs/latest/develop/data-types/streams/)
-- Consumer groups, Pending Entries List, `XACK`, `XAUTOCLAIM`, and entry-ID replay are Redis-native concepts mapped to AEP semantics.
+- Consumer groups, Pending Entries List, `XACK`, `XAUTOCLAIM`, and entry-ID replay are Redis-native concepts mapped to Harmovela semantics.

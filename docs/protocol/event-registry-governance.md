@@ -53,7 +53,7 @@ All implementations share the same set of standard types. The shared conformance
 
 ## Versioning
 
-- Event types are tied to the AEP protocol version (currently 0.1).
+- Event types are tied to the Harmovela protocol version (currently 0.1).
 - Types may be added in minor versions but not removed.
 - Deprecated types remain in the registry with a deprecation note.
 - Breaking changes to event semantics require a new major version.
