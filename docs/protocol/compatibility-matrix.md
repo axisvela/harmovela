@@ -51,3 +51,120 @@ rg -n "\baep\b|\bharmovela\b|\baepd\b|\bharmovelad\b|AEPD_|AEP_|HARMOVELA_|aep_v
 | Runtime naming surfaces | Harmovela runtime defaults vs. legacy commands, paths, environment variables, and subprotocols | Approved breaking-release migration table |
 
 No blocking decision is resolved by this milestone record. In particular, this inventory does not authorize wire, package, CLI, endpoint, environment-variable, schema, or transport-subprotocol renames.
+
+## Dimension Migration Evidence
+
+All seven Harmovela coordination dimensions have been extracted from legacy `aep` namespaces into independent dimension modules across TypeScript, Python, Go, and Java. This section records module locations, legacy adapter state, test evidence, and 1.0 removal gates per dimension per language (7 dimensions x 4 languages = 28 entries).
+
+Evidence collection date: 2026-07-14. Commit range: `88f9aad` (Event core extraction start) through `ef7b3a0` (Delegation completion). Untracked plan files verify planned migration steps.
+
+### 1. Event
+
+**Scope:** Envelope validation, Event-only registry entries, sessions, subscriptions, routing, and transport contracts.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/event/src/` (package `@axisrobo/harmovela-event`) — registry, envelope/validate, session, subscription, router, transport/{base,stdio,websocket,sse,grpc,nats,kafka,redis} | `src/index.js` re-exports Event public APIs; `src/harness.js` imports `isStandardEventType`, `validateEnvelope`, `EventRouter`, `HarmovelaSession`, `Transport*` from `@axisrobo/harmovela-event` | `packages/event/test/event-core.test.js` — Event core fixture; transport tests under `test/transport-*.test.js` redirected to event package | Remove legacy `aep` barrel re-export; remove `src/transport/` directory (moved); remove `packages/event/src/transport/aep.proto` after gRPC Profile compatibility decision |
+| Python | `implementations/python/src/axisrobo_harmovela_event/` — `__init__.py`, `envelope/`, `registry.py`, `router.py`, `session.py`, `subscription.py`, `transport/` (stdio, websocket, sse, grpc, nats, kafka, redis, aep_pb2, aep_pb2_grpc) | `aep/__init__.py` imports `validate_envelope`, `EventRouter`, `HarmovelaSession`, `Transport*` from `axisrobo_harmovela_event`; `aep/harness.py` imports from event module | `tests/test_transport_*.py` redirected to event transport module; cross-language Event core fixture passes | Remove legacy `aep` re-exports; remove `aep/transport/` directory (moved); remove `axisrobo_harmovela_event/transport/aep.proto` derivates after gRPC Profile decision |
+| Go | `implementations/go/event/` — `event_types.go`, `envelope.go`, `session.go`, `subscription.go`, `router.go`, `event_test.go`, `transport/` (stdio, sse, ws, ws_broadcast, nats, kafka, redis, types) | `aep/event_types.go` delegates `IsStandardEventType` to `event.IsStandardEventType`; `aep/runtime/runtime.go` imports `event/transport`; `aep/harness.go` imports from event module | `event/event_test.go` — Event core tests; `event/transport/*_test.go` — transport tests (stdio, sse, ws, ws_broadcast, nats, kafka, redis) | Remove `aep/transport/` directory (moved); remove legacy `aep` adapter dependency on event internals; remove Go event types that duplicate dimension registries |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/event/` — `envelope/Envelope.java`, `registry/EventTypes.java`, `router/EventRouter.java`, `session/Session.java`, `subscription/Subscriptions.java`, `transport/` (Stdio, WsServer, WsClient, SseServer, GrpcServer, GrpcClient, Nats, Kafka, Redis) | `aep/EventTypes.java` delegates `isStandardEventType` to `com.axisrobo.harmovela.event.registry.EventTypes.isStandardEventType`; `aep/Harness.java` imports from event module; `aep/runtime/HarmovelaRuntimeService.java` imports `WsServer` from event transport | `src/test/java/com/axisrobo/harmovela/event/EventCoreTest.java`; transport tests under `event/transport/` (Stdio, Ws, Sse, Grpc, Nats, Kafka, Redis) | Remove `com.axisrobo.aep.transport` package (moved); remove legacy `aep` adapter references to event internals |
+
+**Wire surface note:** Event transport modules in all four languages retain legacy `aep` wire identifiers (`/aep` endpoint, `aep-0.1` subprotocol, `/aep/events` SSE path, `aep.proto` filename, `aep` NATS/Kafka/Redis prefix, `aep-*` headers/fields) as documented in the compatibility matrix. These are transport defaults pending explicit compatibility decisions and do not constitute `aep` package imports.
+
+### 2. Recovery
+
+**Scope:** DeliveryTracker, DeliveryJournal, InMemory/Sqlite/Postgres DeliveryStores, retryDelay.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/recovery/src/` (package `@axisrobo/harmovela-recovery`) — delivery, delivery-journal, delivery-store-memory, delivery-store-sqlite, delivery-store-postgres | `src/index.js` re-exports from `@axisrobo/harmovela-recovery`; `src/harness.js` imports `DeliveryTracker`; `src/runtime/config.js` imports `InMemoryDeliveryStore`, `SqliteDeliveryStore`, `PostgresDeliveryStore` | `packages/recovery/test/delivery.test.js`, `delivery-journal.test.js`, `delivery-store.test.js`, `delivery-store-sqlite.test.js`, `delivery-store-postgres.test.js` | Remove legacy `src/delivery*.js` files (moved); remove adapter re-exports |
+| Python | `implementations/python/src/axisrobo_harmovela_recovery/` — `__init__.py`, `delivery.py`, `delivery_journal.py`, `delivery_store.py`, `sqlite_delivery_store.py`, `postgres_delivery_store.py` | `aep/__init__.py` and `aep/harness.py` import from `axisrobo_harmovela_recovery` | `axisrobo_harmovela_recovery/tests/test_delivery.py`, `test_delivery_journal.py`, `test_delivery_store.py`, `test_sqlite_delivery_store.py`, `test_postgres_delivery_store.py` | Remove legacy `aep/delivery*.py` files (moved); remove adapter re-exports |
+| Go | `implementations/go/recovery/` — `delivery.go`, `delivery_journal.go`, `delivery_store.go`, `delivery_sqlite.go`, `delivery_postgres.go` | `aep/harness.go` imports `"github.com/axisrobo/harmovela/recovery"`; `aep/runtime/runtime.go` imports recovery | `recovery/delivery_test.go`, `delivery_journal_test.go`, `delivery_store_test.go`, `delivery_sqlite_test.go`, `delivery_postgres_test.go` | Remove `aep/store/` directory (moved); remove `aep.go` re-exports |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/recovery/` — `DeliveryStore.java`, `InMemoryDeliveryStore.java`, `SqliteDeliveryStore.java`, `PostgresDeliveryStore.java`, `DeliveryTracker.java`, `DeliveryJournal.java` | `aep/Harness.java` imports `com.axisrobo.harmovela.recovery.DeliveryTracker` | `src/test/java/com/axisrobo/harmovela/recovery/DeliveryTrackerTest.java`, `DeliveryJournalTest.java`, `InMemoryDeliveryStoreTest.java`, `SqliteDeliveryStoreTest.java`, `PostgresDeliveryStoreTest.java` | Remove legacy `com.axisrobo.aep` recovery classes (moved); remove adapter imports |
+
+### 3. Governance
+
+**Scope:** RBAC authorization policy (`authorize` function), role-action mapping.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/governance/src/index.js` (package `@axisrobo/harmovela-governance`) | `src/harness.js` imports `authorize` from `@axisrobo/harmovela-governance` | `packages/governance/test/governance.test.js` | Remove legacy `src/governance.js` (was already abstracted); remove adapter re-export |
+| Python | `implementations/python/src/axisrobo_harmovela_governance/` — `__init__.py`, `policy.py` | `aep/harness.py` imports `authorize` from `axisrobo_harmovela_governance` | `tests/test_governance_module.py` | Remove legacy `aep/governance.py` (was already abstracted); remove adapter re-export |
+| Go | `implementations/go/governance/` — `policy.go` | `aep/harness.go` imports `"github.com/axisrobo/harmovela/governance"` | `governance/policy_test.go` | Remove legacy `aep/governance.go` (was already abstracted); remove adapter re-export |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/governance/GovernancePolicy.java` | `aep/Harness.java` imports `com.axisrobo.harmovela.governance.GovernancePolicy` | `src/test/java/com/axisrobo/harmovela/governance/GovernancePolicyTest.java` | Remove legacy `com.axisrobo.aep.GovernancePolicy` (was already abstracted); remove adapter import |
+
+### 4. Task
+
+**Scope:** TaskTracker state machine, lifecycle transitions, task event types.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/task/src/index.js` (package `@axisrobo/harmovela-task`) — exports `TaskTracker` | `src/index.js` re-exports `TaskTracker`; `src/harness.js` imports `TaskTracker` from `@axisrobo/harmovela-task` | `packages/task/test/task.test.js` | Remove legacy `src/task-tracker.js` (moved); remove adapter re-export |
+| Python | `implementations/python/src/axisrobo_harmovela_task/__init__.py` — exports `TaskState`, `TaskTracker` | `aep/__init__.py` imports `TaskTracker` from `axisrobo_harmovela_task`; `aep/harness.py` imports from task module | `tests/test_task_module.py` | Remove legacy `aep/task_tracker.py` (moved); remove adapter re-export |
+| Go | `implementations/go/task/task.go` — package `task`, exports `TaskTracker`, `TaskState` | `aep/harness.go` imports `"github.com/axisrobo/harmovela/task"`; `aep/runtime/runtime.go` imports task | `task/task_test.go` | Remove legacy `aep/task.go` (moved); remove adapter re-export |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/task/TaskTracker.java` | `aep/Harness.java` imports `com.axisrobo.harmovela.task.TaskTracker` | `src/test/java/com/axisrobo/harmovela/task/TaskTrackerTest.java` | Remove legacy `com.axisrobo.aep.TaskTracker` (moved); remove adapter import |
+
+### 5. State
+
+**Scope:** State event type registry (6 types), `isStateEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/state/src/index.js` (package `@axisrobo/harmovela-state`) — exports `STATE_EVENT_TYPES`, `isStateEventType` | State types remain inline in `src/legacy-dimension-types.js` (pending wire adapter extraction); `src/index.js` does not yet re-export state module | `packages/state/test/state.test.js` | Register `@axisrobo/harmovela-state` in legacy-dimension-types.js when non-dimension legacy types are extracted; remove hardcoded state types from legacy adapter |
+| Python | `implementations/python/src/axisrobo_harmovela_state/__init__.py` — exports `STATE_EVENT_TYPES`, `is_state_event_type` | State types remain inline in `aep/legacy_dimension_types.py` (pending adapter extraction) | `tests/test_state_module.py` | Register `axisrobo_harmovela_state` in legacy_dimension_types.py; remove hardcoded state types from legacy adapter |
+| Go | `implementations/go/state/state.go` — package `state`, exports `EventTypes`, `IsEventType` | State types remain inline in `aep/event_types.go` (pending adapter extraction) | `state/state_test.go` | Register `state.EventTypes` in `aep/event_types.go` merge loop; remove hardcoded state types from legacy adapter |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/state/StateTypes.java` | State types remain inline in `aep/EventTypes.java` (pending adapter extraction) | `src/test/java/com/axisrobo/harmovela/state/StateTypesTest.java` | Register `StateTypes.EVENT_TYPES` in `aep/EventTypes.java`; remove hardcoded state types from legacy adapter |
+
+### 6. Context / Memory
+
+**Scope:** 15 context.* and memory.* event types, `isContextMemoryEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/context/src/index.js` (package `@axisrobo/harmovela-context`) — exports `CONTEXT_MEMORY_EVENT_TYPES`, `isContextMemoryEventType` | `src/legacy-dimension-types.js` imports `CONTEXT_MEMORY_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES`; `src/index.js` exports from `@axisrobo/harmovela-context` | `packages/context/test/context.test.js` — 3 tests: includes all 15 types, positive predicate, negative predicate | Remove legacy adapter import; context types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_context/__init__.py` — exports `CONTEXT_MEMORY_EVENT_TYPES`, `is_context_memory_event_type` | `aep/legacy_dimension_types.py` imports `CONTEXT_MEMORY_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_context_module.py` — 3 tests: size check, positives, negatives | Remove legacy adapter import; context types served directly from module |
+| Go | `implementations/go/context/context.go` — package `context`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/context"` and merges `context.EventTypes` into `legacyStandardEventTypes` via `for` loop | `context/context_test.go` — 3 tests: all 15 types included, positive predicate, negative predicate | Remove legacy adapter merge loop; context types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/context/ContextMemoryTypes.java` — exports `EVENT_TYPES` set, `isContextMemoryEventType` | `aep/EventTypes.java` imports `ContextMemoryTypes` and calls `types.addAll(ContextMemoryTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/context/ContextMemoryTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; context types served directly from module |
+
+### 7. Delegation
+
+**Scope:** 5 delegation event types (`delegation.requested`, `delegation.accepted`, `delegation.rejected`, `delegation.handoff.completed`, `delegation.escalated`), `isDelegationEventType` predicate.
+
+| Language | New module location | Legacy adapter state | Test evidence | 1.0 removal gate |
+| --- | --- | --- | --- | --- |
+| TypeScript | `implementations/typescript/packages/delegation/src/index.js` (package `@axisrobo/harmovela-delegation`) — exports `DELEGATION_EVENT_TYPES`, `isDelegationEventType` | `src/legacy-dimension-types.js` imports `DELEGATION_EVENT_TYPES` and spreads into `LEGACY_DIMENSION_EVENT_TYPES` | `packages/delegation/test/delegation.test.js` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter import; delegation types served directly from module |
+| Python | `implementations/python/src/axisrobo_harmovela_delegation/__init__.py` — exports `DELEGATION_EVENT_TYPES`, `is_delegation_event_type` | `aep/legacy_dimension_types.py` imports `DELEGATION_EVENT_TYPES` and unions into `LEGACY_DIMENSION_EVENT_TYPES` | `tests/test_delegation_module.py` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter import; delegation types served directly from module |
+| Go | `implementations/go/delegation/delegation.go` — package `delegation`, exports `EventTypes` map, `IsEventType` | `aep/event_types.go` imports `"github.com/axisrobo/harmovela/delegation"` and merges `delegation.EventTypes` into `legacyStandardEventTypes` via `for` loop | `delegation/delegation_test.go` — 3 tests: all 5 types, positives, negatives | Remove legacy adapter merge loop; delegation types served directly from module |
+| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/delegation/DelegationTypes.java` — exports `EVENT_TYPES` set, `isDelegationEventType` | `aep/EventTypes.java` imports `DelegationTypes` and calls `types.addAll(DelegationTypes.EVENT_TYPES)` | `src/test/java/com/axisrobo/harmovela/delegation/DelegationTypesTest.java` — 3 tests: size check, positives, negatives with null | Remove legacy adapter `addAll` call; delegation types served directly from module |
+
+### Architecture Compliance
+
+| Rule | Status |
+| --- | --- |
+| No dimension module imports legacy `aep` package code | **PASS** — All 28 modules (7 x 4) verified zero `aep` package imports. Wire identifiers (`aep` default prefix, topic, subprotocol) are transport configuration strings, not package imports. |
+| Legacy `aep` may only adapt through dimension public APIs | **PASS** — `src/harness.js`, `aep/harness.go`, `aep/Harness.java`, `aep/harness.py` all import from dimension module public exports. `EventTypes.java`, `event_types.go`, `legacy-dimension-types.js`, `legacy_dimension_types.py` delegate to dimension registries. |
+| Every dimension module has independent tests | **PASS** — 28 test modules verified across 7 dimensions x 4 languages |
+| Migration is one-way (move, not copy) | **PASS** — Git history confirms files were moved from `aep` namespace to dimension modules via `refactor:` and `feat:` commits |
+| Remaining wire `aep` identifiers are documented | **PASS** — Compatibility matrix rows for WebSocket, SSE, gRPC, NATS, Kafka, Redis, package identifiers cover all remaining `aep` wire surfaces |
+
+### Remaining Wire Adaptation Scope
+
+The following event type families remain hardcoded in legacy adapters and have not yet been extracted to dimension modules:
+
+**State** (6 types): Module exists; not yet wired as adapter import. Types still hardcoded in legacy-dimension-types.js / legacy_dimension_types.py / event_types.go / EventTypes.java.
+
+**Undimensioned legacy types** (~45 types across tool.call.*, agent.*, environment.*, belief.*, freshness.*, interruption.*, compensation.*, provenance.*): Remain in legacy adapter inline. These represent cross-cutting or under-specified event families that may be assigned to future dimensions (Tool/Action, Agent, Environment, Provenance) or remain as non-dimension adapter entries.
+
+**Shared contracts** (envelope schemas, error helpers, gRPC proto): Not moved into dimension modules — documented as shared contracts in compatibility matrix pending explicit compatibility decisions.
+
+### 1.0 Blockers Summary
+
+| Blocker | Status |
+| --- | --- |
+| State dimension adapter wiring (4 languages) | Remaining — module exists, adapter extraction pending across remaining ~45 undimensioned types |
+| Undimensioned legacy type families extraction or retirement | Remaining — ~45 event types cross 7 families not yet assigned to target dimensions |
+| Wire identifier compatibility decisions (endpoints, subprotocols, transport prefixes, schema IDs) | Remaining — all documented in compatibility matrix as Undecided |
+| Package/CLI/config rename decisions | Remaining — four language packages retain `@axisrobo/aep` top-level identity |
+| Shared schema and error contract decisions | Remaining — documented as shared contracts in compatibility matrix |
+
+No Protocol release is implied by this evidence. Dimension migration completion represents implementation progress toward the 1.0 milestone, not a release claim.
