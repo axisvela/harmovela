@@ -364,6 +364,60 @@
         "task.cancel.requested",
         "task.cancelled"
       ]
+    },
+    {
+      "path": "fixtures/delegation-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Delegation ownership transfer, escalation, and cancellation propagation through delegation tree.",
+      "expectation": "accept_all",
+      "profile": "coordination",
+      "tags": [
+        "delegation",
+        "ownership",
+        "escalation",
+        "cancellation"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "delegation.requested",
+        "delegation.accepted",
+        "delegation.handoff.completed",
+        "task.submitted",
+        "delegation.requested",
+        "delegation.escalated",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.submitted",
+        "task.cancelled",
+        "task.cancelled"
+      ]
+    },
+    {
+      "path": "fixtures/delegation-negative.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Invalid delegation sequences: rejected handoff (legitimate), escalated after rejection (invalid), and cancellation of completed task (invalid).",
+      "expectation": "reject_some",
+      "profile": "coordination",
+      "tags": [
+        "negative",
+        "delegation",
+        "escalation",
+        "cancellation"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "delegation.requested",
+        "delegation.rejected",
+        "delegation.requested",
+        "delegation.rejected",
+        "delegation.escalated",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.completed",
+        "task.cancelled"
+      ]
     }
   ],
   "profiles": {
@@ -385,6 +439,16 @@
       "levels": ["HARMOVELA-C0"],
       "fixtures": [
         "fixtures/agent-runtime-semantics.ndjson"
+      ]
+    },
+    "coordination": {
+      "display_name": "Multi-Agent Coordination (L2)",
+      "description": "Task lifecycle enforcement, state freshness and invalidation, delegation ownership, handoff, escalation, and cancellation propagation.",
+      "required_core_level": "HARMOVELA-C1",
+      "levels": ["HARMOVELA-C1"],
+      "fixtures": [
+        "fixtures/delegation-positive.ndjson",
+        "fixtures/delegation-negative.ndjson"
       ]
     }
   }

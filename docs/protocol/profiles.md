@@ -21,6 +21,7 @@ A profile may declare dependencies on other profiles or on core conformance leve
 | `harmovela.delivery.v1` | Core HARMOVELA-C0 + HARMOVELA-C1 |
 | `harmovela.security.v1` | Core HARMOVELA-C0 + HARMOVELA-C1 |
 | `harmovela.runtime-semantics.v1` | Core HARMOVELA-C0 + HARMOVELA-C1 |
+| `harmovela.coordination.v1` | `harmovela.core.v1` + `harmovela.security.v1` |
 | `harmovela.transport.websocket.v1` | Core HARMOVELA-C0 |
 | `harmovela.transport.sse.v1` | Core HARMOVELA-C0 |
 | `harmovela.transport.grpc.v1` | Core HARMOVELA-C0 |
@@ -106,9 +107,10 @@ This filtering behavior is available in:
 ## Dimension Contract Ownership
 
 | Dimension | Contract document |
-|---|---|
+|---|---|---|
 | Event | [Event contract](event-contract.md) |
 | Governance | [Governance contract](governance-contract.md) |
+| Coordination | [Task lifecycle](task-lifecycle.md) + [Delegation and handoff](agent-runtime-semantics.md#delegation-and-handoff) |
 
 ## Profile Catalog
 
@@ -176,6 +178,25 @@ This filtering behavior is available in:
 - Interruption: a running task may be interrupted by a higher-priority event. Interruption semantics include save-point, rollback, and resume.
 - Compensation: completed tasks may define compensating actions for rollback scenarios. Compensation events are triggered on failure or explicit reversal.
 - Provenance: every event carries optional provenance metadata (origin agent, transformation chain, lineage identifiers) for traceability.
+
+### Coordination Profile (L2 Multi-Agent Collaboration and Delegation)
+
+**Identifier:** `harmovela.coordination.v1`
+
+**Conformance:** HARMOVELA-C1
+
+**Dependencies:** `harmovela.core.v1` + `harmovela.security.v1`
+
+**Scope:** Task lifecycle state-machine enforcement, State freshness and invalidation semantics, and Delegation ownership, handoff, escalation, and cancellation propagation.
+
+This profile exists alongside `harmovela.runtime-semantics.v1`, which retains agent-oriented belief, freshness, interruption, compensation, and provenance semantics. Where runtime-semantics covers cognitive and epistemic concerns, coordination covers operational multi-agent collaboration: who owns work, how work transfers between agents, how stale state is detected and invalidated, and how cancellation cascades through a delegation tree.
+
+**Covered specifications:**
+- Task lifecycle: all legal state transitions (submitted→accepted→started→progress→blocked→resumed→output→completed | failed | cancelled | timed_out). Invalid transitions are rejected by the harness.
+- State freshness and invalidation: context snapshots carry `valid_from` and `stale_after` metadata. Consumers may subscribe to `freshness.*` events. A stale state assertion triggers invalidation through the context dimension.
+- Delegation ownership: a task may be delegated from one agent to another via `delegation.requested` → `delegation.accepted` → `delegation.handoff.completed`. Ownership transfer is atomic and trackable through a delegation chain. Handoff rejects (`delegation.rejected`) terminate the delegation flow for that target.
+- Delegation escalation: a delegate may escalate a task to a supervisor via `delegation.escalated`. Escalation is only valid while the delegation is active (not after rejection).
+- Cancellation propagation: when a parent task is cancelled, all child tasks must also be cancelled. The runtime emits `task.cancelled` for each child referencing the parent via `causation_id`. Cancellation is irreversible; a completed task cannot be cancelled.
 
 ### Transport Profiles
 
