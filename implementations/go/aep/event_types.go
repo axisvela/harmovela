@@ -4,6 +4,7 @@ import (
 	"github.com/axisrobo/harmovela/context"
 	"github.com/axisrobo/harmovela/delegation"
 	"github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/state"
 )
 
@@ -44,18 +45,14 @@ var legacyStandardEventTypes = func() map[string]bool {
 		"environment.changed":           true,
 		"environment.alerted":           true,
 		"environment.error":             true,
-		"interruption.requested":        true,
-		"interruption.acknowledged":     true,
-		"interruption.saved":            true,
-		"interruption.resumed":          true,
-		"interruption.cancelled":        true,
-		"compensation.requested":        true,
-		"compensation.completed":        true,
 	}
 	for k, v := range context.EventTypes {
 		m[k] = v
 	}
 	for k, v := range delegation.EventTypes {
+		m[k] = v
+	}
+	for k, v := range recovery.EventTypes {
 		m[k] = v
 	}
 	for k, v := range state.EventTypes {
