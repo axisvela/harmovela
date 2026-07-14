@@ -2,6 +2,7 @@ package aep
 
 import (
 	"github.com/axisrobo/harmovela/context"
+	"github.com/axisrobo/harmovela/delegation"
 	"github.com/axisrobo/harmovela/event"
 )
 
@@ -46,11 +47,6 @@ var legacyStandardEventTypes = func() map[string]bool {
 		"belief.conflict.detected":       true,
 		"freshness.expired":              true,
 		"freshness.window.changed":       true,
-		"delegation.requested":           true,
-		"delegation.accepted":            true,
-		"delegation.rejected":            true,
-		"delegation.handoff.completed":   true,
-		"delegation.escalated":           true,
 		"interruption.requested":         true,
 		"interruption.acknowledged":      true,
 		"interruption.saved":             true,
@@ -67,6 +63,9 @@ var legacyStandardEventTypes = func() map[string]bool {
 		"state.invalidated":              true,
 	}
 	for k, v := range context.EventTypes {
+		m[k] = v
+	}
+	for k, v := range delegation.EventTypes {
 		m[k] = v
 	}
 	return m
