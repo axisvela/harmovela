@@ -45,7 +45,8 @@ class HarmovelaHarness:
             .on("subscription.requested", self._handle_subscription_requested) \
             .on("subscription.cancelled", self._handle_subscription_cancelled) \
             .on("task.submitted", self._handle_task_submitted) \
-            .on(lambda e: e.get("type", "").startswith("task.") and e.get("type") != "task.submitted",
+            .on("task.cancel.requested", self._handle_task_cancel_requested) \
+            .on(lambda e: e.get("type", "").startswith("task.") and e.get("type") not in ("task.submitted", "task.cancel.requested"),
                 self._handle_task_event) \
             .on("session.opened", self._handle_session_opened) \
             .on("session.closed", self._handle_session_closed)
@@ -201,6 +202,16 @@ class HarmovelaHarness:
             return [self._event("event.rejected", event, {
                 "error": error_payload(ErrorCode.TASK_ERROR, str(err)),
             })]
+
+    def _handle_task_cancel_requested(self, event: dict) -> list:
+        task_id = event.get("task_id") or event.get("payload", {}).get("task_id")
+        if not task_id or task_id not in self._tasks:
+            return [self._event("event.rejected", event, {
+                "error": error_payload(ErrorCode.TASK_ERROR, f"unknown task: {task_id or 'missing'}"),
+            })]
+        return [self._event("event.acknowledged", event, {
+            "acknowledged_event_id": event.get("id"),
+        })]
 
     def _handle_session_opened(self, event: dict) -> dict:
         if self._session and self._session.is_active():

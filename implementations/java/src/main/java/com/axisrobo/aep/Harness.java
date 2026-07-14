@@ -27,9 +27,10 @@ public class Harness {
             .on(e -> "subscription.requested".equals(e.get("type")), this::handleSubscriptionRequested)
             .on(e -> "subscription.cancelled".equals(e.get("type")), this::handleSubscriptionCancelled)
             .on(e -> "task.submitted".equals(e.get("type")), this::handleTaskSubmitted)
+            .on(e -> "task.cancel.requested".equals(e.get("type")), this::handleTaskCancelRequested)
             .on(e -> {
                 var t = (String) e.get("type");
-                return t != null && t.startsWith("task.") && !"task.submitted".equals(t);
+                return t != null && t.startsWith("task.") && !"task.submitted".equals(t) && !"task.cancel.requested".equals(t);
             }, this::handleTaskEvent)
             .on(e -> "session.opened".equals(e.get("type")), this::handleSessionOpened)
             .on(e -> "session.closed".equals(e.get("type")), this::handleSessionClosed)
@@ -205,6 +206,25 @@ public class Harness {
 
         if (tracker.isTerminal()) tasks.remove(taskId);
         return responses;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object handleTaskCancelRequested(Map<String, Object> event) {
+        var taskId = (String) event.getOrDefault("task_id", null);
+        if (taskId == null && event.get("payload") instanceof Map<?, ?> p) {
+            taskId = (String) p.get("task_id");
+        }
+        if (taskId == null) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "unknown task: missing", false)
+            ));
+        }
+        if (!tasks.containsKey(taskId)) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR, "unknown task: " + taskId, false)
+            ));
+        }
+        return newEvent("event.acknowledged", event, Map.of("acknowledged_event_id", event.get("id")));
     }
 
     private Object handleSessionOpened(Map<String, Object> event) {

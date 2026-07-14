@@ -296,6 +296,74 @@
         "task.completed",
         "session.heartbeat"
       ]
+    },
+    {
+      "path": "fixtures/task-output.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Task partial output flow exercising the OUTPUT state and output→completed transition.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "output"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.output",
+        "task.completed"
+      ]
+    },
+    {
+      "path": "fixtures/task-failed.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Task failure flow exercising the FAILED terminal state.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "failed"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.progress",
+        "task.failed"
+      ]
+    },
+    {
+      "path": "fixtures/task-cancelled.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Task cancellation flow exercising the CANCELLED terminal state directly.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "cancelled"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.cancelled"
+      ]
+    },
+    {
+      "path": "fixtures/task-cancel-requested.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Two-phase cancellation protocol: cancel.requested by consumer followed by task.cancelled by producer.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "cancelled",
+        "protocol"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.cancel.requested",
+        "task.cancelled"
+      ]
     }
   ],
   "profiles": {

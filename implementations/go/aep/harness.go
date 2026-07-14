@@ -77,7 +77,11 @@ func (h *Harness) setupRouter() {
 		}, h.handleTaskSubmitted).
 		On(func(event map[string]any) bool {
 			typ, _ := event["type"].(string)
-			return len(typ) > 5 && typ[:5] == "task." && typ != "task.submitted"
+			return typ == "task.cancel.requested"
+		}, h.handleTaskCancelRequested).
+		On(func(event map[string]any) bool {
+			typ, _ := event["type"].(string)
+			return len(typ) > 5 && typ[:5] == "task." && typ != "task.submitted" && typ != "task.cancel.requested"
 		}, h.handleTaskEvent).
 		On(func(event map[string]any) bool {
 			typ, _ := event["type"].(string)
@@ -314,6 +318,31 @@ func (h *Harness) handleTaskEvent(event map[string]any) any {
 	}
 
 	return responses
+}
+
+func (h *Harness) handleTaskCancelRequested(event map[string]any) any {
+	taskID, _ := event["task_id"].(string)
+	if taskID == "" {
+		if payload, ok := event["payload"].(map[string]any); ok {
+			taskID, _ = payload["task_id"].(string)
+		}
+	}
+	if taskID == "" {
+		return h.newEvent("event.rejected", event, map[string]any{
+			"error": ErrorPayload(ErrorCodeTaskError, "unknown task: missing", false),
+		})
+	}
+
+	_, ok := h.tasks[taskID]
+	if !ok {
+		return h.newEvent("event.rejected", event, map[string]any{
+			"error": ErrorPayload(ErrorCodeTaskError, "unknown task: "+taskID, false),
+		})
+	}
+
+	return h.newEvent("event.acknowledged", event, map[string]any{
+		"acknowledged_event_id": event["id"],
+	})
 }
 
 func (h *Harness) handleSessionOpened(event map[string]any) any {

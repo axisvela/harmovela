@@ -36,7 +36,8 @@ export class HarmovelaHarness {
       .on("subscription.requested", (event) => this._handleSubscriptionRequested(event))
       .on("subscription.cancelled", (event) => this._handleSubscriptionCancelled(event))
       .on("task.submitted", (event) => this._handleTaskSubmitted(event))
-      .on((event) => event.type.startsWith("task.") && event.type !== "task.submitted", (event) => this._handleTaskEvent(event))
+      .on("task.cancel.requested", (event) => this._handleTaskCancelRequested(event))
+      .on((event) => event.type.startsWith("task.") && event.type !== "task.submitted" && event.type !== "task.cancel.requested", (event) => this._handleTaskEvent(event))
       .on("session.opened", (event) => this._handleSessionOpened(event))
       .on("session.closed", (event) => this._handleSessionClosed(event));
   }
@@ -250,6 +251,18 @@ export class HarmovelaHarness {
         error: errorPayload(ErrorCode.TASK_ERROR, err.message)
       });
     }
+  }
+
+  _handleTaskCancelRequested(event) {
+    const taskId = event.task_id ?? event.payload?.task_id;
+    if (!taskId || !this._tasks.has(taskId)) {
+      return this._event("event.rejected", event, {
+        error: errorPayload(ErrorCode.TASK_ERROR, `unknown task: ${taskId ?? "missing"}`)
+      });
+    }
+    return this._event("event.acknowledged", event, {
+      acknowledged_event_id: event.id
+    });
   }
 
   _handleSessionOpened(event) {
