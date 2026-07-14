@@ -47,4 +47,30 @@ class TaskTrackerTest {
         var tk = new TaskTracker("task_3", "tool:build");
         assertNull(tk.transition("task.completed", null));
     }
+
+    @Test
+    void parentChildTerminalChildCompletesFirstIsValid() {
+        assertNull(TaskTracker.validateParentChildTerminal(
+            TaskTracker.TaskState.STARTED, TaskTracker.TaskState.COMPLETED));
+    }
+
+    @Test
+    void parentChildTerminalParentTerminalChildActiveIsInvalid() {
+        var error = TaskTracker.validateParentChildTerminal(
+            TaskTracker.TaskState.COMPLETED, TaskTracker.TaskState.STARTED);
+        assertNotNull(error);
+        assertTrue(error.toLowerCase().contains("parent task is in terminal state"));
+    }
+
+    @Test
+    void parentChildTerminalBothTerminalIsValid() {
+        assertNull(TaskTracker.validateParentChildTerminal(
+            TaskTracker.TaskState.COMPLETED, TaskTracker.TaskState.COMPLETED));
+    }
+
+    @Test
+    void parentChildTerminalBothActiveIsValid() {
+        assertNull(TaskTracker.validateParentChildTerminal(
+            TaskTracker.TaskState.STARTED, TaskTracker.TaskState.STARTED));
+    }
 }

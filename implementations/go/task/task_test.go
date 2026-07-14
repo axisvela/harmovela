@@ -54,3 +54,18 @@ func TestTrackerFailed(t *testing.T) {
 		t.Fatalf("expected tool_error, got %v", errObj["code"])
 	}
 }
+
+func TestValidateParentChildTerminal(t *testing.T) {
+	if err := ValidateParentChildTerminal(Started, Completed); err != nil {
+		t.Fatalf("child completes before parent should be valid, got error: %v", err)
+	}
+	if err := ValidateParentChildTerminal(Completed, Started); err == nil {
+		t.Fatal("parent terminal while child active should be invalid")
+	}
+	if err := ValidateParentChildTerminal(Completed, Completed); err != nil {
+		t.Fatalf("both terminal should be valid, got error: %v", err)
+	}
+	if err := ValidateParentChildTerminal(Started, Started); err != nil {
+		t.Fatalf("both active should be valid, got error: %v", err)
+	}
+}

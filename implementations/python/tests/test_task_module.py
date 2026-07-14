@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_task import TaskTracker
+from axisrobo_harmovela_task import TaskTracker, validate_parent_child_terminal
 
 
 class TestTask:
@@ -50,3 +50,23 @@ class TestTask:
         assert timed["type"] == "task.timed_out"
         assert timed["payload"]["error"]["retryable"] is True
         assert t.is_terminal() is True
+
+    def test_parent_child_terminal_child_completes_first(self):
+        valid, error = validate_parent_child_terminal("started", "completed")
+        assert valid is True
+        assert error is None
+
+    def test_parent_child_terminal_parent_terminal_child_active(self):
+        valid, error = validate_parent_child_terminal("completed", "started")
+        assert valid is False
+        assert "parent task is in terminal state" in error.lower()
+
+    def test_parent_child_terminal_both_terminal(self):
+        valid, error = validate_parent_child_terminal("completed", "completed")
+        assert valid is True
+        assert error is None
+
+    def test_parent_child_terminal_both_active(self):
+        valid, error = validate_parent_child_terminal("started", "started")
+        assert valid is True
+        assert error is None

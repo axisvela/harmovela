@@ -132,3 +132,12 @@ class TaskTracker:
 
     def is_active(self) -> bool:
         return not self.is_terminal() and self.state != TaskState.SUBMITTED
+
+
+def validate_parent_child_terminal(parent_state: str, child_state: str) -> tuple[bool, str | None]:
+    if parent_state not in TERMINAL_STATES or child_state in TERMINAL_STATES:
+        return True, None
+    return False, (
+        f"Parent task is in terminal state '{parent_state}' but child task is still active ({child_state}). "
+        "Resolve or cancel all children before parent reaches a terminal state."
+    )

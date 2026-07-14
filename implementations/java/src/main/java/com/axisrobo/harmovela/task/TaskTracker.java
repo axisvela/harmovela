@@ -52,6 +52,15 @@ public class TaskTracker {
     public TaskState getState() { return state; }
     public boolean isTerminal() { return TERMINAL.contains(state); }
 
+    public static String validateParentChildTerminal(TaskState parentState, TaskState childState) {
+        if (!TERMINAL.contains(parentState) || TERMINAL.contains(childState)) {
+            return null;
+        }
+        return "Parent task is in terminal state '" + parentState.name().toLowerCase()
+            + "' but child task is still active (" + childState.name().toLowerCase()
+            + "). Resolve or cancel all children before parent reaches a terminal state.";
+    }
+
     public void accept() { transition("task.accepted", null); }
 
     public Map<String, Object> accepted() { return transition("task.accepted", null); }

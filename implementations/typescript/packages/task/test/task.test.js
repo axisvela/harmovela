@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { TaskTracker } from "../src/index.js";
+import { TaskTracker, validateParentChildTerminal } from "../src/index.js";
 
 test("task full happy path: submitted -> completed", () => {
   const task = new TaskTracker({ task_id: "task_01" });
@@ -101,4 +101,25 @@ test("task isActive is false for submitted", () => {
 
   task.accepted();
   assert.equal(task.isActive(), true);
+});
+
+test("parent-child terminal: child completes before parent is valid", () => {
+  const result = validateParentChildTerminal("started", "completed");
+  assert.equal(result.valid, true);
+});
+
+test("parent-child terminal: child active while parent terminal is invalid", () => {
+  const result = validateParentChildTerminal("completed", "started");
+  assert.equal(result.valid, false);
+  assert.ok(result.error.toLowerCase().includes("parent task is in terminal state"));
+});
+
+test("parent-child terminal: both terminal is valid", () => {
+  const result = validateParentChildTerminal("completed", "completed");
+  assert.equal(result.valid, true);
+});
+
+test("parent-child terminal: both active is valid", () => {
+  const result = validateParentChildTerminal("started", "started");
+  assert.equal(result.valid, true);
 });

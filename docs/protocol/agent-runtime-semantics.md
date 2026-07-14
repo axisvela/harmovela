@@ -211,8 +211,9 @@ Emitted when a delegated task is escalated to a supervisor or higher-authority a
 
 ### Consumer Guidance
 
-- A child task with `parent_task_id` must not transition to a terminal state (completed, failed, cancelled) before its parent task reaches a terminal state — unless the parent is explicitly cancelled first.
-- When a parent task is cancelled, all child tasks should be cancelled. The runtime or orchestrator should emit `task.cancelled` for each child, referencing the parent via `causation_id`.
+- A parent task MUST NOT transition to a terminal state (COMPLETED, FAILED, CANCELLED, TIMED_OUT) while it has active (non-terminal) child tasks. Resolve or cancel all children before the parent reaches a terminal state.
+- A child task MAY reach a terminal state independently of, and before, its parent. The common orchestration pattern (child completes first, parent aggregates) is valid.
+- When a parent task is cancelled, all child tasks MUST be cancelled. The runtime or orchestrator SHOULD emit `task.cancelled` for each child, referencing the parent via `causation_id`.
 - `handoff_token` should be treated as opaque. Consumers must not parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.
 - On `delegation.escalated`, consumers tracking the original task should route further status queries through the new delegate (`delegated_to`).
 

@@ -122,6 +122,16 @@ export class TaskTracker {
   }
 }
 
+export function validateParentChildTerminal(parentState, childState) {
+  if (!terminalStates.has(parentState) || terminalStates.has(childState)) {
+    return { valid: true };
+  }
+  return {
+    valid: false,
+    error: `Parent task is in terminal state '${parentState}' but child task is still active (${childState}). Resolve or cancel all children before parent reaches a terminal state.`
+  };
+}
+
 function eventTypeToState(type) {
   const map = {
     "task.submitted": TaskState.SUBMITTED,

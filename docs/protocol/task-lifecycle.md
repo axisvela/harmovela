@@ -247,9 +247,27 @@ A `timeout_ms` value in `task.submitted` sets a deadline. The producer is respon
 
 A producer may also apply a default timeout for tasks without an explicit `timeout_ms`.
 
+## Parent-Child Task Relationships
+
+Tasks may be organized in parent-child hierarchies via the `parent_task_id` envelope field. A parent task delegates work to child tasks or spawns subtasks that must be resolved before the parent itself can complete.
+
+### Terminal State Ordering
+
+- A child task MAY reach a terminal state independently of, and before, its parent. The common orchestration pattern — child completes first, parent aggregates — is valid and expected.
+- A parent task MUST NOT transition to a terminal state while it has active (non-terminal) child tasks. The runtime or orchestrator MUST ensure all children reach a terminal state (naturally or via cancellation) before allowing the parent to complete, fail, cancel, or time out.
+- When a parent task is cancelled, all child tasks MUST be cancelled. The runtime or orchestrator SHOULD emit `task.cancelled` for each child, referencing the parent via `causation_id`.
+- When a parent task fails, child tasks SHOULD be cancelled unless the child tasks are independent and the runtime policy permits orphaned continuation.
+
+### Conformance Fixtures
+
+Parent-child terminal ordering is validated by:
+- `conformance/fixtures/parent-child-positive.ndjson`: child completes before parent (valid).
+- `conformance/fixtures/parent-child-negative.ndjson`: parent completes while child is active (invalid).
+
 ## Implementation Notes
 
-- Task state transitions must be enforced. Attempting an illegal transition should result in an `event.rejected` or `task.failed` response.
-- Terminal states are final. No further task events should be accepted or produced after a terminal state.
-- The `task_id` must be present in the envelope top-level `task_id` field and in `payload.task_id` for consistency.
-- Producers should assign `task_id` if the consumer does not provide one, and return it in `task.accepted`.
+- Task state transitions must be enforced. Attempting an illegal transition MUST result in an `event.rejected` or `task.failed` response.
+- Terminal states are final. No further task events MUST be accepted or produced after a terminal state.
+- Implementations MUST validate parent-child terminal ordering before allowing a parent to reach a terminal state.
+- The `task_id` MUST be present in the envelope top-level `task_id` field and in `payload.task_id` for consistency.
+- Producers SHOULD assign `task_id` if the consumer does not provide one, and return it in `task.accepted`.

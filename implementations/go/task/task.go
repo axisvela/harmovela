@@ -107,6 +107,16 @@ func (t *Tracker) IsTerminal() bool {
 	return terminalStates[t.State]
 }
 
+func ValidateParentChildTerminal(parentState, childState State) error {
+	if !terminalStates[parentState] || terminalStates[childState] {
+		return nil
+	}
+	return fmt.Errorf(
+		"parent task is in terminal state '%s' but child task is still active (%s): resolve or cancel all children before parent reaches a terminal state",
+		parentState, childState,
+	)
+}
+
 func (t *Tracker) Transition(eventType string, payload map[string]any) map[string]any {
 	nextState, ok := eventToState[eventType]
 	if !ok {
