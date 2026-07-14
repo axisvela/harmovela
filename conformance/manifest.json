@@ -228,6 +228,74 @@
         "compensation.requested",
         "provenance.attestation.added"
       ]
+    },
+    {
+      "path": "fixtures/task-blocked-resume.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Task blocked, resumed, and completed flow exercising the BLOCKED state and blocked→resume transition.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "blocked"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.blocked",
+        "task.started",
+        "task.progress",
+        "task.completed"
+      ]
+    },
+    {
+      "path": "fixtures/task-timed-out.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Task timeout flow exercising the TIMED_OUT terminal state.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "timeout"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.progress",
+        "task.timed_out"
+      ]
+    },
+    {
+      "path": "fixtures/task-invalid-transitions.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Illegal task transition attempt (ACCEPTED→COMPLETED) rejected by the harness.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative",
+        "task"
+      ]
+    },
+    {
+      "path": "fixtures/core-lifecycle.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Full core L0-L1 happy-path: session open→ready, subscription create, task submitted→accepted→started→progress→completed, event routing heartbeat.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "session",
+        "subscription",
+        "task",
+        "routing"
+      ],
+      "expected_types": [
+        "session.opened",
+        "subscription.requested",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.progress",
+        "task.completed",
+        "session.heartbeat"
+      ]
     }
   ],
   "profiles": {
