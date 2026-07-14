@@ -44,3 +44,5 @@ Thumbs.db
 # Non-repository artifacts (not part of the protocol)
 paper-harmovela/
 promo/
+.zenodo.json
+tools/benchmark/
