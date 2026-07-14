@@ -4,7 +4,7 @@
 
 **Autonomy mapping:** L3 (production autonomy with audit, budget, and authorization boundaries) is in scope for 1.0. L4 (open-ended long-term autonomy) and AGI (general intelligence) are explicit non-goals.
 
-**Status:** Future. Design direction only — no stable semantics are promised yet.
+**Status:** Delivered - 0.5 Adaptation Preview.
 
 ## Purpose
 

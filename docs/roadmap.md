@@ -47,11 +47,10 @@ Layer documents provide release-specific entry and exit gates.
 
 ## Immediate Next Step
 
-The current frontier is the **[Coordination layer](roadmap/coordination-layer.md)**. Concretely, the next actionable work is:
+The current frontier is the **[Coordination layer](roadmap/coordination-layer.md)**. With 0.1 identity migration done, the L1 policy surface documented, and delegation semantics tightened, the immediate next-step priorities are:
 
-1. Finish the **0.1 Transition** identity migration in the [Event layer](roadmap/event-layer.md) so Harmovela naming is consistent and legacy identifiers have a compatibility policy.
-2. Document the **L1 bounded-autonomy policy surface** (budget, timeout, allowed actions, termination) so bounded autonomy is a contract, not an assumption.
-3. Begin **tightening delegation semantics** (single-owner transfer, deterministic cancellation propagation, escalation contract) with positive and negative conformance fixtures — the core of the 0.2–0.3 releases.
+1. **0.9 RC validation** — validate the complete 0.5 Adaptation Preview L3 semantics without feature expansion through reproducible RC fixtures, a compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.
+2. **1.0 release preparation** — publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.
 
 ## Layer Documents
 

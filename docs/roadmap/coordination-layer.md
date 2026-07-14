@@ -19,7 +19,7 @@ The autonomy ladder places two levels in this layer:
 
 Closing this gap is the central goal of the 0.2–0.4 releases.
 
-All 10 Harmovela coordination dimensions (Event, Recovery, Governance, Task, State, Context/Memory, Delegation, Tool, Agent, Environment) have been extracted into independent modules across all four language implementations with complete adapter wiring. Event type classification is recorded in `docs/protocol/event-dimension-classification.md`. Dimension migration evidence is recorded in `docs/protocol/compatibility-matrix.md`.
+All 10 Harmovela coordination dimensions (Event, Recovery, Governance, Task, State, Context/Memory, Delegation, Tool, Agent, Environment) have been extracted into independent modules across all four language implementations with complete adapter wiring. In addition, 5 infrastructure modules (harness, conformance, CLI, runtime, and MCP bridge) provide the cross-cutting build, test, transport, and tool-integration surface. Event type classification is recorded in `docs/protocol/event-dimension-classification.md`. Dimension migration evidence is recorded in `docs/protocol/compatibility-matrix.md`.
 
 No Coordination dimension may be extracted from a legacy implementation until the Event/Governance contract foundation passes its shared fixtures and the compatibility matrix has an approved decision for every touched public surface.
 

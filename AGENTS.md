@@ -40,7 +40,7 @@ The canonical repository location is `https://github.com/axisrobo/harmovela`.
 
 ## Current Status
 
-This repository is currently a design draft. Treat protocol behavior as provisional unless a document explicitly marks it as stable.
+Active protocol development with 4 reference implementations (TypeScript, Python, Go, Java), 10+ dimension modules, and cross-language conformance.
 
 ## Primary Documents
 
