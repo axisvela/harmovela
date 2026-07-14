@@ -17,6 +17,6 @@ class HarmovelaCliTest {
         assertEquals(0, code);
         var parsed = MAPPER.readValue(Files.readString(path), Map.class);
         var runtime = (Map<?, ?>) parsed.get("runtime");
-        assertEquals("aepd-local", runtime.get("id"));
+        assertEquals("harmovelad-local", runtime.get("id"));
     }
 }

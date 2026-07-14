@@ -18,10 +18,10 @@ import (
 )
 
 func main() {
-	root := &cobra.Command{Use: "aep", Short: "Agent Event Protocol CLI"}
+	root := &cobra.Command{Use: "harmovela", Short: "Harmovela Protocol CLI"}
 
 	var initConfig string
-	initCmd := &cobra.Command{Use: "init", Short: "Create an AEP runtime config file", RunE: func(_ *cobra.Command, _ []string) error {
+	initCmd := &cobra.Command{Use: "init", Short: "Create a Harmovela runtime config file", RunE: func(_ *cobra.Command, _ []string) error {
 		if err := runtime.WriteDefaultConfig(initConfig); err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func main() {
 	initCmd.Flags().StringVar(&initConfig, "config", "harmovela.config.json", "config file path")
 
 	var startConfig string
-	startCmd := &cobra.Command{Use: "start", Short: "Start the local aepd runtime daemon", RunE: func(_ *cobra.Command, _ []string) error {
+	startCmd := &cobra.Command{Use: "start", Short: "Start the local harmovelad runtime daemon", RunE: func(_ *cobra.Command, _ []string) error {
 		config, err := runtime.LoadConfig(startConfig, nil)
 		if err != nil {
 			return err
@@ -40,13 +40,13 @@ func main() {
 		if err := svc.Start(); err != nil {
 			return err
 		}
-		fmt.Printf("aepd started api=%d\n", svc.APIPort())
+		fmt.Printf("harmovelad started api=%d\n", svc.APIPort())
 		select {}
 	}}
 	startCmd.Flags().StringVar(&startConfig, "config", "harmovela.config.json", "config file path")
 
 	var statusURL string
-	statusCmd := &cobra.Command{Use: "status", Short: "Query an aepd health endpoint", RunE: func(_ *cobra.Command, _ []string) error {
+	statusCmd := &cobra.Command{Use: "status", Short: "Query a harmovelad health endpoint", RunE: func(_ *cobra.Command, _ []string) error {
 		resp, err := http.Get(statusURL)
 		if err != nil {
 			return fmt.Errorf("status request failed: %w", err)
@@ -59,7 +59,7 @@ func main() {
 	statusCmd.Flags().StringVar(&statusURL, "url", "http://127.0.0.1:8790/harmovela/api/healthz", "health endpoint URL")
 
 	var emitPayload, emitURL, emitID, emitSource string
-	emitCmd := &cobra.Command{Use: "emit <type>", Short: "Emit one AEP event over WebSocket", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
+	emitCmd := &cobra.Command{Use: "emit <type>", Short: "Emit one Harmovela event over WebSocket", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
 		var payload map[string]any
 		if err := json.Unmarshal([]byte(emitPayload), &payload); err != nil {
 			return fmt.Errorf("invalid JSON payload")
@@ -74,7 +74,7 @@ func main() {
 		}
 		conn, _, err := websocket.DefaultDialer.Dial(emitURL, nil)
 		if err != nil {
-			return fmt.Errorf("emit: %w. Is aepd running?", err)
+			return fmt.Errorf("emit: %w. Is harmovelad running?", err)
 		}
 		defer conn.Close()
 		data, _ := json.Marshal(event)
@@ -87,13 +87,13 @@ func main() {
 	emitCmd.Flags().StringVar(&emitPayload, "payload", "{}", "event payload JSON")
 	emitCmd.Flags().StringVar(&emitURL, "url", "ws://127.0.0.1:8787/harmovela", "WebSocket URL")
 	emitCmd.Flags().StringVar(&emitID, "id", "", "event id")
-	emitCmd.Flags().StringVar(&emitSource, "source", "cli:aep", "event source")
+	emitCmd.Flags().StringVar(&emitSource, "source", "cli:harmovela", "event source")
 
 	var subType, subURL string
-	subscribeCmd := &cobra.Command{Use: "subscribe", Short: "Subscribe to AEP events over WebSocket", RunE: func(_ *cobra.Command, _ []string) error {
+	subscribeCmd := &cobra.Command{Use: "subscribe", Short: "Subscribe to Harmovela events over WebSocket", RunE: func(_ *cobra.Command, _ []string) error {
 		conn, _, err := websocket.DefaultDialer.Dial(subURL, nil)
 		if err != nil {
-			return fmt.Errorf("subscribe: %w. Is aepd running?", err)
+			return fmt.Errorf("subscribe: %w. Is harmovelad running?", err)
 		}
 		defer conn.Close()
 		for {
@@ -144,7 +144,7 @@ func main() {
 
 	var conformanceProfile string
 	conformanceCmd := &cobra.Command{Use: "conformance", Short: "Run Harmovela conformance fixtures", RunE: func(_ *cobra.Command, _ []string) error {
-		cmd := exec.Command("go", "test", "./aep/", "-run", "TestConformance", "-v")
+		cmd := exec.Command("go", "test", "./event/", "-run", "TestConformance", "-v")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if conformanceProfile != "" {
@@ -156,7 +156,7 @@ func main() {
 
 	root.AddCommand(initCmd, startCmd, statusCmd, emitCmd, subscribeCmd, dlqCmd, conformanceCmd, subscriptionsCmd())
 	if err := root.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "aep: %v\n", err)
+		fmt.Fprintf(os.Stderr, "harmovela: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -175,7 +175,7 @@ func subscriptionsCmd() *cobra.Command {
 		body, _ := json.Marshal(map[string]any{"filter": f})
 		resp, err := http.Post(base+"/subscriptions", "application/json", strings.NewReader(string(body)))
 		if err != nil {
-			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+			return fmt.Errorf("request failed: %w. Is harmovelad running?", err)
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode != 201 {
@@ -188,7 +188,7 @@ func subscriptionsCmd() *cobra.Command {
 	cmd.AddCommand(&cobra.Command{Use: "list", Short: "List subscriptions", RunE: func(_ *cobra.Command, _ []string) error {
 		resp, err := http.Get(base + "/subscriptions")
 		if err != nil {
-			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+			return fmt.Errorf("request failed: %w. Is harmovelad running?", err)
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
@@ -202,7 +202,7 @@ func subscriptionsCmd() *cobra.Command {
 		req, _ := http.NewRequest(http.MethodDelete, base+"/subscriptions/"+args[0], nil)
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+			return fmt.Errorf("request failed: %w. Is harmovelad running?", err)
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode == 404 {
@@ -218,7 +218,7 @@ func subscriptionsCmd() *cobra.Command {
 	cmd.AddCommand(&cobra.Command{Use: "stream <id>", Short: "Stream events for a subscription", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
 		resp, err := http.Get(base + "/subscriptions/" + args[0] + "/stream")
 		if err != nil {
-			return fmt.Errorf("request failed: %w. Is aepd running?", err)
+			return fmt.Errorf("request failed: %w. Is harmovelad running?", err)
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode == 404 {

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Command(name = "aep", description = "Agent Event Protocol CLI",
+@Command(name = "harmovela", description = "Harmovela Protocol CLI",
     subcommands = {HarmovelaCli.Init.class, HarmovelaCli.Start.class, HarmovelaCli.Status.class,
                    HarmovelaCli.Emit.class, HarmovelaCli.Subscribe.class, HarmovelaCli.Dlq.class,
                    HarmovelaCli.Conformance.class, HarmovelaCli.SubscriptionsGroup.class})
@@ -52,20 +52,20 @@ public class HarmovelaCli implements Runnable {
         }
     }
 
-    @Command(name = "start", description = "Start the local aepd runtime daemon")
+    @Command(name = "start", description = "Start the local harmovelad runtime daemon")
     static class Start implements java.util.concurrent.Callable<Integer> {
         @Option(names = "--config", defaultValue = "harmovela.config.json") String config;
         public Integer call() throws Exception {
             var c = Config.load(config, System.getenv());
             var svc = new HarmovelaRuntimeService(c);
             svc.start();
-            System.out.println("aepd started api=" + svc.apiPort());
+            System.out.println("harmovelad started api=" + svc.apiPort());
             Thread.currentThread().join();
             return 0;
         }
     }
 
-    @Command(name = "status", description = "Query an aepd health endpoint")
+    @Command(name = "status", description = "Query a harmovelad health endpoint")
     static class Status implements java.util.concurrent.Callable<Integer> {
         @Option(names = "--url", defaultValue = "http://127.0.0.1:8790/harmovela/api/healthz") String url;
         public Integer call() throws Exception {
@@ -77,13 +77,13 @@ public class HarmovelaCli implements Runnable {
         }
     }
 
-    @Command(name = "emit", description = "Emit one AEP event over WebSocket")
+    @Command(name = "emit", description = "Emit one Harmovela event over WebSocket")
     static class Emit implements java.util.concurrent.Callable<Integer> {
         @Parameters(index = "0") String type;
         @Option(names = "--payload", defaultValue = "{}") String payload;
         @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/harmovela") String url;
         @Option(names = "--id") String id;
-        @Option(names = "--source", defaultValue = "cli:aep") String source;
+        @Option(names = "--source", defaultValue = "cli:harmovela") String source;
         @SuppressWarnings("unchecked")
         public Integer call() throws Exception {
             Map<String, Object> parsed;
@@ -107,7 +107,7 @@ public class HarmovelaCli implements Runnable {
         }
     }
 
-    @Command(name = "subscribe", description = "Subscribe to AEP events over WebSocket")
+    @Command(name = "subscribe", description = "Subscribe to Harmovela events over WebSocket")
     static class Subscribe implements java.util.concurrent.Callable<Integer> {
         @Option(names = "--type", defaultValue = "*") String type;
         @Option(names = "--url", defaultValue = "ws://127.0.0.1:8787/harmovela") String url;

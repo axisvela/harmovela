@@ -23,7 +23,7 @@ def test_init_writes_config():
         assert code == 0, err
         with open(path) as f:
             config = json.load(f)
-        assert config["runtime"]["id"] == "aepd-local"
+        assert config["runtime"]["id"] == "harmovelad-local"
 
 
 def test_conformance_runs():

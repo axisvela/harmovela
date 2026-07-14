@@ -10,7 +10,7 @@ class TestSession:
         assert s.is_open() is True
         assert s.is_active() is False
 
-        ready = s.ready({"protocol": "aep", "version": "0.1"})
+        ready = s.ready({"protocol": "harmovela", "version": "0.2"})
         assert ready["type"] == "session.ready"
         assert s.is_active() is True
 

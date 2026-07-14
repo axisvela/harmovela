@@ -8,7 +8,7 @@ public class Harmovelad {
             : Config.defaultConfig();
         var svc = new HarmovelaRuntimeService(config);
         svc.start();
-        System.out.println("aepd started api=" + svc.apiPort());
+        System.out.println("harmovelad started api=" + svc.apiPort());
         Runtime.getRuntime().addShutdownHook(new Thread(svc::stop));
         Thread.currentThread().join();
     }

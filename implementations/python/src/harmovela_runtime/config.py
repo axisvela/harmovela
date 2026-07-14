@@ -8,7 +8,7 @@ from axisrobo_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliverySto
 def default_config() -> dict:
     return {
         "spec_version": "0.2",
-        "runtime": {"id": "aepd-local", "source": "runtime:aepd"},
+        "runtime": {"id": "harmovelad-local", "source": "runtime:harmovelad"},
         "transports": {
             "websocket": {"enabled": True, "host": "127.0.0.1", "port": 8787, "path": "/harmovela"},
             "sse": {"enabled": True, "host": "127.0.0.1", "port": 8788, "path": "/harmovela/events"},

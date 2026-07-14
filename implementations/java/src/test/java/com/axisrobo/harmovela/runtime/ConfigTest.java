@@ -31,7 +31,7 @@ class ConfigTest {
         var path = dir.resolve("harmovela.config.json");
         Config.writeDefaultConfig(path.toString());
         var loaded = Config.load(path.toString(), Map.of());
-        assertEquals("runtime:aepd", loaded.runtimeSource());
+        assertEquals("runtime:harmovelad", loaded.runtimeSource());
     }
 
     @Test

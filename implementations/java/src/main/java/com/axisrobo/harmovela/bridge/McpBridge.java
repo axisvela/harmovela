@@ -31,7 +31,7 @@ public class McpBridge {
     private final EventSink sink;
     private final Harness harness;
     private final Map<String, Tool> tools = new LinkedHashMap<>();
-    private final Map<String, Object> serverInfo = Map.of("name", "aep-mcp-bridge", "version", "0.1.0");
+    private final Map<String, Object> serverInfo = Map.of("name", "harmovela-mcp-bridge", "version", "0.1.0");
 
     public McpBridge(EventSink sink) {
         this.sink = sink;

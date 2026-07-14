@@ -11,7 +11,7 @@ class McpBridge:
         self.aep = aep or HarmovelaHarness()
         self.transport = transport
         self.tools = {}
-        self.server_info = server_info or {"name": "aep-mcp-bridge", "version": "0.1.0"}
+        self.server_info = server_info or {"name": "harmovela-mcp-bridge", "version": "0.1.0"}
 
     def register_tool(self, tool_def: dict):
         self.tools[tool_def["name"]] = {

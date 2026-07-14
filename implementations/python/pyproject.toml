@@ -3,9 +3,9 @@ requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aep-reference-python"
+name = "harmovela-reference-python"
 version = "0.1.0.dev0"
-description = "Draft Agent Event Protocol Python reference implementation."
+description = "Harmovela Protocol Python reference implementation."
 requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2",

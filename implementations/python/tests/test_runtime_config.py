@@ -8,7 +8,7 @@ from axisrobo_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliverySto
 def test_default_config():
     config = default_config()
     assert config["spec_version"] == "0.2"
-    assert config["runtime"]["id"] == "aepd-local"
+    assert config["runtime"]["id"] == "harmovelad-local"
     assert config["delivery"]["store"] == "sqlite"
     assert config["transports"]["websocket"]["port"] == 8787
     assert config["transports"]["api"]["port"] == 8790
@@ -19,7 +19,7 @@ def test_write_and_load_config():
         path = os.path.join(d, "harmovela.config.json")
         write_default_config(path)
         config = load_config(path, env={})
-        assert config["runtime"]["source"] == "runtime:aepd"
+        assert config["runtime"]["source"] == "runtime:harmovelad"
 
 
 def test_apply_env_overrides():

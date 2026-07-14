@@ -22,7 +22,7 @@ function runCli(args) {
   });
 }
 
-test("aep emit delivers event through running aepd websocket runtime", async () => {
+test("harmovela emit delivers event through running harmovelad websocket runtime", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "harmovela-e2e-"));
   const configPath = path.join(dir, "harmovela.config.json");
   const config = defaultConfig();

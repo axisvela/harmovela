@@ -37,7 +37,7 @@ def test_healthz():
     status, body = _get(f"{base}/healthz")
     assert status == 200
     assert body["status"] == "ok"
-    assert body["runtime"]["id"] == "aepd-local"
+    assert body["runtime"]["id"] == "harmovelad-local"
     service.stop()
 
 

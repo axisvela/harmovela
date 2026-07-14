@@ -27,7 +27,7 @@ def init(config_path):
 @cli.command()
 @click.option("--config", "config_path", default=None, help="config file path")
 def start(config_path):
-    """Start the local aepd runtime daemon."""
+    """Start the local harmovelad runtime daemon."""
     import time
     service = start_daemon(config_path=config_path)
     try:
@@ -40,7 +40,7 @@ def start(config_path):
 @cli.command()
 @click.option("--url", default="http://127.0.0.1:8790/harmovela/api/healthz", help="health endpoint URL")
 def status(url):
-    """Query an aepd health endpoint."""
+    """Query a harmovelad health endpoint."""
     try:
         with urllib.request.urlopen(url) as resp:
             click.echo(resp.read().decode())
@@ -173,7 +173,7 @@ def subscriptions_delete(subscription_id, base):
             click.echo(f"request failed: HTTP {err.code}", err=True)
         sys.exit(1)
     except Exception as err:
-        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        click.echo(f"request failed: {err}. Is harmovelad running?", err=True)
         sys.exit(1)
 
 
@@ -190,7 +190,7 @@ def subscriptions_stream(subscription_id, base):
             click.echo(f"request failed: HTTP {err.code}", err=True)
         sys.exit(1)
     except Exception as err:
-        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        click.echo(f"request failed: {err}. Is harmovelad running?", err=True)
         sys.exit(1)
     try:
         for raw in resp:
@@ -209,7 +209,7 @@ def _print_response(req):
         click.echo(f"request failed: HTTP {err.code}", err=True)
         sys.exit(1)
     except Exception as err:
-        click.echo(f"request failed: {err}. Is aepd running?", err=True)
+        click.echo(f"request failed: {err}. Is harmovelad running?", err=True)
         sys.exit(1)
 
 

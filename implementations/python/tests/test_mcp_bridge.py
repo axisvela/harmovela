@@ -4,7 +4,7 @@ from harmovela_mcp_bridge import McpBridge
 def test_initialize_returns_server_info():
     bridge = McpBridge()
     resp = bridge.handle_request({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}})
-    assert resp["result"]["serverInfo"]["name"] == "aep-mcp-bridge"
+    assert resp["result"]["serverInfo"]["name"] == "harmovela-mcp-bridge"
     assert resp["result"]["capabilities"] == {"tools": {}}
     assert resp["result"]["protocolVersion"] == "0.1.0"
 

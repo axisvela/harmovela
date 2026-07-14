@@ -13,8 +13,8 @@ func TestMcpInitialize(t *testing.T) {
 	resp := bridge.HandleRequest(map[string]any{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": map[string]any{}})
 	result := resp["result"].(map[string]any)
 	info := result["serverInfo"].(map[string]any)
-	if info["name"] != "aep-mcp-bridge" {
-		t.Fatalf("expected aep-mcp-bridge, got %v", info["name"])
+	if info["name"] != "harmovela-mcp-bridge" {
+		t.Fatalf("expected harmovela-mcp-bridge, got %v", info["name"])
 	}
 	if result["protocolVersion"] != "0.1.0" {
 		t.Fatalf("expected 0.1.0, got %v", result["protocolVersion"])

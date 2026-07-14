@@ -166,7 +166,7 @@ class HarmovelaHarness:
 
     def _handle_capabilities(self, event: dict) -> dict:
         return self._event("capabilities.declared", event, {
-            "protocol": "aep",
+            "protocol": "harmovela",
             "spec_version": "0.2",
             "transports": ["stdio"],
             "delivery_modes": ["best_effort", "at_least_once", "replayable"],
@@ -273,7 +273,7 @@ class HarmovelaHarness:
         )
         self._session.opened()
         return self._session.ready({
-            "protocol": "aep", "spec_version": "0.2", "transports": ["stdio"],
+            "protocol": "harmovela", "spec_version": "0.2", "transports": ["stdio"],
             "features": ["envelope", "subscription", "task_lifecycle", "error_model"],
         })
 

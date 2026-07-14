@@ -50,15 +50,15 @@ type RuntimeConfig struct {
 func DefaultConfig() RuntimeConfig {
 	var c RuntimeConfig
 	c.SpecVersion = "0.2"
-	c.Runtime.ID = "aepd-local"
-	c.Runtime.Source = "runtime:aepd"
+	c.Runtime.ID = "harmovelad-local"
+	c.Runtime.Source = "runtime:harmovelad"
 	c.Transports.WebSocket = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8787, Path: "/harmovela"}
 	c.Transports.SSE = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8788, Path: "/harmovela/events"}
 	c.Transports.API = TransportConfig{Enabled: true, Host: "127.0.0.1", Port: 8790, Path: "/harmovela/api"}
 	c.Transports.Stdio = TransportConfig{Enabled: false}
 	c.Delivery = DeliveryConfig{
 		Store:    "sqlite",
-		Sqlite:   map[string]string{"path": ".aep/aep.sqlite"},
+		Sqlite:   map[string]string{"path": ".harmovela/harmovela.sqlite"},
 		Postgres: map[string]string{"url": "postgres://postgres:postgres@localhost:5433/postgres"},
 	}
 	return c

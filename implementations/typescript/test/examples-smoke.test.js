@@ -25,7 +25,7 @@ test("sdk runtime-embed example publishes and receives an event", async () => {
   assert.match(result.stdout, /received task.submitted evt_embed/);
 });
 
-test("service http-api-client example round-trips through aepd", async () => {
+test("service http-api-client example round-trips through harmovelad", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "harmovela-ex-"));
   const configPath = path.join(dir, "harmovela.config.json");
   const config = defaultConfig();

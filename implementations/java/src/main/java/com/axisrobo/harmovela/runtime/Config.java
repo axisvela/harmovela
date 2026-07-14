@@ -17,9 +17,9 @@ public class Config {
 
     public record Delivery(String store, String sqlitePath, String postgresUrl) {}
 
-    private String aepVersion = "0.2";
-    private String runtimeId = "aepd-local";
-    private String runtimeSource = "runtime:aepd";
+    private String specVersion = "0.2";
+    private String runtimeId = "harmovelad-local";
+    private String runtimeSource = "runtime:harmovelad";
     private Transport websocket = new Transport(true, "127.0.0.1", 8787, "/harmovela");
     private Transport sse = new Transport(true, "127.0.0.1", 8788, "/harmovela/events");
     private Transport api = new Transport(true, "127.0.0.1", 8790, "/harmovela/api");
@@ -31,7 +31,7 @@ public class Config {
         return new Config();
     }
 
-    public String aepVersion() { return aepVersion; }
+    public String specVersion() { return specVersion; }
     public String runtimeId() { return runtimeId; }
     public String runtimeSource() { return runtimeSource; }
     public Transport websocket() { return websocket; }
@@ -67,7 +67,7 @@ public class Config {
 
     public Map<String, Object> toMap() {
         return Map.of(
-            "spec_version", aepVersion,
+            "spec_version", specVersion,
             "runtime", Map.of("id", runtimeId, "source", runtimeSource),
             "transports", Map.of(
                 "websocket", transportMap(websocket),
@@ -92,10 +92,10 @@ public class Config {
         var raw = Files.readString(Path.of(path));
         var parsed = (Map<String, Object>) MAPPER.readValue(raw, Map.class);
         var c = new Config();
-        c.aepVersion = (String) parsed.getOrDefault("spec_version", "0.2");
+        c.specVersion = (String) parsed.getOrDefault("spec_version", "0.2");
         var runtime = (Map<String, Object>) parsed.getOrDefault("runtime", Map.of());
-        c.runtimeId = (String) runtime.getOrDefault("id", "aepd-local");
-        c.runtimeSource = (String) runtime.getOrDefault("source", "runtime:aepd");
+        c.runtimeId = (String) runtime.getOrDefault("id", "harmovelad-local");
+        c.runtimeSource = (String) runtime.getOrDefault("source", "runtime:harmovelad");
         var transports = (Map<String, Object>) parsed.getOrDefault("transports", Map.of());
         c.websocket = readTransport(transports, "websocket", c.websocket);
         c.sse = readTransport(transports, "sse", c.sse);

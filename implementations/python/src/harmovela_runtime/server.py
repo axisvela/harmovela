@@ -12,7 +12,7 @@ def start_daemon(config=None, config_path=None, install_signals=True) -> Harmove
     api = service.transports.get("api")
     ws_port = ws.port if ws else "disabled"
     api_port = api.port if api else "disabled"
-    print(f"aepd started ws={ws_port} api={api_port}", flush=True)
+    print(f"harmovelad started ws={ws_port} api={api_port}", flush=True)
 
     if install_signals:
         def handle(_signum, _frame):

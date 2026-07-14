@@ -244,7 +244,7 @@ func (h *Harness) Handle(value map[string]any) []map[string]any {
 
 func (h *Harness) handleCapabilities(evt map[string]any) any {
 	return h.newEvent("capabilities.declared", evt, map[string]any{
-		"protocol":       "aep",
+		"protocol":       "harmovela",
 		"spec_version":   "0.2",
 		"transports":     []string{"stdio"},
 		"delivery_modes": []string{"best_effort", "at_least_once", "replayable"},

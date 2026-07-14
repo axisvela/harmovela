@@ -39,7 +39,7 @@ func NewMcpBridge(sender Sender) *McpBridge {
 		harness:    harness.NewHarness(),
 		sender:     sender,
 		tools:      make(map[string]McpTool),
-		serverInfo: map[string]any{"name": "aep-mcp-bridge", "version": "0.1.0"},
+		serverInfo: map[string]any{"name": "harmovela-mcp-bridge", "version": "0.1.0"},
 	}
 }
 

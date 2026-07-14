@@ -15,7 +15,7 @@ class McpBridgeTest {
         var resp = bridge.handleRequest(Map.of("jsonrpc", "2.0", "id", 1, "method", "initialize", "params", Map.of()));
         var result = (Map<String, Object>) resp.get("result");
         var info = (Map<String, Object>) result.get("serverInfo");
-        assertEquals("aep-mcp-bridge", info.get("name"));
+        assertEquals("harmovela-mcp-bridge", info.get("name"));
         assertEquals("0.1.0", result.get("protocolVersion"));
     }
 
