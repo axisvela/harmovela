@@ -29,6 +29,9 @@
 <h2>Purpose</h2>
 <p>Define recommended envelope metadata fields and event types for agent-runtime concerns that go beyond transport, session, subscription, and task lifecycle: belief revision, freshness and validity, delegation and handoff, interruption and cancellation safety, and provenance and trust.</p>
 <p>All additions are optional. No existing required fields change. All fields fall under the envelope <code>additionalProperties: true</code> policy.</p>
+<h2>Terminology And Normative Language</h2>
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="https://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<p>Normative requirements use RFC 2119 keywords. Guidance sections that do not use these keywords are non-normative and provided for implementation convenience only.</p>
 <h2>Epistemic Metadata</h2>
 <h3>Fields</h3>
 <p>| Field | Type | Values | Description | |---|---|---|---| | <code>belief_status</code> | string | <code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code> | Epistemic relationship of this event to prior knowledge | | <code>belief_scope</code> | string | <code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code> | Category of the assertion | | <code>confidence</code> | number | 0.0 – 1.0 | Optional producer-assigned confidence |</p>
@@ -63,11 +66,11 @@
   }
 }
 </code></pre>
-<h3>Consumer Guidance</h3>
+<h3>Normative Requirements</h3>
 <ul>
-<li>On <code>memory.fact.invalidated</code> with <code>belief_status: "retracted"</code>, consumers should inspect which working conclusions depend on the retracted fact and mark them for re-evaluation.</li>
-<li>On <code>belief.conflict.detected</code>, consumers that have not yet acted on contested claims should defer until a <code>belief.revised</code> or a higher-authority resolution arrives.</li>
-<li><code>confidence</code> is advisory. Consumers should combine it with their own trust model; 0.95 confidence from an unverified source may carry less weight than 0.6 from a verified source.</li>
+<li>On <code>memory.fact.invalidated</code> with <code>belief_status: "retracted"</code>, consumers MUST inspect which working conclusions depend on the retracted fact and mark them for re-evaluation.</li>
+<li>On <code>belief.conflict.detected</code>, consumers that have not yet acted on contested claims SHOULD defer until a <code>belief.revised</code> or a higher-authority resolution arrives.</li>
+<li><code>confidence</code> is advisory. Consumers SHOULD combine it with their own trust model; 0.95 confidence from an unverified source MAY carry less weight than 0.6 from a verified source.</li>
 </ul>
 <h2>Freshness And Validity</h2>
 <h3>Fields</h3>
@@ -99,10 +102,10 @@
   }
 }
 </code></pre>
-<h3>Consumer Guidance</h3>
+<h3>Normative Requirements</h3>
 <ul>
-<li>When <code>valid_until</code> has passed, consumers should treat the assertion as potentially stale. If <code>refresh_hint</code> is present, they may request a fresh copy.</li>
-<li>When <code>freshness.expired</code> arrives for a resource the consumer relies on, it should re-read or re-request that resource before proceeding with decisions that depend on it.</li>
+<li>When <code>valid_until</code> has passed, consumers MUST treat the assertion as potentially stale. If <code>refresh_hint</code> is present, they MAY request a fresh copy.</li>
+<li>When <code>freshness.expired</code> arrives for a resource the consumer relies on, it SHOULD re-read or re-request that resource before proceeding with decisions that depend on it.</li>
 <li><code>stale_after</code> and <code>valid_until</code> are mutually informative. If both are present, the earliest point governs.</li>
 </ul>
 <h2>Delegation And Handoff</h2>
@@ -170,13 +173,13 @@
   }
 }
 </code></pre>
-<h3>Consumer Guidance</h3>
+<h3>Normative Requirements</h3>
 <ul>
 <li>A parent task MUST NOT transition to a terminal state (COMPLETED, FAILED, CANCELLED, TIMED_OUT) while it has active (non-terminal) child tasks. Resolve or cancel all children before the parent reaches a terminal state.</li>
 <li>A child task MAY reach a terminal state independently of, and before, its parent. The common orchestration pattern (child completes first, parent aggregates) is valid.</li>
 <li>When a parent task is cancelled, all child tasks MUST be cancelled. The runtime or orchestrator SHOULD emit <code>task.cancelled</code> for each child, referencing the parent via <code>causation_id</code>.</li>
-<li><code>handoff_token</code> should be treated as opaque. Consumers must not parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.</li>
-<li>On <code>delegation.escalated</code>, consumers tracking the original task should route further status queries through the new delegate (<code>delegated_to</code>).</li>
+<li><code>handoff_token</code> MUST be treated as opaque. Consumers MUST NOT parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.</li>
+<li>On <code>delegation.escalated</code>, consumers tracking the original task SHOULD route further status queries through the new delegate (<code>delegated_to</code>).</li>
 </ul>
 <h2>Interruption And Cancellation Safety</h2>
 <h3>Fields</h3>
@@ -267,13 +270,13 @@ interruption.acknowledged
   }
 }
 </code></pre>
-<h3>Consumer Guidance</h3>
+<h3>Normative Requirements</h3>
 <ul>
-<li>On <code>interruption.requested</code> with policy <code>save_and_stop</code>, the task should create a checkpoint, emit <code>interruption.saved</code>, and stop within the grace period.</li>
-<li>On <code>interruption.requested</code> with policy <code>drain_then_stop</code>, the task should finish its current unit of work before saving and stopping.</li>
-<li>On <code>interruption.requested</code> with policy <code>force_stop</code>, the task should stop as soon as possible. Checkpoints are optional but encouraged.</li>
-<li>Recovery after <code>interruption.resumed</code> should use the <code>checkpoint_id</code> to locate saved state. If the checkpoint is unavailable, the task should re-emit <code>task.failed</code> with a <code>checkpoint_missing</code> error code.</li>
-<li><code>compensation_id</code> should reference the original <code>task_id</code> of the task whose side effects need reversal. Compensation tasks should follow the standard task lifecycle.</li>
+<li>On <code>interruption.requested</code> with policy <code>save_and_stop</code>, the task MUST create a checkpoint, emit <code>interruption.saved</code>, and stop within the grace period.</li>
+<li>On <code>interruption.requested</code> with policy <code>drain_then_stop</code>, the task SHOULD finish its current unit of work before saving and stopping.</li>
+<li>On <code>interruption.requested</code> with policy <code>force_stop</code>, the task MUST stop as soon as possible. Checkpoints are OPTIONAL but RECOMMENDED.</li>
+<li>Recovery after <code>interruption.resumed</code> MUST use the <code>checkpoint_id</code> to locate saved state. If the checkpoint is unavailable, the task MUST re-emit <code>task.failed</code> with a <code>checkpoint_missing</code> error code.</li>
+<li><code>compensation_id</code> MUST reference the original <code>task_id</code> of the task whose side effects need reversal. Compensation tasks MUST follow the standard task lifecycle.</li>
 </ul>
 <h2>Provenance</h2>
 <h3>Fields</h3>
@@ -322,16 +325,16 @@ interruption.acknowledged
   }
 }
 </code></pre>
-<h3>Consumer Guidance</h3>
+<h3>Normative Requirements</h3>
 <ul>
-<li><code>evidence_chain</code> should be read as a time-ordered list from origin (earliest) to most recent. The last entry should be the immediate predecessor (<code>causation_id</code>).</li>
-<li>Assertions with <code>source_trust: "unverified"</code> should be treated as provisional. Consumers should avoid making irreversible decisions based solely on unverified assertions.</li>
-<li><code>source_trust: "signed"</code> can be verified through the identity and authorization mechanisms outlined in <code>docs/specs/security.md</code>.</li>
-<li>When <code>provenance.chain.truncated</code> arrives, consumers that relied on the missing portion should assess whether their conclusions remain valid. If not, treat the affected assertion as <code>belief_status: "unknown"</code>.</li>
-<li><code>attestation_count</code> increments with each <code>provenance.attestation.added</code> and effectively decrements with each <code>provenance.attestation.revoked</code>. Consumers should not use it as a sole trust signal without considering attestor identity.</li>
+<li><code>evidence_chain</code> MUST be read as a time-ordered list from origin (earliest) to most recent. The last entry MUST be the immediate predecessor (<code>causation_id</code>).</li>
+<li>Assertions with <code>source_trust: "unverified"</code> MUST be treated as provisional. Consumers MUST NOT make irreversible decisions based solely on unverified assertions.</li>
+<li><code>source_trust: "signed"</code> MAY be verified through the identity and authorization mechanisms outlined in <code>docs/protocol/security.md</code>.</li>
+<li>When <code>provenance.chain.truncated</code> arrives, consumers that relied on the missing portion SHOULD assess whether their conclusions remain valid. If not, they SHOULD treat the affected assertion as <code>belief_status: "unknown"</code>.</li>
+<li><code>attestation_count</code> increments with each <code>provenance.attestation.added</code> and effectively decrements with each <code>provenance.attestation.revoked</code>. Consumers SHOULD NOT use it as a sole trust signal without considering attestor identity.</li>
 </ul>
 <h2>Relationship To Other Specs</h2>
-<p>| Spec | Relationship | |---|---| | <code>task-lifecycle.md</code> | Delegation, interruption, and compensation events compose with the task state machine | | <code>session.md</code> | Session close should trigger interruption with policy <code>save_and_stop</code> for all active tasks | | <code>subscription.md</code> | Consumers can subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code> | | <code>delivery.md</code> | Checkpoint events should use <code>at_least_once</code> delivery | | <code>security.md</code> | <code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation may require identity/auth metadata | | <code>error-model.md</code> | Use standard error payloads for delegation rejection, interruption failure, and provenance verification failure |</p>
+<p>| Spec | Relationship | |---|---| | <code>task-lifecycle.md</code> | Delegation, interruption, and compensation events compose with the task state machine | | <code>session.md</code> | Session close SHOULD trigger interruption with policy <code>save_and_stop</code> for all active tasks | | <code>subscription.md</code> | Consumers MAY subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code> | | <code>delivery.md</code> | Checkpoint events SHOULD use <code>at_least_once</code> delivery | | <code>security.md</code> | <code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation MAY require identity/auth metadata | | <code>error-model.md</code> | Error payloads for delegation rejection, interruption failure, and provenance verification failure MUST follow the standard error model |</p>
 <h2>Field Summary</h2>
 <p>| Domain | Fields Added | |---|---| | Epistemic | <code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code> | | Freshness | <code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code> | | Delegation | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code> | | Interruption | <code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code> | | Provenance | <code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code> |</p>
 <p>All fields are optional envelope properties. All event types follow the <code>domain.object.action</code> naming convention. No existing required fields or event types change.</p>

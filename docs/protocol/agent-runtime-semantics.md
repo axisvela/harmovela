@@ -8,6 +8,12 @@ Define recommended envelope metadata fields and event types for agent-runtime co
 
 All additions are optional. No existing required fields change. All fields fall under the envelope `additionalProperties: true` policy.
 
+## Terminology And Normative Language
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+
+Normative requirements use RFC 2119 keywords. Guidance sections that do not use these keywords are non-normative and provided for implementation convenience only.
+
 ## Epistemic Metadata
 
 ### Fields
@@ -58,11 +64,11 @@ Emitted when multiple sources assert contradictory claims about the same subject
 }
 ```
 
-### Consumer Guidance
+### Normative Requirements
 
-- On `memory.fact.invalidated` with `belief_status: "retracted"`, consumers should inspect which working conclusions depend on the retracted fact and mark them for re-evaluation.
-- On `belief.conflict.detected`, consumers that have not yet acted on contested claims should defer until a `belief.revised` or a higher-authority resolution arrives.
-- `confidence` is advisory. Consumers should combine it with their own trust model; 0.95 confidence from an unverified source may carry less weight than 0.6 from a verified source.
+- On `memory.fact.invalidated` with `belief_status: "retracted"`, consumers MUST inspect which working conclusions depend on the retracted fact and mark them for re-evaluation.
+- On `belief.conflict.detected`, consumers that have not yet acted on contested claims SHOULD defer until a `belief.revised` or a higher-authority resolution arrives.
+- `confidence` is advisory. Consumers SHOULD combine it with their own trust model; 0.95 confidence from an unverified source MAY carry less weight than 0.6 from a verified source.
 
 ## Freshness And Validity
 
@@ -112,10 +118,10 @@ Emitted when a previously declared validity window is shortened or extended.
 }
 ```
 
-### Consumer Guidance
+### Normative Requirements
 
-- When `valid_until` has passed, consumers should treat the assertion as potentially stale. If `refresh_hint` is present, they may request a fresh copy.
-- When `freshness.expired` arrives for a resource the consumer relies on, it should re-read or re-request that resource before proceeding with decisions that depend on it.
+- When `valid_until` has passed, consumers MUST treat the assertion as potentially stale. If `refresh_hint` is present, they MAY request a fresh copy.
+- When `freshness.expired` arrives for a resource the consumer relies on, it SHOULD re-read or re-request that resource before proceeding with decisions that depend on it.
 - `stale_after` and `valid_until` are mutually informative. If both are present, the earliest point governs.
 
 ## Delegation And Handoff
@@ -209,13 +215,13 @@ Emitted when a delegated task is escalated to a supervisor or higher-authority a
 }
 ```
 
-### Consumer Guidance
+### Normative Requirements
 
 - A parent task MUST NOT transition to a terminal state (COMPLETED, FAILED, CANCELLED, TIMED_OUT) while it has active (non-terminal) child tasks. Resolve or cancel all children before the parent reaches a terminal state.
 - A child task MAY reach a terminal state independently of, and before, its parent. The common orchestration pattern (child completes first, parent aggregates) is valid.
 - When a parent task is cancelled, all child tasks MUST be cancelled. The runtime or orchestrator SHOULD emit `task.cancelled` for each child, referencing the parent via `causation_id`.
-- `handoff_token` should be treated as opaque. Consumers must not parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.
-- On `delegation.escalated`, consumers tracking the original task should route further status queries through the new delegate (`delegated_to`).
+- `handoff_token` MUST be treated as opaque. Consumers MUST NOT parse or derive information from it; its sole purpose is to verify ownership transfer against the delegating runtime.
+- On `delegation.escalated`, consumers tracking the original task SHOULD route further status queries through the new delegate (`delegated_to`).
 
 ## Interruption And Cancellation Safety
 
@@ -341,13 +347,13 @@ Emitted when an interrupted task is terminated rather than resumed.
 }
 ```
 
-### Consumer Guidance
+### Normative Requirements
 
-- On `interruption.requested` with policy `save_and_stop`, the task should create a checkpoint, emit `interruption.saved`, and stop within the grace period.
-- On `interruption.requested` with policy `drain_then_stop`, the task should finish its current unit of work before saving and stopping.
-- On `interruption.requested` with policy `force_stop`, the task should stop as soon as possible. Checkpoints are optional but encouraged.
-- Recovery after `interruption.resumed` should use the `checkpoint_id` to locate saved state. If the checkpoint is unavailable, the task should re-emit `task.failed` with a `checkpoint_missing` error code.
-- `compensation_id` should reference the original `task_id` of the task whose side effects need reversal. Compensation tasks should follow the standard task lifecycle.
+- On `interruption.requested` with policy `save_and_stop`, the task MUST create a checkpoint, emit `interruption.saved`, and stop within the grace period.
+- On `interruption.requested` with policy `drain_then_stop`, the task SHOULD finish its current unit of work before saving and stopping.
+- On `interruption.requested` with policy `force_stop`, the task MUST stop as soon as possible. Checkpoints are OPTIONAL but RECOMMENDED.
+- Recovery after `interruption.resumed` MUST use the `checkpoint_id` to locate saved state. If the checkpoint is unavailable, the task MUST re-emit `task.failed` with a `checkpoint_missing` error code.
+- `compensation_id` MUST reference the original `task_id` of the task whose side effects need reversal. Compensation tasks MUST follow the standard task lifecycle.
 
 ## Provenance
 
@@ -418,24 +424,24 @@ Emitted when a runtime detects that earlier links in an evidence chain are no lo
 }
 ```
 
-### Consumer Guidance
+### Normative Requirements
 
-- `evidence_chain` should be read as a time-ordered list from origin (earliest) to most recent. The last entry should be the immediate predecessor (`causation_id`).
-- Assertions with `source_trust: "unverified"` should be treated as provisional. Consumers should avoid making irreversible decisions based solely on unverified assertions.
-- `source_trust: "signed"` can be verified through the identity and authorization mechanisms outlined in `docs/specs/security.md`.
-- When `provenance.chain.truncated` arrives, consumers that relied on the missing portion should assess whether their conclusions remain valid. If not, treat the affected assertion as `belief_status: "unknown"`.
-- `attestation_count` increments with each `provenance.attestation.added` and effectively decrements with each `provenance.attestation.revoked`. Consumers should not use it as a sole trust signal without considering attestor identity.
+- `evidence_chain` MUST be read as a time-ordered list from origin (earliest) to most recent. The last entry MUST be the immediate predecessor (`causation_id`).
+- Assertions with `source_trust: "unverified"` MUST be treated as provisional. Consumers MUST NOT make irreversible decisions based solely on unverified assertions.
+- `source_trust: "signed"` MAY be verified through the identity and authorization mechanisms outlined in `docs/protocol/security.md`.
+- When `provenance.chain.truncated` arrives, consumers that relied on the missing portion SHOULD assess whether their conclusions remain valid. If not, they SHOULD treat the affected assertion as `belief_status: "unknown"`.
+- `attestation_count` increments with each `provenance.attestation.added` and effectively decrements with each `provenance.attestation.revoked`. Consumers SHOULD NOT use it as a sole trust signal without considering attestor identity.
 
 ## Relationship To Other Specs
 
 | Spec | Relationship |
 |---|---|
 | `task-lifecycle.md` | Delegation, interruption, and compensation events compose with the task state machine |
-| `session.md` | Session close should trigger interruption with policy `save_and_stop` for all active tasks |
-| `subscription.md` | Consumers can subscribe to `belief.*`, `freshness.*`, `delegation.*`, `interruption.*`, `compensation.*`, and `provenance.*` |
-| `delivery.md` | Checkpoint events should use `at_least_once` delivery |
-| `security.md` | `source_trust: "signed"` verification and `handoff_token` validation may require identity/auth metadata |
-| `error-model.md` | Use standard error payloads for delegation rejection, interruption failure, and provenance verification failure |
+| `session.md` | Session close SHOULD trigger interruption with policy `save_and_stop` for all active tasks |
+| `subscription.md` | Consumers MAY subscribe to `belief.*`, `freshness.*`, `delegation.*`, `interruption.*`, `compensation.*`, and `provenance.*` |
+| `delivery.md` | Checkpoint events SHOULD use `at_least_once` delivery |
+| `security.md` | `source_trust: "signed"` verification and `handoff_token` validation MAY require identity/auth metadata |
+| `error-model.md` | Error payloads for delegation rejection, interruption failure, and provenance verification failure MUST follow the standard error model |
 
 ## Field Summary
 
