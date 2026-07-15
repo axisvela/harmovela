@@ -5,10 +5,12 @@ import (
 
 	"github.com/axisrobo/harmovela/adaptation"
 	"github.com/axisrobo/harmovela/agent"
+	"github.com/axisrobo/harmovela/command"
 	"github.com/axisrobo/harmovela/context"
 	"github.com/axisrobo/harmovela/delegation"
 	"github.com/axisrobo/harmovela/environment"
 	"github.com/axisrobo/harmovela/event"
+	"github.com/axisrobo/harmovela/query"
 	"github.com/axisrobo/harmovela/recovery"
 	"github.com/axisrobo/harmovela/state"
 	"github.com/axisrobo/harmovela/tool"
@@ -57,6 +59,12 @@ var legacyStandardEventTypes = func() map[string]bool {
 		m[k] = v
 	}
 	for k, v := range adaptation.EventTypes {
+		m[k] = v
+	}
+	for k, v := range command.EventTypes {
+		m[k] = v
+	}
+	for k, v := range query.EventTypes {
 		m[k] = v
 	}
 	return m

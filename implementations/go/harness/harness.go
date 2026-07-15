@@ -31,6 +31,8 @@ type Harness struct {
 	Audit         []AuditRecord
 	Budget        map[string]map[string]float64
 	BudgetLimits  map[string]float64
+	commands      map[string]map[string]any
+	queries       map[string]map[string]any
 }
 
 func NewHarness() *Harness {
@@ -43,6 +45,8 @@ func NewHarness() *Harness {
 		Audit:         make([]AuditRecord, 0),
 		Budget:        make(map[string]map[string]float64),
 		BudgetLimits:  make(map[string]float64),
+		commands:      make(map[string]map[string]any),
+		queries:       make(map[string]map[string]any),
 	}
 	h.setupRouter()
 	h.setupDeliveryRouter()
@@ -95,6 +99,22 @@ func (h *Harness) setupRouter() {
 			typ, _ := evt["type"].(string)
 			return typ == "session.closed"
 		}, h.handleSessionClosed).
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
+			return typ == "command.requested"
+		}, h.handleCommandRequested).
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
+			return len(typ) > 8 && typ[:8] == "command." && typ != "command.requested"
+		}, h.handleCommandLifecycle).
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
+			return typ == "query.requested"
+		}, h.handleQueryRequested).
+		On(func(evt map[string]any) bool {
+			typ, _ := evt["type"].(string)
+			return len(typ) > 6 && typ[:6] == "query." && typ != "query.requested"
+		}, h.handleQueryLifecycle).
 		On(func(evt map[string]any) bool {
 			typ, _ := evt["type"].(string)
 			return len(typ) > 10 && typ[:10] == "adaptation"
@@ -367,6 +387,154 @@ func (h *Harness) handleTaskEvent(evt map[string]any) any {
 	}
 
 	return responses
+}
+
+func (h *Harness) handleCommandRequested(evt map[string]any) any {
+	correlationID, _ := evt["correlation_id"].(string)
+	if correlationID == "" {
+		correlationID = fmt.Sprintf("cmd_%d", time.Now().UnixMilli())
+	}
+	target, _ := evt["target"].(string)
+	payload, _ := evt["payload"].(map[string]any)
+
+	if target == "" {
+		return h.newEvent("command.rejected", evt, map[string]any{
+			"correlation_id": correlationID,
+			"reason":         "missing target agent",
+			"error":          event.ErrorPayload(event.ErrorCodeInvalidCommand, "command.requested must include target agent", false),
+		})
+	}
+
+	if _, exists := h.commands[correlationID]; exists {
+		return h.newEvent("command.rejected", evt, map[string]any{
+			"correlation_id": correlationID,
+			"reason":         "duplicate correlation_id",
+			"error":          event.ErrorPayload(event.ErrorCodeInvalidCommand, "duplicate command correlation_id: "+correlationID, false),
+		})
+	}
+
+	negotiationWindowMs := any(float64(5000))
+	if payload != nil {
+		if v, ok := payload["negotiation_window_ms"]; ok {
+			negotiationWindowMs = v
+		}
+	}
+	source, _ := evt["source"].(string)
+	h.commands[correlationID] = map[string]any{
+		"id":                    correlationID,
+		"source":                source,
+		"target":                target,
+		"status":                "accepted",
+		"accepted_at":           Now(),
+		"negotiation_window_ms": negotiationWindowMs,
+		"payload":               payload,
+	}
+
+	return h.newEvent("command.accepted", evt, map[string]any{
+		"correlation_id":        correlationID,
+		"target":                target,
+		"negotiation_window_ms": negotiationWindowMs,
+	})
+}
+
+func (h *Harness) handleCommandLifecycle(evt map[string]any) any {
+	correlationID, _ := evt["correlation_id"].(string)
+	if cmd, ok := h.commands[correlationID]; ok {
+		typ, _ := evt["type"].(string)
+		switch typ {
+		case "command.completed":
+			cmd["status"] = "completed"
+			delete(h.commands, correlationID)
+		case "command.failed":
+			cmd["status"] = "failed"
+			delete(h.commands, correlationID)
+		case "command.rejected":
+			cmd["status"] = "rejected"
+			delete(h.commands, correlationID)
+		}
+	}
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
+	})
+}
+
+func (h *Harness) handleQueryRequested(evt map[string]any) any {
+	correlationID, _ := evt["correlation_id"].(string)
+	if correlationID == "" {
+		correlationID = fmt.Sprintf("qry_%d", time.Now().UnixMilli())
+	}
+	target, _ := evt["target"].(string)
+	payload, _ := evt["payload"].(map[string]any)
+	var scope any
+	if payload != nil {
+		scope = payload["query_scope"]
+	}
+
+	if target == "" {
+		return h.newEvent("query.rejected", evt, map[string]any{
+			"correlation_id": correlationID,
+			"reason":         "missing target agent",
+			"error":          event.ErrorPayload(event.ErrorCodeInvalidQuery, "query.requested must include target agent", false),
+		})
+	}
+
+	if scope == nil {
+		return h.newEvent("query.rejected", evt, map[string]any{
+			"correlation_id": correlationID,
+			"reason":         "missing query scope",
+			"error":          event.ErrorPayload(event.ErrorCodeInvalidQuery, "query.requested must include query_scope in payload", false),
+		})
+	}
+
+	snapshotVersion := fmt.Sprintf("snap_%d_%04d", time.Now().UnixMilli(), h.nextSeq())
+	source, _ := evt["source"].(string)
+
+	var freshness any
+	var pagination any
+	if payload != nil {
+		freshness = payload["freshness"]
+		pagination = payload["pagination"]
+	}
+
+	h.queries[correlationID] = map[string]any{
+		"id":               correlationID,
+		"source":           source,
+		"target":           target,
+		"scope":            scope,
+		"snapshot_version": snapshotVersion,
+		"created_at":       Now(),
+		"freshness":        freshness,
+		"pagination":       pagination,
+	}
+
+	var paginationResponse any
+	if p, ok := pagination.(map[string]any); ok {
+		merged := make(map[string]any, len(p)+1)
+		for k, v := range p {
+			merged[k] = v
+		}
+		merged["next_cursor"] = nil
+		paginationResponse = merged
+	}
+
+	return h.newEvent("query.response", evt, map[string]any{
+		"correlation_id":   correlationID,
+		"query_scope":      scope,
+		"snapshot_version": snapshotVersion,
+		"freshness":        freshness,
+		"pagination":       paginationResponse,
+	})
+}
+
+func (h *Harness) handleQueryLifecycle(evt map[string]any) any {
+	typ, _ := evt["type"].(string)
+	if typ == "query.error" {
+		correlationID, _ := evt["correlation_id"].(string)
+		delete(h.queries, correlationID)
+	}
+	return h.newEvent("event.acknowledged", evt, map[string]any{
+		"acknowledged_event_id": evt["id"],
+	})
 }
 
 func (h *Harness) handleTaskCancelRequested(evt map[string]any) any {

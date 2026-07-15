@@ -17,6 +17,8 @@ const (
 	ErrorCodeToolError            = "tool_error"
 	ErrorCodeToolTimeout          = "tool_timeout"
 	ErrorCodeInternalError        = "internal_error"
+	ErrorCodeInvalidCommand       = "invalid_command"
+	ErrorCodeInvalidQuery         = "invalid_query"
 	ErrorCodeBudgetExceeded       = "budget_exceeded"
 )
 
