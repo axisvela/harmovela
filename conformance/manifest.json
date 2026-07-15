@@ -621,6 +621,38 @@
         "task.started",
         "task.completed"
       ]
+    },
+    {
+      "path": "fixtures/capability-contract-formal.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "CAP-C0 contract conformance: minimal and fully-populated capability contracts accepted via capability.registered.",
+      "expectation": "accept_all",
+      "profile": "capability",
+      "tags": [
+        "capability",
+        "cap-c0"
+      ],
+      "expected_types": [
+        "capability.registered",
+        "capability.registered"
+      ]
+    },
+    {
+      "path": "fixtures/capability-contract-reject.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "CAP-C0 contract rejection: missing signature, non-semver version, and empty implementations rejected by the payload schema contract mirror.",
+      "expectation": "reject_some",
+      "profile": "capability",
+      "tags": [
+        "negative",
+        "capability",
+        "cap-c0"
+      ],
+      "expected_types": [
+        "capability.registered",
+        "capability.registered",
+        "capability.registered"
+      ]
     }
   ],
   "profiles": {
@@ -676,7 +708,9 @@
       "fixtures": [
         "fixtures/capability-positive.ndjson",
         "fixtures/capability-negative.ndjson",
-        "fixtures/capability-composed.ndjson"
+        "fixtures/capability-composed.ndjson",
+        "fixtures/capability-contract-formal.ndjson",
+        "fixtures/capability-contract-reject.ndjson"
       ]
     }
   }
