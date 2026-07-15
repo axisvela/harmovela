@@ -45,7 +45,9 @@ public final class Envelope {
         "command.requested", "command.accepted", "command.rejected",
         "command.completed", "command.failed",
         "query.requested", "query.response", "query.rejected",
-        "query.error"
+        "query.error",
+        "capability.registered", "capability.updated", "capability.deprecated",
+        "capability.composed", "capability.validated"
     );
 
     public static boolean isStandardEventType(String type) {
