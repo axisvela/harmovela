@@ -120,3 +120,19 @@ test("capability.validated with unknown level fails payload schema", () => {
   });
   assert.equal(isValidBySchema(event, "payloads"), false);
 });
+
+test("capability.composed with empty capabilities fails payload schema", () => {
+  const event = envelope("capability.composed", {
+    composition_id: "comp_01",
+    capabilities: []
+  });
+  assert.equal(isValidBySchema(event, "payloads"), false);
+});
+
+test("capability.composed with hyphenated capability id fails payload schema", () => {
+  const event = envelope("capability.composed", {
+    composition_id: "comp_01",
+    capabilities: ["engineering.quality.code-review", "engineering.release.changelog_generation"]
+  });
+  assert.equal(isValidBySchema(event, "payloads"), false);
+});
