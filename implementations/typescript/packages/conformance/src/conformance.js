@@ -14,7 +14,9 @@ const PAYLOAD_VALIDATED_TYPES = new Set([
   "interruption.requested", "interruption.acknowledged", "interruption.saved",
   "interruption.resumed", "interruption.cancelled",
   "compensation.requested", "compensation.completed",
-  "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated"
+  "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
+  "capability.registered", "capability.updated", "capability.deprecated",
+  "capability.composed", "capability.validated"
 ]);
 
 const LEVEL_ORDER = new Map([

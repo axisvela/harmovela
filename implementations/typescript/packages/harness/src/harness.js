@@ -13,6 +13,7 @@ import { ENVIRONMENT_EVENT_TYPES } from "@axisrobo/harmovela-environment";
 import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
 import { COMMAND_EVENT_TYPES } from "@axisrobo/harmovela-command";
 import { QUERY_EVENT_TYPES } from "@axisrobo/harmovela-query";
+import { CAPABILITY_EVENT_TYPES } from "@axisrobo/harmovela-capability";
 
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
@@ -41,6 +42,7 @@ const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   ...ADAPTATION_EVENT_TYPES,
   ...COMMAND_EVENT_TYPES,
   ...QUERY_EVENT_TYPES,
+  ...CAPABILITY_EVENT_TYPES,
 ]);
 
 export function isLegacyDimensionEventType(type) {
