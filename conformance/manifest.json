@@ -598,6 +598,29 @@
         "capability.updated",
         "capability.validated"
       ]
+    },
+    {
+      "path": "fixtures/capability-composed.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Capability composition chain: capability.composed declaration followed by two capability execution tasks linked by causation_id and parent_task_id.",
+      "expectation": "stateful_flow",
+      "profile": "capability",
+      "tags": [
+        "capability",
+        "composition",
+        "task"
+      ],
+      "expected_types": [
+        "capability.composed",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.completed",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.completed"
+      ]
     }
   ],
   "profiles": {
@@ -649,10 +672,11 @@
       "display_name": "Capability Contract",
       "description": "Typed capability contract lifecycle: registration, versioned update, validation, deprecation, composition chains, and CAP-C0 contract conformance.",
       "required_core_level": "HARMOVELA-C0",
-      "levels": ["HARMOVELA-C0"],
+      "levels": ["HARMOVELA-C0", "HARMOVELA-C1"],
       "fixtures": [
         "fixtures/capability-positive.ndjson",
-        "fixtures/capability-negative.ndjson"
+        "fixtures/capability-negative.ndjson",
+        "fixtures/capability-composed.ndjson"
       ]
     }
   }
