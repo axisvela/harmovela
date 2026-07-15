@@ -135,6 +135,28 @@ The selector is a simple priority-ordered rule set:
 - **context_match**: Evaluates `when` conditions against runtime context (sandbox type, network availability, permissions, model type)
 - **first_available**: Picks the first implementation whose runtime is reachable
 
+## Implementation Resolution
+
+`implementations[].path` is a logical artifact reference, not a physical runtime address. The two concerns have different lifecycles and different owners:
+
+| Information | Lifecycle | Owner |
+|-------------|-----------|-------|
+| Artifact reference (`path`, `locator`) | Changes with the contract version | Capability Contract (MNEME registry) |
+| Execution endpoint (where AXON Core / Vulcan Forge / Janus Gateway actually run) | Changes with deployment, environment, region | Hop 2 execution engine registry (deployment configuration) |
+
+Physical endpoints deliberately stay out of the contract. Embedding a concrete address would couple a portable, versioned, governed definition to a specific deployment, forcing a contract version bump on every infrastructure change.
+
+The resolution chain at execution time:
+
+1. `selector` picks an `implementations[]` entry (by `type`).
+2. The Hop 2 execution engine registry — deployment configuration, one per environment — maps `type` + `runtime` (and optionally `endpoint_ref`) to the actual engine endpoint.
+3. The selected engine interprets `path` within its own artifact namespace, or dereferences `locator` when present.
+
+Two optional fields support this without breaking the layering:
+
+- `locator`: an artifact locator URI (`file://`, `git+https://`, `oci://`, `mcp://`, `https://`) pinning where the artifact lives when engine-relative `path` resolution is not enough.
+- `endpoint_ref`: a logical key into the deployment configuration's endpoint bindings. It names a binding; it is never itself a physical address.
+
 ## Example Instance
 
 ```json
@@ -191,12 +213,14 @@ The selector is a simple priority-ordered rule set:
     {
       "type": "skill",
       "path": "skills/code-review/SKILL.md",
+      "locator": "git+https://github.com/axisrobo/harmovela.git#skills/code-review/SKILL.md",
       "runtime": "node",
       "description": "LLM-based review using code-review SKILL.md prompt"
     },
     {
       "type": "script",
       "path": "scripts/review.py",
+      "endpoint_ref": "vulcan-forge.default",
       "runtime": "python",
       "description": "Deterministic lint-based review script"
     }

@@ -283,7 +283,16 @@
           },
           "path": {
             "type": "string",
-            "description": "Relative file path (for skill/script/workflow), MCP server name, or API base URL"
+            "description": "Engine-relative artifact reference interpreted by the selected execution engine (for skill/script/workflow), MCP server name, or API base path. Physical endpoints do not belong in the contract; see locator and endpoint_ref."
+          },
+          "locator": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional artifact locator URI identifying where the implementation artifact lives. Supported scheme conventions: file://, git+https://, oci://, mcp://, https://. When absent, path is resolved by the selected execution engine within its own artifact namespace."
+          },
+          "endpoint_ref": {
+            "type": "string",
+            "description": "Optional logical key referencing an execution endpoint binding in Hop 2 deployment configuration (execution engine registry). Never a physical address; physical endpoints are resolved per environment at execution time."
           },
           "entrypoint": {
             "type": "string",
