@@ -566,6 +566,38 @@
         "query.requested",
         "query.requested"
       ]
+    },
+    {
+      "path": "fixtures/capability-positive.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Capability contract lifecycle: registered, updated, validated, and deprecated events with payload schema validation.",
+      "expectation": "accept_all",
+      "profile": "capability",
+      "tags": [
+        "capability"
+      ],
+      "expected_types": [
+        "capability.registered",
+        "capability.updated",
+        "capability.validated",
+        "capability.deprecated"
+      ]
+    },
+    {
+      "path": "fixtures/capability-negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Invalid capability payloads rejected: bad governance risk enum, missing version, unknown CAP level.",
+      "expectation": "reject_some",
+      "profile": "capability",
+      "tags": [
+        "negative",
+        "capability"
+      ],
+      "expected_types": [
+        "capability.registered",
+        "capability.updated",
+        "capability.validated"
+      ]
     }
   ],
   "profiles": {
@@ -611,6 +643,16 @@
       "fixtures": [
         "fixtures/adaptation-positive.ndjson",
         "fixtures/adaptation-negative.ndjson"
+      ]
+    },
+    "capability": {
+      "display_name": "Capability Contract",
+      "description": "Typed capability contract lifecycle: registration, versioned update, validation, deprecation, composition chains, and CAP-C0 contract conformance.",
+      "required_core_level": "HARMOVELA-C0",
+      "levels": ["HARMOVELA-C0"],
+      "fixtures": [
+        "fixtures/capability-positive.ndjson",
+        "fixtures/capability-negative.ndjson"
       ]
     }
   }
