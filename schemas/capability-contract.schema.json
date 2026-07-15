@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/capability-contract.v0.1.schema.json",
+  "title": "Capability Contract",
+  "description": "A typed, governed contract that defines a Capability as the primary abstraction for agentic program execution. Replaces SKILL.md as the primary unit — Skill is absorbed as one implementation profile (implementations[].type: \"skill\"). Routing is Intent → Capability → Execution Engine, with implementation selection controlled by the embedded selector field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "signature", "permissions", "governance", "freshness", "implementations"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$",
+      "description": "Dotted hierarchical capability identifier. Example: engineering.quality.code-review"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.]+)?$",
+      "description": "Semver version of this capability contract"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable name for this capability"
+    },
+    "description": {
+      "type": "string",
+      "description": "Natural language description used for semantic matching by ORCHID O-0"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for discovery and categorization"
+    },
+
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputs", "outputs", "preconditions", "postconditions"],
+      "description": "Type-level contract: what goes in, what comes out, what must be true before and after",
+      "properties": {
+        "inputs": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "required": ["type"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string", "minLength": 1, "description": "Semantic type name, used for structural matching" },
+              "schema": { "type": "string", "format": "uri-reference", "description": "Relative path or URI to JSON Schema for validation" },
+              "description": { "type": "string" },
+              "required": { "type": "boolean", "default": true }
+            }
+          },
+          "description": "Named input parameters with their types"
+        },
+        "outputs": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "required": ["type"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string", "minLength": 1, "description": "Semantic type name of the output" },
+              "schema": { "type": "string", "format": "uri-reference", "description": "Relative path or URI to JSON Schema for validation" },
+              "description": { "type": "string" }
+            }
+          },
+          "description": "Named output results with their types"
+        },
+        "preconditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Conditions that must be true before this capability can execute"
+        },
+        "postconditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Conditions guaranteed true after successful execution"
+        },
+        "effects": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Declared side effects. Convention: may_read_*, may_write_*, may_delete_*, may_restart_*, may_modify_*"
+        },
+        "idempotency": {
+          "type": "string",
+          "description": "Idempotency classification. Examples: idempotent, idempotent_with_freshness(5m), non_idempotent"
+        },
+        "recovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "compensation": { "type": "string", "description": "Compensating capability ID or action for undo" },
+            "rollback": { "type": "string", "description": "Rollback capability ID or action" },
+            "retry_strategy": {
+              "enum": ["none", "at_most_once", "exponential_backoff", "linear"],
+              "description": "Retry strategy on failure"
+            },
+            "max_retries": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope"],
+      "description": "Permission and resource constraints for execution",
+      "properties": {
+        "scope": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "boolean" },
+          "description": "Permission scopes as boolean flags. Convention: resource:action. Example: {\"repo:read\": true, \"repo:write:comments\": true, \"cluster:deploy\": false}"
+        },
+        "network": {
+          "enum": ["disabled", "allowlisted", "open"],
+          "default": "disabled",
+          "description": "Network access level during execution"
+        },
+        "filesystem": {
+          "enum": ["none", "read_only", "scoped_rw", "full"],
+          "default": "none",
+          "description": "Filesystem access level during execution"
+        },
+        "max_runtime_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum execution time in milliseconds"
+        },
+        "max_memory_mb": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum memory allocation in megabytes"
+        }
+      }
+    },
+
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk"],
+      "description": "Governance metadata: risk classification, approval policy, ownership",
+      "properties": {
+        "risk": {
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Risk classification used by Archon Guard for capability token issuance decisions"
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": { "enum": ["auto", "approval_required", "none"] },
+          "description": "Per-environment approval mode. Example: {\"production\": \"approval_required\", \"staging\": \"auto\"}"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Team or individual responsible for this capability's lifecycle"
+        },
+        "review_interval": {
+          "type": "string",
+          "description": "ISO 8601 duration for periodic governance review. Example: P90D, P6M, P1Y"
+        }
+      }
+    },
+
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid_from"],
+      "description": "Freshness windows for capability validity. Maps to Harmovela envelope valid_from/valid_until/stale_after semantics.",
+      "properties": {
+        "valid_from": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this capability version becomes effective"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this capability version expires"
+        },
+        "stale_after": {
+          "type": "string",
+          "pattern": "^P\\d+[YMWD]$",
+          "description": "ISO 8601 duration after which the capability is considered stale. Example: P180D, P6M"
+        }
+      }
+    },
+
+    "enterprise": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Enterprise architecture classification. Optional — not all capabilities need business mapping.",
+      "properties": {
+        "business_domain": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Business units or departments. Example: [\"Engineering\", \"Security\", \"Finance\"]"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "enum": ["global", "na", "eu", "apac", "latam", "mea", "africa"]
+          },
+          "description": "Geographic regions where this capability is applicable"
+        },
+        "business_capabilities": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Business capability taxonomy references"
+        },
+        "apqc_processes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category_id", "process_name"],
+            "properties": {
+              "category_id": { "type": "string", "description": "APQC PCF category ID. Example: 8.2.1" },
+              "process_name": { "type": "string", "description": "APQC process name" },
+              "level": { "type": "integer", "minimum": 1, "maximum": 5 }
+            }
+          },
+          "description": "APQC Process Classification Framework references"
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Applicable compliance frameworks. Example: [\"SOX\", \"GDPR\", \"SOC2\", \"ISO27001\"]"
+        }
+      }
+    },
+
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "default"],
+      "description": "Implementation selection logic embedded in the capability contract itself — NOT a separate routing layer. Resolves which implementations[] entry to use based on execution context.",
+      "properties": {
+        "strategy": {
+          "enum": ["priority", "context_match", "first_available"],
+          "description": "Selection strategy: priority (first matching rule wins), context_match (best context fit), first_available (first reachable runtime)"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["prefer"],
+            "properties": {
+              "prefer": { "enum": ["skill", "script", "workflow", "mcp", "api", "service"] },
+              "when": {
+                "type": "object",
+                "description": "Context conditions that trigger this preference. Common keys: sandbox (docker|wasm|none), model (cloud|local), network (enabled|disabled), tenant",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          },
+          "description": "Ordered preference rules. First matching rule determines the implementation."
+        },
+        "default": {
+          "enum": ["skill", "script", "workflow", "mcp", "api", "service"],
+          "description": "Fallback implementation type when no rules match"
+        }
+      }
+    },
+
+    "implementations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "path"],
+        "properties": {
+          "type": {
+            "enum": ["skill", "script", "workflow", "mcp", "api", "service"],
+            "description": "Implementation profile: skill (LLM prompt in SKILL.md), script (deterministic code), workflow (defined process), mcp (model context protocol server), api (REST/gRPC), service (long-running service)"
+          },
+          "path": {
+            "type": "string",
+            "description": "Relative file path (for skill/script/workflow), MCP server name, or API base URL"
+          },
+          "entrypoint": {
+            "type": "string",
+            "description": "Optional entrypoint function or command for scripts and workflows"
+          },
+          "runtime": {
+            "enum": ["node", "python", "go", "java", "wasm", "docker", "native"],
+            "description": "Target runtime environment for this implementation"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of this specific implementation"
+          }
+        }
+      },
+      "description": "Concrete implementations of this capability. Skill is one profile among many — routing layer never sees this distinction."
+    },
+
+    "conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Capability conformance verification metadata. Mirrors Harmovela's C0-C3 conformance model extended with CAP-C4 governance.",
+      "properties": {
+        "level": {
+          "enum": ["CAP-C0", "CAP-C1", "CAP-C2", "CAP-C3", "CAP-C4"],
+          "description": "Certified conformance level. CAP-C0=schema valid, CAP-C1=golden cases, CAP-C2=adversarial, CAP-C3=composition invariants, CAP-C4=governance integrity"
+        },
+        "golden_cases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Paths to golden test fixture files (NDJSON format, one input event per line)"
+        },
+        "adversarial_cases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Paths to adversarial test fixture files (malformed inputs, boundary conditions, attack payloads)"
+        },
+        "benchmark": {
+          "type": "string",
+          "description": "Benchmark identifier or path for performance and accuracy measurement"
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the last successful conformance verification"
+        },
+        "verified_by": {
+          "type": "string",
+          "description": "Actor or system that performed the last verification"
+        }
+      }
+    }
+  }
+}
