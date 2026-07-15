@@ -21,6 +21,8 @@ PAYLOAD_VALIDATED_TYPES = frozenset({
     "interruption.resumed", "interruption.cancelled",
     "compensation.requested", "compensation.completed",
     "provenance.attestation.added", "provenance.attestation.revoked", "provenance.chain.truncated",
+    "capability.registered", "capability.updated", "capability.deprecated",
+    "capability.composed", "capability.validated",
 })
 
 

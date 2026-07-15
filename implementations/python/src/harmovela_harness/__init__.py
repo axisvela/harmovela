@@ -14,12 +14,13 @@ from axisrobo_harmovela_task import TaskTracker
 from axisrobo_harmovela_tool import TOOL_EVENT_TYPES
 from axisrobo_harmovela_command import COMMAND_EVENT_TYPES
 from axisrobo_harmovela_query import QUERY_EVENT_TYPES
+from axisrobo_harmovela_capability import CAPABILITY_EVENT_TYPES
 
 LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
     "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
     "task.output", "task.completed", "task.failed", "task.cancel.requested", "task.cancelled", "task.timed_out",
-}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES).union(ADAPTATION_EVENT_TYPES).union(COMMAND_EVENT_TYPES).union(QUERY_EVENT_TYPES))
+}.union(CONTEXT_MEMORY_EVENT_TYPES).union(DELEGATION_EVENT_TYPES).union(RECOVERY_EVENT_TYPES).union(STATE_EVENT_TYPES).union(TOOL_EVENT_TYPES).union(AGENT_EVENT_TYPES).union(ENVIRONMENT_EVENT_TYPES).union(ADAPTATION_EVENT_TYPES).union(COMMAND_EVENT_TYPES).union(QUERY_EVENT_TYPES).union(CAPABILITY_EVENT_TYPES))
 
 
 def is_legacy_dimension_event_type(type_: str) -> bool:
