@@ -90,6 +90,11 @@ Autonomous coordination requires verifiable boundaries. Harmovela provides ident
 - Harmovela is not a new LLM inference API.
 - Harmovela is not a general database API.
 - Harmovela is not a mandatory message broker implementation.
+- Harmovela is not a Capability Registry or Catalog — capability contracts and service discovery are platform concerns, not protocol concerns.
+- Harmovela is not a Planning or Orchestration Engine — decomposition, composition, and replanning algorithms belong to planning layers above the protocol.
+- Harmovela is not an Agent Runtime — agent execution loops, sandboxing, tool invocation, and model interaction belong to agent runtimes.
+- Harmovela is not a Workflow Engine — deterministic process instances, BPMN-like visualization, and human-task nodes are platform concerns.
+- Harmovela is not a Governance Platform — enterprise policy management, tenant administration, and compliance dashboards belong to governance layers above the protocol.
 - Harmovela does not define every domain-specific event schema.
 - Harmovela does not define a general intelligence model or universal ontology.
 
@@ -104,4 +109,5 @@ Autonomous coordination requires verifiable boundaries. Harmovela provides ident
 - **Durability optional, semantics explicit**: transports may be ephemeral or durable, but delivery guarantees must be declared.
 - **Causality matters**: every event should be traceable to a task, conversation, or triggering event when available.
 - **Human-readable, machine-validatable**: JSON should be easy to inspect and schema-check.
+- **Protocol, not platform**: define coordination semantics — events, task lifecycle, state, delegation, recovery, governance. Capability registries, planners, agent runtimes, workflow engines, and governance dashboards are platform concerns that consume the protocol, not protocol concerns themselves.
 - **Small core, extensible domains**: standardize the envelope and lifecycle events; allow domain-specific payloads.

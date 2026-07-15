@@ -24,6 +24,8 @@ Harmovela Protocol is an open coordination protocol for autonomous systems acros
 
 Harmovela complements MCP. MCP is the synchronous capability invocation layer; Harmovela provides asynchronous event, subscription, lifecycle, state, recovery, and coordination semantics.
 
+Harmovela is a coordination protocol, not a platform. It defines the semantics for events, tasks, state, delegation, recovery, and governance. Capability registries, planning engines, agent runtimes, workflow engines, and governance dashboards are platform concerns that consume the protocol — they are not protocol features. See `docs/vision.md` for the full non-goals list.
+
 The canonical repository location is `https://github.com/axisrobo/harmovela`.
 
 ## Naming And Namespace Rules
