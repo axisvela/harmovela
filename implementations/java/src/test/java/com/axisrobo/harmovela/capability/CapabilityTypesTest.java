@@ -31,6 +31,7 @@ public class CapabilityTypesTest {
     void isCapabilityEventTypeNegatives() {
         assertFalse(CapabilityTypes.isCapabilityEventType("capabilities.requested"));
         assertFalse(CapabilityTypes.isCapabilityEventType("command.requested"));
+        assertFalse(CapabilityTypes.isCapabilityEventType(""));
         assertFalse(CapabilityTypes.isCapabilityEventType(null));
     }
 
