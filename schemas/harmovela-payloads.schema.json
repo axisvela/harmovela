@@ -382,6 +382,123 @@
           }
         }
       }
+    },
+    {
+      "if": { "properties": { "type": { "const": "capability.registered" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["contract"],
+            "properties": {
+              "contract": {
+                "type": "object",
+                "required": ["id", "version", "signature", "permissions", "governance", "freshness", "implementations"],
+                "properties": {
+                  "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+                  "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.]+)?$" },
+                  "signature": {
+                    "type": "object",
+                    "required": ["inputs", "outputs", "preconditions", "postconditions"]
+                  },
+                  "permissions": { "type": "object", "required": ["scope"] },
+                  "governance": {
+                    "type": "object",
+                    "required": ["risk"],
+                    "properties": {
+                      "risk": { "enum": ["low", "medium", "high", "critical"] }
+                    }
+                  },
+                  "freshness": { "type": "object", "required": ["valid_from"] },
+                  "implementations": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["type", "path"],
+                      "properties": {
+                        "type": { "enum": ["skill", "script", "workflow", "mcp", "api", "service"] }
+                      }
+                    }
+                  }
+                }
+              },
+              "registry": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "capability.updated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["capability_id", "version"],
+            "properties": {
+              "capability_id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+              "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.]+)?$" },
+              "previous_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.]+)?$" },
+              "changes": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "capability.deprecated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["capability_id", "reason"],
+            "properties": {
+              "capability_id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+              "reason": { "type": "string", "minLength": 1 },
+              "replaced_by": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+              "sunset_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "capability.composed" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["composition_id", "capabilities"],
+            "properties": {
+              "composition_id": { "type": "string", "minLength": 1 },
+              "capabilities": {
+                "type": "array",
+                "minItems": 2,
+                "items": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" }
+              },
+              "binding": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "capability.validated" } } },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": ["capability_id", "level"],
+            "properties": {
+              "capability_id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+              "level": { "enum": ["CAP-C0", "CAP-C1", "CAP-C2", "CAP-C3", "CAP-C4"] },
+              "verified_by": { "type": "string" },
+              "fixtures": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
     }
   ]
 }
