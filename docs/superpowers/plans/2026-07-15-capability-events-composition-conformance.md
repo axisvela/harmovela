@@ -1295,3 +1295,45 @@ git commit -m "docs: record capability conformance verification results"
 - Harness route handlers with capability lifecycle state machines (no state tracking needed for these fixtures; default acknowledgement is correct)
 - CAP-C1..C4 fixtures (require capability execution semantics, deferred)
 - Any change to `capabilities.*` (existing family, untouched)
+
+---
+
+## Verification Record
+
+**Date:** 2026-07-15
+**HEAD at verification:** commit 1b26f7a (Task 9)
+
+**Full-suite results (all at HEAD):**
+
+| Language | Command | Result |
+|----------|---------|--------|
+| Python | `python -m pytest -q` (workdir `implementations/python`) | **260 passed** in 27.08s |
+| Go | `go test ./...` (workdir `implementations/go`) | **all 19 packages ok** (incl. `capability`, `conformance`, `harness`) |
+| TypeScript | `node --test test/fixtures.test.js packages/event/test/*.test.js packages/capability/test/*.test.js packages/conformance/test/*.test.js packages/harness/test/*.test.js` (workdir `implementations/typescript`) | **68 passed, 0 failed** |
+| Java | `mvn test` (workdir `implementations/java`) | **170 run, 0 failures, 0 errors** — BUILD SUCCESS |
+
+Note: `node --test` against bare package directories reports spurious directory-level `not ok` entries (Node's runner mis-discovers non-test `.js` files); running explicit `*.test.js` paths gives the true 68/68 result.
+
+**Capability profile smoke check:**
+`$env:HARMOVELA_PROFILE="capability"; python -m pytest tests/test_fixtures.py -q` → **42 passed** (capability fixtures selected; non-profile fixtures still included per filter semantics).
+
+**Fixture count:** 5 new capability fixtures added to the conformance suite:
+- `capability-positive.ndjson` (accept_all, C0)
+- `capability-negative.ndjson` (reject_some, C0)
+- `capability-composed.ndjson` (stateful_flow, C1)
+- `capability-contract-formal.ndjson` (accept_all, C0)
+- `capability-contract-reject.ndjson` (reject_some, C0)
+
+All 5 registered under the new `capability` manifest profile (levels C0+C1), executed by all 4 language conformance runners.
+
+**Delivered commits (this plan):**
+- `e6a0b1b` — schema: optional `locator`/`endpoint_ref` on implementations + resolution doc (Task 0)
+- `9b0d790`, `cd11a7a` — payloads schema `capability.*` branches + tests (Task 1)
+- `3204855`, `b627407` — TS capability package + wiring (Task 2)
+- `aa0930f` — Python capability module + wiring (Task 3)
+- `617c7de` — Go capability package + wiring (Task 4)
+- `1404ef7`, `79387db` — Java capability types + Envelope/Harness registration (Task 5)
+- `f1cd704` — capability positive/negative fixtures + profile (Task 6)
+- `c7d3715`, `782f361` — capability composition task-chain fixture (Task 7)
+- `0ab7a6c` — CAP-C0 formal/reject contract fixtures (Task 8)
+- `1b26f7a` — TS full-strictness contract fixture validation test (Task 9)
