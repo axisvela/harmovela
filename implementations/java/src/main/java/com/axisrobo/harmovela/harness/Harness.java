@@ -48,9 +48,13 @@ public class Harness {
     );
 
     private static final String SOURCE = "harness:harmovela";
+    private static final Set<String> TERMINAL_TASK_EVENT_TYPES = Set.of(
+        "task.completed", "task.failed", "task.cancelled", "task.timed_out"
+    );
     private int sequence;
     private final Map<String, Map<String, Object>> subscriptions = new LinkedHashMap<>();
     private final Map<String, TaskTracker> tasks = new LinkedHashMap<>();
+    private final Map<String, Set<String>> taskChildren = new LinkedHashMap<>();
     private final Map<String, Map<String, Object>> commands = new LinkedHashMap<>();
     private final Map<String, Map<String, Object>> queries = new LinkedHashMap<>();
     private final EventRouter router = new EventRouter();
@@ -255,12 +259,30 @@ public class Harness {
             ));
         }
 
+        var parentTaskId = (String) event.getOrDefault("parent_task_id", null);
+        if (parentTaskId == null && event.get("payload") instanceof Map<?, ?> p) {
+            parentTaskId = (String) p.get("parent_task_id");
+        }
+
         var source = (String) event.getOrDefault("source", "unknown");
         var tracker = new TaskTracker(taskId, source);
         tracker.accept();
         tasks.put(taskId, tracker);
+        if (parentTaskId != null) {
+            taskChildren.computeIfAbsent(parentTaskId, k -> new LinkedHashSet<>()).add(taskId);
+        }
 
         return newEvent("task.accepted", event, Map.of("task_id", taskId, "status", "accepted"));
+    }
+
+    private boolean taskHasActiveChildren(String taskId) {
+        var children = taskChildren.get(taskId);
+        if (children == null || children.isEmpty()) return false;
+        for (var childId : children) {
+            var child = tasks.get(childId);
+            if (child != null && !child.isTerminal()) return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -283,6 +305,13 @@ public class Harness {
         }
 
         var eventType = (String) event.get("type");
+        if (TERMINAL_TASK_EVENT_TYPES.contains(eventType) && taskHasActiveChildren(taskId)) {
+            return newEvent("event.rejected", event, Map.of(
+                "error", Errors.errorPayload(Errors.TASK_ERROR,
+                    "parent task " + taskId + " cannot reach a terminal state while it has active child tasks", false)
+            ));
+        }
+
         var payload = event.get("payload") instanceof Map<?, ?> p ? (Map<String, Object>) p : null;
         var taskEvent = tracker.transition(eventType, payload);
         if (taskEvent == null) {

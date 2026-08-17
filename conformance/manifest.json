@@ -566,6 +566,46 @@
         "query.requested",
         "query.requested"
       ]
+    },
+    {
+      "path": "fixtures/parent-child-positive.ndjson",
+      "level": "HARMOVELA-C1",
+      "description": "Parent-child task hierarchy: child completes before parent reaches terminal state.",
+      "expectation": "stateful_flow",
+      "tags": [
+        "task",
+        "parent-child"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.completed",
+        "task.completed"
+      ]
+    },
+    {
+      "path": "fixtures/parent-child-negative.ndjson",
+      "level": "HARMOVELA-C0",
+      "description": "Parent must not reach terminal state while it has active child tasks.",
+      "expectation": "reject_some",
+      "tags": [
+        "negative",
+        "task",
+        "parent-child"
+      ],
+      "expected_types": [
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.submitted",
+        "task.accepted",
+        "task.started",
+        "task.completed"
+      ]
     }
   ],
   "profiles": {

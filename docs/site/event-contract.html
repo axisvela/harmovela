@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Contract — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Event Contract</h1>
+<h1>Harmovela Event Contract</h1>
+<p>&gt; Status: draft. Language-neutral contract boundary.</p>
+<h2>Ownership</h2>
+<p>Event owns envelope validation, registry lookup, session lifecycle, subscription matching, routing, and transport contracts.</p>
+<p>The existing specifications define the behavior within those responsibilities: envelope and conformance rules, <a href="event-registry-governance.html">event registry governance</a>, <a href="session.html">session lifecycle</a>, <a href="subscription.html">subscription model</a>, and the transport binding specifications in this directory. This contract assigns ownership without duplicating their wire fields or transport binding details.</p>
+<h2>Event Registry Ownership</h2>
+<p>Event owns only the control entries needed to establish, route, and end an Event interaction. The registry is not a catalog of domain events.</p>
+<table>
+<thead><tr><th>Control area</th><th>Event registry entries</th><th>Ownership boundary</th></tr></thead>
+<tbody>
+<tr><td>Envelope</td><td>No event type; the envelope fields and validation rules</td><td>Event validates envelopes before registry lookup or routing.</td></tr>
+<tr><td>Session</td><td><code>session.opened</code>, <code>session.ready</code>, <code>session.heartbeat</code>, <code>session.closed</code>, <code>session.error</code></td><td>Session lifecycle and negotiation control.</td></tr>
+<tr><td>Capability negotiation</td><td><code>capabilities.requested</code>, <code>capabilities.declared</code>, <code>capabilities.changed</code></td><td>Session and transport capability control.</td></tr>
+<tr><td>Subscription</td><td><code>subscription.requested</code>, <code>subscription.created</code>, <code>subscription.rejected</code>, <code>subscription.cancelled</code>, <code>subscription.expired</code></td><td>Subscription creation, confirmation, rejection, and termination.</td></tr>
+<tr><td>Routing</td><td>The session and subscription control entries above</td><td>Routing uses envelope targets, topics, and subscription filters; it introduces no separate domain event family.</td></tr>
+<tr><td>Transport control</td><td>The session and capability entries above</td><td>Transport bindings carry Event envelopes but do not add transport-specific registry entries.</td></tr>
+</tbody>
+</table>
+<p>Task, State, Context/Memory, Delegation, Recovery, and Governance types are owned by their respective dimension modules. They are not Event registry entries. In particular, Recovery owns delivery and replay control types; Event routing must not claim them as Event-owned entries.</p>
+<h2>Public Contracts</h2>
+<p>Consumers may validate envelopes, negotiate sessions, create or cancel subscriptions, route envelopes, and use declared transport bindings. Consumers must not import Event implementation internals.</p>
+<p>Event exposes these capabilities as public contracts so dimension modules can depend on the boundary rather than a language-specific implementation.</p>
+<h2>Dependencies</h2>
+<p>Event has no dimension-module dependency.</p>
+</body>
+</html>

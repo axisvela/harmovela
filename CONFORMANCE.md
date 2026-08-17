@@ -1,6 +1,6 @@
 # Harmovela Conformance Matrix
 
-> Status: 0.4 Beta. Last verified: 2026-07-14.
+> Status: 0.5 Adaptation Preview. Last verified: 2026-08-17.
 
 ## Core Conformance Levels
 
@@ -48,7 +48,15 @@ Conformance: HARMOVELA-C2 + HARMOVELA-C3. Durable delivery, acknowledgement and 
 |-------|-----------|--------|-----|------|
 | HARMOVELA-C1 | PASS | PASS | PASS | PASS |
 
-Conformance: HARMOVELA-C1. Task lifecycle state-machine enforcement, state freshness and invalidation semantics, delegation ownership, handoff, escalation, and cancellation propagation.
+Conformance: HARMOVELA-C1. Task lifecycle state-machine enforcement, state freshness and invalidation semantics, delegation ownership, handoff, escalation, and cancellation propagation; command and query lifecycle enforcement.
+
+### Adaptation Profile (`harmovela.adaptation.v1`)
+
+| Level | TypeScript | Python | Go | Java |
+|-------|-----------|--------|-----|------|
+| HARMOVELA-C1 | PASS | PASS | PASS | PASS |
+
+Conformance: HARMOVELA-C1. Depends on `harmovela.security.v1` for base identity, authorization, audit, and tenant isolation. Budget establishment, change, enforcement, and violation; goal lifecycle; feedback/outcome correlation; adaptation-operation authority and audit linkage.
 
 ## Implementation Details
 
@@ -61,15 +69,16 @@ Conformance: HARMOVELA-C1. Task lifecycle state-machine enforcement, state fresh
 
 ## Conformance Fixtures
 
-25 shared fixtures in `conformance/fixtures/`, categorised by level and profile:
+34 shared fixtures in `conformance/fixtures/`, categorised by level and profile:
 
 | Level | Fixture Count | Fixtures |
 |-------|:---:|----------|
-| HARMOVELA-C0 | 8 | `negative.ndjson`, `reject-some-protocol.ndjson`, `reject-some-payload.ndjson`, `memory-context-ack.ndjson`, `governance-contract.ndjson`, `tenant-isolation-negative.ndjson`, `agent-runtime-semantics.ndjson`, `task-invalid-transitions.ndjson` |
-| HARMOVELA-C1 | 12 | `task-lifecycle.ndjson`, `session-flow.ndjson`, `event-contract.ndjson`, `event-core.ndjson`, `tenant-isolation-positive.ndjson`, `task-blocked-resume.ndjson`, `task-timed-out.ndjson`, `core-lifecycle.ndjson`, `task-output.ndjson`, `task-failed.ndjson`, `task-cancelled.ndjson`, `task-cancel-requested.ndjson` |
+| HARMOVELA-C0 | 12 | `negative.ndjson`, `reject-unknown-events.ndjson`, `reject-some-protocol.ndjson`, `reject-some-payload.ndjson`, `memory-context-ack.ndjson`, `governance-contract.ndjson`, `tenant-isolation-negative.ndjson`, `agent-runtime-semantics.ndjson`, `task-invalid-transitions.ndjson`, `command-negative.ndjson`, `query-negative.ndjson`, `parent-child-negative.ndjson` |
+| HARMOVELA-C1 | 19 | `task-lifecycle.ndjson`, `session-flow.ndjson`, `event-contract.ndjson`, `event-core.ndjson`, `tenant-isolation-positive.ndjson`, `task-blocked-resume.ndjson`, `task-timed-out.ndjson`, `core-lifecycle.ndjson`, `task-output.ndjson`, `task-failed.ndjson`, `task-cancelled.ndjson`, `task-cancel-requested.ndjson`, `delegation-positive.ndjson`, `delegation-negative.ndjson`, `adaptation-positive.ndjson`, `adaptation-negative.ndjson`, `command-positive.ndjson`, `query-positive.ndjson`, `parent-child-positive.ndjson` |
 | HARMOVELA-C2 (delivery) | 2 | `delivery.ndjson`, `delivery-stateful.ndjson` |
 | HARMOVELA-C3 (delivery) | 1 | `delivery-e2e.ndjson` |
-| Coordination profile | 2 | `delegation-positive.ndjson`, `delegation-negative.ndjson` |
+
+Profile fixtures: `harmovela.coordination.v1` (delegation-positive, delegation-negative, command-positive, command-negative, query-positive, query-negative), `harmovela.adaptation.v1` (adaptation-positive, adaptation-negative), `harmovela.delivery.v1` (delivery, delivery-stateful, delivery-e2e), `harmovela.runtime-semantics.v1` (agent-runtime-semantics).
 
 7 transport bindings implemented across all four languages: stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams.
 

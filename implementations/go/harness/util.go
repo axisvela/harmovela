@@ -20,6 +20,17 @@ func Now() string {
 	return time.Now().UTC().Format(time.RFC3339)
 }
 
+var terminalTaskEventTypes = map[string]bool{
+	"task.completed": true,
+	"task.failed":    true,
+	"task.cancelled": true,
+	"task.timed_out": true,
+}
+
+func isTerminalTaskEventType(typ string) bool {
+	return terminalTaskEventTypes[typ]
+}
+
 var legacyStandardEventTypes = func() map[string]bool {
 	m := map[string]bool{
 		"event.redelivered":     true,

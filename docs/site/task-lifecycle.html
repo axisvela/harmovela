@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Task Lifecycle</h1>
 <h1>Harmovela Task Lifecycle</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 core specification. &gt; Category: core</p>
@@ -177,12 +177,28 @@
 <h2>Timeout Semantics</h2>
 <p>A <code>timeout_ms</code> value in <code>task.submitted</code> sets a deadline. The producer is responsible for sending <code>task.timed_out</code> if the task does not reach a terminal state within the deadline.</p>
 <p>A producer may also apply a default timeout for tasks without an explicit <code>timeout_ms</code>.</p>
+<h2>Parent-Child Task Relationships</h2>
+<p>Tasks may be organized in parent-child hierarchies via the <code>parent_task_id</code> envelope field. A parent task delegates work to child tasks or spawns subtasks that must be resolved before the parent itself can complete.</p>
+<h3>Terminal State Ordering</h3>
+<ul>
+<li>A child task MAY reach a terminal state independently of, and before, its parent. The common orchestration pattern — child completes first, parent aggregates — is valid and expected.</li>
+<li>A parent task MUST NOT transition to a terminal state while it has active (non-terminal) child tasks. The runtime or orchestrator MUST ensure all children reach a terminal state (naturally or via cancellation) before allowing the parent to complete, fail, cancel, or time out.</li>
+<li>When a parent task is cancelled, all child tasks MUST be cancelled. The runtime or orchestrator SHOULD emit <code>task.cancelled</code> for each child, referencing the parent via <code>causation_id</code>.</li>
+<li>When a parent task fails, child tasks SHOULD be cancelled unless the child tasks are independent and the runtime policy permits orphaned continuation.</li>
+</ul>
+<h3>Conformance Fixtures</h3>
+<p>Parent-child terminal ordering is validated by:</p>
+<ul>
+<li><code>conformance/fixtures/parent-child-positive.ndjson</code>: child completes before parent (valid).</li>
+<li><code>conformance/fixtures/parent-child-negative.ndjson</code>: parent completes while child is active (invalid).</li>
+</ul>
 <h2>Implementation Notes</h2>
 <ul>
-<li>Task state transitions must be enforced. Attempting an illegal transition should result in an <code>event.rejected</code> or <code>task.failed</code> response.</li>
-<li>Terminal states are final. No further task events should be accepted or produced after a terminal state.</li>
-<li>The <code>task_id</code> must be present in the envelope top-level <code>task_id</code> field and in <code>payload.task_id</code> for consistency.</li>
-<li>Producers should assign <code>task_id</code> if the consumer does not provide one, and return it in <code>task.accepted</code>.</li>
+<li>Task state transitions must be enforced. Attempting an illegal transition MUST result in an <code>event.rejected</code> or <code>task.failed</code> response.</li>
+<li>Terminal states are final. No further task events MUST be accepted or produced after a terminal state.</li>
+<li>Implementations MUST validate parent-child terminal ordering before allowing a parent to reach a terminal state.</li>
+<li>The <code>task_id</code> MUST be present in the envelope top-level <code>task_id</code> field and in <code>payload.task_id</code> for consistency.</li>
+<li>Producers SHOULD assign <code>task_id</code> if the consumer does not provide one, and return it in <code>task.accepted</code>.</li>
 </ul>
 </body>
 </html>

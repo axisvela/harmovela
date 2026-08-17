@@ -8,7 +8,7 @@
 | --- | --- |
 | Snapshot ID | `[v0.9.0-rc.1-YYYYMMDD]` |
 | Protocol | `v0.5.0` |
-| Fixture suite | `32 fixtures; version [required]` |
+| Fixture suite | `34 fixtures; version [required]` |
 | L3 profile | `harmovela.adaptation.v1` version `[required]` |
 | Transport profile(s) | `[ID and version required]` |
 | Topology ID/version | `[required; distinct from transport profile]` |
@@ -52,13 +52,13 @@ Populate one row for every implementation x selected L3 profile x transport prof
 
 | Implementation/version | Profile/version | Transport/version | Topology/version | Fixture/scenario ID | Result | Evidence URI/hash |
 | --- | --- | --- | --- | --- | --- |
-| `[required]` | `[required]` | `[required]` | `[required]` | `[one of 32 fixture IDs or official scenario ID]` | PENDING | `[required]` |
+| `[required]` | `[required]` | `[required]` | `[required]` | `[one of 34 fixture IDs or official scenario ID]` | PENDING | `[required]` |
 
 ## Sign-Off
 
 | Gate | Status | Evidence |
 | --- | --- | --- |
-| All 32 fixture cells complete and passing | PENDING | `[required]` |
+| All 34 fixture cells complete and passing | PENDING | `[required]` |
 | Two independently maintained implementations | **PENDING** | `[required]` |
 | External L3 pilot accepted | **PENDING** | `external-l3-pilot-template.md` report |
 | Zero release blockers | PENDING | `[required]` |

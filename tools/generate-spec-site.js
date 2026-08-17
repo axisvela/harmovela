@@ -120,8 +120,8 @@ function mdToHtml(md) {
   }
 
   html = grouped.join("\n")
-    .replace(/@@AEP_LINK_(\d+)@@/g, (_, index) => links[index])
-    .replace(/@@AEP_BLOCK_(\d+)@@/g, (_, index) => blocks[index]);
+    .replace(/@@AEP_BLOCK_(\d+)@@/g, (_, index) => blocks[index])
+    .replace(/@@AEP_LINK_(\d+)@@/g, (_, index) => links[index]);
 
   return html;
 }

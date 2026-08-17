@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Query — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Command Query</h1>
+<h1>Harmovela Command and Query Protocol</h1>
+<p>&gt; Status: draft. Part of the Harmovela 0.2 specification. L2 Coordination layer capability.</p>
+<h2>Purpose</h2>
+<p>Define directed request/response primitives that complement the Harmovela event substrate. Commands represent directed instructions to a specific agent. Queries represent directed information requests with snapshot-versioned responses.</p>
+<p>Both Command and Query are L2 Coordination layer capabilities, not L3 Adaptation. They inherit governance enforcement (RBAC, tenant isolation) from the Governance dimension and use the standard event envelope for delivery.</p>
+<h2>Command</h2>
+<p>A Command is a <strong>directed instruction</strong> from one agent to another. The commanding agent issues <code>command.requested</code> with a specific <code>target</code> agent. The harness validates authorization and routing, then emits <code>command.accepted</code> within a negotiation window or <code>command.rejected</code> if validation fails. The target agent completes the command lifecycle with <code>command.completed</code> or <code>command.failed</code>.</p>
+<h3>Event Types</h3>
+<table>
+<thead><tr><th>Event</th><th>Direction</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>command.requested</code></td><td>source → harness</td><td>A directed instruction carrying target agent, correlation_id, delegation chain, and authorization scope</td></tr>
+<tr><td><code>command.accepted</code></td><td>harness → source</td><td>Command validated and routed to target within negotiation window</td></tr>
+<tr><td><code>command.rejected</code></td><td>harness → source</td><td>Command rejected due to validation failure (missing target, unauthorized, unknown target agent)</td></tr>
+<tr><td><code>command.completed</code></td><td>target → source (via harness)</td><td>Command executed successfully by target agent</td></tr>
+<tr><td><code>command.failed</code></td><td>target → source (via harness)</td><td>Command execution failed by target agent</td></tr>
+</tbody>
+</table>
+<h3>Lifecycle</h3>
+<pre><code>Happy path:
+  source → command.requested → harness
+  harness → command.accepted → source
+  harness → command.requested → target (routed)
+  target → command.completed → source (via harness)
+
+Rejection path:
+  source → command.requested → harness
+  harness → command.rejected → source
+
+Failure path:
+  source → command.requested → harness
+  harness → command.accepted → source
+  harness → command.requested → target (routed)
+  target → command.failed → source (via harness)
+</code></pre>
+<h3>Required Envelope Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>Yes</td><td>One of the <code>command.*</code> event types</td></tr>
+<tr><td><code>source</code></td><td>Yes</td><td>Commanding agent identity</td></tr>
+<tr><td><code>target</code></td><td>Yes</td><td>Target agent identity (who must execute the command)</td></tr>
+<tr><td><code>correlation_id</code></td><td>Yes</td><td>Logical operation correlation key linking request to responses</td></tr>
+<tr><td><code>created_at</code></td><td>Yes</td><td>Event creation timestamp</td></tr>
+<tr><td><code>id</code></td><td>Yes</td><td>Globally unique event ID</td></tr>
+<tr><td><code>spec_version</code></td><td>Yes</td><td>Protocol version</td></tr>
+</tbody>
+</table>
+<h3>Recommended Envelope Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>session_id</code></td><td>Runtime session</td></tr>
+<tr><td><code>conversation_id</code></td><td>Conversation or interaction thread</td></tr>
+<tr><td><code>causation_id</code></td><td>Event that caused this event (for chaining)</td></tr>
+<tr><td><code>payload.command</code></td><td>The command name or identifier</td></tr>
+<tr><td><code>payload.args</code></td><td>Command arguments</td></tr>
+<tr><td><code>payload.authorization_scope</code></td><td>Permission scope required for execution</td></tr>
+<tr><td><code>payload.delegation_chain</code></td><td>Ordered list of agents that delegated this command</td></tr>
+<tr><td><code>payload.negotiation_window_ms</code></td><td>Maximum time (ms) for acceptance decision</td></tr>
+</tbody>
+</table>
+<h3>Negotiation Window</h3>
+<p>When a <code>command.requested</code> arrives, the harness must emit <code>command.accepted</code> or <code>command.rejected</code> within the negotiation window (default: 5000ms). If the harness cannot complete validation within the window, it emits <code>command.rejected</code> with reason <code>negotiation_timeout</code>.</p>
+<h3>Authorization Scope</h3>
+<p>Every command request carries an <code>authorization_scope</code> defining the permissions required for execution. The harness validates that the commanding agent holds the required capabilities (via Governance dimension RBAC) before accepting the command. Commands crossing tenant boundaries require explicit <code>tenant.cross_access</code> capability.</p>
+<h3>Delegation Chain</h3>
+<p>Commands may carry a <code>delegation_chain</code>: an ordered list of agent identities showing how authority was delegated to the commanding agent. The harness validates the chain against the Governance dimension's delegation policy.</p>
+<h2>Query</h2>
+<p>A Query is a <strong>directed information request</strong> from one agent to another. The querying agent issues <code>query.requested</code> with a specific <code>target</code> agent and query scope. The harness validates authorization and routing, then routes the query to the target. The target responds with <code>query.response</code> carrying a snapshot version for idempotent re-query, or <code>query.rejected</code> if the query cannot be satisfied.</p>
+<h3>Event Types</h3>
+<table>
+<thead><tr><th>Event</th><th>Direction</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>query.requested</code></td><td>source → harness</td><td>A directed information request carrying target, query scope, freshness requirements, and pagination hint</td></tr>
+<tr><td><code>query.response</code></td><td>harness/target → source</td><td>Query response carrying snapshot version for idempotent re-query</td></tr>
+<tr><td><code>query.rejected</code></td><td>harness → source</td><td>Query rejected due to validation failure (missing target, unauthorized, unknown target)</td></tr>
+<tr><td><code>query.error</code></td><td>target → source (via harness)</td><td>Error occurred during query execution</td></tr>
+</tbody>
+</table>
+<h3>Lifecycle</h3>
+<pre><code>Happy path:
+  source → query.requested → harness
+  harness → query.response → source
+
+Rejection path:
+  source → query.requested → harness
+  harness → query.rejected → source
+
+Error path:
+  source → query.requested → harness
+  harness → query.response → source (validated)
+  harness → query.requested → target (routed)
+  target → query.error → source (via harness)
+</code></pre>
+<h3>Required Envelope Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>Yes</td><td>One of the <code>query.*</code> event types</td></tr>
+<tr><td><code>source</code></td><td>Yes</td><td>Querying agent identity</td></tr>
+<tr><td><code>target</code></td><td>Yes</td><td>Target agent identity (who answers the query)</td></tr>
+<tr><td><code>correlation_id</code></td><td>Yes</td><td>Logical operation correlation key linking request to response</td></tr>
+<tr><td><code>created_at</code></td><td>Yes</td><td>Event creation timestamp</td></tr>
+<tr><td><code>id</code></td><td>Yes</td><td>Globally unique event ID</td></tr>
+<tr><td><code>spec_version</code></td><td>Yes</td><td>Protocol version</td></tr>
+</tbody>
+</table>
+<h3>Recommended Envelope Fields</h3>
+<table>
+<thead><tr><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>session_id</code></td><td>Runtime session</td></tr>
+<tr><td><code>conversation_id</code></td><td>Conversation or interaction thread</td></tr>
+<tr><td><code>causation_id</code></td><td>Event that caused this event (for chaining)</td></tr>
+<tr><td><code>payload.query_scope</code></td><td>What domain or resource the query targets</td></tr>
+<tr><td><code>payload.freshness.max_age_ms</code></td><td>Maximum acceptable age of returned data</td></tr>
+<tr><td><code>payload.freshness.require_consistent</code></td><td>If true, response must reflect the latest consistent snapshot</td></tr>
+<tr><td><code>payload.pagination.limit</code></td><td>Maximum results per page</td></tr>
+<tr><td><code>payload.pagination.cursor</code></td><td>Opaque cursor for next page (empty for first page)</td></tr>
+<tr><td><code>payload.snapshot_version</code></td><td>Monotonic snapshot version carried in responses</td></tr>
+</tbody>
+</table>
+<h3>Snapshot Version</h3>
+<p>Every <code>query.response</code> carries a <code>snapshot_version</code> in its payload. This is a monotonically increasing identifier representing the state snapshot against which the query was answered. The querying agent may include a <code>since_version</code> in subsequent <code>query.requested</code> events to request only delta updates. The snapshot version enables idempotent re-query: an agent may re-issue the same query against the same snapshot version and expect the same result.</p>
+<h3>Freshness Requirements</h3>
+<p>A query may specify freshness constraints through <code>payload.freshness</code>:</p>
+<ul>
+<li><code>max_age_ms</code>: Maximum acceptable age of the returned data. If the target's data is older, it must either refresh or reject.</li>
+<li><code>require_consistent</code>: If true, the response must reflect a consistent snapshot across all relevant data sources.</li>
+</ul>
+<h3>Pagination</h3>
+<p>Queries that may return large result sets support pagination through <code>payload.pagination</code>:</p>
+<ul>
+<li><code>limit</code>: Maximum results per page.</li>
+<li><code>cursor</code>: Opaque cursor returned by the previous response, used to fetch the next page. Empty for the first page.</li>
+</ul>
+<h2>Governance Enforcement</h2>
+<p>Both Command and Query inherit governance enforcement from the Governance dimension:</p>
+<table>
+<thead><tr><th>Check</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Identity verification</td><td>Source and target agent identities are verified</td></tr>
+<tr><td>RBAC authorization</td><td>Source must hold required capabilities for the action</td></tr>
+<tr><td>Tenant isolation</td><td>Cross-tenant commands and queries require <code>tenant.cross_access</code> capability</td></tr>
+<tr><td>Delegation chain validation</td><td>Delegation chain is verified against policy</td></tr>
+<tr><td>Audit</td><td>All command and query events are audited with actor identity, timestamp, and affected resource</td></tr>
+</tbody>
+</table>
+<h2>Layer Classification</h2>
+<p>Command and Query are <strong>L2 Coordination layer</strong> capabilities. They depend on:</p>
+<ul>
+<li>L0: Event envelope, session, subscriptions (Event dimension)</li>
+<li>L1: Task lifecycle, state freshness (Task and State dimensions)</li>
+<li>Governance: RBAC, tenant isolation, audit (Governance dimension)</li>
+</ul>
+<p>They are not L3 Adaptation layer capabilities. Adaptation (budget enforcement, outcome correlation, feedback) operates at a higher level of autonomy and uses commands and queries as one mechanism among several.</p>
+<h2>Conformance Levels</h2>
+<table>
+<thead><tr><th>Level</th><th>Requirement</th></tr></thead>
+<tbody>
+<tr><td>HARMOVELA-C0</td><td>All <code>command.*</code> and <code>query.*</code> event types are registered. Invalid commands (missing target, unauthorized) are rejected.</td></tr>
+<tr><td>HARMOVELA-C1</td><td>Command lifecycle (requested → accepted → completed/failed) flows through harness. Query lifecycle (requested → response) returns snapshot-versioned responses.</td></tr>
+</tbody>
+</table>
+<h2>Related Documents</h2>
+<ul>
+<li><a href="profiles.html">Profiles</a> — <code>harmovela.coordination.v1</code> profile scope</li>
+<li><a href="dimensions.html">Dimensions</a> — dimension module layout</li>
+<li><a href="governance-contract.html">Governance Contract</a> — RBAC, tenant isolation, audit</li>
+<li><a href="security.html">Security</a> — identity, authorization, audit model</li>
+<li><a href="event-contract.html">Event Contract</a> — envelope validation</li>
+</ul>
+</body>
+</html>

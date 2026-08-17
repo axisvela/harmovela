@@ -22,25 +22,25 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Nats</h1>
 <h1>Harmovela Transport Binding: NATS</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 transport-nats profile.</p>
 <h2>Purpose</h2>
-<p>Define how AEP runs over NATS, supporting subject-based publish/subscribe with optional JetStream durability.</p>
+<p>Define how Harmovela runs over NATS, supporting subject-based publish/subscribe with optional JetStream durability.</p>
 <h2>Framing</h2>
-<p>AEP over NATS uses JSON-encoded AEP events as NATS message bodies:</p>
+<p>Harmovela over NATS uses JSON-encoded Harmovela events as NATS message bodies:</p>
 <ul>
-<li>Each NATS message body is a complete, valid JSON-encoded AEP event.</li>
+<li>Each NATS message body is a complete, valid JSON-encoded Harmovela event.</li>
 <li>Messages are delivered via NATS subject-based routing.</li>
 <li>The transport does not fragment events across multiple messages.</li>
 </ul>
 <h2>Subject Mapping</h2>
-<p>AEP topics map to NATS subjects using a configurable prefix:</p>
-<p>| AEP context | NATS subject pattern | Example | |---|---|---| | Topic <code>tasks.task_01</code> | <code>aep.tasks.task_01</code> | <code>aep.tasks.task_01</code> | | Source <code>agent:researcher</code> | <code>aep.agent.researcher</code> | <code>aep.agent.researcher</code> | | Wildcard subscription <code>task.*</code> | <code>aep.task.&gt;</code> | <code>aep.task.&gt;</code> | | Session-scoped | <code>aep.sess.&lt;session_id&gt;</code> | <code>aep.sess.sess_01</code> |</p>
+<p>Harmovela topics map to NATS subjects using a configurable prefix:</p>
+<p>| Harmovela context | NATS subject pattern | Example | |---|---|---| | Topic <code>tasks.task_01</code> | <code>aep.tasks.task_01</code> | <code>aep.tasks.task_01</code> | | Source <code>agent:researcher</code> | <code>aep.agent.researcher</code> | <code>aep.agent.researcher</code> | | Wildcard subscription <code>task.*</code> | <code>aep.task.&gt;</code> | <code>aep.task.&gt;</code> | | Session-scoped | <code>aep.sess.&lt;session_id&gt;</code> | <code>aep.sess.sess_01</code> |</p>
 <p>The default subject prefix is <code>aep</code>. Implementations should make this configurable.</p>
 <h3>Subject Construction</h3>
-<p>| Pattern | Behavior | |---|---| | <code>aep.type.&lt;type&gt;</code> | Route by event type (e.g. <code>aep.type.task.progress</code>) | | <code>aep.source.&lt;source&gt;</code> | Route by event source | | <code>aep.topic.&lt;topic&gt;</code> | Route by explicit AEP topic | | <code>aep.sess.&lt;session_id&gt;</code> | Route to all events for a session | | <code>aep.conv.&lt;conversation_id&gt;</code> | Route to all events for a conversation |</p>
+<p>| Pattern | Behavior | |---|---| | <code>aep.type.&lt;type&gt;</code> | Route by event type (e.g. <code>aep.type.task.progress</code>) | | <code>aep.source.&lt;source&gt;</code> | Route by event source | | <code>aep.topic.&lt;topic&gt;</code> | Route by explicit Harmovela topic | | <code>aep.sess.&lt;session_id&gt;</code> | Route to all events for a session | | <code>aep.conv.&lt;conversation_id&gt;</code> | Route to all events for a conversation |</p>
 <p>Producers should publish on the most specific subject. Consumers subscribe with wildcards.</p>
 <h2>Delivery Modes</h2>
 <h3>Core NATS (Best Effort)</h3>
@@ -54,7 +54,7 @@
 <li><code>replayable</code>: JetStream stream with configurable retention. Consumers replay from any sequence number.</li>
 </ul>
 <h3>Delivery Mode Selection</h3>
-<p>| AEP Delivery Mode | NATS Mechanism | |---|---| | <code>best_effort</code> | Core NATS publish | | <code>at_least_once</code> | JetStream push consumer with <code>AckWait</code> | | <code>replayable</code> | JetStream pull consumer with <code>DeliverPolicy</code> |</p>
+<p>| Harmovela Delivery Mode | NATS Mechanism | |---|---| | <code>best_effort</code> | Core NATS publish | | <code>at_least_once</code> | JetStream push consumer with <code>AckWait</code> | | <code>replayable</code> | JetStream pull consumer with <code>DeliverPolicy</code> |</p>
 <h2>Session Lifecycle</h2>
 <p>| NATS State | Session State | |---|---| | Connection established | <code>CREATED</code> | | First subscription created | <code>OPENED</code> | | Capability negotiation complete | <code>READY</code> | | Connection drain + close | <code>CLOSED</code> | | Connection lost (no reconnect) | <code>ERROR</code> |</p>
 <h2>Connection</h2>
@@ -70,7 +70,7 @@
 <ul>
 <li>Use <code>nats.Conn.Subscribe(subject, handler)</code> for inbound.</li>
 <li>Use <code>nats.Conn.Publish(subject, data)</code> for outbound.</li>
-<li>Each inbound NATS message is parsed as JSON into an AEP envelope.</li>
+<li>Each inbound NATS message is parsed as JSON into a Harmovela envelope.</li>
 <li>Malformed JSON should emit an error event but not crash the subscription.</li>
 </ul>
 <h3>JetStream</h3>

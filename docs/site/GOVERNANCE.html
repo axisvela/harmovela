@@ -22,12 +22,12 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>GOVERNANCE</h1>
 <h1>Harmovela Protocol Governance</h1>
-<p>&gt; Status: draft. Governance model evolves toward 1.0.</p>
+<p>&gt; Status: draft. Community governance model evolves toward 1.0. Current decision authority rests with Axisrobo maintainers during the 0.x phase.</p>
 <h2>Purpose</h2>
-<p>This document defines how the Harmovela Protocol is governed: who makes decisions, how changes are proposed and accepted, and how the project transitions from a founding-organization model to independent multi-party governance.</p>
+<p>This document defines how the Harmovela Protocol is governed: who makes decisions, how changes are proposed and accepted, the contribution path, the RFC process, the security response procedure, and how the project transitions from a founding-organization model to independent multi-party governance.</p>
 <h2>Governance Structure</h2>
 <h3>Founding Organization</h3>
 <p>Axisrobo is the founding organization of the Harmovela Protocol. Axisrobo initiated the protocol design, maintains the canonical repository (<code>https://github.com/axisrobo/harmovela</code>), and stewards the 0.x draft phase.</p>
@@ -35,50 +35,157 @@
 <h3>Maintainer Responsibilities</h3>
 <p>Maintainers are responsible for:</p>
 <ul>
-<li>Reviewing and merging protocol specification changes</li>
-<li>Ensuring cross-language consistency across reference implementations</li>
-<li>Maintaining conformance fixture integrity</li>
-<li>Enforcing versioning and compatibility policies</li>
-<li>Upholding the code of conduct</li>
+<li>Reviewing and merging protocol specification changes.</li>
+<li>Ensuring cross-language consistency across TypeScript, Python, Go, and Java reference implementations.</li>
+<li>Maintaining conformance fixture integrity and cross-language runner health.</li>
+<li>Enforcing versioning and compatibility policies as defined in <code>docs/protocol/versioning.md</code> and <code>docs/protocol/compatibility-matrix.md</code>.</li>
+<li>Upholding the <a href="CODE_OF_CONDUCT.html">Code of Conduct</a>.</li>
+<li>Responding to security disclosures within the committed response window.</li>
+<li>Triaging issues, RFCs, and pull requests in a timely manner.</li>
+</ul>
+<h3>Maintainer Onboarding</h3>
+<p>New maintainers are nominated by existing maintainers based on sustained, high-quality contributions. Nomination requires:</p>
+<ul>
+<li>A history of accepted PRs across at least one specification document and one reference implementation.</li>
+<li>Demonstrated understanding of the protocol's coordination dimensions.</li>
+<li>Endorsement from at least two existing maintainers.</li>
+<li>Acceptance of the maintainer responsibilities and code of conduct.</li>
 </ul>
 <h3>Future: Multi-Party Governance</h3>
 <p>The Harmovela Protocol intends to establish independent multi-party governance before the 1.0 release. The goal is a governance structure that includes:</p>
 <ul>
-<li>Representation from multiple organizations and independent contributors</li>
-<li>A documented decision-making process with clear escalation paths</li>
-<li>A technical steering committee responsible for protocol evolution</li>
-<li>Transparent processes for specification changes, event registry updates, and conformance decisions</li>
+<li>Representation from multiple organizations and independent contributors.</li>
+<li>A documented decision-making process with clear escalation paths.</li>
+<li>A technical steering committee (TSC) responsible for protocol evolution.</li>
+<li>Transparent processes for specification changes, event registry updates, and conformance decisions.</li>
 </ul>
-<p>The specific governance model (e.g., foundation-hosted, community-driven steering group, or standards-body affiliation) will be determined through community discussion during the 0.5 beta phase, with a target of being operational before 1.0.</p>
-<h2>Decision-Making</h2>
-<h3>Protocol Changes</h3>
-<p>Protocol specification changes require the following process:</p>
-<p>1. <strong>Proposal</strong>: A documented proposal (GitHub issue or discussion) describing the change, its motivation, and impact analysis. 2. <strong>Specification update</strong>: A pull request updating the relevant specification document(s) in <code>docs/protocol/</code>. 3. <strong>Conformance fixture update</strong>: Corresponding updates to shared conformance fixtures in <code>conformance/fixtures/</code> that exercise the new or changed behavior. 4. <strong>Maintainer review</strong>: At least one Axisrobo maintainer must review and approve the change. 5. <strong>Cross-language consistency</strong>: At least the TypeScript reference implementation must be updated to match. Parity across Python, Go, and Java is expected but not gating for initial spec changes; cross-language parity should follow within a reasonable timeframe.</p>
-<h3>Event Registry Changes</h3>
-<p>Event type registry governance follows <code>docs/protocol/event-registry-governance.md</code>. New event types or event families require:</p>
+<p>The specific governance model (e.g. foundation-hosted, community-driven steering group, or standards-body affiliation) will be determined through community discussion during the 0.5 Beta phase, with a target of being operational before 1.0.</p>
+<h2>Decision-Making Process</h2>
+<h3>Consensus and Lazy Consensus</h3>
+<p>The default decision-making model is <strong>consensus-seeking</strong>. Proposals without objections within a reasonable review period (7 calendar days for specification changes, 3 calendar days for bug fixes and minor improvements) may proceed under <strong>lazy consensus</strong>.</p>
+<p>Objections must be substantive and relate to protocol correctness, compatibility, security, or conformance. An objection must include a specific rationale and, where possible, a suggested alternative.</p>
+<h3>Escalation Path</h3>
+<p>1. <strong>PR discussion</strong>: All decisions begin as pull request or issue discussion. 2. <strong>Maintainer tie-break</strong>: If consensus is not reached, an Axisrobo maintainer makes a decision. 3. <strong>Recorded decision</strong>: Tie-break decisions are documented in the PR or a decision record under <code>docs/design/decisions/</code> with rationale. 4. <strong>Appeal</strong>: Community members may appeal a decision by opening a new issue with "Decision Appeal: &lt;topic&gt;" and new evidence or analysis. Maintainers reconsider, but the second decision is final during the 0.x phase.</p>
+<h3>Decision Types</h3>
+<table>
+<thead><tr><th>Decision Type</th><th>Process</th><th>Review Period</th><th>Approver</th></tr></thead>
+<tbody>
+<tr><td>Protocol specification change</td><td>RFC or detailed PR</td><td>7 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>New event type or event family</td><td>Proposal + registry update + fixture</td><td>7 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Conformance fixture change</td><td>PR with fixture diff</td><td>3 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Reference implementation change (non-semantic)</td><td>Standard PR</td><td>3 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Bug fix</td><td>Standard PR</td><td>3 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Documentation improvement</td><td>Standard PR</td><td>3 days</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Security fix</td><td>Coordinated disclosure (see Security Response)</td><td>As needed</td><td>Axisrobo maintainer</td></tr>
+<tr><td>Compatibility decision</td><td>RFC + compatibility matrix update</td><td>7 days</td><td>Axisrobo maintainer</td></tr>
+</tbody>
+</table>
+<h2>Contribution Path</h2>
+<h3>Contributor Journey</h3>
+<pre><code>Observer → Contributor → Repeat Contributor → Maintainer Nominee → Maintainer
+</code></pre>
+<p>1. <strong>Observer</strong>: Reads specifications, uses implementations, opens issues. 2. <strong>Contributor</strong>: First accepted PR (documentation, bug fix, or feature). Added to CONTRIBUTORS. 3. <strong>Repeat Contributor</strong>: Multiple accepted PRs across different areas (spec, implementation, conformance). 4. <strong>Maintainer Nominee</strong>: Nominated by existing maintainers based on sustained contribution quality. 5. <strong>Maintainer</strong>: Onboarded with merge access and decision authority.</p>
+<h3>Pull Request Requirements</h3>
+<p>All PRs must:</p>
 <ul>
-<li>A proposal describing the type, its semantics, and its relationship to existing families</li>
-<li>Registration in all four language event type registries</li>
-<li>At least one conformance fixture exercising the new type</li>
-<li>Maintainer review</li>
+<li>Reference an existing issue or RFC (except trivial fixes).</li>
+<li>Include or update tests where applicable.</li>
+<li>Pass cross-language conformance (<code>node tools/conformance-runner.js</code>).</li>
+<li>Follow the code style documented in <code>CONTRIBUTING.md</code>.</li>
+<li>Not introduce breaking changes without a documented compatibility decision.</li>
 </ul>
-<h3>Compatibility Decisions</h3>
-<p>All compatibility decisions follow <code>docs/protocol/versioning.md</code>. Breaking changes to the core protocol envelope, required event families, or delivery semantics require a major version change. During the 0.x phase, breaking changes are permitted but must be documented with migration guidance.</p>
-<h3>Informal Decisions</h3>
-<p>Bug fixes, documentation improvements, example updates, and non-semantic implementation changes may proceed through the standard pull request process without a formal proposal, provided they do not alter protocol behavior or conformance expectations.</p>
+<h3>Contributor License</h3>
+<p>All contributions are accepted under the <a href="LICENSE">Apache License 2.0</a> as described in <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>. By submitting a PR, contributors agree to license their work under these terms.</p>
+<h2>RFC Process</h2>
+<h3>When an RFC is Required</h3>
+<p>An RFC (Request for Comments) is required for:</p>
+<ul>
+<li>New protocol features or specification changes.</li>
+<li>New event type families.</li>
+<li>Changes to the protocol envelope or required fields.</li>
+<li>Changes to conformance levels or fixture expectations.</li>
+<li>Breaking changes to any reference implementation.</li>
+<li>Changes to governance, versioning, or compatibility policies.</li>
+</ul>
+<p>An RFC is not required for:</p>
+<ul>
+<li>Bug fixes that restore intended behavior.</li>
+<li>Documentation improvements.</li>
+<li>Non-semantic refactoring.</li>
+<li>Adding tests for existing behavior.</li>
+</ul>
+<h3>RFC Workflow</h3>
+<p>1. <strong>Proposal</strong>: Open a GitHub issue with title "RFC: &lt;summary&gt;" containing:</p>
+<ul>
+<li>Motivation and problem statement.</li>
+<li>Proposed solution with enough detail for evaluation.</li>
+<li>Impact analysis: which specs, fixtures, and implementations are affected.</li>
+<li>Alternatives considered.</li>
+</ul>
+<p>2. <strong>Discussion</strong>: Community and maintainers discuss the proposal. The discussion period is at least 7 days. 3. <strong>Decision</strong>: A maintainer posts a decision comment: Accepted, Rejected, or Needs Revision. Accepted RFCs link to an implementation PR. Rejected RFCs include rationale. Needs Revision RFCs return to step 1. 4. <strong>Implementation</strong>: An accepted RFC is implemented via one or more PRs referencing the RFC issue. 5. <strong>Closure</strong>: The RFC issue is closed when all implementation PRs are merged and conformance passes.</p>
+<h3>RFC Lifecycle States</h3>
+<table>
+<thead><tr><th>State</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code>proposed</code></td><td>RFC issue opened, under discussion</td></tr>
+<tr><td><code>accepted</code></td><td>Maintainer approved; awaiting implementation</td></tr>
+<tr><td><code>rejected</code></td><td>Maintainer declined with rationale</td></tr>
+<tr><td><code>implemented</code></td><td>All PRs merged, conformance passes</td></tr>
+<tr><td><code>superseded</code></td><td>Replaced by a later RFC</td></tr>
+<tr><td><code>withdrawn</code></td><td>Author withdrew the proposal</td></tr>
+</tbody>
+</table>
+<h2>Security Response</h2>
+<h3>Reporting a Vulnerability</h3>
+<p>Security vulnerabilities should be reported privately to the Axisrobo security team at <code>security@axisrobo.com</code>. Do not open a public issue.</p>
+<p>Include in your report:</p>
+<ul>
+<li>A description of the vulnerability and its potential impact.</li>
+<li>Steps to reproduce or a proof of concept.</li>
+<li>Affected protocol versions, specifications, or implementation languages.</li>
+<li>Any suggested mitigations.</li>
+</ul>
+<h3>Response Timeline</h3>
+<table>
+<thead><tr><th>Phase</th><th>Target</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Acknowledge</td><td>48 hours</td><td>Confirm receipt of the report and assign a tracker ID.</td></tr>
+<tr><td>Triage</td><td>5 business days</td><td>Assess severity, scope, and affected versions.</td></tr>
+<tr><td>Fix development</td><td>Varies by severity</td><td>Develop and test a fix. Critical vulnerabilities prioritised.</td></tr>
+<tr><td>Coordinated disclosure</td><td>Mutually agreed date</td><td>Publish fix, advisory, and CVE (if applicable).</td></tr>
+</tbody>
+</table>
+<h3>Severity Classification</h3>
+<table>
+<thead><tr><th>Severity</th><th>Definition</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td>Critical</td><td>Allows unauthorised event injection, session hijacking, or tenant isolation bypass with no mitigation.</td><td>Transport-layer auth bypass, envelope spoofing</td></tr>
+<tr><td>High</td><td>Allows limited unauthorised access, denial of service, or data leak with practical exploit.</td><td>Subscription bypass, replay attack, dead-letter queue leak</td></tr>
+<tr><td>Medium</td><td>Violates protocol conformance in a way that could cause interop failure or data loss under specific conditions.</td><td>Edge-case state machine violation, cursor corruption</td></tr>
+<tr><td>Low</td><td>Minor spec deviation without practical exploit or data loss.</td><td>Missing validation of optional field, documentation gap</td></tr>
+</tbody>
+</table>
+<h3>Disclosure Process</h3>
+<p>1. A security advisory is prepared describing the vulnerability, affected versions, and remediation. 2. Fixed versions are released to all four reference implementations (TypeScript, Python, Go, Java) simultaneously. 3. The advisory is published on the GitHub Security Advisories page and announced on relevant community channels. 4. A post-mortem is conducted for Critical and High severity issues, with findings published (redacted as needed).</p>
+<h3>Supported Versions</h3>
+<p>During the 0.x pre-release phase, only the latest commit on the <code>main</code> branch is supported for security fixes. Once 1.0 is released, a formal supported-version policy will be established.</p>
+<h2>Compatibility and Versioning</h2>
+<p>All compatibility decisions follow <code>docs/protocol/versioning.md</code> and the <a href="compatibility-matrix.html">compatibility matrix</a>. Breaking changes to the core protocol envelope, required event families, or delivery semantics require a major version change. During the 0.x phase, breaking changes are permitted but must be documented with migration guidance and a compatibility decision record.</p>
 <h2>Code of Conduct</h2>
-<p>This project follows the <a href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a>. All participants in governance processes are expected to uphold it.</p>
+<p>This project follows the <a href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a>. All participants in governance processes are expected to uphold it. Violations may result in removal from governance roles.</p>
 <h2>License</h2>
 <p>All governance documents, protocol specifications, schemas, and conformance fixtures are licensed under the <a href="LICENSE">Apache License 2.0</a>. Implementations may be licensed under the same terms. Contributions are accepted under the Apache 2.0 license as described in <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</p>
 <h2>Related Documents</h2>
 <ul>
-<li><a href="GOVERNANCE.html">Governance</a> (<code>GOVERNANCE.md</code>) — this document</li>
-<li><a href="RELEASES.html">Releases</a> (<code>RELEASES.md</code>) — release phases, versioning, and artifacts</li>
-<li><a href="TRADEMARKS.html">Trademarks</a> (<code>TRADEMARKS.md</code>) — name and mark usage guidelines</li>
-<li><a href="versioning.html">Versioning</a> — protocol versioning rules</li>
-<li><a href="event-registry-governance.html">Event Registry Governance</a> — event type registry governance</li>
-<li><a href="CONTRIBUTING.html">Contributing</a> — contribution guidelines</li>
+<li><a href="CONTRIBUTING.html">Contributing</a> — contribution guide and repository conventions</li>
 <li><a href="CODE_OF_CONDUCT.html">Code of Conduct</a> — community standards</li>
+<li><a href="RELEASES.html">Releases</a> — release phases, versioning, and artifacts</li>
+<li><a href="TRADEMARKS.html">Trademarks</a> — name and mark usage guidelines</li>
+<li><a href="roadmap.html">Roadmap</a> — milestones toward 1.0</li>
+<li><a href="versioning.html">Versioning</a> — protocol versioning rules</li>
+<li><a href="compatibility-matrix.html">Compatibility Matrix</a> — legacy identifier migration inventory</li>
+<li><a href="event-registry-governance.html">Event Registry Governance</a> — event type registry governance</li>
+<li><a href="security.html">Security</a> — identity, authorization, audit, tenant isolation</li>
 </ul>
 </body>
 </html>

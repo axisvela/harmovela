@@ -15,6 +15,10 @@ from axisrobo_harmovela_tool import TOOL_EVENT_TYPES
 from axisrobo_harmovela_command import COMMAND_EVENT_TYPES
 from axisrobo_harmovela_query import QUERY_EVENT_TYPES
 
+TERMINAL_TASK_EVENT_TYPES = frozenset({
+    "task.completed", "task.failed", "task.cancelled", "task.timed_out",
+})
+
 LEGACY_DIMENSION_EVENT_TYPES = frozenset({
     "event.acknowledged", "event.rejected", "event.redelivered", "event.replayed", "event.dead_lettered",
     "task.submitted", "task.accepted", "task.started", "task.blocked", "task.progress",
@@ -33,6 +37,7 @@ class HarmovelaHarness:
         self._sequence = 0
         self._subscriptions: dict[str, dict] = {}
         self._tasks: dict[str, TaskTracker] = {}
+        self._task_children: dict[str, set[str]] = {}
         self._commands: dict[str, dict] = {}
         self._queries: dict[str, dict] = {}
         self._router = EventRouter()
@@ -220,6 +225,8 @@ class HarmovelaHarness:
                 "error": error_payload(ErrorCode.TASK_ERROR, f"duplicate task id: {task_id}"),
             })
 
+        parent_task_id = event.get("parent_task_id") or event.get("payload", {}).get("parent_task_id")
+
         tracker = TaskTracker(
             task_id=task_id,
             description=event.get("payload", {}).get("description", ""),
@@ -229,9 +236,21 @@ class HarmovelaHarness:
             created_at=event.get("created_at"),
         )
         self._tasks[task_id] = tracker
+        if parent_task_id:
+            self._task_children.setdefault(parent_task_id, set()).add(task_id)
         tracker.accepted()
 
         return self._event("task.accepted", event, {"task_id": task_id, "status": "accepted"})
+
+    def _task_has_active_children(self, task_id: str) -> bool:
+        children = self._task_children.get(task_id)
+        if not children:
+            return False
+        for child_id in children:
+            child = self._tasks.get(child_id)
+            if child is not None and not child.is_terminal():
+                return True
+        return False
 
     def _handle_task_event(self, event: dict) -> list | None:
         task_id = event.get("task_id") or event.get("payload", {}).get("task_id")
@@ -240,6 +259,14 @@ class HarmovelaHarness:
         if task_id not in self._tasks:
             return [self._event("event.rejected", event, {
                 "error": error_payload(ErrorCode.TASK_ERROR, f"unknown task: {task_id}"),
+            })]
+
+        if event.get("type") in TERMINAL_TASK_EVENT_TYPES and self._task_has_active_children(task_id):
+            return [self._event("event.rejected", event, {
+                "error": error_payload(
+                    ErrorCode.TASK_ERROR,
+                    f"parent task {task_id} cannot reach a terminal state while it has active child tasks",
+                ),
             })]
 
         tracker = self._tasks[task_id]

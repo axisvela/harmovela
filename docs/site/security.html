@@ -22,16 +22,16 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Security</h1>
 <h1>Harmovela Security Model</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 security profile.</p>
 <h2>Purpose</h2>
-<p>Define the identity, authorization, and audit boundaries for AEP communication. AEP does not prescribe a specific authentication protocol; this document defines the security metadata hooks that transports and implementations must respect.</p>
+<p>Define the identity, authorization, and audit boundaries for Harmovela communication. Harmovela does not prescribe a specific authentication protocol; this document defines the security metadata hooks that transports and implementations must respect.</p>
 <h2>Design Principle</h2>
-<p>AEP security is <strong>defense in layers</strong>:</p>
-<p>1. <strong>Transport-level security</strong> (TLS, mTLS, SSH tunnels) — handled by the transport binding, not AEP. 2. <strong>AEP-level identity</strong> — who is sending and receiving events. 3. <strong>AEP-level authorization</strong> — what a given identity is allowed to send, subscribe to, or receive. 4. <strong>AEP-level audit</strong> — what happened, recorded for inspection.</p>
-<p>AEP layer 2-4 are the scope of this specification.</p>
+<p>Harmovela security is <strong>defense in layers</strong>:</p>
+<p>1. <strong>Transport-level security</strong> (TLS, mTLS, SSH tunnels) — handled by the transport binding, not Harmovela. 2. <strong>Harmovela-level identity</strong> — who is sending and receiving events. 3. <strong>Harmovela-level authorization</strong> — what a given identity is allowed to send, subscribe to, or receive. 4. <strong>Harmovela-level audit</strong> — what happened, recorded for inspection.</p>
+<p>Harmovela layers 2-4 are the scope of this specification.</p>
 <h2>Identity Model</h2>
 <h3>Producer Identity</h3>
 <p>Every event carries a <code>source</code> field that identifies the producer:</p>
@@ -41,7 +41,7 @@
 }
 </code></pre>
 <p>The source format uses a dotted prefix convention:</p>
-<p>| Prefix | Meaning | Example | |---|---|---| | <code>agent:</code> | An agent instance | <code>agent:researcher</code> | | <code>tool:</code> | A tool or tool server | <code>tool:web_crawler</code> | | <code>memory:</code> | A memory system | <code>memory:main</code> | | <code>context:</code> | A context provider | <code>context:browser</code> | | <code>environment:</code> | An environment observer | <code>environment:sensors</code> | | <code>harness:</code> | Protocol harness or orchestrator | <code>harness:aep</code> |</p>
+<p>| Prefix | Meaning | Example | |---|---|---| | <code>agent:</code> | An agent instance | <code>agent:researcher</code> | | <code>tool:</code> | A tool or tool server | <code>tool:web_crawler</code> | | <code>memory:</code> | A memory system | <code>memory:main</code> | | <code>context:</code> | A context provider | <code>context:browser</code> | | <code>environment:</code> | An environment observer | <code>environment:sensors</code> | | <code>harness:</code> | Protocol harness or orchestrator | <code>harness:harmovela</code> |</p>
 <h3>Consumer Identity</h3>
 <p>Every event may carry a <code>target</code> field that identifies the intended consumer:</p>
 <pre><code>{
@@ -54,7 +54,7 @@
 <p>Identity claims in <code>source</code> and <code>target</code> must be verifiable. The verification mechanism is transport-specific:</p>
 <ul>
 <li><strong>stdio</strong>: The process identity is the transport identity (OS-level process). The transport provides the identity claim.</li>
-<li><strong>WebSocket</strong>: TLS client certificates provide transport-level identity. The AEP identity is mapped from the certificate.</li>
+<li><strong>WebSocket</strong>: TLS client certificates provide transport-level identity. The Harmovela identity is mapped from the certificate.</li>
 <li><strong>HTTP SSE</strong>: HTTP headers (e.g., <code>Authorization: Bearer</code>) or mTLS provide identity.</li>
 </ul>
 <p>A transport that cannot verify identity must reject events with a falsified <code>source</code> field.</p>
@@ -107,7 +107,7 @@
 </ul>
 <p>A producer that does not support the requested scheme must reject the event with <code>unauthorized</code>.</p>
 <h2>Payload Redaction</h2>
-<p>Sensitive data in event payloads may be redacted before delivery to unauthorized consumers. The redaction policy is implementation-defined, but AEP defines metadata for declaring sensitivity:</p>
+<p>Sensitive data in event payloads may be redacted before delivery to unauthorized consumers. The redaction policy is implementation-defined, but Harmovela defines metadata for declaring sensitivity:</p>
 <pre><code>{
   "payload": {
     "user_query": "what is the capital of France",
@@ -117,11 +117,11 @@
 </code></pre>
 <p>The <code>_redacted</code> key (reserved, prefix <code>_</code>) declares that specific fields in the payload were removed before delivery. Consumers should treat <code>_redacted</code> as informational and not attempt to reconstruct the removed data.</p>
 <h2>Audit Trail</h2>
-<p>Productions deployments should maintain an audit trail of all AEP events. The minimum audit record for each event includes:</p>
+<p>Productions deployments should maintain an audit trail of all Harmovela events. The minimum audit record for each event includes:</p>
 <p>| Field | Source | |---|---| | Event <code>id</code> | Envelope | | Event <code>type</code> | Envelope | | <code>source</code> identity | Envelope | | <code>target</code> identity | Envelope | | <code>created_at</code> | Envelope | | Transport identity | Transport binding | | Auth identity (if different from source) | Transport or envelope <code>authorization</code> | | Delivery status | Delivery tracker |</p>
-<p>Audit records are implementation-specific and not defined by the AEP wire protocol. A conformant implementation may expose audit events as AEP events (e.g., <code>audit.event.delivered</code>), but this is not required.</p>
+<p>Audit records are implementation-specific and not defined by the Harmovela wire protocol. A conformant implementation may expose audit events as Harmovela events (e.g., <code>audit.event.delivered</code>), but this is not required.</p>
 <h2>Threat Model Summary</h2>
-<p>| Threat | Mitigation | |---|---| | Impersonation (spoofed <code>source</code>) | Transport-level identity verification | | Unauthorized subscription | Capability-scoped subscription enforcement | | Unauthorized targeted delivery | Producer-to-target authorization check | | Eavesdropping | Transport-level encryption (TLS) | | Payload data leak | Payload redaction before delivery | | Replay attacks | Event <code>id</code> idempotency + idempotent consumers | | Audit tampering | Append-only audit log, external to AEP |</p>
+<p>| Threat | Mitigation | |---|---| | Impersonation (spoofed <code>source</code>) | Transport-level identity verification | | Unauthorized subscription | Capability-scoped subscription enforcement | | Unauthorized targeted delivery | Producer-to-target authorization check | | Eavesdropping | Transport-level encryption (TLS) | | Payload data leak | Payload redaction before delivery | | Replay attacks | Event <code>id</code> idempotency + idempotent consumers | | Audit tampering | Append-only audit log, external to Harmovela |</p>
 <h2>Multi-Tenant Isolation</h2>
 <p>In shared deployments, the <code>tenant_id</code> envelope field provides namespace isolation:</p>
 <pre><code>{
@@ -138,7 +138,7 @@
 <p>Tenant isolation is enforced by the producer/orchestrator, not by the protocol wire format.</p>
 <h2>Implementation Notes</h2>
 <ul>
-<li>The <code>authorization</code> envelope field is defined by this spec but no mandatory scheme is defined in AEP 0.1. Implementations may use <code>bearer</code> tokens, capability URLs, or custom schemes.</li>
+<li>The <code>authorization</code> envelope field is defined by this spec but no mandatory scheme is defined in Harmovela 0.1. Implementations may use <code>bearer</code> tokens, capability URLs, or custom schemes.</li>
 <li>The <code>_redacted</code> payload prefix is reserved. Implementations must not use this prefix for application data.</li>
 <li>Capability scopes use glob-style pattern matching (same as event type matching).</li>
 <li>Transport bindings may define additional security requirements (e.g., WebSocket mandates TLS for <code>wss://</code>).</li>

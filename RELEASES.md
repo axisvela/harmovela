@@ -1,6 +1,6 @@
 # Harmovela Protocol Releases
 
-> Current version: **0.4.0-beta**
+> Current version: **0.5.0**
 
 ## Release Phases
 
@@ -49,10 +49,11 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Planned |
+| **Status** | Delivered |
 | **Goal** | Specify and implement normative feedback/outcome correlation; security-profile-dependent adaptation-operation authority, audit linkage, and authorization checks; the L3 adaptation profile; and cross-language conformance fixtures |
 | **Entry criteria** | The L2 coordination profile is interoperable at 0.4 |
 | **Exit criteria** | Feedback/outcome and adaptation-operation specifications, an L3 profile declaration that depends on `harmovela.security.v1`, and shared fixtures published; the existing Security Profile retains base HARMOVELA-C0/C1 identity, authorization, audit, and tenant-isolation behavior; adaptation-operation semantics identify authority and audit linkage for feedback/outcome and budget establishment, change, enforcement, and violation; budget semantics identify the enforcement point and observable limit-approaching and limit-exceeded outcomes; authorization checks cover feedback/outcome and budget establishment, change, enforcement, and violation operations; every reference implementation passes the declared L3 fixtures |
+| **Deliverables** | 11 adaptation event types defined and registered; budget enforcement semantics integrated with the harness; 4 cross-language adaptation conformance fixtures pass across all reference implementations |
 | **Scope** | The L3 profile depends on `harmovela.security.v1`, which owns base HARMOVELA-C0/C1 identity, authorization, audit, and tenant isolation; L3 adds adaptation-operation authority and audit linkage for feedback/outcome and budget establishment, change, enforcement, and violation, and authorization checks for those operations; L3 profile identifier, dependencies, capability negotiation, versioning, and conformance; positive and negative L3 fixtures for outcome correlation, authorized and unauthorized feedback/outcome and budget establishment, change, enforcement, and violation operations, limits, and adaptation-operation audit linkage |
 
 ### 0.9 — Release Candidate
@@ -100,6 +101,8 @@ Each versioned release produces the following artifacts:
 ## Versioning
 
 Protocol versioning follows `docs/protocol/versioning.md`. The protocol envelope `spec_version` field uses `MAJOR.MINOR` format. Release phase numbers correspond to the protocol version.
+
+> **Git tag axis note:** the `v0.6.0` git tag is an **implementation/milestone** tag (protocol boundary documentation and Go harness coordination fix), not a Protocol release. It does not advance the Protocol version and does not appear in the release path above. Implementation tags must not be read as Protocol releases.
 
 ## Related Documents
 

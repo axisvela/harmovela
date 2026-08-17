@@ -45,6 +45,8 @@ The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by
 
 Layer documents provide release-specific entry and exit gates.
 
+> **Git tag axis note:** the `v0.6.0` git tag is an **implementation/milestone** tag (protocol boundary documentation and Go harness coordination fix), not a Protocol release. It does not advance the Protocol version and does not occupy a row in the release path above. Implementation tags must not be read as Protocol releases; see [RELEASES.md](../RELEASES.md).
+
 ## Immediate Next Step
 
 The current frontier is the **[Adaptation layer](roadmap/adaptation-layer.md)**. With 0.1 through 0.5 delivered, the immediate next-step priorities are:

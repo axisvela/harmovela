@@ -22,12 +22,12 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Mcp Relationship</h1>
-<h1>AEP And MCP</h1>
+<h1>Harmovela And MCP</h1>
 <h2>Summary</h2>
-<p>AEP is the asynchronous counterpart to MCP.</p>
-<p>MCP standardizes how a model or agent synchronously invokes capabilities. AEP standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.</p>
+<p>Harmovela is the asynchronous counterpart to MCP.</p>
+<p>MCP standardizes how a model or agent synchronously invokes capabilities. Harmovela standardizes how agents, tools, memory systems, context providers, and environments communicate asynchronously.</p>
 <p>They should be complementary protocols.</p>
 <h2>Why MCP Alone Is Not Enough</h2>
 <p>MCP is centered on request-response interactions:</p>
@@ -55,24 +55,24 @@
 <p>For a long-running operation, submission and acceptance are distinct from progress and the terminal result:</p>
 <pre><code>Agent --MCP/HTTPS--&gt; submit ingest_document
 Tool  --MCP/HTTPS--&gt; accepted (task_id)
-Tool  --AEP--------&gt; task.progress (task_id)
-Tool  --AEP--------&gt; task.completed | task.failed | task.cancelled (task_id)
+Tool  --Harmovela--------&gt; task.progress (task_id)
+Tool  --Harmovela--------&gt; task.completed | task.failed | task.cancelled (task_id)
 </code></pre>
-<p>The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft AEP lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.</p>
+<p>The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft Harmovela lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.</p>
 <h2>Correspondence Table</h2>
-<p>| MCP Capability | AEP Counterpart | | --- | --- | | <code>initialize</code> | <code>session.opened</code>, <code>session.ready</code>, capability negotiation | | <code>tools/list</code> | <code>capabilities.requested</code>, <code>capabilities.declared</code> | | <code>tools/call</code> | <code>tool.call.requested</code>, lifecycle events | | <code>resources/list</code> | <code>streams/list</code> or subscription capabilities | | <code>resources/read</code> | <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code> | | <code>notifications/*</code> | General event publish / subscribe | | Request-response result | Deferred result stream |</p>
+<p>| MCP Capability | Harmovela Counterpart | | --- | --- | | <code>initialize</code> | <code>session.opened</code>, <code>session.ready</code>, capability negotiation | | <code>tools/list</code> | <code>capabilities.requested</code>, <code>capabilities.declared</code> | | <code>tools/call</code> | <code>tool.call.requested</code>, lifecycle events | | <code>resources/list</code> | <code>streams/list</code> or subscription capabilities | | <code>resources/read</code> | <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code> | | <code>notifications/*</code> | General event publish / subscribe | | Request-response result | Deferred result stream |</p>
 <h2>Interop Model</h2>
-<h3>MCP Tool Calls Producing AEP Events</h3>
-<p>A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing AEP events later.</p>
+<h3>MCP Tool Calls Producing Harmovela Events</h3>
+<p>A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing Harmovela events later.</p>
 <p>Example:</p>
 <pre><code>Agent --MCP--&gt; call tool: ingest_document
 Tool --MCP--&gt; returns accepted result
-Tool --AEP--&gt; task.progress
-Tool --AEP--&gt; memory.summary.ready
-Tool --AEP--&gt; task.completed
+Tool --Harmovela--&gt; task.progress
+Tool --Harmovela--&gt; memory.summary.ready
+Tool --Harmovela--&gt; task.completed
 </code></pre>
-<h3>AEP Events Requesting MCP Tool Calls</h3>
-<p>AEP can carry an event that asks a runtime to execute an MCP tool asynchronously.</p>
+<h3>Harmovela Events Requesting MCP Tool Calls</h3>
+<p>Harmovela can carry an event that asks a runtime to execute an MCP tool asynchronously.</p>
 <pre><code>{
   "type": "tool.call.requested",
   "payload": {
@@ -85,15 +85,15 @@ Tool --AEP--&gt; task.completed
   }
 }
 </code></pre>
-<p>The result is emitted as AEP lifecycle events rather than returned synchronously.</p>
-<h3>MCP For Current State, AEP For Change Over Time</h3>
-<p>MCP can read a current resource snapshot. AEP can notify agents that the snapshot changed.</p>
+<p>The result is emitted as Harmovela lifecycle events rather than returned synchronously.</p>
+<h3>MCP For Current State, Harmovela For Change Over Time</h3>
+<p>MCP can read a current resource snapshot. Harmovela can notify agents that the snapshot changed.</p>
 <pre><code>MCP: read current context
-AEP: context.updated / context.invalidated
+Harmovela: context.updated / context.invalidated
 </code></pre>
 <h2>Design Boundary</h2>
-<p>AEP should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.</p>
-<p>AEP should define:</p>
+<p>Harmovela should not attempt to duplicate every MCP feature. It should not become a second synchronous tool protocol.</p>
+<p>Harmovela should define:</p>
 <ul>
 <li>Event envelope</li>
 <li>Subscription model</li>
@@ -112,7 +112,7 @@ AEP: context.updated / context.invalidated
 <h2>Naming Recommendation</h2>
 <p>Avoid calling the project "Async MCP".</p>
 <p>Recommended framing:</p>
-<p>&gt; AEP is the event layer for agent systems. MCP is the call layer.</p>
+<p>&gt; Harmovela is the event layer for agent systems. MCP is the call layer.</p>
 <p>This keeps the protocol independent, general, and useful beyond the MCP ecosystem while still allowing first-class MCP integration.</p>
 </body>
 </html>

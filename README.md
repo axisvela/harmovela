@@ -20,11 +20,11 @@ Harmovela complements MCP. MCP remains the synchronous capability invocation lay
 
 The current 0.5 Adaptation Preview is a multi-language protocol repository with:
 
-- **11 dimension modules** (Event, Task, State, Context/Memory, Delegation, Recovery, Governance, Tool, Agent, Environment, Adaptation)
+- **13 dimension modules** (Event, Task, State, Context/Memory, Delegation, Recovery, Governance, Tool, Agent, Environment, Adaptation, Command, Query)
 - **5 infrastructure modules** (Harness, Runtime, CLI, Conformance, MCP Bridge)
 - **17 protocol specifications** covering session, subscription, task, error, versioning, delivery, reliability, security, conformance, and transport layers
 - **4 productized implementations** (TypeScript, Python, Go, Java) — each with runtime daemon, CLI, HTTP API, subscriptions, MCP bridge, and delivery stores
-- **28 conformance fixtures** with cross-language validation
+- **34 conformance fixtures** with cross-language validation
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance

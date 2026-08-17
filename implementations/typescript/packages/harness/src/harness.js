@@ -14,6 +14,13 @@ import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
 import { COMMAND_EVENT_TYPES } from "@axisrobo/harmovela-command";
 import { QUERY_EVENT_TYPES } from "@axisrobo/harmovela-query";
 
+const TERMINAL_TASK_EVENT_TYPES = new Set([
+  "task.completed",
+  "task.failed",
+  "task.cancelled",
+  "task.timed_out"
+]);
+
 const LEGACY_DIMENSION_EVENT_TYPES = new Set([
   "event.acknowledged",
   "event.rejected",
@@ -55,6 +62,7 @@ export class HarmovelaHarness {
     this._sequence = 0;
     this._subscriptions = new Map();
     this._tasks = new Map();
+    this._taskChildren = new Map();
     this._commands = new Map();
     this._queries = new Map();
     this._router = new EventRouter();
@@ -282,6 +290,8 @@ export class HarmovelaHarness {
       });
     }
 
+    const parentTaskId = event.parent_task_id ?? event.payload?.parent_task_id;
+
     const tracker = new TaskTracker({
       task_id: taskId,
       description: event.payload?.description,
@@ -292,12 +302,27 @@ export class HarmovelaHarness {
     });
 
     this._tasks.set(taskId, tracker);
+    if (parentTaskId) {
+      const siblings = this._taskChildren.get(parentTaskId) ?? new Set();
+      siblings.add(taskId);
+      this._taskChildren.set(parentTaskId, siblings);
+    }
     tracker.accepted();
 
     return this._event("task.accepted", event, {
       task_id: taskId,
       status: "accepted"
     });
+  }
+
+  _taskHasActiveChildren(taskId) {
+    const children = this._taskChildren.get(taskId);
+    if (!children) return false;
+    for (const childId of children) {
+      const child = this._tasks.get(childId);
+      if (child && !child.isTerminal()) return true;
+    }
+    return false;
   }
 
   _handleTaskEvent(event) {
@@ -308,6 +333,15 @@ export class HarmovelaHarness {
     if (!this._tasks.has(taskId)) {
       return this._event("event.rejected", event, {
         error: errorPayload(ErrorCode.TASK_ERROR, `unknown task: ${taskId}`)
+      });
+    }
+
+    if (TERMINAL_TASK_EVENT_TYPES.has(event.type) && this._taskHasActiveChildren(taskId)) {
+      return this._event("event.rejected", event, {
+        error: errorPayload(
+          ErrorCode.TASK_ERROR,
+          `parent task ${taskId} cannot reach a terminal state while it has active child tasks`
+        )
       });
     }
 

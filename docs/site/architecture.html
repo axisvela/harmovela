@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Architecture</h1>
 <h1>Harmovela Architecture</h1>
 <h2>Architectural Position</h2>
@@ -72,18 +72,18 @@ LLM Agent / Agent Runtime
 <h3>Agent</h3>
 <p>An agent is a producer and consumer of events. It may publish messages, subscribe to topics, launch async tasks, receive progress, react to context changes, and coordinate with other agents.</p>
 <h3>Tool</h3>
-<p>A tool may expose synchronous MCP calls, asynchronous AEP tasks, or both. A slow tool can accept work quickly and emit task lifecycle events over AEP.</p>
+<p>A tool may expose synchronous MCP calls, asynchronous Harmovela tasks, or both. A slow tool can accept work quickly and emit task lifecycle events over Harmovela.</p>
 <h3>Memory System</h3>
 <p>A memory system emits events when facts, episodes, preferences, constraints, summaries, or retrieval results change. It may also consume agent events to build long-term memory.</p>
 <h3>Context Provider</h3>
 <p>A context provider emits updates, invalidations, snapshots, and readiness events. This allows an agent to avoid stale context without constant polling.</p>
 <h3>Environment Observer</h3>
-<p>An observer watches external state such as browsers, files, robots, APIs, sensors, logs, or user activity and emits events into AEP.</p>
+<p>An observer watches external state such as browsers, files, robots, APIs, sensors, logs, or user activity and emits events into Harmovela.</p>
 <h3>Orchestrator</h3>
 <p>An orchestrator coordinates subscriptions, routes events, tracks task lifecycle, applies delivery policy, and bridges transports.</p>
 <h2>Protocol Layers</h2>
 <h3>1. Transport Binding</h3>
-<p>AEP should support several transports:</p>
+<p>Harmovela should support several transports:</p>
 <ul>
 <li><code>stdio</code> for local process integration</li>
 <li><code>WebSocket</code> for bidirectional local or remote streams</li>
@@ -136,42 +136,50 @@ LLM Agent / Agent Runtime
 <p>The core protocol should define common domain families but allow extension.</p>
 <h2>Data Flow Examples</h2>
 <h3>Async Tool Call</h3>
-<pre><code>Agent -&gt; AEP: tool.call.requested
-AEP -&gt; Tool: tool.call.requested
-Tool -&gt; AEP: tool.call.accepted
-Tool -&gt; AEP: tool.call.progress
-Tool -&gt; AEP: tool.call.output
-Tool -&gt; AEP: tool.call.completed
-AEP -&gt; Agent: task result events
+<pre><code>Agent -&gt; Harmovela: tool.call.requested
+Harmovela -&gt; Tool: tool.call.requested
+Tool -&gt; Harmovela: tool.call.accepted
+Tool -&gt; Harmovela: tool.call.progress
+Tool -&gt; Harmovela: tool.call.output
+Tool -&gt; Harmovela: tool.call.completed
+Harmovela -&gt; Agent: task result events
 </code></pre>
 <h3>Memory Update</h3>
 <pre><code>Agent -&gt; Tool: synchronous MCP call
 Tool -&gt; Memory: stores new fact
-Memory -&gt; AEP: memory.fact.added
-AEP -&gt; subscribed agents: memory.fact.added
-Agent -&gt; AEP: event.acknowledged
+Memory -&gt; Harmovela: memory.fact.added
+Harmovela -&gt; subscribed agents: memory.fact.added
+Agent -&gt; Harmovela: event.acknowledged
 </code></pre>
 <h3>Context Invalidation</h3>
-<pre><code>Context provider -&gt; AEP: context.invalidated
-AEP -&gt; Agent: context.invalidated
-Agent -&gt; MCP or AEP: requests fresh context
-Context provider -&gt; AEP: context.snapshot.ready
+<pre><code>Context provider -&gt; Harmovela: context.invalidated
+Harmovela -&gt; Agent: context.invalidated
+Agent -&gt; MCP or Harmovela: requests fresh context
+Context provider -&gt; Harmovela: context.snapshot.ready
 </code></pre>
 <h3>Delegation</h3>
-<pre><code>Orchestrator -&gt; AEP: task.delegated (task_id, from_agent, to_agent)
-AEP -&gt; from_agent: task.delegated (ack)
-AEP -&gt; to_agent: task.delegated (new assignment)
-to_agent -&gt; AEP: task.delegation.accepted
-to_agent -&gt; AEP: task.running
+<pre><code>Orchestrator -&gt; Harmovela: task.delegated (task_id, from_agent, to_agent)
+Harmovela -&gt; from_agent: task.delegated (ack)
+Harmovela -&gt; to_agent: task.delegated (new assignment)
+to_agent -&gt; Harmovela: task.delegation.accepted
+to_agent -&gt; Harmovela: task.running
 </code></pre>
 <h3>Recovery</h3>
-<pre><code>AEP -&gt; dead_letter: delivery.failed (after retry policy exhausted)
-Orchestrator -&gt; AEP: delivery.replay.requested (cursor)
-AEP -&gt; Agent: replay stream from cursor
-Agent -&gt; AEP: event.acknowledged (idempotent check on event_id)
+<pre><code>Harmovela -&gt; dead_letter: delivery.failed (after retry policy exhausted)
+Orchestrator -&gt; Harmovela: delivery.replay.requested (cursor)
+Harmovela -&gt; Agent: replay stream from cursor
+Agent -&gt; Harmovela: event.acknowledged (idempotent check on event_id)
 </code></pre>
+<h2>Module Architecture</h2>
+<p>Harmovela ships with 10+ dimension modules and 5 infrastructure modules:</p>
+<h3>Dimension Modules</h3>
+<p>Each dimension module owns its event type registry and the public contracts for its coordination concern. Dimension modules are independently publishable and have no imports from other dimension internals.</p>
+<p>| Dimension | Concern | |---|---| | Event | Envelope validation, sessions, subscriptions, routing, transport contracts | | Recovery | Delivery tracker, delivery journal, retry policy, dead-letter, durability stores | | Governance | RBAC authorization policy, capability-based access control, audit trail | | Task | Task state machine, lifecycle transitions, task event types | | State | State snapshots, incremental deltas, freshness window metadata | | Context / Memory | Facts, episodes, preferences, invalidation, belief revision | | Delegation | Ownership transfer, handoff, escalation, cancellation propagation | | Tool | Tool invocation lifecycle, MCP bridge integration | | Agent | Agent-to-agent messaging, request/response, decision recording | | Environment | Environment observation, change detection, alerting | | Adaptation | Feedback/outcome correlation, budget authority and enforcement |</p>
+<h3>Infrastructure Modules</h3>
+<p>Infrastructure modules provide cross-cutting runtime support and are not dimension-specific.</p>
+<p>| Module | Concern | |---|---| | Harness | Runtime ingress/egress enforcement, dimension wiring, policy dispatch | | Runtime | Daemon process, HTTP API, transport lifecycle, configuration management | | CLI | Command-line interface for publish, subscribe, conformance, and administration | | Conformance | Cross-language test runner, profile fixtures, compliance verification | | MCP Bridge | Protocol bridge between MCP synchronous calls and Harmovela async events |</p>
 <h2>Reliability Model</h2>
-<p>AEP should support multiple reliability levels:</p>
+<p>Harmovela should support multiple reliability levels:</p>
 <ul>
 <li><strong>Best effort</strong>: transient events, no replay guarantee.</li>
 <li><strong>At least once</strong>: durable delivery with possible duplicates.</li>
@@ -180,7 +188,7 @@ Agent -&gt; AEP: event.acknowledged (idempotent check on event_id)
 </ul>
 <p>The protocol should require globally unique event IDs and recommend idempotent consumers.</p>
 <h2>Security Model</h2>
-<p>AEP needs security at the identity, subscription, and payload levels.</p>
+<p>Harmovela needs security at the identity, subscription, and payload levels.</p>
 <p>Required concepts:</p>
 <ul>
 <li>Producer identity</li>

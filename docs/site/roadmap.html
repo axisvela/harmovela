@@ -22,178 +22,62 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Roadmap</h1>
 <h1>Harmovela Protocol Roadmap</h1>
-<p>&gt; The protocol's formal working name is <strong>Harmovela Protocol</strong>. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases.</p>
-<h2>Phase 0: Vision And Design �?Complete</h2>
-<p>Goal: define the project direction clearly enough for external review.</p>
-<p>Deliverables (all delivered):</p>
+<p>&gt; The protocol's formal working name is <strong>Harmovela Protocol</strong>. The current 0.1 draft remains the compatibility baseline while public identity and technical identifiers transition through versioned releases. Legacy technical identifiers such as <code>schemas/aep-envelope.schema.json</code> and <code>AEP-C3</code> stay valid until that migration completes.</p>
+<h2>Direction Of Travel</h2>
+<p>Harmovela's value grows through a <strong>capability maturity stack</strong>. Each layer depends on the one below and only becomes meaningful once the lower layer is stable. Events are the substrate; coordination is the current frontier; adaptation is the horizon.</p>
+<table>
+<thead><tr><th>Layer</th><th>Question it answers</th><th>Autonomy</th><th>Status</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td><strong>Event</strong></td><td>What happened? — typed, correlatable communication substrate</td><td>L0</td><td>Delivered / stable</td><td><a href="event-layer.html">event-layer.md</a></td></tr>
+<tr><td><strong>Coordination</strong></td><td>Who does what, on what shared truth? — delegation, ownership, state agreement</td><td>L1–L2</td><td>Active, semantics tightening</td><td><a href="coordination-layer.html">coordination-layer.md</a></td></tr>
+<tr><td><strong>Adaptation</strong></td><td>How does the system observe, adjust, and evolve? — feedback, production-autonomy boundaries</td><td>L3 (in scope); L4/AGI (non-goals)</td><td>Delivered</td><td><a href="adaptation-layer.html">adaptation-layer.md</a></td></tr>
+</tbody>
+</table>
+<p><strong>Where we are now:</strong> the Event layer is complete and stable (0.1 delivered). The Coordination layer is delivered and interoperable (0.2–0.4 delivered). The Adaptation layer feedback/outcome and L3 autonomy boundaries are specified and conformance-tested (0.5 delivered). The immediate next step is 0.9 RC validation of the complete L3 semantics.</p>
+<h2>Autonomy Ladder</h2>
+<p>Harmovela is a coordination protocol, not an intelligence model. Version milestones commit only to the coordination semantics required at each level, never to the intelligence of the implementing agent.</p>
+<table>
+<thead><tr><th>Level</th><th>Definition</th><th>Status</th><th>Layer</th></tr></thead>
+<tbody>
+<tr><td>L0</td><td>Event-aware agent</td><td>Supported</td><td>Event</td></tr>
+<tr><td>L1</td><td>Bounded autonomous task agent</td><td>Supported, but relies on implementer policy</td><td>Coordination</td></tr>
+<tr><td>L2</td><td>Multi-agent collaboration and delegation</td><td>Partially supported; semantics need tightening</td><td>Coordination</td></tr>
+<tr><td>L3</td><td>Production autonomy with audit, budget, and authorization boundaries</td><td>Not yet achieved</td><td>Adaptation</td></tr>
+<tr><td>L4</td><td>Open-ended long-term autonomy</td><td>Not to be promised by 1.0</td><td>Adaptation (non-goal)</td></tr>
+<tr><td>AGI</td><td>General intelligence capability</td><td>Not a protocol version target</td><td>Out of scope</td></tr>
+</tbody>
+</table>
+<p><strong>L3 is the 1.0 ceiling.</strong> L4 and AGI are stated only to bound the promise, never scheduled.</p>
+<h2>Release Path</h2>
+<p>The 0.1 → 1.0 milestones are the delivery timeline. Each release is labeled by the layer it advances and the autonomy level it targets.</p>
+<table>
+<thead><tr><th>Release</th><th>Advances</th><th>Target level</th><th>Goal</th><th>Delivered</th></tr></thead>
+<tbody>
+<tr><td><strong>0.1 Transition</strong></td><td>Event</td><td>L0–L1 (documented)</td><td>Establish the Harmovela identity and document the L1 policy surface without changing wire behavior.</td><td>:white_check_mark:</td></tr>
+<tr><td><strong>0.2 Core Stabilization</strong></td><td>Coordination</td><td>L1 (frozen)</td><td>Freeze the L0–L1 coordination core: envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, declared delivery semantics.</td><td>:white_check_mark:</td></tr>
+<tr><td><strong>0.3 Optional Profiles</strong></td><td>Coordination</td><td>L2 (tightened)</td><td>Tighten delegation/handoff/escalation/cancellation into a conformance-tested profile; separate durable delivery and security into adoptable profiles.</td><td>:white_check_mark:</td></tr>
+<tr><td><strong>0.4 Beta</strong></td><td>Coordination</td><td>L2 (interoperable)</td><td>Prove L2 multi-agent coordination across two independent implementations with a public conformance matrix.</td><td>:white_check_mark:</td></tr>
+<tr><td><strong>0.5 Adaptation Preview</strong></td><td>Adaptation</td><td>L3 (specified and testable)</td><td>Define feedback/outcome correlation and protocol-level budget, audit, and authorization semantics; publish the L3 profile and cross-language conformance fixtures.</td><td>:white_check_mark:</td></tr>
+<tr><td><strong>0.9 Release Candidate</strong></td><td>Adaptation</td><td>L3 (validated)</td><td>Preparation in progress; external evidence pending. Validate the complete 0.5 L3 semantics without feature expansion through the <a href="rc-validation.html">RC validation kit</a>, reproducible compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.</td><td></td></tr>
+<tr><td><strong>1.0</strong></td><td>Adaptation</td><td>L3 (stable)</td><td>Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.</td><td></td></tr>
+</tbody>
+</table>
+<p>Layer documents provide release-specific entry and exit gates.</p>
+<p>&gt; <strong>Git tag axis note:</strong> the <code>v0.6.0</code> git tag is an <strong>implementation/milestone</strong> tag (protocol boundary documentation and Go harness coordination fix), not a Protocol release. It does not advance the Protocol version and does not occupy a row in the release path above. Implementation tags must not be read as Protocol releases; see <a href="RELEASES.html">RELEASES.md</a>.</p>
+<h2>Immediate Next Step</h2>
+<p>The current frontier is the <strong><a href="adaptation-layer.html">Adaptation layer</a></strong>. With 0.1 through 0.5 delivered, the immediate next-step priorities are:</p>
+<p>1. <strong>0.9 RC validation</strong> — Preparation in progress; external evidence pending. Use the <a href="rc-validation.html">RC validation kit</a> to validate the complete 0.5 Adaptation Preview L3 semantics without feature expansion through reproducible RC fixtures, a compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot. 2. <strong>1.0 release preparation</strong> — publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.</p>
+<h2>Layer Documents</h2>
+<p>Layer documents classify historical work by the capability it enables, not the chronological phase that originally delivered it.</p>
 <ul>
-<li>Vision document</li>
-<li>Architecture document</li>
-<li>Protocol design draft</li>
-<li>MCP relationship document</li>
-<li>Initial terminology</li>
+<li><a href="event-layer.html">Event layer</a> — foundation; absorbs completed Phases 0–8; stable (L0).</li>
+<li><a href="coordination-layer.html">Coordination layer</a> — active work; delegation and shared-truth semantics; releases 0.2–0.4 (L1–L2).</li>
+<li><a href="adaptation-layer.html">Adaptation layer</a> — delivered; feedback and governed production autonomy; releases 0.5–1.0 (L3), with L4/AGI as non-goals.</li>
 </ul>
-<h2>Phase 1: Core Specification Draft �?Complete</h2>
-<p>Goal: produce a minimal implementable protocol specification.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>Event envelope JSON Schema (<code>schemas/aep-envelope.schema.json</code>)</li>
-<li>Standard event type registry (<code>implementations/typescript/src/event-types.js</code>)</li>
-<li>Session and capability negotiation spec (<code>docs/specs/session.md</code>)</li>
-<li>Subscription spec (<code>docs/specs/subscription.md</code>)</li>
-<li>Task lifecycle spec (<code>docs/specs/task-lifecycle.md</code>)</li>
-<li>Error model (<code>docs/specs/error-model.md</code>)</li>
-<li>Versioning rules (<code>docs/specs/versioning.md</code>)</li>
-<li>Shared conformance fixtures for reference implementations (<code>conformance/fixtures/</code>)</li>
-</ul>
-<h2>Phase 2: Transport Bindings �?Complete</h2>
-<p>Goal: define how AEP runs over common transports.</p>
-<p>Initial bindings:</p>
-<ul>
-<li><code>stdio</code> for local process integration (<code>docs/specs/transport-stdio.md</code>, implemented in <code>implementations/typescript/src/transport/stdio.js</code>)</li>
-<li><code>WebSocket</code> for bidirectional streams (<code>docs/specs/transport-websocket.md</code>, implemented in <code>implementations/typescript/src/transport/websocket.js</code>)</li>
-<li><code>HTTP SSE</code> for server-to-client event streams (<code>docs/specs/transport-sse.md</code>, implemented in <code>implementations/typescript/src/transport/sse.js</code>)</li>
-</ul>
-<p>Later bindings:</p>
-<ul>
-<li>gRPC streaming (<code>docs/specs/transport-grpc.md</code>, implemented in <code>implementations/typescript/src/transport/grpc.js</code>)</li>
-<li>NATS (<code>docs/specs/transport-nats.md</code>, implemented in <code>implementations/go/aep/transport_nats.go</code>)</li>
-<li>Kafka (<code>docs/specs/transport-kafka.md</code>, implemented in all 4 languages)</li>
-<li>Redis Streams (<code>docs/specs/transport-redis-streams.md</code>, implemented in all 4 languages)</li>
-</ul>
-<h2>Phase 3: Reference Implementation �?Complete</h2>
-<p>Goal: prove the spec with a small, understandable implementation.</p>
-<p>Deliverables (all delivered across four languages):</p>
-<ul>
-<li>TypeScript reference server and client</li>
-<li>Python reference client</li>
-<li>JSON Schema validation</li>
-<li>Simple local router</li>
-<li>Example async tool (<code>implementations/typescript/examples/async-tool-producer.js</code>)</li>
-<li>Example memory event producer (<code>implementations/typescript/examples/memory-event-producer.js</code>)</li>
-<li>Example agent subscriber (<code>implementations/typescript/examples/agent-subscriber.js</code>)</li>
-<li>Cross-language conformance tests using shared fixtures</li>
-</ul>
-<h2>Phase 4: MCP Bridge �?Complete</h2>
-<p>Goal: demonstrate clean interop with MCP.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>MCP tool call to AEP task bridge (<code>implementations/typescript/src/bridge/mcp-bridge.js</code>)</li>
-<li>AEP task completion events from MCP tools</li>
-<li>Example MCP server emitting AEP events (<code>implementations/typescript/examples/mcp-bridge/demo.js</code>)</li>
-<li>Example agent consuming both MCP and AEP (<code>implementations/typescript/examples/mcp-aep-consumer.js</code>)</li>
-</ul>
-<h2>Phase 5: Reliability And Production Semantics �?Complete</h2>
-<p>Goal: support durable and distributed deployments.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>Replay cursors (<code>docs/specs/delivery.md</code>)</li>
-<li>Acknowledgement protocol (<code>docs/specs/delivery.md</code>)</li>
-<li>Dead-letter events (<code>docs/specs/reliability.md</code>, <code>implementations/typescript/src/delivery.js</code>)</li>
-<li>Retry policy metadata (<code>docs/specs/reliability.md</code>, <code>implementations/typescript/src/delivery.js</code>)</li>
-<li>Authorization model (<code>docs/specs/security.md</code>)</li>
-<li>Multi-tenant routing model (<code>docs/specs/security.md</code>)</li>
-</ul>
-<h2>Phase 6: Ecosystem And Governance �?Complete</h2>
-<p>Goal: make AEP usable as a general open protocol.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>Public specification site (<code>docs/site/</code>, generated by <code>tools/generate-spec-site.js</code>)</li>
-<li>Compatibility test suite (<code>tools/conformance-runner.js</code>)</li>
-<li>Conformance levels (<code>docs/specs/conformance.md</code>, <code>conformance/manifest.json</code>)</li>
-<li>Event registry governance (<code>docs/specs/event-registry-governance.md</code>)</li>
-<li>Contribution guide (<code>CONTRIBUTING.md</code>)</li>
-<li>Code of conduct (<code>CODE_OF_CONDUCT.md</code>)</li>
-<li>Security considerations (<code>docs/specs/security.md</code>)</li>
-</ul>
-<h2>Suggested First Milestone �?Achieved</h2>
-<p>The first milestone <strong>AEP 0.1 Draft</strong> has been delivered:</p>
-<ul>
-<li>One event envelope �?- One subscription model �?- One async task lifecycle �?- One context event family �?- One memory event family �?- Two transport bindings: stdio and WebSocket �?- One MCP bridge example �?</li>
-</ul>
-<p>AEP has since expanded to include four transport bindings (stdio, WebSocket, SSE, gRPC), full delivery and reliability subsystems, SQLite-backed stores, four language references, cross-language conformance testing, and a published spec site.</p>
-<h2>Phase 7: Agent Semantics And Positioning �?Complete</h2>
-<p>Goal: distinguish AEP from existing event systems and define agent-runtime metadata.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>Differentiation and positioning document (<code>docs/differentiation.md</code>)</li>
-<li>Agent-runtime-semantics specification (<code>docs/specs/agent-runtime-semantics.md</code>)</li>
-<li>Extended event envelope schema with 15 optional agent-runtime metadata fields (<code>schemas/aep-envelope.schema.json</code>)</li>
-<li>Six new standard event families: belief, freshness, delegation, interruption, compensation, provenance</li>
-<li>All 4 language event registries updated with 18 new event types</li>
-<li>Cross-language conformance fixture for agent-runtime semantics (4/4 languages PASS)</li>
-</ul>
-<h2>Phase 8: Delivery End-to-End Conformance �?Complete</h2>
-<p>Goal: exercise real DeliveryTracker trace (track �?ack, track �?nack, track �?dead-letter) in every language's conformance harness.</p>
-<p>Deliverables (all delivered):</p>
-<ul>
-<li>AEP-C3 conformance level with <code>delivery_e2e</code> expectation</li>
-<li><code>conformance/fixtures/delivery-e2e.ndjson</code> �?full tracking lifecycle fixture</li>
-<li>DeliveryTracker integration in all 4 language harnesses</li>
-<li>Cross-language delivery-e2e fixture PASS at AEP-C3 default target</li>
-<li>Payload schema validation for 26 event types in TypeScript and Python (<code>schemas/aep-payloads.schema.json</code>)</li>
-</ul>
-<h2>Current Completion State</h2>
-<p>All eight roadmap phases (Phase 0 through Phase 8) are fully delivered. The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/harmovela/. Default conformance target is AEP-C3 with DeliveryTracker integration in all languages.</p>
-<p>Future roadmap work should focus on: formal protocol versioning and community governance structures. A networked PostgreSQL delivery-store backend now ships in all four languages alongside the in-memory and SQLite backends.</p>
-<h2>Next Release Path</h2>
-<h3>0.1 Transition</h3>
-<p>Goal: establish the Harmovela protocol identity without silently changing the existing draft's wire behavior or delivery guarantees.</p>
-<p>Exit criteria:</p>
-<ul>
-<li>Public documentation consistently identifies Harmovela as the protocol.</li>
-<li>Legacy technical identifiers have an explicit compatibility policy.</li>
-<li>Protocol identity, schema identifiers, package names, and repository paths have a documented migration sequence.</li>
-</ul>
-<h3>0.2 Core Stabilization</h3>
-<p>Goal: freeze the minimum interoperable coordination core.</p>
-<p>Scope:</p>
-<ul>
-<li>Envelope, session, subscription, task lifecycle, errors, correlation, version negotiation, and declared delivery semantics.</li>
-<li>Internally consistent conformance levels, manifest expectations, and default runner target.</li>
-<li>Shared positive and negative fixtures for core lifecycle behavior.</li>
-</ul>
-<h3>0.3 Optional Profiles</h3>
-<p>Goal: separate the stable core from independently adoptable coordination capabilities.</p>
-<p>Profiles include runtime semantics, durable delivery, security, and transport-specific capabilities. A profile must define its identifier, dependencies, capability negotiation, versioning, and conformance fixtures.</p>
-<h3>0.4 Beta</h3>
-<p>Goal: release a stable, well-documented coordination core to attract independent implementations and community feedback.</p>
-<p>Entry criteria:</p>
-<ul>
-<li>0.3 profiles complete with profile conformance declarations and <code>--profile</code> filtering.</li>
-<li>Frozen core with published compatibility policy.</li>
-<li>Passing cross-language conformance (TypeScript, Go).</li>
-<li>Three documented integration scenarios: async task orchestration, context/memory coordination, MCP bridge with async feedback.</li>
-<li>Public conformance matrix (CONFORMANCE.md).</li>
-<li>Governance, release, trademark, and license documentation published.</li>
-</ul>
-<p>Exit criteria:</p>
-<ul>
-<li>At least two independently maintained interoperable implementations.</li>
-<li>No unremediated core conformance regressions.</li>
-<li>Community governance proposal published.</li>
-</ul>
-<h3>0.9 Release Candidate</h3>
-<p>Goal: validate the proposed 1.0 core without new feature expansion.</p>
-<p>Entry criteria:</p>
-<ul>
-<li>No unresolved breaking core semantic changes.</li>
-<li>Release-candidate conformance fixtures and compatibility matrix.</li>
-<li>Public governance, release, security-response, and registry processes.</li>
-<li>At least one external deployment or interoperability pilot.</li>
-</ul>
-<h3>1.0</h3>
-<p>Goal: publish a stable, implementable open coordination protocol for autonomous systems.</p>
-<p>Release criteria:</p>
-<ul>
-<li>Stable core semantics and version negotiation.</li>
-<li>Repeatable conformance results across independently maintained implementations.</li>
-<li>Documented governance, release, licensing, and trademark policies.</li>
-<li>Clear separation between required core behavior and optional profiles.</li>
-<li>Published upgrade and deprecation policy.</li>
-</ul>
+<h2>Design Record</h2>
+<p>The rationale for this layered structure is recorded in <a href="2026-07-12-layered-roadmap-design.html">docs/design/2026-07-12-layered-roadmap-design.md</a>.</p>
 </body>
 </html>

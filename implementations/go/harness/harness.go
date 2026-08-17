@@ -25,6 +25,7 @@ type Harness struct {
 	sequence      int
 	subscriptions map[string]map[string]any
 	tasks         map[string]*task.Tracker
+	taskChildren  map[string]map[string]bool
 	router        *event.EventRouter
 	session       *event.HarmovelaSession
 	Delivery      *recovery.DeliveryTracker
@@ -40,6 +41,7 @@ func NewHarness() *Harness {
 		Source:        "harness:harmovela",
 		subscriptions: make(map[string]map[string]any),
 		tasks:         make(map[string]*task.Tracker),
+		taskChildren:  make(map[string]map[string]bool),
 		router:        event.NewEventRouter(),
 		Delivery:      recovery.NewDeliveryTracker(nil, nil),
 		Audit:         make([]AuditRecord, 0),
@@ -333,6 +335,16 @@ func (h *Harness) handleTaskSubmitted(evt map[string]any) any {
 		})
 	}
 
+	parentTaskID := ""
+	if evt["parent_task_id"] != nil {
+		parentTaskID, _ = evt["parent_task_id"].(string)
+	}
+	if parentTaskID == "" {
+		if payload, ok := evt["payload"].(map[string]any); ok {
+			parentTaskID, _ = payload["parent_task_id"].(string)
+		}
+	}
+
 	description := ""
 	if payload, ok := evt["payload"].(map[string]any); ok {
 		description, _ = payload["description"].(string)
@@ -341,11 +353,30 @@ func (h *Harness) handleTaskSubmitted(evt map[string]any) any {
 	tracker := task.NewTracker(taskID, source, description)
 	tracker.Accept()
 	h.tasks[taskID] = tracker
+	if parentTaskID != "" {
+		if h.taskChildren[parentTaskID] == nil {
+			h.taskChildren[parentTaskID] = make(map[string]bool)
+		}
+		h.taskChildren[parentTaskID][taskID] = true
+	}
 
 	return h.newEvent("task.accepted", evt, map[string]any{
 		"task_id": taskID,
 		"status":  "accepted",
 	})
+}
+
+func (h *Harness) taskHasActiveChildren(taskID string) bool {
+	children := h.taskChildren[taskID]
+	if len(children) == 0 {
+		return false
+	}
+	for childID := range children {
+		if child, ok := h.tasks[childID]; ok && !child.IsTerminal() {
+			return true
+		}
+	}
+	return false
 }
 
 func (h *Harness) handleTaskEvent(evt map[string]any) any {
@@ -367,6 +398,13 @@ func (h *Harness) handleTaskEvent(evt map[string]any) any {
 	}
 
 	eventType, _ := evt["type"].(string)
+	if isTerminalTaskEventType(eventType) && h.taskHasActiveChildren(taskID) {
+		return h.newEvent("event.rejected", evt, map[string]any{
+			"error": event.ErrorPayload(event.ErrorCodeTaskError,
+				fmt.Sprintf("parent task %s cannot reach a terminal state while it has active child tasks", taskID), false),
+		})
+	}
+
 	payload, _ := evt["payload"].(map[string]any)
 	taskEvent := tracker.Transition(eventType, payload)
 	if taskEvent == nil {

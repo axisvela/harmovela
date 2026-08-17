@@ -26,7 +26,7 @@ Record the command, revision, environment, exit code, and retained output locati
 
 ## Required Fixture And Profile Matrix
 
-The RC matrix must run all 32 official fixtures in `conformance/fixtures/` against each selected implementation, profile, transport profile, and topology combination. The selected L3 profile must include its declared dependencies:
+The RC matrix must run all 34 official fixtures in `conformance/fixtures/` against each selected implementation, profile, transport profile, and topology combination. The selected L3 profile must include its declared dependencies:
 
 | Profile | Version | Required result |
 | --- | --- | --- |

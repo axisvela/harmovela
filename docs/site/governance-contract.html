@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Governance Contract — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Governance Contract</h1>
+<h1>Harmovela Governance Contract</h1>
+<p>&gt; Status: draft. Language-neutral contract boundary.</p>
+<h2>Ownership</h2>
+<p>Governance owns identity, authorization, audit, tenant isolation, and policy/budget contracts.</p>
+<p>The <a href="security.html">security model</a> defines the existing identity, authorization, audit, and tenant-isolation behavior. Governance owns the policy and budget decision contracts that apply those concerns across dimensions without duplicating Event envelope or transport behavior.</p>
+<h2>Public Contracts</h2>
+<p>Other dimensions consume Governance decisions through documented interfaces. Runtime ingress and egress enforce those decisions; dimensions do not import Governance internals.</p>
+<p>The existing <code>harmovela.security.v1</code> Profile supplies the base profile. Future L3 work extends only adaptation-operation controls; it does not expand this contract into other adaptation behavior.</p>
+<h2>Adaptation Budget Authorization (L3)</h2>
+<p>The Governance dimension enforces budget authorization for the L3 adaptation profile. These are adaptation-operation controls that extend the base <code>harmovela.security.v1</code> authorization model without duplicating its identity, audit, or tenant-isolation behavior.</p>
+<h3>Actions</h3>
+<table>
+<thead><tr><th>Action</th><th>Capability</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>budget.establish</code></td><td>Governance</td><td>Authorize creation or modification of a budget for a task, goal, or session. The issuer must be the delegating agent in the delegation chain.</td></tr>
+<tr><td><code>budget.enforce</code></td><td>Governance</td><td>Authorize the runtime (harness) to check consumption counters, block actions, and emit budget-exceeded events. The enforcement point is the harness, which must hold this capability.</td></tr>
+</tbody>
+</table>
+<p>The existing capability scopes (<code>read:&lt;domain&gt;</code>, <code>write:&lt;domain&gt;</code>, <code>subscribe:&lt;pattern&gt;</code>) are insufficient for budget actions, which span multiple domains and involve runtime-level enforcement. The <code>budget.establish</code> and <code>budget.enforce</code> capabilities are checked at the Governance boundary rather than at the Event routing layer.</p>
+<h3>Budget Establishment Authorization</h3>
+<p>An agent requesting <code>adaptation.budget.established</code> must demonstrate the <code>budget.establish</code> capability scoped to the target entity. The check verifies:</p>
+<p>1. The requesting agent's identity matches the delegation chain (the agent must be the delegator or an authorized parent in the chain). 2. The agent holds <code>budget.establish</code> capability for the <code>scope_type</code> (<code>task</code>, <code>goal</code>, or <code>session</code>) and the <code>scope_id</code>. 3. If modifying an existing budget, the causation chain links to the original budget establishment event.</p>
+<p>A request that fails any check is rejected with <code>event.rejected</code> (code <code>unauthorized</code>, details <code>missing_capability: budget.establish</code>).</p>
+<h3>Budget Enforcement Authorization</h3>
+<p>The harness must hold <code>budget.enforce</code> to act as the enforcement point. During session capability negotiation:</p>
+<p>1. The harness declares <code>budget.enforce</code> in its capabilities. 2. The delegating agent grants the harness authority through <code>budget.establish</code> for the specific budget scopes. 3. The harness checks counter state before each action dispatch. If the harness lacks <code>budget.enforce</code> for a scope, it must not enforce budget limits for that scope and must emit <code>session.error</code> with code <code>missing_capability</code> and details <code>budget.enforce</code>.</p>
+<h3>Budget Authorization in Delegation Chains</h3>
+<p>Budget authorization follows the delegation chain established by the <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">coordination profile</a>:</p>
+<ul>
+<li>The <strong>original delegator</strong> holds <code>budget.establish</code> and delegates it to the harness via the budget establishment event.</li>
+<li>The <strong>intermediate delegate</strong> may sub-delegate the task but may not increase the budget beyond the parent's declared limit. A sub-delegation that requests a higher budget must be rejected.</li>
+<li>The <strong>harness</strong> (enforcement point) holds <code>budget.enforce</code> and checks every action against the effective budget for each scope.</li>
+<li>Budget authorization revocation follows the same escalation path as delegation revocation.</li>
+</ul>
+<pre><code>digraph budget_auth {
+    rankdir=TB;
+    delegator [label="Delegating Agent\n(budget.establish)"];
+    harness [label="Harness\n(budget.enforce)", shape=box];
+    delegate [label="Bounded Agent\n(budget consumer)"];
+
+    delegator -&gt; harness [label="adaptation.budget.established\n(grant budget.enforce scope)"];
+    harness -&gt; delegate [label="checks each action\nagainst counter"];
+}
+</code></pre>
+<h2>Dependencies</h2>
+<p>Governance depends only on Event contracts.</p>
+</body>
+</html>

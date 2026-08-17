@@ -22,7 +22,7 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Websocket</h1>
 <h1>Harmovela Transport Binding: WebSocket</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 transport-websocket profile.</p>
@@ -33,6 +33,7 @@
 <pre><code>ws://host:port/path
 wss://host:port/path  (TLS)
 </code></pre>
+<p>The reference runtime defaults its WebSocket path to <code>/harmovela</code>. Deployments may configure a different path.</p>
 <h3>Subprotocol</h3>
 <p>The WebSocket handshake must request the subprotocol <code>harmovela-0.2</code>:</p>
 <pre><code>GET /harmovela HTTP/1.1
@@ -44,7 +45,7 @@ Sec-WebSocket-Protocol: harmovela-0.2
 <h3>Connection Parameters</h3>
 <p>Path and query string may carry initialization parameters (e.g., <code>ws://host/harmovela?session_id=sess_01</code>). This is transport-level metadata and not part of the protocol envelope.</p>
 <h2>Framing</h2>
-<p>| Aspect | Specification | |---|---| | Frame type | Text frames only (opcode <code>0x1</code>) | | Message format | One complete JSON AEP event per message | | Encoding | UTF-8 | | Multi-frame | Not used. Each event is a single text frame. | | Control frames | Ping/Pong used for heartbeat (see below) |</p>
+<p>| Aspect | Specification | |---|---| | Frame type | Text frames only (opcode <code>0x1</code>) | | Message format | One complete JSON Harmovela event per message | | Encoding | UTF-8 | | Multi-frame | Not used. Each event is a single text frame. | | Control frames | Ping/Pong used for heartbeat (see below) |</p>
 <h2>Session Lifecycle</h2>
 <p>| WebSocket State | Session State | Notes | |---|---|---| | Connecting | <code>CREATED</code> | | | Open (after handshake) | <code>OPENED</code> | | | After <code>session.ready</code> | <code>READY</code> | | | Close frame (1000) | <code>CLOSED</code> | Graceful shutdown | | Close frame (1001–1015) | <code>CLOSED</code> | Shutdown with reason | | Connection error | <code>ERROR</code> | Network failure | | Protocol error (1002) | <code>ERROR</code> | Framing or message error |</p>
 <h2>Heartbeat</h2>
@@ -63,13 +64,13 @@ Sec-WebSocket-Protocol: harmovela-0.2
 <pre><code>evt_01JZ0000000000000000000000:42
 </code></pre>
 <h2>Close Codes</h2>
-<p>Standard WebSocket close codes are mapped to AEP semantics:</p>
-<p>| Code | Meaning | AEP Mapping | |---|---|---| | 1000 | Normal closure | <code>session.closed</code> with reason <code>"normal"</code> | | 1001 | Going away | <code>session.closed</code> with reason <code>"peer_disconnected"</code> | | 1002 | Protocol error | <code>session.error</code> with code <code>protocol_error</code> | | 1008 | Policy violation | <code>session.error</code> with code <code>unauthorized</code> | | 1011 | Internal error | <code>session.error</code> with code <code>internal_error</code> |</p>
+<p>Standard WebSocket close codes are mapped to Harmovela semantics:</p>
+<p>| Code | Meaning | Harmovela Mapping | |---|---|---| | 1000 | Normal closure | <code>session.closed</code> with reason <code>"normal"</code> | | 1001 | Going away | <code>session.closed</code> with reason <code>"peer_disconnected"</code> | | 1002 | Protocol error | <code>session.error</code> with code <code>protocol_error</code> | | 1008 | Policy violation | <code>session.error</code> with code <code>unauthorized</code> | | 1011 | Internal error | <code>session.error</code> with code <code>internal_error</code> |</p>
 <h2>Implementation Notes</h2>
 <ul>
 <li>Implementations should set a maximum message size. Messages exceeding the limit should trigger a close (1009 — message too big).</li>
 <li>TLS (<code>wss://</code>) is strongly recommended for any network-exposed deployment.</li>
-<li>The WebSocket transport may coexist with other transports in the same AEP runtime.</li>
+<li>The WebSocket transport may coexist with other transports in the same Harmovela runtime.</li>
 <li>See the <a href="session.html">session lifecycle specification</a> for session state machine details.</li>
 </ul>
 </body>

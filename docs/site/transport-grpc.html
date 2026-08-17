@@ -22,23 +22,23 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Grpc</h1>
 <h1>Harmovela Transport Binding: gRPC</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 transport-grpc profile.</p>
 <h2>Purpose</h2>
-<p>Define how AEP runs over gRPC, supporting bidirectional event streams using a single bidirectional RPC with JSON-encoded payloads carried in protobuf messages.</p>
+<p>Define how Harmovela runs over gRPC, supporting bidirectional event streams using a single bidirectional RPC with JSON-encoded payloads carried in protobuf messages.</p>
 <h2>Service Definition</h2>
-<pre><code>service AepTransport {
-  rpc Stream(stream AepMessage) returns (stream AepMessage);
+<pre><code>service HarmovelaTransport {
+  rpc Stream(stream HarmovelaMessage) returns (stream HarmovelaMessage);
 }
 </code></pre>
 <h3>Message</h3>
-<pre><code>message AepMessage {
+<pre><code>message HarmovelaMessage {
   string json_payload = 1;
 }
 </code></pre>
-<p>The <code>json_payload</code> field carries a JSON-encoded AEP event envelope. Protobuf is used only for framing; the AEP event schema remains JSON-defined. This avoids duplicating the AEP envelope schema in protobuf and keeps the transport layer independent of protocol evolution.</p>
+<p>The <code>json_payload</code> field carries a JSON-encoded Harmovela event envelope. Protobuf is used only for framing; the Harmovela event schema remains JSON-defined. This avoids duplicating the Harmovela envelope schema in protobuf and keeps the transport layer independent of protocol evolution.</p>
 <h2>Connection</h2>
 <h3>URI Scheme</h3>
 <pre><code>grpc://host:port/servicePath
@@ -46,16 +46,16 @@
 <p>For TLS-secured connections:</p>
 <pre><code>grpcs://host:port/servicePath
 </code></pre>
-<p>The default service path is <code>/aep.v1.AepTransport/Stream</code>.</p>
+<p>The default service path is <code>/harmovela.v1.HarmovelaTransport/Stream</code>.</p>
 <h3>Connection Negotiation</h3>
 <p>The gRPC transport uses standard gRPC channel establishment:</p>
-<p>1. Client creates a gRPC channel to the server address. 2. Client invokes the <code>Stream</code> bidirectional RPC, receiving a call object. 3. Both peers may immediately begin writing <code>AepMessage</code> frames. 4. The stream is long-lived; there is no per-event request/response cycle.</p>
+<p>1. Client creates a gRPC channel to the server address. 2. Client invokes the <code>Stream</code> bidirectional RPC, receiving a call object. 3. Both peers may immediately begin writing <code>HarmovelaMessage</code> frames. 4. The stream is long-lived; there is no per-event request/response cycle.</p>
 <h3>Metadata</h3>
 <p>gRPC metadata (headers and trailers) may carry transport-level parameters:</p>
-<p>| Metadata Key | Direction | Description | |---|---|---| | <code>aep-session-id</code> | Client → Server | Session identifier for connection binding | | <code>aep-version</code> | Client → Server | AEP protocol version (e.g., <code>0.1</code>) | | <code>aep-agent-id</code> | Client → Server | Optional agent identity | | <code>x-aep-cursor</code> | Server → Client (trailer) | Last committed event cursor on stream close |</p>
-<p>Metadata is not part of the AEP event envelope and must not be used to carry event semantics.</p>
+<p>| Metadata Key | Direction | Description | |---|---|---| | <code>harmovela-session-id</code> | Client → Server | Session identifier for connection binding | | <code>harmovela-version</code> | Client → Server | Harmovela protocol version (e.g., <code>0.2</code>) | | <code>harmovela-agent-id</code> | Client → Server | Optional agent identity | | <code>x-harmovela-cursor</code> | Server → Client (trailer) | Last committed event cursor on stream close |</p>
+<p>Metadata is not part of the Harmovela event envelope and must not be used to carry event semantics.</p>
 <h2>Framing</h2>
-<p>| Aspect | Specification | |---|---| | Frame type | gRPC protobuf messages (binary) | | Message format | One complete JSON AEP event in <code>json_payload</code> per message | | Encoding | UTF-8 for the JSON payload; standard protobuf framing | | Flow control | Managed by gRPC/HTTP/2 flow control | | Message boundaries | Each <code>AepMessage</code> is one AEP event |</p>
+<p>| Aspect | Specification | |---|---| | Frame type | gRPC protobuf messages (binary) | | Message format | One complete JSON Harmovela event in <code>json_payload</code> per message | | Encoding | UTF-8 for the JSON payload; standard protobuf framing | | Flow control | Managed by gRPC/HTTP/2 flow control | | Message boundaries | Each <code>HarmovelaMessage</code> is one Harmovela event |</p>
 <h2>Session Lifecycle</h2>
 <p>| gRPC State | Session State | Notes | |---|---|---| | Channel connecting | <code>CREATED</code> | | | Stream open (bidirectional) | <code>OPENED</code> | | | After <code>session.ready</code> | <code>READY</code> | | | Stream end (OK status, code 0) | <code>CLOSED</code> | Graceful shutdown | | Stream end (non-zero status) | <code>ERROR</code> | See error mapping below | | Channel disconnected | <code>ERROR</code> | Network failure |</p>
 <h2>Heartbeat</h2>
@@ -70,17 +70,17 @@
 <h2>Reconnect and Cursor Recovery</h2>
 <p>A disconnected client may reconnect and resume the event stream:</p>
 <p>1. Client opens a new gRPC channel and invokes <code>Stream</code>. 2. Client sends <code>session.opened</code> with a new or existing <code>session_id</code>. 3. Client sends <code>subscription.requested</code> with <code>from_cursor</code> set to the last received cursor value. 4. Server replays events from the cursor position.</p>
-<p>The cursor value may also be communicated in the server's response trailer under the <code>x-aep-cursor</code> metadata key to allow the client to persist the last known position for recovery.</p>
+<p>The cursor value may also be communicated in the server's response trailer under the <code>x-harmovela-cursor</code> metadata key to allow the client to persist the last known position for recovery.</p>
 <h2>Status Code Mapping</h2>
-<p>gRPC status codes are mapped to AEP semantics:</p>
-<p>| gRPC Status Code | Code | AEP Mapping | |---|---|---| | OK | 0 | <code>session.closed</code> with reason <code>"normal"</code> | | CANCELLED | 1 | <code>session.closed</code> with reason <code>"cancelled"</code> | | UNAVAILABLE | 14 | <code>session.error</code> with code <code>"transport_unavailable"</code> | | PERMISSION_DENIED | 7 | <code>session.error</code> with code <code>"unauthorized"</code> | | UNAUTHENTICATED | 16 | <code>session.error</code> with code <code>"unauthenticated"</code> | | INTERNAL | 13 | <code>session.error</code> with code <code>"internal_error"</code> | | INVALID_ARGUMENT | 3 | <code>session.error</code> with code <code>"invalid_envelope"</code> | | RESOURCE_EXHAUSTED | 8 | <code>session.error</code> with code <code>"rate_limited"</code> | | DEADLINE_EXCEEDED | 4 | <code>session.error</code> with code <code>"timeout"</code> | | ABORTED | 10 | <code>session.error</code> with code <code>"aborted"</code> | | UNKNOWN | 2 | <code>session.error</code> with code <code>"unknown"</code> |</p>
+<p>gRPC status codes are mapped to Harmovela semantics:</p>
+<p>| gRPC Status Code | Code | Harmovela Mapping | |---|---|---| | OK | 0 | <code>session.closed</code> with reason <code>"normal"</code> | | CANCELLED | 1 | <code>session.closed</code> with reason <code>"cancelled"</code> | | UNAVAILABLE | 14 | <code>session.error</code> with code <code>"transport_unavailable"</code> | | PERMISSION_DENIED | 7 | <code>session.error</code> with code <code>"unauthorized"</code> | | UNAUTHENTICATED | 16 | <code>session.error</code> with code <code>"unauthenticated"</code> | | INTERNAL | 13 | <code>session.error</code> with code <code>"internal_error"</code> | | INVALID_ARGUMENT | 3 | <code>session.error</code> with code <code>"invalid_envelope"</code> | | RESOURCE_EXHAUSTED | 8 | <code>session.error</code> with code <code>"rate_limited"</code> | | DEADLINE_EXCEEDED | 4 | <code>session.error</code> with code <code>"timeout"</code> | | ABORTED | 10 | <code>session.error</code> with code <code>"aborted"</code> | | UNKNOWN | 2 | <code>session.error</code> with code <code>"unknown"</code> |</p>
 <h2>gRPC-Specific Options</h2>
 <p>| Option | Default | Description | |---|---|---| | <code>grpc.max_receive_message_length</code> | 4194304 (4 MB) | Maximum message size in bytes | | <code>grpc.max_send_message_length</code> | 4194304 (4 MB) | Maximum send message size in bytes | | <code>grpc.keepalive_time_ms</code> | 30000 | Keep-alive ping interval | | <code>grpc.keepalive_timeout_ms</code> | 10000 | Keep-alive acknowledgment timeout |</p>
 <h2>Implementation Notes</h2>
 <ul>
 <li>Implementations should set a reasonable maximum message size. Messages exceeding the limit will trigger a <code>RESOURCE_EXHAUSTED</code> gRPC error.</li>
 <li>TLS (<code>grpcs://</code>) is strongly recommended for any network-exposed deployment.</li>
-<li>The gRPC transport may coexist with other transports in the same AEP runtime.</li>
+<li>The gRPC transport may coexist with other transports in the same Harmovela runtime.</li>
 <li>gRPC bidirectional streaming provides native multiplexing without requiring a separate ingest endpoint (unlike SSE).</li>
 <li>Service reflection may be enabled to allow tools like <code>grpcurl</code> to inspect the service definition.</li>
 <li>See the <a href="session.html">session lifecycle specification</a> for session state machine details.</li>

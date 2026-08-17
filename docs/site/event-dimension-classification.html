@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Dimension Classification — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Event Dimension Classification</h1>
+<h1>Event Type Dimension Classification</h1>
+<p>Classification of legacy undimensioned event types into Harmovela coordination dimensions.</p>
+<h2>Classification Summary</h2>
+<table>
+<thead><tr><th>Event Type Family</th><th>Dimension</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>state.*</code>, <code>freshness.*</code></td><td>State</td><td>In <code>State</code> module; spread into legacy registries</td></tr>
+<tr><td><code>belief.*</code>, <code>provenance.*</code></td><td>Context / Memory</td><td>In <code>Context</code> module (cognitive facts and attestations); spread into legacy registries</td></tr>
+<tr><td><code>context.*</code>, <code>memory.*</code></td><td>Context / Memory</td><td>Already in <code>Context</code> module</td></tr>
+<tr><td><code>delegation.*</code></td><td>Delegation</td><td>Already in <code>Delegation</code> module</td></tr>
+<tr><td><code>interruption.*</code>, <code>compensation.*</code></td><td>Recovery</td><td>In <code>Recovery</code> module; spread into legacy registries</td></tr>
+<tr><td><code>task.*</code></td><td>Task</td><td>Already in <code>Task</code> module; may benefit from future spreading</td></tr>
+<tr><td><code>tool.call.*</code></td><td>Tool</td><td>In <code>Tool</code> module; spread into legacy registries</td></tr>
+<tr><td><code>command.*</code></td><td>Command</td><td>In <code>Command</code> module</td></tr>
+<tr><td><code>query.*</code></td><td>Query</td><td>In <code>Query</code> module</td></tr>
+<tr><td><code>agent.*</code></td><td>Agent</td><td>In <code>Agent</code> module; spread into legacy registries</td></tr>
+<tr><td><code>environment.*</code></td><td>Environment</td><td>In <code>Environment</code> module; spread into legacy registries</td></tr>
+</tbody>
+</table>
+<h2>Rationale</h2>
+<p><strong>State dimension</strong> (<code>state.*</code>, <code>freshness.*</code>): Covers current known truth, snapshots, deltas, invalidation, and temporal freshness windows. The <code>State</code> module owns these.</p>
+<p><strong>Context / Memory dimension</strong> (<code>belief.*</code>, <code>provenance.*</code>): Covers cognitive decisions (belief revision, conflict detection) and provenance attestation chains. The <code>Context</code> module owns these alongside existing <code>context.*</code> and <code>memory.*</code> types.</p>
+<p><strong>Recovery dimension</strong> (<code>interruption.*</code>, <code>compensation.*</code>): Interruption lifecycle and compensation semantics belong to the Resilience/Recovery dimension. The <code>Recovery</code> module owns these and they are spread into legacy registries.</p>
+<p><strong>Tool dimension</strong> (<code>tool.call.*</code>): Covers tool invocation lifecycle (MCP bridge). The <code>Tool</code> module owns these and they are spread into legacy registries.</p>
+<p><strong>Agent dimension</strong> (<code>agent.*</code>): Covers agent-to-agent messaging, request/response creation, and decision recording. The <code>Agent</code> module owns these and they are spread into legacy registries.</p>
+<p><strong>Environment dimension</strong> (<code>environment.*</code>): Covers environment observation, change detection, alerting, and error reporting. The <code>Environment</code> module owns these and they are spread into legacy registries.</p>
+</body>
+</html>

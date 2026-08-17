@@ -22,34 +22,34 @@
 </style>
 </head>
 <body>
-<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="error-model.html">Error Model</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="CONFORMANCE.html">Conformance</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
 <h1>Transport Kafka</h1>
 <h1>Harmovela Transport Binding: Kafka</h1>
 <p>&gt; Status: draft. Part of the Harmovela 0.2 transport-kafka profile.</p>
 <h2>Purpose</h2>
-<p>Define how AEP runs over Apache Kafka, supporting topic-based publish/subscribe with partition-based ordering and offset-based replay.</p>
+<p>Define how Harmovela runs over Apache Kafka, supporting topic-based publish/subscribe with partition-based ordering and offset-based replay.</p>
 <h2>Framing</h2>
-<p>AEP over Kafka uses JSON-encoded AEP events as Kafka message values:</p>
+<p>Harmovela over Kafka uses JSON-encoded Harmovela events as Kafka message values:</p>
 <ul>
-<li>Each Kafka record value is a complete, valid JSON-encoded AEP event.</li>
+<li>Each Kafka record value is a complete, valid JSON-encoded Harmovela event.</li>
 <li>Records are published to Kafka topics and consumed by consumer groups.</li>
 <li>The transport does not fragment events across multiple records.</li>
 </ul>
 <h3>Message Key</h3>
-<p>The Kafka record key is derived from one of the following AEP envelope fields, in priority order:</p>
+<p>The Kafka record key is derived from one of the following Harmovela envelope fields, in priority order:</p>
 <p>| Priority | Field | Purpose | |---|---|---| | 1 | <code>task_id</code> | All events for a task land in the same partition | | 2 | <code>conversation_id</code> | All events for a conversation are ordered | | 3 | <code>session_id</code> | Events for a session are ordered | | 4 | <code>source</code> | Events from the same producer are ordered | | 5 | (none) | Round-robin across partitions |</p>
 <h3>Message Headers</h3>
-<p>| Header | AEP Field | Type | |---|---|---| | <code>aep-type</code> | <code>type</code> | string | | <code>aep-source</code> | <code>source</code> | string | | <code>aep-session</code> | <code>session_id</code> | string | | <code>aep-conversation</code> | <code>conversation_id</code> | string | | <code>aep-task</code> | <code>task_id</code> | string | | <code>aep-correlation</code> | <code>correlation_id</code> | string | | <code>aep-causation</code> | <code>causation_id</code> | string | | <code>aep-delivery-mode</code> | <code>delivery.mode</code> | string |</p>
+<p>| Header | Harmovela Field | Type | |---|---|---| | <code>aep-type</code> | <code>type</code> | string | | <code>aep-source</code> | <code>source</code> | string | | <code>aep-session</code> | <code>session_id</code> | string | | <code>aep-conversation</code> | <code>conversation_id</code> | string | | <code>aep-task</code> | <code>task_id</code> | string | | <code>aep-correlation</code> | <code>correlation_id</code> | string | | <code>aep-causation</code> | <code>causation_id</code> | string | | <code>aep-delivery-mode</code> | <code>delivery.mode</code> | string |</p>
 <p>Headers enable consumers to filter and route without deserializing the message body.</p>
 <h2>Topic Mapping</h2>
-<p>| AEP context | Kafka topic pattern | Example | |---|---|---| | Topic <code>tasks.task_01</code> | <code>aep.topic.tasks.task_01</code> | <code>aep.topic.tasks.task_01</code> | | Source <code>agent:researcher</code> | <code>aep.source.agent.researcher</code> | <code>aep.source.agent.researcher</code> | | Type pattern <code>task.*</code> | <code>aep.type.task.*</code> | Matches all task subtopics | | Session | <code>aep.sess.&lt;session_id&gt;</code> | <code>aep.sess.sess_01</code> | | All events | <code>aep.events</code> | Single-topic deployment |</p>
+<p>| Harmovela context | Kafka topic pattern | Example | |---|---|---| | Topic <code>tasks.task_01</code> | <code>aep.topic.tasks.task_01</code> | <code>aep.topic.tasks.task_01</code> | | Source <code>agent:researcher</code> | <code>aep.source.agent.researcher</code> | <code>aep.source.agent.researcher</code> | | Type pattern <code>task.*</code> | <code>aep.type.task.*</code> | Matches all task subtopics | | Session | <code>aep.sess.&lt;session_id&gt;</code> | <code>aep.sess.sess_01</code> | | All events | <code>aep.events</code> | Single-topic deployment |</p>
 <p>The default topic prefix is <code>aep</code>. Implementations should allow per-envelope topic routing or single-topic deployment with header-based filtering.</p>
 <h2>Delivery Modes</h2>
-<p>| AEP Delivery Mode | Kafka Mechanism | |---|---| | <code>best_effort</code> | Fire-and-forget producer with <code>acks=0</code> | | <code>at_least_once</code> | Producer with <code>acks=1</code> or <code>acks=all</code>, consumer with manual commit after processing | | <code>replayable</code> | Consumer with <code>auto.offset.reset=earliest</code>, replay by seeking to offset |</p>
+<p>| Harmovela Delivery Mode | Kafka Mechanism | |---|---| | <code>best_effort</code> | Fire-and-forget producer with <code>acks=0</code> | | <code>at_least_once</code> | Producer with <code>acks=1</code> or <code>acks=all</code>, consumer with manual commit after processing | | <code>replayable</code> | Consumer with <code>auto.offset.reset=earliest</code>, replay by seeking to offset |</p>
 <h3>At-Least-Once</h3>
 <ul>
 <li>Producer: <code>enable.idempotence=true</code>, <code>acks=all</code> prevents duplicates from producer retries.</li>
-<li>Consumer: commit offset only after AEP <code>event.acknowledged</code> is emitted. On rebalance, uncommitted offsets are redelivered.</li>
+<li>Consumer: commit offset only after Harmovela <code>event.acknowledged</code> is emitted. On rebalance, uncommitted offsets are redelivered.</li>
 </ul>
 <h3>Replayable</h3>
 <ul>
@@ -58,7 +58,7 @@
 <li>Retention policy dictates maximum replay window.</li>
 </ul>
 <h2>Consumer Groups</h2>
-<p>AEP sessions map to Kafka consumer groups:</p>
+<p>Harmovela sessions map to Kafka consumer groups:</p>
 <p>| Session | Consumer Group | |---|---| | <code>sess_01</code> | <code>aep-sess_01</code> | | Multiple agents sharing a session | Same group — events distributed across members | | Independent sessions | Separate groups — each receives full event stream |</p>
 <h2>Partitioning And Ordering</h2>
 <p>Ordering is guaranteed within a partition, not across partitions:</p>
@@ -80,7 +80,7 @@
 <h2>References</h2>
 <ul>
 <li><a href="https://kafka.apache.org/documentation/">Apache Kafka Documentation</a></li>
-<li>Key-based partitioning, consumer groups, offset management, and transactional producers are Kafka-native concepts mapped to AEP semantics.</li>
+<li>Key-based partitioning, consumer groups, offset management, and transactional producers are Kafka-native concepts mapped to Harmovela semantics.</li>
 </ul>
 </body>
 </html>
