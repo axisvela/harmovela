@@ -46,7 +46,7 @@ All implementations share the same set of standard types. The shared conformance
 ## Adding a New Event Family
 
 1. Propose the family with motivation and initial event types.
-2. Define the family's scope in `docs/specs/` if it has protocol semantics.
+2. Define the family's scope in `docs/protocol/` if it has protocol semantics.
 3. Add all initial types to each language registry.
 4. Add conformance fixtures for the family.
 5. Implement handling in at least the TypeScript reference.

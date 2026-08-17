@@ -53,7 +53,7 @@
 <h3>Negotiation</h3>
 <p>During session initialization (<code>session.opened</code> / <code>session.ready</code>), peers declare their supported protocol version via <code>capabilities.spec_version</code>. Both sides must agree on a version before the session becomes ready. A peer that cannot negotiate a compatible version should send <code>session.error</code> with code <code>unsupported_version</code>.</p>
 <h2>Event Type Registry Versioning</h2>
-<p>The standard event type registry (the set of <code>type</code> string values defined in <code>docs/specs/</code>) follows these rules:</p>
+<p>The standard event type registry (the set of <code>type</code> string values defined in <code>docs/protocol/</code>) follows these rules:</p>
 <ul>
 <li>New event types may be added in any minor version.</li>
 <li>Existing event type names must not be removed within a minor version.</li>

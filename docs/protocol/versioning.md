@@ -47,7 +47,7 @@ During session initialization (`session.opened` / `session.ready`), peers declar
 
 ## Event Type Registry Versioning
 
-The standard event type registry (the set of `type` string values defined in `docs/specs/`) follows these rules:
+The standard event type registry (the set of `type` string values defined in `docs/protocol/`) follows these rules:
 
 - New event types may be added in any minor version.
 - Existing event type names must not be removed within a minor version.

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generate a static spec site from docs/specs/*.md and docs/*.md
+// Generate a static spec site from docs/protocol/*.md and docs/*.md
 // Usage: node tools/generate-spec-site.js
 // Output: docs/site/
 
