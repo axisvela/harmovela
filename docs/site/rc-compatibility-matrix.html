@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rc Compatibility Matrix — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="roadmap.html">Roadmap</a><a href="conformance-matrix.html">Conformance Matrix</a><a href="GOVERNANCE.html">Governance</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Rc Compatibility Matrix</h1>
+<h1>Harmovela 0.9 RC Compatibility Matrix</h1>
+<p>&gt; Snapshot template for Protocol <code>v0.5.0</code>. Status: Preparation in progress; independently maintained implementations and external pilot evidence are <strong>PENDING</strong>.</p>
+<h2>Snapshot Metadata</h2>
+<table>
+<thead><tr><th>Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Snapshot ID</td><td><code>[v0.9.0-rc.1-YYYYMMDD]</code></td></tr>
+<tr><td>Protocol</td><td><code>v0.5.0</code></td></tr>
+<tr><td>Fixture suite</td><td><code>34 fixtures; version [required]</code></td></tr>
+<tr><td>L3 profile</td><td><code>harmovela.adaptation.v1</code> version <code>[required]</code></td></tr>
+<tr><td>Transport profile(s)</td><td><code>[ID and version required]</code></td></tr>
+<tr><td>Topology ID/version</td><td><code>[required; distinct from transport profile]</code></td></tr>
+<tr><td>External L3 pilot</td><td><strong>PENDING</strong></td></tr>
+<tr><td>Release-blocker count</td><td><code>[required]</code></td></tr>
+</tbody>
+</table>
+<h2>Module Inventory</h2>
+<table>
+<thead><tr><th>Kind</th><th>Required modules</th></tr></thead>
+<tbody>
+<tr><td>13 dimension modules</td><td>Event, Recovery, Governance, Task, State, Context/Memory, Delegation, Tool, Agent, Environment, Query, Command, Adaptation</td></tr>
+<tr><td>5 infrastructure modules</td><td>Harness, Conformance, CLI, Runtime, MCP Bridge</td></tr>
+</tbody>
+</table>
+<p>Record module version or revision for every implementation in each populated matrix row.</p>
+<h2>Reference Implementations</h2>
+<table>
+<thead><tr><th>Implementation</th><th>Version/revision</th><th>Repository</th><th>Maintainer</th><th>Independently maintained</th></tr></thead>
+<tbody>
+<tr><td>TypeScript reference</td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><strong>PENDING</strong></td></tr>
+<tr><td>Python reference</td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><strong>PENDING</strong></td></tr>
+<tr><td>Go reference</td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><strong>PENDING</strong></td></tr>
+<tr><td>Java reference</td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><strong>PENDING</strong></td></tr>
+</tbody>
+</table>
+<p>The four in-repository references are not evidence of independently maintained implementations until their repository and maintainer provenance is recorded and reviewed.</p>
+<h2>Profile, Transport, And Wire Snapshot</h2>
+<table>
+<thead><tr><th>Type</th><th>Identifier</th><th>Version</th><th>Wire identifiers/configuration</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Core profile</td><td><code>harmovela.core.v1</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td>PENDING</td></tr>
+<tr><td>Security profile</td><td><code>harmovela.security.v1</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td>PENDING</td></tr>
+<tr><td>Coordination profile</td><td><code>harmovela.coordination.v1</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td>PENDING</td></tr>
+<tr><td>L3 adaptation profile</td><td><code>harmovela.adaptation.v1</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td>PENDING</td></tr>
+<tr><td>Transport profile</td><td><code>[required]</code></td><td><code>[required]</code></td><td>endpoint, subprotocol/content type, routing identifiers <code>[required]</code></td><td>PENDING</td></tr>
+<tr><td>Topology</td><td><code>[required]</code></td><td><code>[required]</code></td><td>participant roles and connectivity <code>[required]</code></td><td>PENDING</td></tr>
+</tbody>
+</table>
+<h2>Required Results Matrix</h2>
+<p>Populate one row for every implementation x selected L3 profile x transport profile x topology x official fixture/scenario. <code>PASS</code> requires retained evidence; <code>NOT RUN</code>, <code>SKIP</code>, and <code>FAIL</code> block promotion.</p>
+<table>
+<thead><tr><th>Implementation/version</th><th>Profile/version</th><th>Transport/version</th><th>Topology/version</th><th>Fixture/scenario ID</th><th>Result</th><th>Evidence URI/hash</th></tr></thead>
+<tbody>
+<tr><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[required]</code></td><td><code>[one of 34 fixture IDs or official scenario ID]</code></td><td>PENDING</td><td><code>[required]</code></td></tr>
+</tbody>
+</table>
+<h2>Sign-Off</h2>
+<table>
+<thead><tr><th>Gate</th><th>Status</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td>All 34 fixture cells complete and passing</td><td>PENDING</td><td><code>[required]</code></td></tr>
+<tr><td>Two independently maintained implementations</td><td><strong>PENDING</strong></td><td><code>[required]</code></td></tr>
+<tr><td>External L3 pilot accepted</td><td><strong>PENDING</strong></td><td><code>external-l3-pilot-template.md</code> report</td></tr>
+<tr><td>Zero release blockers</td><td>PENDING</td><td><code>[required]</code></td></tr>
+</tbody>
+</table>
+</body>
+</html>

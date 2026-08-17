@@ -15,7 +15,7 @@ const outDir = resolve(root, "docs/site");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
 const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];
-const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "TRADEMARKS.md"];
+const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "TRADEMARKS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "README_zh.md"];
 
 mkdirSync(outDir, { recursive: true });
 
@@ -166,7 +166,7 @@ ${content}
 // Generate nav
 const navLinks = '<a href="index.html">Home</a>' +
   '<a href="roadmap.html">Roadmap</a>' +
-  '<a href="CONFORMANCE.html">Conformance</a>' +
+  '<a href="conformance-matrix.html">Conformance Matrix</a>' +
   '<a href="GOVERNANCE.html">Governance</a>' +
   specFiles.map((f) => `<a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a>`).join("");
 
@@ -182,10 +182,38 @@ for (const file of docFiles.filter((f) => existsSync(resolve(docsDir, f)))) {
   writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
 }
 
+// Generate subdirectory document pages (roadmap layers, release docs, key design records)
+// referenced by top-level docs but not rendered by the loops above.
+const subDocDirs = {
+  "docs/roadmap": resolve(docsDir, "roadmap"),
+  "docs/release": resolve(docsDir, "release"),
+};
+const referencedDesignDocs = ["docs/design/2026-07-12-layered-roadmap-design.md"];
+for (const [label, dirPath] of Object.entries(subDocDirs)) {
+  if (!existsSync(dirPath)) continue;
+  for (const f of readdirSync(dirPath).filter((x) => x.endsWith(".md"))) {
+    const { title, html } = readAndConvert(resolve(dirPath, f));
+    writeFileSync(resolve(outDir, f.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
+  }
+}
+for (const rel of referencedDesignDocs) {
+  const full = resolve(root, rel);
+  if (!existsSync(full)) continue;
+  const { title, html } = readAndConvert(full);
+  const outName = rel.split("/").pop().replace(".md", ".html");
+  writeFileSync(resolve(outDir, outName), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
+}
+
 // Generate root doc pages
+const rootDocOutput = (file) => {
+  const base = file.replace(".md", ".html");
+  // CONFORMANCE.md collides case-insensitively with docs/protocol/conformance.md;
+  // publish the matrix under a distinct lowercase name so both survive deployment.
+  return file === "CONFORMANCE.md" ? "conformance-matrix.html" : base;
+};
 for (const file of rootDocFiles.filter((f) => existsSync(resolve(root, f)))) {
   const { title, html } = readAndConvert(resolve(root, file));
-  writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
+  writeFileSync(resolve(outDir, rootDocOutput(file)), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
 }
 
 // Generate home page
@@ -196,7 +224,7 @@ const homeContent = `<h1>Harmovela Protocol</h1>
 <h2>Design Documents</h2>
 <ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
 <h2>Project</h2>
-<ul>${rootDocFiles.filter((f) => existsSync(resolve(root, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}
+<ul>${rootDocFiles.filter((f) => existsSync(resolve(root, f))).map((f) => `<li><a href="${rootDocOutput(f)}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}
 <li><a href="schemas/harmovela-envelope.schema.json">Envelope Schema</a></li></ul>
 <p>Generated from <code>docs/protocol/</code> and <code>docs/</code>.</p>`;
 
