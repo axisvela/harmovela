@@ -34,7 +34,14 @@
 <p>Normative requirements use RFC 2119 keywords. Guidance sections that do not use these keywords are non-normative and provided for implementation convenience only.</p>
 <h2>Epistemic Metadata</h2>
 <h3>Fields</h3>
-<p>| Field | Type | Values | Description | |---|---|---|---| | <code>belief_status</code> | string | <code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code> | Epistemic relationship of this event to prior knowledge | | <code>belief_scope</code> | string | <code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code> | Category of the assertion | | <code>confidence</code> | number | 0.0 – 1.0 | Optional producer-assigned confidence |</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Values</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>belief_status</code></td><td>string</td><td><code>"asserted"</code>, <code>"retracted"</code>, <code>"revised"</code>, <code>"contradicted"</code>, <code>"unknown"</code></td><td>Epistemic relationship of this event to prior knowledge</td></tr>
+<tr><td><code>belief_scope</code></td><td>string</td><td><code>"fact"</code>, <code>"inference"</code>, <code>"observation"</code>, <code>"preference"</code>, <code>"hypothesis"</code></td><td>Category of the assertion</td></tr>
+<tr><td><code>confidence</code></td><td>number</td><td>0.0 – 1.0</td><td>Optional producer-assigned confidence</td></tr>
+</tbody>
+</table>
 <h3>Events</h3>
 <p>#### <code>belief.revised</code></p>
 <p>Emitted when an agent discovers an earlier belief was incorrect and publishes the corrected state.</p>
@@ -75,7 +82,15 @@
 <h2>Freshness And Validity</h2>
 <h3>Fields</h3>
 <p>Distinct from <code>expires_at</code> (which governs event delivery lifetime). These fields describe when the *asserted content* becomes stale.</p>
-<p>| Field | Type | Description | |---|---|---| | <code>valid_from</code> | RFC 3339 | The point in time from which the assertion is considered valid | | <code>valid_until</code> | RFC 3339 | The point in time after which the assertion should be considered stale | | <code>stale_after</code> | ISO 8601 duration | Relative staleness duration from <code>created_at</code> (alternative to <code>valid_until</code>) | | <code>refresh_hint</code> | URI | Where to obtain a more current version of this assertion |</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>valid_from</code></td><td>RFC 3339</td><td>The point in time from which the assertion is considered valid</td></tr>
+<tr><td><code>valid_until</code></td><td>RFC 3339</td><td>The point in time after which the assertion should be considered stale</td></tr>
+<tr><td><code>stale_after</code></td><td>ISO 8601 duration</td><td>Relative staleness duration from <code>created_at</code> (alternative to <code>valid_until</code>)</td></tr>
+<tr><td><code>refresh_hint</code></td><td>URI</td><td>Where to obtain a more current version of this assertion</td></tr>
+</tbody>
+</table>
 <h3>Events</h3>
 <p>#### <code>freshness.expired</code></p>
 <p>Emitted by a runtime or observer when it detects cached state has exceeded its validity window.</p>
@@ -110,7 +125,15 @@
 </ul>
 <h2>Delegation And Handoff</h2>
 <h3>Fields</h3>
-<p>| Field | Type | Description | |---|---|---| | <code>delegated_by</code> | string | Identifier of the delegating agent or runtime | | <code>delegated_to</code> | string | Identifier of the accepting agent or runtime | | <code>parent_task_id</code> | string | The delegating task; establishes parent-child relationship | | <code>handoff_token</code> | string | Opaque token proving ownership transfer |</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>delegated_by</code></td><td>string</td><td>Identifier of the delegating agent or runtime</td></tr>
+<tr><td><code>delegated_to</code></td><td>string</td><td>Identifier of the accepting agent or runtime</td></tr>
+<tr><td><code>parent_task_id</code></td><td>string</td><td>The delegating task; establishes parent-child relationship</td></tr>
+<tr><td><code>handoff_token</code></td><td>string</td><td>Opaque token proving ownership transfer</td></tr>
+</tbody>
+</table>
 <h3>Events</h3>
 <p>#### <code>delegation.requested</code></p>
 <pre><code>{
@@ -185,7 +208,19 @@
 <p>A <code>handoff_token</code> is an opaque bearer token that proves ownership transfer from the delegating agent to the delegate. It is emitted on <code>delegation.handoff.completed</code> and MUST be validated by any runtime that receives a status query or subsequent delegation event for the transferred task.</p>
 <p>#### Token Structure</p>
 <p>Handoff tokens are opaque strings as transmitted on the wire. Implementations that produce structured tokens SHOULD encode the following claims:</p>
-<p>| Claim | Required | Description | |---|---|---| | <code>iss</code> | yes | Issuer identifier (the delegating agent, matching <code>delegated_by</code> on the event) | | <code>sub</code> | yes | Delegate identifier (the receiving agent, matching <code>delegated_to</code> on the event) | | <code>task_id</code> | yes | The task whose ownership is being transferred | | <code>parent_task_id</code> | yes | The parent delegating task | | <code>iat</code> | yes | Issued-at timestamp (RFC 3339) | | <code>exp</code> | yes | Expiration timestamp (RFC 3339). Tokens without expiry MUST be rejected. | | <code>jti</code> | yes | Unique token identifier (nonce) for replay protection | | <code>sig</code> | no | Cryptographic signature. Advanced feature reserved for <code>harmovela.security.v2</code> profile work (see below). |</p>
+<table>
+<thead><tr><th>Claim</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>iss</code></td><td>yes</td><td>Issuer identifier (the delegating agent, matching <code>delegated_by</code> on the event)</td></tr>
+<tr><td><code>sub</code></td><td>yes</td><td>Delegate identifier (the receiving agent, matching <code>delegated_to</code> on the event)</td></tr>
+<tr><td><code>task_id</code></td><td>yes</td><td>The task whose ownership is being transferred</td></tr>
+<tr><td><code>parent_task_id</code></td><td>yes</td><td>The parent delegating task</td></tr>
+<tr><td><code>iat</code></td><td>yes</td><td>Issued-at timestamp (RFC 3339)</td></tr>
+<tr><td><code>exp</code></td><td>yes</td><td>Expiration timestamp (RFC 3339). Tokens without expiry MUST be rejected.</td></tr>
+<tr><td><code>jti</code></td><td>yes</td><td>Unique token identifier (nonce) for replay protection</td></tr>
+<tr><td><code>sig</code></td><td>no</td><td>Cryptographic signature. Advanced feature reserved for <code>harmovela.security.v2</code> profile work (see below).</td></tr>
+</tbody>
+</table>
 <p>#### Validation Requirements</p>
 <p>A runtime receiving a <code>handoff_token</code> MUST perform the following checks before accepting it as proof of ownership transfer:</p>
 <p>1. <strong>Issuer match:</strong> The <code>iss</code> claim MUST match the <code>delegated_by</code> field on the accompanying <code>delegation.handoff.completed</code> event. 2. <strong>Delegate match:</strong> The <code>sub</code> claim MUST match the <code>delegated_to</code> field on the event. 3. <strong>Task binding:</strong> The <code>task_id</code> and <code>parent_task_id</code> claims MUST match the corresponding fields on the event. 4. <strong>Expiry check:</strong> The current time MUST be before the <code>exp</code> claim. Expired tokens MUST be rejected. 5. <strong>Replay protection:</strong> The <code>jti</code> claim MUST NOT have been observed by this runtime before. Runtimes SHOULD maintain a token replay cache with a retention period not shorter than the maximum token expiry window. 6. <strong>Timeliness:</strong> The <code>iat</code> claim MUST NOT be in the future (with a reasonable clock-skew tolerance of up to 60 seconds). 7. <strong>Opaqueness:</strong> Consumers that cannot validate token internals MUST treat the token as opaque and MUST NOT rely on it for authorization decisions beyond "the delegating runtime issued this token."</p>
@@ -208,7 +243,15 @@
 </ul>
 <h2>Interruption And Cancellation Safety</h2>
 <h3>Fields</h3>
-<p>| Field | Type | Description | |---|---|---| | <code>checkpoint_id</code> | string | Identifier for saved execution state | | <code>checkpoint_at</code> | RFC 3339 | Timestamp when the checkpoint was saved | | <code>interruption_policy</code> | string | <code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code> | | <code>compensation_id</code> | string | Links a compensation task to the task it compensates for |</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>checkpoint_id</code></td><td>string</td><td>Identifier for saved execution state</td></tr>
+<tr><td><code>checkpoint_at</code></td><td>RFC 3339</td><td>Timestamp when the checkpoint was saved</td></tr>
+<tr><td><code>interruption_policy</code></td><td>string</td><td><code>"save_and_stop"</code>, <code>"drain_then_stop"</code>, <code>"force_stop"</code></td></tr>
+<tr><td><code>compensation_id</code></td><td>string</td><td>Links a compensation task to the task it compensates for</td></tr>
+</tbody>
+</table>
 <h3>Events</h3>
 <p>#### Interruption Lifecycle</p>
 <pre><code>interruption.requested
@@ -305,7 +348,15 @@ interruption.acknowledged
 </ul>
 <h2>Provenance</h2>
 <h3>Fields</h3>
-<p>| Field | Type | Description | |---|---|---| | <code>evidence_chain</code> | array of objects with <code>source</code> (string) and <code>id</code> (string) | Ordered list of events and sources that contributed to this assertion, from origin to immediate predecessor | | <code>source_trust</code> | string | <code>"verified"</code>, <code>"attested"</code>, <code>"unverified"</code>, <code>"signed"</code> | | <code>attestation_count</code> | number | Number of independent verifications of this assertion | | <code>data_provenance</code> | URI | Link to a machine-readable provenance document |</p>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>evidence_chain</code></td><td>array of objects with <code>source</code> (string) and <code>id</code> (string)</td><td>Ordered list of events and sources that contributed to this assertion, from origin to immediate predecessor</td></tr>
+<tr><td><code>source_trust</code></td><td>string</td><td><code>"verified"</code>, <code>"attested"</code>, <code>"unverified"</code>, <code>"signed"</code></td></tr>
+<tr><td><code>attestation_count</code></td><td>number</td><td>Number of independent verifications of this assertion</td></tr>
+<tr><td><code>data_provenance</code></td><td>URI</td><td>Link to a machine-readable provenance document</td></tr>
+</tbody>
+</table>
 <p>The <code>evidence_chain</code> field extends <code>causation_id</code> (which identifies only the single immediately preceding event) into a multi-hop lineage:</p>
 <pre><code>{
   "evidence_chain": [
@@ -359,19 +410,64 @@ interruption.acknowledged
 <li><code>attestation_count</code> increments with each <code>provenance.attestation.added</code> and effectively decrements with each <code>provenance.attestation.revoked</code>. Consumers SHOULD NOT use it as a sole trust signal without considering attestor identity.</li>
 </ul>
 <h2>Relationship To Other Specs</h2>
-<p>| Spec | Relationship | |---|---| | <code>task-lifecycle.md</code> | Delegation, interruption, and compensation events compose with the task state machine | | <code>session.md</code> | Session close SHOULD trigger interruption with policy <code>save_and_stop</code> for all active tasks | | <code>subscription.md</code> | Consumers MAY subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code> | | <code>delivery.md</code> | Checkpoint events SHOULD use <code>at_least_once</code> delivery | | <code>security.md</code> | <code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation MAY require identity/auth metadata | | <code>error-model.md</code> | Error payloads for delegation rejection, interruption failure, and provenance verification failure MUST follow the standard error model |</p>
+<table>
+<thead><tr><th>Spec</th><th>Relationship</th></tr></thead>
+<tbody>
+<tr><td><code>task-lifecycle.md</code></td><td>Delegation, interruption, and compensation events compose with the task state machine</td></tr>
+<tr><td><code>session.md</code></td><td>Session close SHOULD trigger interruption with policy <code>save_and_stop</code> for all active tasks</td></tr>
+<tr><td><code>subscription.md</code></td><td>Consumers MAY subscribe to <code>belief.*</code>, <code>freshness.*</code>, <code>delegation.*</code>, <code>interruption.*</code>, <code>compensation.*</code>, and <code>provenance.*</code></td></tr>
+<tr><td><code>delivery.md</code></td><td>Checkpoint events SHOULD use <code>at_least_once</code> delivery</td></tr>
+<tr><td><code>security.md</code></td><td><code>source_trust: "signed"</code> verification and <code>handoff_token</code> validation MAY require identity/auth metadata</td></tr>
+<tr><td><code>error-model.md</code></td><td>Error payloads for delegation rejection, interruption failure, and provenance verification failure MUST follow the standard error model</td></tr>
+</tbody>
+</table>
 <h2>Field Summary</h2>
-<p>| Domain | Fields Added | |---|---| | Epistemic | <code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code> | | Freshness | <code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code> | | Delegation | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code> | | Interruption | <code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code> | | Provenance | <code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code> |</p>
+<table>
+<thead><tr><th>Domain</th><th>Fields Added</th></tr></thead>
+<tbody>
+<tr><td>Epistemic</td><td><code>belief_status</code>, <code>belief_scope</code>, <code>confidence</code></td></tr>
+<tr><td>Freshness</td><td><code>valid_from</code>, <code>valid_until</code>, <code>stale_after</code>, <code>refresh_hint</code></td></tr>
+<tr><td>Delegation</td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code></td></tr>
+<tr><td>Interruption</td><td><code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code></td></tr>
+<tr><td>Provenance</td><td><code>evidence_chain</code>, <code>source_trust</code>, <code>attestation_count</code>, <code>data_provenance</code></td></tr>
+</tbody>
+</table>
 <p>All fields are optional envelope properties. All event types follow the <code>domain.object.action</code> naming convention. No existing required fields or event types change.</p>
 <h2>Profile-Level Conditional Requiredness</h2>
 <p>All runtime-semantics fields are envelope-level optional properties with <code>additionalProperties: true</code> enabled. When a session declares a profile during capability negotiation, specific fields become conditionally REQUIRED or SHOULD-level based on the event type and profile scope.</p>
 <h3>Profile: <code>harmovela.runtime-semantics.v1</code></h3>
 <p>When this profile is negotiated, the following fields become conditionally required:</p>
-<p>| Event type | Conditionally required fields | Level | |---|---|---| | <code>belief.revised</code> | <code>belief_status</code>, <code>belief_scope</code> | REQUIRED | | <code>belief.conflict.detected</code> | <code>belief_status</code> | REQUIRED | | <code>freshness.expired</code> | <code>valid_until</code> or <code>stale_after</code> | REQUIRED (at least one) | | <code>freshness.window.changed</code> | <code>valid_until</code> (as <code>new_valid_until</code> in payload) | REQUIRED | | <code>delegation.requested</code> | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code> | REQUIRED | | <code>delegation.accepted</code> | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code> | REQUIRED | | <code>delegation.rejected</code> | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code> | REQUIRED | | <code>delegation.handoff.completed</code> | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code> | REQUIRED | | <code>delegation.escalated</code> | <code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code> | REQUIRED | | <code>interruption.requested</code> | <code>interruption_policy</code> | REQUIRED | | <code>interruption.saved</code> | <code>checkpoint_id</code>, <code>checkpoint_at</code> | REQUIRED | | <code>interruption.resumed</code> | <code>checkpoint_id</code> | REQUIRED | | <code>compensation.requested</code> | <code>compensation_id</code> | REQUIRED | | <code>compensation.completed</code> | <code>compensation_id</code> | REQUIRED | | <code>provenance.attestation.added</code> | <code>evidence_chain</code> or <code>causation_id</code> | REQUIRED (at least one) |</p>
+<table>
+<thead><tr><th>Event type</th><th>Conditionally required fields</th><th>Level</th></tr></thead>
+<tbody>
+<tr><td><code>belief.revised</code></td><td><code>belief_status</code>, <code>belief_scope</code></td><td>REQUIRED</td></tr>
+<tr><td><code>belief.conflict.detected</code></td><td><code>belief_status</code></td><td>REQUIRED</td></tr>
+<tr><td><code>freshness.expired</code></td><td><code>valid_until</code> or <code>stale_after</code></td><td>REQUIRED (at least one)</td></tr>
+<tr><td><code>freshness.window.changed</code></td><td><code>valid_until</code> (as <code>new_valid_until</code> in payload)</td><td>REQUIRED</td></tr>
+<tr><td><code>delegation.requested</code></td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>delegation.accepted</code></td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>delegation.rejected</code></td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>delegation.handoff.completed</code></td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>handoff_token</code></td><td>REQUIRED</td></tr>
+<tr><td><code>delegation.escalated</code></td><td><code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>interruption.requested</code></td><td><code>interruption_policy</code></td><td>REQUIRED</td></tr>
+<tr><td><code>interruption.saved</code></td><td><code>checkpoint_id</code>, <code>checkpoint_at</code></td><td>REQUIRED</td></tr>
+<tr><td><code>interruption.resumed</code></td><td><code>checkpoint_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>compensation.requested</code></td><td><code>compensation_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>compensation.completed</code></td><td><code>compensation_id</code></td><td>REQUIRED</td></tr>
+<tr><td><code>provenance.attestation.added</code></td><td><code>evidence_chain</code> or <code>causation_id</code></td><td>REQUIRED (at least one)</td></tr>
+</tbody>
+</table>
 <p>Non-event-specific envelope fields (<code>delegated_by</code>, <code>delegated_to</code>, <code>parent_task_id</code>, <code>checkpoint_id</code>, <code>checkpoint_at</code>, <code>interruption_policy</code>, <code>compensation_id</code>) are REQUIRED only on the event types listed above. They MAY be present on other event types but carry no normative weight.</p>
 <h3>Profile: <code>harmovela.coordination.v1</code></h3>
 <p>When this profile is negotiated in addition to <code>harmovela.runtime-semantics.v1</code>, the following additional constraints apply:</p>
-<p>| Event type | Conditionally required fields | Level | |---|---|---| | <code>delegation.handoff.completed</code> | <code>handoff_token</code> expiry MUST be checked (see Handoff Token Semantics) | REQUIRED | | <code>task.cancelled</code> (child) | <code>causation_id</code> MUST reference parent <code>task.cancelled</code> or <code>task.cancelled</code> event | REQUIRED | | Any task event on a task with <code>parent_task_id</code> | Parent task MUST exist and MUST NOT be in terminal state unless this event itself is a terminal transition (cancellation propagation) | REQUIRED |</p>
+<table>
+<thead><tr><th>Event type</th><th>Conditionally required fields</th><th>Level</th></tr></thead>
+<tbody>
+<tr><td><code>delegation.handoff.completed</code></td><td><code>handoff_token</code> expiry MUST be checked (see Handoff Token Semantics)</td><td>REQUIRED</td></tr>
+<tr><td><code>task.cancelled</code> (child)</td><td><code>causation_id</code> MUST reference parent <code>task.cancelled</code> or <code>task.cancelled</code> event</td><td>REQUIRED</td></tr>
+<tr><td>Any task event on a task with <code>parent_task_id</code></td><td>Parent task MUST exist and MUST NOT be in terminal state unless this event itself is a terminal transition (cancellation propagation)</td><td>REQUIRED</td></tr>
+</tbody>
+</table>
 <p>Additionally, <code>delegated_by</code>, <code>delegated_to</code>, and <code>parent_task_id</code> on delegation events become REQUIRED (enforced at the <code>runtime-semantics.v1</code> level above). The coordination profile adds orchestration-level validation (cancellation cascade, parent-child terminal ordering) that builds on these fields.</p>
 <h3>Profile: <code>harmovela.security.v1</code></h3>
 <p>When this profile is negotiated, <code>source_trust: "signed"</code> assertions on provenance events MUST carry a verifiable signature. The <code>handoff_token</code> validation checks defined in the Handoff Token Semantics section become REQUIRED rather than RECOMMENDED.</p>
@@ -381,7 +477,19 @@ interruption.acknowledged
 <p>Structured payload validation is defined in the shared payloads schema:</p>
 <p><code>schemas/harmovela-payloads.schema.json</code> (<code>https://schemas.axisrobo.com/harmovela-payloads.v0.1.schema.json</code>)</p>
 <p>The schema uses <code>if</code>/<code>then</code> discriminator blocks keyed on the envelope <code>type</code> field to validate payloads for the following event types:</p>
-<p>| Family | Validated types | |---|---| | Context | <code>context.invalidated</code>, <code>context.updated</code>, <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code> | | Memory | <code>memory.fact.invalidated</code>, <code>memory.fact.added</code>, <code>memory.fact.updated</code> | | Belief | <code>belief.revised</code>, <code>belief.conflict.detected</code> | | Freshness | <code>freshness.expired</code>, <code>freshness.window.changed</code> | | Delegation | <code>delegation.requested</code>, <code>.accepted</code>, <code>.rejected</code>, <code>.handoff.completed</code>, <code>.escalated</code> | | Interruption | <code>interruption.requested</code>, <code>.acknowledged</code>, <code>.saved</code>, <code>.resumed</code>, <code>.cancelled</code> | | Compensation | <code>compensation.requested</code>, <code>.completed</code> | | Provenance | <code>provenance.attestation.added</code>, <code>.revoked</code>, <code>.chain.truncated</code> |</p>
+<table>
+<thead><tr><th>Family</th><th>Validated types</th></tr></thead>
+<tbody>
+<tr><td>Context</td><td><code>context.invalidated</code>, <code>context.updated</code>, <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code></td></tr>
+<tr><td>Memory</td><td><code>memory.fact.invalidated</code>, <code>memory.fact.added</code>, <code>memory.fact.updated</code></td></tr>
+<tr><td>Belief</td><td><code>belief.revised</code>, <code>belief.conflict.detected</code></td></tr>
+<tr><td>Freshness</td><td><code>freshness.expired</code>, <code>freshness.window.changed</code></td></tr>
+<tr><td>Delegation</td><td><code>delegation.requested</code>, <code>.accepted</code>, <code>.rejected</code>, <code>.handoff.completed</code>, <code>.escalated</code></td></tr>
+<tr><td>Interruption</td><td><code>interruption.requested</code>, <code>.acknowledged</code>, <code>.saved</code>, <code>.resumed</code>, <code>.cancelled</code></td></tr>
+<tr><td>Compensation</td><td><code>compensation.requested</code>, <code>.completed</code></td></tr>
+<tr><td>Provenance</td><td><code>provenance.attestation.added</code>, <code>.revoked</code>, <code>.chain.truncated</code></td></tr>
+</tbody>
+</table>
 <p>Conformance tests in TypeScript and Python validate payloads against this schema.</p>
 </body>
 </html>

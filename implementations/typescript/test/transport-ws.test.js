@@ -11,7 +11,7 @@ test("WebSocket server starts and accepts connections", async () => {
 
   assert.ok(server.port > 0);
 
-  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/aep` });
+  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/harmovela` });
   await client.start();
 
   assert.equal(connections.length, 1);
@@ -29,7 +29,7 @@ test("WebSocket bidirectional message exchange", async () => {
   server.on("message", (event) => serverMessages.push(event));
   await server.start();
 
-  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/aep` });
+  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/harmovela` });
   client.on("message", (event) => clientMessages.push(event));
   await client.start();
 
@@ -58,8 +58,8 @@ test("WebSocket server broadcasts to all clients", async () => {
   const server = new WsServerTransport({ port: 0 });
   await server.start();
 
-  const client1 = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/aep` });
-  const client2 = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/aep` });
+  const client1 = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/harmovela` });
+  const client2 = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/harmovela` });
 
   const client1Messages = [];
   const client2Messages = [];
@@ -88,7 +88,7 @@ test("WebSocket client receives close code on server shutdown", async () => {
   const server = new WsServerTransport({ port: 0 });
   await server.start();
 
-  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/aep` });
+  const client = new WsClientTransport({ url: `ws://127.0.0.1:${server.port}/harmovela` });
   await client.start();
 
   let closed = false;

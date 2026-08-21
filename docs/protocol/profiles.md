@@ -249,6 +249,16 @@ Transport profiles define wire-level bindings for Harmovela communication. Each 
 
 Each transport profile specification defines framing rules, connection lifecycle, error handling for transport-level failures, and subprotocol or content-type identifiers.
 
+### Topology Identifiers
+
+A topology identifier is a distinct conformance axis from both profiles and transports. It names the participant structure a deployment runs under and is recorded alongside the transport profile in compatibility evidence. Topology identifiers follow the pattern `harmovela.topology.<name>.<version>`, version independently of profiles and transports, and are used when a matrix cell or pilot report must state which participant structure produced the result.
+
+| Topology ID | Description |
+|---|---|
+| `harmovela.topology.hub-spoke.v1` | A central runtime/harness hub with producer and consumer agents attached via sessions; the hub owns routing, subscription fanout, and delivery state. This is the topology every reference runtime's fanout architecture implements. |
+
+A topology identifier is named and versioned so that conformance and pilot evidence is reproducible; two reports with the same topology identifier must describe the same participant structure.
+
 ## Profile Declaration in Capability Negotiation
 
 Profiles are declared during session establishment in the `capabilities` object. The negotiation flow:

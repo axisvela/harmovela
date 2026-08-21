@@ -88,8 +88,8 @@ class ConformanceTest {
                     filtered.add(f);
                 }
             }
-            manifest = new Fixtures.Manifest(manifest.spec_version(), manifest.default_target_level(),
-                manifest.levels(), filtered, manifest.profiles());
+            manifest = new Fixtures.Manifest(manifest.spec_version(), manifest.suite_version(),
+                manifest.default_target_level(), manifest.levels(), filtered, manifest.profiles());
         }
 
         var targetOrder = LEVEL_ORDER.getOrDefault(manifest.default_target_level(), 1);

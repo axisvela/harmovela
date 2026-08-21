@@ -15,13 +15,14 @@ const outDir = resolve(root, "docs/site");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
 const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];
-const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "TRADEMARKS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "README_zh.md"];
+const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "SECURITY.md", "TRADEMARKS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "README_zh.md"];
 
 mkdirSync(outDir, { recursive: true });
 
 function mdToHtml(md) {
   const blocks = [];
   const links = [];
+  md = md.replace(/\r\n/g, "\n");
   const escapeHtml = (value) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const escapeAttribute = (value) => escapeHtml(value).replace(/"/g, "&quot;");
   const addBlock = (html) => {
@@ -36,7 +37,10 @@ function mdToHtml(md) {
     const trimmed = target.trim();
     const localMarkdown = !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(trimmed) && /^.*\.md(?:#.*)?$/i.test(trimmed);
     const href = localMarkdown
-      ? trimmed.replace(/^(?:.*\/)?([^/]+)\.md(#.*)?$/i, "$1.html$2")
+      ? trimmed.replace(/^(?:.*\/)?([^/]+)\.md(#.*)?$/i, (_m, name, anchor = "") => {
+          const base = rootDocOutput(`${name}.md`);
+          return base + (anchor || "");
+        })
       : trimmed;
     const allowed = /^(?:https?:|mailto:|#)/i.test(href) || (!/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith("//"));
     return allowed ? `<a href="${escapeAttribute(href)}">${renderInline(text)}</a>` : renderInline(text);
@@ -205,12 +209,15 @@ for (const rel of referencedDesignDocs) {
 }
 
 // Generate root doc pages
-const rootDocOutput = (file) => {
+function rootDocOutput(file) {
   const base = file.replace(".md", ".html");
-  // CONFORMANCE.md collides case-insensitively with docs/protocol/conformance.md;
-  // publish the matrix under a distinct lowercase name so both survive deployment.
-  return file === "CONFORMANCE.md" ? "conformance-matrix.html" : base;
-};
+  // CONFORMANCE.md and SECURITY.md collide case-insensitively with
+  // docs/protocol/conformance.md and docs/protocol/security.md;
+  // publish each under a distinct lowercase name so both survive deployment.
+  if (file === "CONFORMANCE.md") return "conformance-matrix.html";
+  if (file === "SECURITY.md") return "security-response.html";
+  return base;
+}
 for (const file of rootDocFiles.filter((f) => existsSync(resolve(root, f)))) {
   const { title, html } = readAndConvert(resolve(root, file));
   writeFileSync(resolve(outDir, rootDocOutput(file)), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));

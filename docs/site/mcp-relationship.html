@@ -60,7 +60,18 @@ Tool  --Harmovela--------&gt; task.completed | task.failed | task.cancelled (tas
 </code></pre>
 <p>The same async layer lets a producer report external state changes, such as a memory invalidation or an environment observation, without a consumer first making a request. It also provides a place for cancellation to be communicated while work is in flight and for a reconnecting consumer to request replay of missed events. These are draft Harmovela lifecycle and delivery conventions, not a claim that MCP cannot expose notifications or extensions.</p>
 <h2>Correspondence Table</h2>
-<p>| MCP Capability | Harmovela Counterpart | | --- | --- | | <code>initialize</code> | <code>session.opened</code>, <code>session.ready</code>, capability negotiation | | <code>tools/list</code> | <code>capabilities.requested</code>, <code>capabilities.declared</code> | | <code>tools/call</code> | <code>tool.call.requested</code>, lifecycle events | | <code>resources/list</code> | <code>streams/list</code> or subscription capabilities | | <code>resources/read</code> | <code>context.snapshot.requested</code>, <code>context.snapshot.ready</code> | | <code>notifications/*</code> | General event publish / subscribe | | Request-response result | Deferred result stream |</p>
+<table>
+<thead><tr><th>MCP Capability</th><th>Harmovela Counterpart</th></tr></thead>
+<tbody>
+<tr><td><code>initialize</code></td><td><code>session.opened</code>, <code>session.ready</code>, capability negotiation</td></tr>
+<tr><td><code>tools/list</code></td><td><code>capabilities.requested</code>, <code>capabilities.declared</code></td></tr>
+<tr><td><code>tools/call</code></td><td><code>tool.call.requested</code>, lifecycle events</td></tr>
+<tr><td><code>resources/list</code></td><td><code>streams/list</code> or subscription capabilities</td></tr>
+<tr><td><code>resources/read</code></td><td><code>context.snapshot.requested</code>, <code>context.snapshot.ready</code></td></tr>
+<tr><td><code>notifications/*</code></td><td>General event publish / subscribe</td></tr>
+<tr><td>Request-response result</td><td>Deferred result stream</td></tr>
+</tbody>
+</table>
 <h2>Interop Model</h2>
 <h3>MCP Tool Calls Producing Harmovela Events</h3>
 <p>A synchronous MCP tool may perform a write or trigger background processing. The tool can return immediately while publishing Harmovela events later.</p>

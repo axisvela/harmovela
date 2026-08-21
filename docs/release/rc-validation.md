@@ -10,6 +10,14 @@
 4. Every accepted RC change must rerun the full required test matrix and update the compatibility snapshot.
 5. The RC may not be promoted while a release-blocker remains open.
 
+## Designated Release Maintainer
+
+The designated release maintainer for `v0.9.0-rc.1` is the **Axisrobo team**, acting through the Axisrobo maintainers who hold decision authority during the 0.x phase (see [GOVERNANCE.md](../GOVERNANCE.md)). The release maintainer tags `release-blocker` issues in the public tracker, approves RC exceptions, and owns promotion. This designation is recorded in the current release documents; it does not alter the historical 0.4/0.5 release records.
+
+## Public Tracker
+
+The public tracker for release-blocker tagging is the GitHub issue tracker of the canonical repository `https://github.com/axisrobo/harmovela`. A `release-blocker` is an open issue tagged `release-blocker` by the designated release maintainer.
+
 ## Required Test Commands
 
 Run from the repository root unless a command states otherwise:
@@ -26,7 +34,7 @@ Record the command, revision, environment, exit code, and retained output locati
 
 ## Required Fixture And Profile Matrix
 
-The RC matrix must run all 34 official fixtures in `conformance/fixtures/` against each selected implementation, profile, transport profile, and topology combination. The selected L3 profile must include its declared dependencies:
+The RC matrix must run all 34 official fixtures (suite version `1.0.0`, declared in `conformance/manifest.json`) in `conformance/fixtures/` against each selected implementation, profile, transport profile, and topology combination. The selected L3 profile must include its declared dependencies:
 
 | Profile | Version | Required result |
 | --- | --- | --- |
@@ -34,6 +42,8 @@ The RC matrix must run all 34 official fixtures in `conformance/fixtures/` again
 | `harmovela.security.v1` | `[version]` | PASS |
 | `harmovela.coordination.v1` | `[version]` | PASS |
 | `harmovela.adaptation.v1` | `[version]` | PASS |
+
+The selected transport profile is `harmovela.transport.stdio.v1` and the selected topology identifier is `harmovela.topology.hub-spoke.v1` (declared in [profiles.md](profiles.md#topology-identifiers)); each matrix row must record both with their versions.
 
 The matrix must include positive and negative evidence for feedback/outcome correlation, budget establishment/change/enforcement/violation, audit linkage, authorization, and tenant isolation. Every required cell is implementation x profile x transport profile x topology x fixture/scenario. A skipped, unrun, or inconclusive required cell is not a passing matrix.
 
@@ -62,7 +72,7 @@ A generic interoperability demonstration does not meet this acceptance criterion
 
 ## Independent Implementation Evidence
 
-Use the following template for each implementation claimed as independently maintained:
+Use the following template for each implementation claimed as independently maintained. For field-by-field guidance and examples of what does and does not count as independent maintenance, see [`independent-implementation-guide.md`](independent-implementation-guide.md).
 
 ```text
 Implementation name and version:

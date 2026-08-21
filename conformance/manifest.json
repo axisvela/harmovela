@@ -1,5 +1,6 @@
 {
   "spec_version": "0.2",
+  "suite_version": "1.0.0",
   "default_target_level": "HARMOVELA-C3",
   "levels": [
     "HARMOVELA-C0",

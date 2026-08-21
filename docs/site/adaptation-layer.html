@@ -27,7 +27,7 @@
 <h1>Adaptation Layer — Delivered</h1>
 <p>&gt; Part of the <a href="roadmap.html">Harmovela roadmap</a>. This layer answers <strong>"How does the system observe outcomes, adjust, and evolve?"</strong> — the semantics that sit above <a href="coordination-layer.html">Coordination</a> once multiple agents can reliably work together.</p>
 <p><strong>Autonomy mapping:</strong> L3 (production autonomy with audit, budget, and authorization boundaries) is in scope for 1.0. L4 (open-ended long-term autonomy) and AGI (general intelligence) are explicit non-goals.</p>
-<p><strong>Status:</strong> Delivered — 0.5 Adaptation Preview. Evidence: 11 adaptation event types defined and registered; budget enforcement semantics integrated with the harness; 4 cross-language adaptation conformance fixtures pass across all reference implementations.</p>
+<p><strong>Status:</strong> Delivered — 0.5 Adaptation Preview, with Protocol 1.0 declared released as a wire-compatible declaration. Evidence: 11 adaptation event types defined and registered; budget enforcement semantics integrated with the harness; 4 cross-language adaptation conformance fixtures pass across all reference implementations. The 0.9 RC external-evidence gates (independent implementations, external L3 pilot, release-blocker review) were deferred to 1.1 by explicit compatibility decision.</p>
 <h2>Purpose</h2>
 <p>Once agents coordinate reliably, the next value comes from a system that watches the results of its own work and changes what it does. This layer has three ascending stages: <strong>feedback</strong> (observe outcomes), <strong>adaptation</strong> (adjust behavior within governed boundaries), and — bounded and mostly out of scope — <strong>self-evolution</strong> (change its own behavior over time).</p>
 <p>Harmovela remains a coordination protocol, not an intelligence model. This layer standardizes the *coordination semantics* that make feedback and adaptation observable, auditable, and governable — never the intelligence of the implementing agent.</p>
@@ -69,8 +69,9 @@
 <thead><tr><th>Release</th><th>Focus</th><th>Target level</th></tr></thead>
 <tbody>
 <tr><td><strong>0.5 Adaptation Preview</strong></td><td>Specify and implement feedback/outcome correlation; security-profile-dependent adaptation-operation authority, audit linkage, and authorization checks; L3 adaptation-profile declaration; and cross-language conformance fixtures.</td><td>L3 (specified and testable)</td></tr>
-<tr><td><strong>0.9 Release Candidate</strong></td><td>Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.</td><td>L3 (validated)</td></tr>
-<tr><td><strong>1.0</strong></td><td>Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals.</td><td>L3 (stable)</td></tr>
+<tr><td><strong>0.9 Release Candidate</strong></td><td>Superseded by 1.0. Validate the complete 0.5 L3 semantics without feature expansion through reproducible RC fixtures and compatibility matrix, governance/security/registry processes, and an external L3 autonomy pilot.</td><td>L3 (validated)</td></tr>
+<tr><td><strong>1.0</strong></td><td>Delivered. Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals; released as a wire-compatible declaration.</td><td>L3 (stable)</td></tr>
+<tr><td><strong>1.1</strong></td><td>Planned. Close the external-evidence gates deferred from 0.9: two independently maintained implementations, an external L3 autonomy pilot, and zero <code>release-blocker</code> issues.</td><td>L3 (validated, external evidence)</td></tr>
 </tbody>
 </table>
 <h2>Release Gates</h2>
@@ -87,6 +88,7 @@
 <li>Every reference implementation passes the declared L3 fixtures.</li>
 </ul>
 <h3>0.9 Release Candidate</h3>
+<p>&gt; <strong>Superseded by 1.0.</strong> The in-repository matrix evidence was completed, but the external-evidence exit gates below were not satisfied and were deferred to 1.1 by explicit compatibility decision (see <code>docs/release/release-notes-v1.0.0.md</code>).</p>
 <p>Entry criteria:</p>
 <ul>
 <li>0.5 L3 specifications and fixtures are complete.</li>
@@ -102,12 +104,26 @@
 <li>No new protocol features are added during the RC period.</li>
 </ul>
 <h3>1.0</h3>
-<p>Release criteria:</p>
+<p>Release criteria (met by explicit compatibility decision; see <code>docs/release/release-notes-v1.0.0.md</code>):</p>
 <ul>
 <li>Stable feedback/outcome correlation and budget, audit, and authorization boundaries.</li>
-<li>Repeatable conformance results across independently maintained implementations.</li>
 <li>Documented governance, release, licensing, trademark, upgrade, and deprecation policies.</li>
 <li>A published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals.</li>
+<li>The 0.9 external-evidence gates (two independently maintained implementations, external L3 autonomy pilot, zero independently-reviewed <code>release-blocker</code> issues) were exempted and deferred to 1.1.</li>
+</ul>
+<h3>1.1</h3>
+<p>Entry criteria:</p>
+<ul>
+<li>1.0 released; in-repository compatibility matrix covers all required implementation, profile, transport, topology, fixture, and scenario cells.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, one named and versioned topology identifier distinct from that transport profile, and an official versioned L3 fixture/scenario suite; each matrix row records both the transport profile and topology identifier with their versions.</li>
+<li>Required matrix cells are each implementation x the selected L3 profile x the selected topology identifier and version x every official fixture/scenario; every cell passes.</li>
+<li>A <code>release-blocker</code> is an open issue tagged by the designated release maintainer in the public tracker; zero <code>release-blocker</code> issues may remain.</li>
+<li>Public governance, release, security-response, and registry processes are published; their applicability is reviewed.</li>
+<li>An external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation. Its published report identifies both implementation names and versions, the L3 profile and version, transport profile and version, topology identifier and version, and official fixture/scenario-suite version; it publishes per-fixture and per-scenario pass/fail results demonstrating the feedback/outcome, budget, audit, and authorization boundaries, all of which pass. A generic interoperability pilot does not satisfy this gate.</li>
+<li>No new protocol features are added during the validation period.</li>
 </ul>
 </body>
 </html>

@@ -27,7 +27,9 @@ public final class Fixtures {
                              List<String> levels,
                              List<String> fixtures) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Manifest(@JsonProperty("spec_version") String spec_version,
+                           @JsonProperty("suite_version") String suite_version,
                            @JsonProperty("default_target_level") String default_target_level,
                            List<String> levels, List<ManifestFixture> fixtures,
                            Map<String, ProfileDef> profiles) {}

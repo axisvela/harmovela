@@ -1,0 +1,129 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Detecting the operating system and CPU architecture
+[INFO] ------------------------------------------------------------------------
+[INFO] os.detected.name: windows
+[INFO] os.detected.arch: x86_64
+[INFO] os.detected.bitness: 64
+[INFO] os.detected.version: 10.0
+[INFO] os.detected.version.major: 10
+[INFO] os.detected.version.minor: 0
+[INFO] os.detected.classifier: windows-x86_64
+[INFO] 
+[INFO] ------------------< com.axisrobo:aep-reference-java >-------------------
+[INFO] Building AEP Java Reference 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- protobuf:0.6.1:compile (default) @ aep-reference-java ---
+[INFO] Compiling 1 proto file(s) to D:\profile\paper-code\Harmovela\implementations\java\target\generated-sources\protobuf\java
+[INFO] 
+[INFO] --- protobuf:0.6.1:compile-custom (default) @ aep-reference-java ---
+[INFO] Compiling 1 proto file(s) to D:\profile\paper-code\Harmovela\implementations\java\target\generated-sources\protobuf\grpc-java
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ aep-reference-java ---
+[INFO] skip non existing resourceDirectory D:\profile\paper-code\Harmovela\implementations\java\src\main\resources
+[INFO] Copying 1 resource from src\main\proto to target\classes
+[INFO] Copying 1 resource from src\main\proto to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ aep-reference-java ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 42 source files with javac [debug release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ aep-reference-java ---
+[INFO] skip non existing resourceDirectory D:\profile\paper-code\Harmovela\implementations\java\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ aep-reference-java ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 36 source files with javac [debug release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ aep-reference-java ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.axisrobo.harmovela.adaptation.AdaptationTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.104 s -- in com.axisrobo.harmovela.adaptation.AdaptationTypesTest
+[INFO] Running com.axisrobo.harmovela.agent.AgentTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.axisrobo.harmovela.agent.AgentTypesTest
+[INFO] Running com.axisrobo.harmovela.bridge.McpBridgeTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.493 s -- in com.axisrobo.harmovela.bridge.McpBridgeTest
+[INFO] Running com.axisrobo.harmovela.cli.HarmovelaCliTest
+created D:\Users\hanhw1\AppData\Local\Temp\junit6675950489963064266\harmovela.config.json
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.651 s -- in com.axisrobo.harmovela.cli.HarmovelaCliTest
+[INFO] Running com.axisrobo.harmovela.command.CommandTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.axisrobo.harmovela.command.CommandTypesTest
+[INFO] Running com.axisrobo.harmovela.conformance.ConformanceTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.756 s -- in com.axisrobo.harmovela.conformance.ConformanceTest
+[INFO] Running com.axisrobo.harmovela.context.ContextMemoryTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.axisrobo.harmovela.context.ContextMemoryTypesTest
+[INFO] Running com.axisrobo.harmovela.delegation.DelegationTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in com.axisrobo.harmovela.delegation.DelegationTypesTest
+[INFO] Running com.axisrobo.harmovela.environment.EnvironmentTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.axisrobo.harmovela.environment.EnvironmentTypesTest
+[INFO] Running com.axisrobo.harmovela.event.EnvelopeTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in com.axisrobo.harmovela.event.EnvelopeTest
+[INFO] Running com.axisrobo.harmovela.event.EventCoreTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.axisrobo.harmovela.event.EventCoreTest
+[INFO] Running com.axisrobo.harmovela.event.router.EventRouterTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s -- in com.axisrobo.harmovela.event.router.EventRouterTest
+[INFO] Running com.axisrobo.harmovela.event.subscription.SubscriptionsTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.axisrobo.harmovela.event.subscription.SubscriptionsTest
+[INFO] Running com.axisrobo.harmovela.event.transport.GrpcTransportTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.479 s -- in com.axisrobo.harmovela.event.transport.GrpcTransportTest
+[INFO] Running com.axisrobo.harmovela.event.transport.KafkaTransportTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.axisrobo.harmovela.event.transport.KafkaTransportTest
+[INFO] Running com.axisrobo.harmovela.event.transport.NatsTransportTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in com.axisrobo.harmovela.event.transport.NatsTransportTest
+[INFO] Running com.axisrobo.harmovela.event.transport.RedisTransportTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.axisrobo.harmovela.event.transport.RedisTransportTest
+[INFO] Running com.axisrobo.harmovela.event.transport.SseServerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.686 s -- in com.axisrobo.harmovela.event.transport.SseServerTest
+[INFO] Running com.axisrobo.harmovela.event.transport.StdioTransportTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.axisrobo.harmovela.event.transport.StdioTransportTest
+[INFO] Running com.axisrobo.harmovela.event.transport.WsTransportTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.311 s -- in com.axisrobo.harmovela.event.transport.WsTransportTest
+[INFO] Running com.axisrobo.harmovela.governance.GovernancePolicyTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.axisrobo.harmovela.governance.GovernancePolicyTest
+[INFO] Running com.axisrobo.harmovela.harness.HarnessTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.axisrobo.harmovela.harness.HarnessTest
+[INFO] Running com.axisrobo.harmovela.query.QueryTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.axisrobo.harmovela.query.QueryTypesTest
+[INFO] Running com.axisrobo.harmovela.recovery.DeliveryJournalTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 s -- in com.axisrobo.harmovela.recovery.DeliveryJournalTest
+[INFO] Running com.axisrobo.harmovela.recovery.DeliveryTrackerTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.axisrobo.harmovela.recovery.DeliveryTrackerTest
+[INFO] Running com.axisrobo.harmovela.recovery.InMemoryDeliveryStoreTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.axisrobo.harmovela.recovery.InMemoryDeliveryStoreTest
+[INFO] Running com.axisrobo.harmovela.recovery.PostgresDeliveryStoreTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.925 s -- in com.axisrobo.harmovela.recovery.PostgresDeliveryStoreTest
+[INFO] Running com.axisrobo.harmovela.recovery.RecoveryTypesTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.axisrobo.harmovela.recovery.RecoveryTypesTest
+[INFO] Running com.axisrobo.harmovela.recovery.SqliteDeliveryStoreTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.382 s -- in com.axisrobo.harmovela.recovery.SqliteDeliveryStoreTest
+[INFO] Running com.axisrobo.harmovela.runtime.ApiSubscriptionsTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.700 s -- in com.axisrobo.harmovela.runtime.ApiSubscriptionsTest
+[INFO] Running com.axisrobo.harmovela.runtime.ConfigTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.034 s -- in com.axisrobo.harmovela.runtime.ConfigTest
+[INFO] Running com.axisrobo.harmovela.runtime.RuntimeServiceTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.268 s -- in com.axisrobo.harmovela.runtime.RuntimeServiceTest
+[INFO] Running com.axisrobo.harmovela.runtime.RuntimeSubscriptionsTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.axisrobo.harmovela.runtime.RuntimeSubscriptionsTest
+[INFO] Running com.axisrobo.harmovela.state.StateTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.axisrobo.harmovela.state.StateTypesTest
+[INFO] Running com.axisrobo.harmovela.task.TaskTrackerTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.axisrobo.harmovela.task.TaskTrackerTest
+[INFO] Running com.axisrobo.harmovela.tool.ToolTypesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in com.axisrobo.harmovela.tool.ToolTypesTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 166, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  27.431 s
+[INFO] Finished at: 2026-08-18T07:57:26+08:00
+[INFO] ------------------------------------------------------------------------

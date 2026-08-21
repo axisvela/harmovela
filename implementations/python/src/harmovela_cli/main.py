@@ -123,10 +123,12 @@ def dlq(subcommand, config_path):
 def conformance(level, profile):
     """Run the conformance test suite."""
     import os
+    from pathlib import Path
     env = os.environ.copy()
     if profile:
         env["HARMOVELA_PROFILE"] = profile
-    args = [sys.executable, "-m", "pytest", "tests/test_fixtures.py", "-q"]
+    test_file = Path(__file__).resolve().parent.parent.parent / "tests" / "test_fixtures.py"
+    args = [sys.executable, "-m", "pytest", str(test_file), "-q"]
     result = subprocess.run(args, env=env)
     sys.exit(result.returncode)
 

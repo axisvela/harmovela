@@ -31,7 +31,15 @@
 <p>Migration decisions for legacy public identifiers are tracked in the <a href="compatibility-matrix.html">compatibility matrix</a>. That matrix is decision input only and does not authorize identifier changes.</p>
 <h2>Versioned Assets</h2>
 <p>Harmovela versions four distinct assets independently:</p>
-<p>| Asset | Version Field | Example | Scope | Category | |---|---|---|---|---| | Protocol envelope | <code>spec_version</code> | <code>"0.2"</code> | Envelope field set, required fields, semantic rules | core | | Event type families | Event type registry | — | Standard event type names and semantics | core | | Payload schemas | <code>payload_schema</code> (URI) | <code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code> | Per-event payload structure | profile | | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. | profile |</p>
+<table>
+<thead><tr><th>Asset</th><th>Version Field</th><th>Example</th><th>Scope</th><th>Category</th></tr></thead>
+<tbody>
+<tr><td>Protocol envelope</td><td><code>spec_version</code></td><td><code>"0.2"</code></td><td>Envelope field set, required fields, semantic rules</td><td>core</td></tr>
+<tr><td>Event type families</td><td>Event type registry</td><td>—</td><td>Standard event type names and semantics</td><td>core</td></tr>
+<tr><td>Payload schemas</td><td><code>payload_schema</code> (URI)</td><td><code>https://schemas.axisrobo.com/tool.call.progress.v1.json</code></td><td>Per-event payload structure</td><td>profile</td></tr>
+<tr><td>Transport bindings</td><td>Transport spec</td><td>—</td><td>stdio framing, WebSocket subprotocol, etc.</td><td>profile</td></tr>
+</tbody>
+</table>
 <p>Core assets are required by every conformant implementation. Profile assets may be adopted independently and carry their own conformance requirements.</p>
 <h2>Protocol Envelope Versioning</h2>
 <h3>Format</h3>

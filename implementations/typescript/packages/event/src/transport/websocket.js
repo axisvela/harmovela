@@ -125,7 +125,7 @@ export class WsClientTransport extends Transport {
 
   constructor(options = {}) {
     super();
-    this.url = options.url ?? "ws://127.0.0.1:0/aep";
+    this.url = options.url ?? "ws://127.0.0.1:0/harmovela";
     this.reconnect = options.reconnect ?? false;
     this.reconnectDelay = options.reconnectDelay ?? 1000;
   }

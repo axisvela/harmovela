@@ -27,10 +27,10 @@
 | Protocol version | `v0.5.0` |
 | L3 profile ID and version | `[required]` |
 | Dependency profile IDs and versions | `[required]` |
-| Transport profile ID and version | `[required]` |
-| Topology ID and version | `[required]` |
+| Transport profile ID and version | `harmovela.transport.stdio.v1` |
+| Topology ID and version | `harmovela.topology.hub-spoke.v1` |
 | Wire identifiers and endpoints/routing | `[required]` |
-| Fixture-suite version | `[required]` |
+| Fixture-suite version | `1.0.0` |
 | Host, runtime, and toolchain versions | `[required]` |
 
 ## Fixture And Scenario Results

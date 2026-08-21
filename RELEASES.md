@@ -1,6 +1,6 @@
 # Harmovela Protocol Releases
 
-> Current version: **0.5.0**
+> Current version: **1.0.0**
 
 ## Release Phases
 
@@ -39,7 +39,7 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Current |
+| **Status** | Delivered |
 | **Goal** | Attract independent implementations and community feedback with a stable, well-documented coordination core |
 | **Entry criteria** | 0.3 profiles complete; frozen core with published compatibility policy; passing cross-language conformance (TypeScript, Go); three documented integration scenarios (async task, context/memory, MCP bridge); public conformance matrix; governance, release, trademark, and license documentation |
 | **Exit criteria** | At least two independently maintained interoperable implementations; no unremediated core conformance regressions; community governance proposal published |
@@ -60,20 +60,33 @@ Harmovela follows a phased release model toward 1.0. Each phase has documented e
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Preparation in progress; external evidence pending |
+| **Status** | Superseded by 1.0 |
 | **Goal** | Validate the complete 0.5 L3 semantics without feature expansion |
 | **Entry criteria** | 0.5 L3 specifications and fixtures are complete; no unresolved breaking core, L2, or L3 semantic changes remain |
 | **Exit criteria** | The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, one named and versioned topology identifier distinct from that transport profile, and an official versioned L3 fixture/scenario suite; each matrix row records both the transport profile and topology identifier with their versions; required matrix cells are each implementation x the selected L3 profile x the selected topology identifier and version x every official fixture/scenario; every cell passes; a `release-blocker` is an open issue tagged by the designated release maintainer in the public tracker, and zero `release-blocker` issues may remain; public governance, release, security-response, and registry processes are published; an external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation, and its published report identifies both implementation names and versions, the L3 profile and version, transport profile and version, topology identifier and version, and official fixture/scenario-suite version; it publishes per-fixture and per-scenario pass/fail results demonstrating the feedback/outcome, budget, audit, and authorization boundaries, all of which pass; a generic interoperability pilot does not satisfy this gate; no new protocol features are added during the RC period |
 | **Scope** | Validation-only RC fixtures and reproducible compatibility matrix, governance/security/registry processes, and external L3 autonomy pilot |
 
+> **Note:** 0.9's in-repository validation evidence (34-fixture x 4-language matrix, 136 cells) was completed, but its external-evidence exit gates (two independently maintained implementations, external L3 autonomy pilot, zero independently-reviewed `release-blocker` issues) were not satisfied when 1.0 was declared. By explicit compatibility decision (recorded in `docs/release/release-notes-v1.0.0.md`), 1.0 was released as a wire-compatible declaration, and the remaining external-evidence gates were carried forward to 1.1.
+
 ### 1.0
 
 | Attribute | Detail |
 |---|---|
-| **Status** | Planned |
+| **Status** | Delivered |
 | **Goal** | Publish stable L3 coordination semantics with a documented boundary declaring L4 and AGI as non-goals |
-| **Entry criteria** | 0.9 RC exit criteria satisfied: compatibility matrix covers two independently maintained implementations, one declared versioned L3 profile, one named and versioned transport profile, one named and versioned topology identifier, and the official versioned L3 fixture/scenario suite; every required matrix cell passes; zero `release-blocker` issues; public governance, release, security-response, and registry processes published; external L3 autonomy pilot published with all fixtures and scenarios passing; stable feedback/outcome correlation and budget, audit, and authorization boundaries; repeatable conformance results across independently maintained implementations; documented governance, release, licensing, trademark, upgrade, and deprecation policies; published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals |
-| **Exit criteria** | 1.0 released; stable L3 coordination semantics frozen with interop guarantees and a non-goal boundary that excludes L4 open-ended autonomy and AGI |
+| **Entry criteria** | 0.5 L3 specifications and fixtures are complete; no unresolved breaking core, L2, or L3 semantic changes remain |
+| **Exit criteria** | By explicit compatibility decision (see `docs/release/release-notes-v1.0.0.md`), the 0.9 external-evidence gates (two independently maintained implementations, external L3 autonomy pilot, zero independently-reviewed `release-blocker` issues) were exempted and deferred to 1.1. Released 1.0 as a wire-compatible Protocol declaration: the envelope `spec_version` remains `0.2`; profiles, schemas, and wire identifiers are unchanged. Stable feedback/outcome correlation and budget, audit, and authorization boundaries; documented governance, release, licensing, trademark, upgrade, and deprecation policies; a published boundary declaring L4 open-ended autonomy and AGI as explicit non-goals |
+| **Deliverables** | Protocol 1.0 release declaration (`v1.0.0`), release notes, updated release records and roadmap reflecting the exemption and the deferred 1.1 gates |
+
+### 1.1 — External Evidence
+
+| Attribute | Detail |
+|---|---|
+| **Status** | Planned |
+| **Goal** | Close the external-evidence gates deferred from the 0.9 RC by explicit compatibility decision when 1.0 was released |
+| **Entry criteria** | 1.0 released; compatibility matrix covers all required implementation, profile, transport, topology, fixture, and scenario cells in-repository |
+| **Exit criteria** | The compatibility matrix covers two implementations maintained in distinct public repositories by distinct maintainers, one declared versioned L3 profile, one named and versioned existing transport profile, one named and versioned topology identifier distinct from that transport profile, and an official versioned L3 fixture/scenario suite; each matrix row records both the transport profile and topology identifier with their versions; required matrix cells are each implementation x the selected L3 profile x the selected topology identifier and version x every official fixture/scenario; every cell passes; a `release-blocker` is an open issue tagged by the designated release maintainer in the public tracker, and zero `release-blocker` issues may remain; public governance, release, security-response, and registry processes are published; an external L3 autonomy pilot has an operator who is not a maintainer of either participating implementation, and its published report identifies both implementation names and versions, the L3 profile and version, transport profile and version, topology identifier and version, and official fixture/scenario-suite version; it publishes per-fixture and per-scenario pass/fail results demonstrating the feedback/outcome, budget, audit, and authorization boundaries, all of which pass; a generic interoperability pilot does not satisfy this gate; no new protocol features are added during the validation period |
+| **Scope** | Independent-implementation evidence, external L3 autonomy pilot, release-blocker review; governance/security/registry process applicability review |
 
 ## Breaking Changes Policy
 
@@ -108,6 +121,7 @@ Protocol versioning follows `docs/protocol/versioning.md`. The protocol envelope
 
 - [Governance](GOVERNANCE.md) (`GOVERNANCE.md`) — project governance and decision-making
 - [Roadmap](docs/roadmap.md) — detailed phase descriptions and milestones
-- [0.9 RC validation kit](docs/release/rc-validation.md) — freeze rules, test matrix, evidence templates, and compatibility snapshot
+- [1.0 release notes](docs/release/release-notes-v1.0.0.md) — release declaration, compatibility decision, and deferred-gate record
+- [0.9 RC validation kit](docs/release/rc-validation.md) — freeze rules, test matrix, evidence templates, and compatibility snapshot (historical; gates superseded and carried to 1.1)
 - [Versioning](docs/protocol/versioning.md) — protocol versioning rules
 - [Trademarks](TRADEMARKS.md) (`TRADEMARKS.md`) — name and mark usage

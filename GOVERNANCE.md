@@ -203,6 +203,7 @@ All governance documents, protocol specifications, schemas, and conformance fixt
 
 - [Contributing](CONTRIBUTING.md) — contribution guide and repository conventions
 - [Code of Conduct](CODE_OF_CONDUCT.md) — community standards
+- [Security Response](SECURITY.md) — public security reporting and disclosure process
 - [Releases](RELEASES.md) — release phases, versioning, and artifacts
 - [Trademarks](TRADEMARKS.md) — name and mark usage guidelines
 - [Roadmap](docs/roadmap.md) — milestones toward 1.0

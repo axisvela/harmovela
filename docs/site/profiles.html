@@ -33,7 +33,22 @@
 <p>Each profile has a unique string identifier following the pattern <code>harmovela.&lt;domain&gt;.&lt;name&gt;.&lt;version&gt;</code>, for example <code>harmovela.delivery.v1</code>. Profile identifiers are stable within a major version and must not change semantics in a backward-incompatible way without a version bump.</p>
 <h3>Dependencies</h3>
 <p>A profile may declare dependencies on other profiles or on core conformance levels. Dependencies are transitive: adopting a profile implies adopting all profiles it depends on.</p>
-<p>| Profile | Depends On | |---|---| | <code>harmovela.delivery.v1</code> | Core HARMOVELA-C0 + HARMOVELA-C1 | | <code>harmovela.security.v1</code> | Core HARMOVELA-C0 + HARMOVELA-C1 | | <code>harmovela.runtime-semantics.v1</code> | Core HARMOVELA-C0 + HARMOVELA-C1 | | <code>harmovela.coordination.v1</code> | <code>harmovela.core.v1</code> + <code>harmovela.security.v1</code> | | <code>harmovela.adaptation.v1</code> | <code>harmovela.coordination.v1</code> + <code>harmovela.security.v1</code> | | <code>harmovela.transport.websocket.v1</code> | Core HARMOVELA-C0 | | <code>harmovela.transport.sse.v1</code> | Core HARMOVELA-C0 | | <code>harmovela.transport.grpc.v1</code> | Core HARMOVELA-C0 | | <code>harmovela.transport.nats.v1</code> | Core HARMOVELA-C0 | | <code>harmovela.transport.kafka.v1</code> | Core HARMOVELA-C0 | | <code>harmovela.transport.redis-streams.v1</code> | Core HARMOVELA-C0 |</p>
+<table>
+<thead><tr><th>Profile</th><th>Depends On</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.delivery.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.security.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.runtime-semantics.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.coordination.v1</code></td><td><code>harmovela.core.v1</code> + <code>harmovela.security.v1</code></td></tr>
+<tr><td><code>harmovela.adaptation.v1</code></td><td><code>harmovela.coordination.v1</code> + <code>harmovela.security.v1</code></td></tr>
+<tr><td><code>harmovela.transport.websocket.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.sse.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.grpc.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.nats.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.kafka.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.redis-streams.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+</tbody>
+</table>
 <h3>Capability Negotiation</h3>
 <p>During session initialization, a peer declares supported profiles in <code>capabilities.profiles</code>:</p>
 <pre><code>{
@@ -89,7 +104,24 @@
 <li><strong>Java CLI:</strong> <code>cd implementations/java &amp;&amp; mvn -q exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"</code></li>
 </ul>
 <h2>Dimension Contract Ownership</h2>
-<p>| Dimension | Contract document | |---|---| | Event | <a href="event-contract.html">Event contract</a> | | Recovery | <a href="delivery.html">Delivery</a> + <a href="reliability.html">Reliability</a> | | Governance | <a href="governance-contract.html">Governance contract</a> + <a href="security.html">Security</a> | | Task | <a href="task-lifecycle.html">Task lifecycle</a> | | State | <a href="event-dimension-classification.html#state-dimension">Event dimension classification</a> | | Context / Memory | <a href="event-dimension-classification.html#context--memory-dimension">Event dimension classification</a> | | Delegation | <a href="agent-runtime-semantics.html#delegation-and-handoff">Agent runtime semantics</a> + <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">Coordination profile</a> | | Tool | <a href="event-dimension-classification.html#tool-dimension">Event dimension classification</a> | | Agent | <a href="event-dimension-classification.html#agent-dimension">Event dimension classification</a> | | Environment | <a href="event-dimension-classification.html#environment-dimension">Event dimension classification</a> | | Adaptation | <a href="adaptation-feedback.html">Adaptation feedback</a> + <a href="adaptation-budget.html">Adaptation budget</a> + <a href="governance-contract.html#authorization-checks">Governance contract</a> | | Command | <a href="command-query.html#command">Command and Query</a> | | Query | <a href="command-query.html#query">Command and Query</a> |</p>
+<table>
+<thead><tr><th>Dimension</th><th>Contract document</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td><a href="event-contract.html">Event contract</a></td></tr>
+<tr><td>Recovery</td><td><a href="delivery.html">Delivery</a> + <a href="reliability.html">Reliability</a></td></tr>
+<tr><td>Governance</td><td><a href="governance-contract.html">Governance contract</a> + <a href="security.html">Security</a></td></tr>
+<tr><td>Task</td><td><a href="task-lifecycle.html">Task lifecycle</a></td></tr>
+<tr><td>State</td><td><a href="event-dimension-classification.html#state-dimension">Event dimension classification</a></td></tr>
+<tr><td>Context / Memory</td><td><a href="event-dimension-classification.html#context--memory-dimension">Event dimension classification</a></td></tr>
+<tr><td>Delegation</td><td><a href="agent-runtime-semantics.html#delegation-and-handoff">Agent runtime semantics</a> + <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">Coordination profile</a></td></tr>
+<tr><td>Tool</td><td><a href="event-dimension-classification.html#tool-dimension">Event dimension classification</a></td></tr>
+<tr><td>Agent</td><td><a href="event-dimension-classification.html#agent-dimension">Event dimension classification</a></td></tr>
+<tr><td>Environment</td><td><a href="event-dimension-classification.html#environment-dimension">Event dimension classification</a></td></tr>
+<tr><td>Adaptation</td><td><a href="adaptation-feedback.html">Adaptation feedback</a> + <a href="adaptation-budget.html">Adaptation budget</a> + <a href="governance-contract.html#authorization-checks">Governance contract</a></td></tr>
+<tr><td>Command</td><td><a href="command-query.html#command">Command and Query</a></td></tr>
+<tr><td>Query</td><td><a href="command-query.html#query">Command and Query</a></td></tr>
+</tbody>
+</table>
 <h2>Profile Catalog</h2>
 <h3>Core Profile</h3>
 <p><strong>Identifier:</strong> <code>harmovela.core.v1</code></p>
@@ -177,8 +209,28 @@
 <p><strong>Profile family:</strong> Adaptation feedback and budget events use the <code>adaptation.*</code> event family prefix, owned by the Governance dimension under the <a href="event-registry-governance.html">event registry governance</a> model.</p>
 <h3>Transport Profiles</h3>
 <p>Transport profiles define wire-level bindings for Harmovela communication. Each transport profile is independent and optional. An implementation may support zero or more transport profiles.</p>
-<p>| Profile ID | Transport | Specification | |---|---|---| | <code>harmovela.transport.stdio.v1</code> | stdio | <code>docs/protocol/transport-stdio.md</code> | | <code>harmovela.transport.websocket.v1</code> | WebSocket | <code>docs/protocol/transport-websocket.md</code> | | <code>harmovela.transport.sse.v1</code> | HTTP SSE | <code>docs/protocol/transport-sse.md</code> | | <code>harmovela.transport.grpc.v1</code> | gRPC streaming | <code>docs/protocol/transport-grpc.md</code> | | <code>harmovela.transport.nats.v1</code> | NATS | <code>docs/protocol/transport-nats.md</code> | | <code>harmovela.transport.kafka.v1</code> | Kafka | <code>docs/protocol/transport-kafka.md</code> | | <code>harmovela.transport.redis-streams.v1</code> | Redis Streams | <code>docs/protocol/transport-redis-streams.md</code> |</p>
+<table>
+<thead><tr><th>Profile ID</th><th>Transport</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.transport.stdio.v1</code></td><td>stdio</td><td><code>docs/protocol/transport-stdio.md</code></td></tr>
+<tr><td><code>harmovela.transport.websocket.v1</code></td><td>WebSocket</td><td><code>docs/protocol/transport-websocket.md</code></td></tr>
+<tr><td><code>harmovela.transport.sse.v1</code></td><td>HTTP SSE</td><td><code>docs/protocol/transport-sse.md</code></td></tr>
+<tr><td><code>harmovela.transport.grpc.v1</code></td><td>gRPC streaming</td><td><code>docs/protocol/transport-grpc.md</code></td></tr>
+<tr><td><code>harmovela.transport.nats.v1</code></td><td>NATS</td><td><code>docs/protocol/transport-nats.md</code></td></tr>
+<tr><td><code>harmovela.transport.kafka.v1</code></td><td>Kafka</td><td><code>docs/protocol/transport-kafka.md</code></td></tr>
+<tr><td><code>harmovela.transport.redis-streams.v1</code></td><td>Redis Streams</td><td><code>docs/protocol/transport-redis-streams.md</code></td></tr>
+</tbody>
+</table>
 <p>Each transport profile specification defines framing rules, connection lifecycle, error handling for transport-level failures, and subprotocol or content-type identifiers.</p>
+<h3>Topology Identifiers</h3>
+<p>A topology identifier is a distinct conformance axis from both profiles and transports. It names the participant structure a deployment runs under and is recorded alongside the transport profile in compatibility evidence. Topology identifiers follow the pattern <code>harmovela.topology.&lt;name&gt;.&lt;version&gt;</code>, version independently of profiles and transports, and are used when a matrix cell or pilot report must state which participant structure produced the result.</p>
+<table>
+<thead><tr><th>Topology ID</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.topology.hub-spoke.v1</code></td><td>A central runtime/harness hub with producer and consumer agents attached via sessions; the hub owns routing, subscription fanout, and delivery state. This is the topology every reference runtime's fanout architecture implements.</td></tr>
+</tbody>
+</table>
+<p>A topology identifier is named and versioned so that conformance and pilot evidence is reproducible; two reports with the same topology identifier must describe the same participant structure.</p>
 <h2>Profile Declaration in Capability Negotiation</h2>
 <p>Profiles are declared during session establishment in the <code>capabilities</code> object. The negotiation flow:</p>
 <p>1. Client sends <code>session.open</code> with <code>capabilities.profiles</code> listing supported profiles and versions. 2. Server responds with <code>session.opened</code> containing the intersection of supported profiles. 3. Client sends <code>session.ready</code> confirming the negotiated profile set. 4. If a required profile is absent from the intersection, either peer sends <code>session.error</code> with code <code>unsupported_profile</code>.</p>

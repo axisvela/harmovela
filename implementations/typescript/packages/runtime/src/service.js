@@ -48,7 +48,7 @@ export class HarmovelaRuntimeService {
     if (this.started) return;
     const ws = this.config.transports?.websocket;
     if (ws?.enabled) {
-      const transport = new WsServerTransport({ host: ws.host, port: ws.port, path: ws.path ?? "/aep" });
+      const transport = new WsServerTransport({ host: ws.host, port: ws.port, path: ws.path ?? "/harmovela" });
       transport.on("message", (event) => this.publish(stripPrivateFields(event)));
       await transport.start();
       this.transports.websocket = transport;

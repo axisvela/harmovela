@@ -53,6 +53,7 @@ const LANGUAGES = {
     cwd: "implementations/go",
     cmd: "go",
     args: ["test", "./...", "-run", "TestConformance", "-v"],
+    env: { GOWORK: "off" },
   },
   Java: {
     cwd: "implementations/java",
@@ -61,13 +62,14 @@ const LANGUAGES = {
   },
 };
 
-function runCommand(cwd, cmd, args) {
+function runCommand(cwd, cmd, args, extraEnv = {}) {
   const cmdline = [cmd, ...args].join(" ");
   const result = spawnSync(cmdline, [], {
     cwd: resolve(ROOT, cwd),
     timeout: 60000,
     encoding: "utf-8",
     shell: true,
+    env: { ...process.env, ...extraEnv },
   });
 
   if (result.error && result.error.code === "ENOENT") {
@@ -134,7 +136,8 @@ for (const [lang, config] of Object.entries(LANGUAGES)) {
   const { exitCode, stdout, stderr, notFound, timedOut } = runCommand(
     config.cwd,
     config.cmd,
-    config.args
+    config.args,
+    config.env
   );
 
   if (notFound || timedOut) {

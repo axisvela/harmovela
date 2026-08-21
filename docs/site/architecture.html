@@ -174,10 +174,34 @@ Agent -&gt; Harmovela: event.acknowledged (idempotent check on event_id)
 <p>Harmovela ships with 10+ dimension modules and 5 infrastructure modules:</p>
 <h3>Dimension Modules</h3>
 <p>Each dimension module owns its event type registry and the public contracts for its coordination concern. Dimension modules are independently publishable and have no imports from other dimension internals.</p>
-<p>| Dimension | Concern | |---|---| | Event | Envelope validation, sessions, subscriptions, routing, transport contracts | | Recovery | Delivery tracker, delivery journal, retry policy, dead-letter, durability stores | | Governance | RBAC authorization policy, capability-based access control, audit trail | | Task | Task state machine, lifecycle transitions, task event types | | State | State snapshots, incremental deltas, freshness window metadata | | Context / Memory | Facts, episodes, preferences, invalidation, belief revision | | Delegation | Ownership transfer, handoff, escalation, cancellation propagation | | Tool | Tool invocation lifecycle, MCP bridge integration | | Agent | Agent-to-agent messaging, request/response, decision recording | | Environment | Environment observation, change detection, alerting | | Adaptation | Feedback/outcome correlation, budget authority and enforcement |</p>
+<table>
+<thead><tr><th>Dimension</th><th>Concern</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td>Envelope validation, sessions, subscriptions, routing, transport contracts</td></tr>
+<tr><td>Recovery</td><td>Delivery tracker, delivery journal, retry policy, dead-letter, durability stores</td></tr>
+<tr><td>Governance</td><td>RBAC authorization policy, capability-based access control, audit trail</td></tr>
+<tr><td>Task</td><td>Task state machine, lifecycle transitions, task event types</td></tr>
+<tr><td>State</td><td>State snapshots, incremental deltas, freshness window metadata</td></tr>
+<tr><td>Context / Memory</td><td>Facts, episodes, preferences, invalidation, belief revision</td></tr>
+<tr><td>Delegation</td><td>Ownership transfer, handoff, escalation, cancellation propagation</td></tr>
+<tr><td>Tool</td><td>Tool invocation lifecycle, MCP bridge integration</td></tr>
+<tr><td>Agent</td><td>Agent-to-agent messaging, request/response, decision recording</td></tr>
+<tr><td>Environment</td><td>Environment observation, change detection, alerting</td></tr>
+<tr><td>Adaptation</td><td>Feedback/outcome correlation, budget authority and enforcement</td></tr>
+</tbody>
+</table>
 <h3>Infrastructure Modules</h3>
 <p>Infrastructure modules provide cross-cutting runtime support and are not dimension-specific.</p>
-<p>| Module | Concern | |---|---| | Harness | Runtime ingress/egress enforcement, dimension wiring, policy dispatch | | Runtime | Daemon process, HTTP API, transport lifecycle, configuration management | | CLI | Command-line interface for publish, subscribe, conformance, and administration | | Conformance | Cross-language test runner, profile fixtures, compliance verification | | MCP Bridge | Protocol bridge between MCP synchronous calls and Harmovela async events |</p>
+<table>
+<thead><tr><th>Module</th><th>Concern</th></tr></thead>
+<tbody>
+<tr><td>Harness</td><td>Runtime ingress/egress enforcement, dimension wiring, policy dispatch</td></tr>
+<tr><td>Runtime</td><td>Daemon process, HTTP API, transport lifecycle, configuration management</td></tr>
+<tr><td>CLI</td><td>Command-line interface for publish, subscribe, conformance, and administration</td></tr>
+<tr><td>Conformance</td><td>Cross-language test runner, profile fixtures, compliance verification</td></tr>
+<tr><td>MCP Bridge</td><td>Protocol bridge between MCP synchronous calls and Harmovela async events</td></tr>
+</tbody>
+</table>
 <h2>Reliability Model</h2>
 <p>Harmovela should support multiple reliability levels:</p>
 <ul>

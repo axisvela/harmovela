@@ -1,0 +1,21 @@
+ok  	github.com/axisrobo/harmovela/adaptation	(cached)
+ok  	github.com/axisrobo/harmovela/agent	(cached)
+?   	github.com/axisrobo/harmovela/cli	[no test files]
+?   	github.com/axisrobo/harmovela/cmd/harmovela	[no test files]
+?   	github.com/axisrobo/harmovela/cmd/harmovelad	[no test files]
+ok  	github.com/axisrobo/harmovela/command	(cached)
+ok  	github.com/axisrobo/harmovela/conformance	(cached)
+ok  	github.com/axisrobo/harmovela/context	(cached)
+ok  	github.com/axisrobo/harmovela/delegation	(cached)
+ok  	github.com/axisrobo/harmovela/environment	(cached)
+ok  	github.com/axisrobo/harmovela/event	(cached)
+ok  	github.com/axisrobo/harmovela/event/transport	(cached)
+ok  	github.com/axisrobo/harmovela/governance	(cached)
+ok  	github.com/axisrobo/harmovela/harness	(cached)
+ok  	github.com/axisrobo/harmovela/mcp-bridge	(cached)
+ok  	github.com/axisrobo/harmovela/query	(cached)
+ok  	github.com/axisrobo/harmovela/recovery	(cached)
+ok  	github.com/axisrobo/harmovela/runtime	(cached)
+ok  	github.com/axisrobo/harmovela/state	(cached)
+ok  	github.com/axisrobo/harmovela/task	(cached)
+ok  	github.com/axisrobo/harmovela/tool	(cached)

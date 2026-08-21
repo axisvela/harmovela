@@ -30,7 +30,21 @@
 <h2>Getting Started</h2>
 <p>1. Read <a href="README.html"><code>README.md</code></a>, <a href="GOVERNANCE.html"><code>GOVERNANCE.md</code></a>, and <a href="roadmap.html"><code>docs/roadmap.md</code></a>. 2. Check open issues for areas where help is needed. 3. For protocol changes, start with a design discussion before writing code. 4. Contributions are licensed under the <a href="LICENSE">Apache License 2.0</a>.</p>
 <h2>Repository Structure</h2>
-<p>| Directory | Purpose | |---|---| | <code>docs/protocol/</code> | Protocol specifications by layer (session, subscription, task, error, delivery, etc.) | | <code>.superpowers/specs/</code> | Design specs for planned features | | <code>.superpowers/plans/</code> | Implementation plans | | <code>schemas/</code> | Shared JSON Schema assets | | <code>conformance/</code> | Shared conformance manifest and fixtures | | <code>implementations/typescript/</code> | TypeScript reference (primary) | | <code>implementations/python/</code> | Python reference | | <code>implementations/go/</code> | Go reference | | <code>implementations/java/</code> | Java reference | | <code>tools/</code> | Development tools |</p>
+<table>
+<thead><tr><th>Directory</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>docs/protocol/</code></td><td>Protocol specifications by layer (session, subscription, task, error, delivery, etc.)</td></tr>
+<tr><td><code>.superpowers/specs/</code></td><td>Design specs for planned features</td></tr>
+<tr><td><code>.superpowers/plans/</code></td><td>Implementation plans</td></tr>
+<tr><td><code>schemas/</code></td><td>Shared JSON Schema assets</td></tr>
+<tr><td><code>conformance/</code></td><td>Shared conformance manifest and fixtures</td></tr>
+<tr><td><code>implementations/typescript/</code></td><td>TypeScript reference (primary)</td></tr>
+<tr><td><code>implementations/python/</code></td><td>Python reference</td></tr>
+<tr><td><code>implementations/go/</code></td><td>Go reference</td></tr>
+<tr><td><code>implementations/java/</code></td><td>Java reference</td></tr>
+<tr><td><code>tools/</code></td><td>Development tools</td></tr>
+</tbody>
+</table>
 <h2>How to Contribute</h2>
 <h3>Protocol Spec Changes</h3>
 <p>1. Start a discussion issue describing the proposed change and its motivation. 2. Draft the specification change in <code>docs/protocol/&lt;topic&gt;.md</code>. 3. Update relevant JSON Schemas in <code>schemas/</code>. 4. Add conformance fixtures that exercise the new or changed behavior. 5. Update at least the TypeScript reference to match. 6. Cross-language parity is a goal but not a blocker for initial spec changes.</p>

@@ -52,12 +52,39 @@
 <p>1. Client creates a gRPC channel to the server address. 2. Client invokes the <code>Stream</code> bidirectional RPC, receiving a call object. 3. Both peers may immediately begin writing <code>HarmovelaMessage</code> frames. 4. The stream is long-lived; there is no per-event request/response cycle.</p>
 <h3>Metadata</h3>
 <p>gRPC metadata (headers and trailers) may carry transport-level parameters:</p>
-<p>| Metadata Key | Direction | Description | |---|---|---| | <code>harmovela-session-id</code> | Client → Server | Session identifier for connection binding | | <code>harmovela-version</code> | Client → Server | Harmovela protocol version (e.g., <code>0.2</code>) | | <code>harmovela-agent-id</code> | Client → Server | Optional agent identity | | <code>x-harmovela-cursor</code> | Server → Client (trailer) | Last committed event cursor on stream close |</p>
+<table>
+<thead><tr><th>Metadata Key</th><th>Direction</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela-session-id</code></td><td>Client → Server</td><td>Session identifier for connection binding</td></tr>
+<tr><td><code>harmovela-version</code></td><td>Client → Server</td><td>Harmovela protocol version (e.g., <code>0.2</code>)</td></tr>
+<tr><td><code>harmovela-agent-id</code></td><td>Client → Server</td><td>Optional agent identity</td></tr>
+<tr><td><code>x-harmovela-cursor</code></td><td>Server → Client (trailer)</td><td>Last committed event cursor on stream close</td></tr>
+</tbody>
+</table>
 <p>Metadata is not part of the Harmovela event envelope and must not be used to carry event semantics.</p>
 <h2>Framing</h2>
-<p>| Aspect | Specification | |---|---| | Frame type | gRPC protobuf messages (binary) | | Message format | One complete JSON Harmovela event in <code>json_payload</code> per message | | Encoding | UTF-8 for the JSON payload; standard protobuf framing | | Flow control | Managed by gRPC/HTTP/2 flow control | | Message boundaries | Each <code>HarmovelaMessage</code> is one Harmovela event |</p>
+<table>
+<thead><tr><th>Aspect</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td>Frame type</td><td>gRPC protobuf messages (binary)</td></tr>
+<tr><td>Message format</td><td>One complete JSON Harmovela event in <code>json_payload</code> per message</td></tr>
+<tr><td>Encoding</td><td>UTF-8 for the JSON payload; standard protobuf framing</td></tr>
+<tr><td>Flow control</td><td>Managed by gRPC/HTTP/2 flow control</td></tr>
+<tr><td>Message boundaries</td><td>Each <code>HarmovelaMessage</code> is one Harmovela event</td></tr>
+</tbody>
+</table>
 <h2>Session Lifecycle</h2>
-<p>| gRPC State | Session State | Notes | |---|---|---| | Channel connecting | <code>CREATED</code> | | | Stream open (bidirectional) | <code>OPENED</code> | | | After <code>session.ready</code> | <code>READY</code> | | | Stream end (OK status, code 0) | <code>CLOSED</code> | Graceful shutdown | | Stream end (non-zero status) | <code>ERROR</code> | See error mapping below | | Channel disconnected | <code>ERROR</code> | Network failure |</p>
+<table>
+<thead><tr><th>gRPC State</th><th>Session State</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Channel connecting</td><td><code>CREATED</code></td><td></td></tr>
+<tr><td>Stream open (bidirectional)</td><td><code>OPENED</code></td><td></td></tr>
+<tr><td>After <code>session.ready</code></td><td><code>READY</code></td><td></td></tr>
+<tr><td>Stream end (OK status, code 0)</td><td><code>CLOSED</code></td><td>Graceful shutdown</td></tr>
+<tr><td>Stream end (non-zero status)</td><td><code>ERROR</code></td><td>See error mapping below</td></tr>
+<tr><td>Channel disconnected</td><td><code>ERROR</code></td><td>Network failure</td></tr>
+</tbody>
+</table>
 <h2>Heartbeat</h2>
 <p>gRPC provides HTTP/2 PING frames as a transport-level heartbeat. Application-level keep-alive is supported via standard gRPC channel options:</p>
 <ul>
@@ -73,9 +100,32 @@
 <p>The cursor value may also be communicated in the server's response trailer under the <code>x-harmovela-cursor</code> metadata key to allow the client to persist the last known position for recovery.</p>
 <h2>Status Code Mapping</h2>
 <p>gRPC status codes are mapped to Harmovela semantics:</p>
-<p>| gRPC Status Code | Code | Harmovela Mapping | |---|---|---| | OK | 0 | <code>session.closed</code> with reason <code>"normal"</code> | | CANCELLED | 1 | <code>session.closed</code> with reason <code>"cancelled"</code> | | UNAVAILABLE | 14 | <code>session.error</code> with code <code>"transport_unavailable"</code> | | PERMISSION_DENIED | 7 | <code>session.error</code> with code <code>"unauthorized"</code> | | UNAUTHENTICATED | 16 | <code>session.error</code> with code <code>"unauthenticated"</code> | | INTERNAL | 13 | <code>session.error</code> with code <code>"internal_error"</code> | | INVALID_ARGUMENT | 3 | <code>session.error</code> with code <code>"invalid_envelope"</code> | | RESOURCE_EXHAUSTED | 8 | <code>session.error</code> with code <code>"rate_limited"</code> | | DEADLINE_EXCEEDED | 4 | <code>session.error</code> with code <code>"timeout"</code> | | ABORTED | 10 | <code>session.error</code> with code <code>"aborted"</code> | | UNKNOWN | 2 | <code>session.error</code> with code <code>"unknown"</code> |</p>
+<table>
+<thead><tr><th>gRPC Status Code</th><th>Code</th><th>Harmovela Mapping</th></tr></thead>
+<tbody>
+<tr><td>OK</td><td>0</td><td><code>session.closed</code> with reason <code>"normal"</code></td></tr>
+<tr><td>CANCELLED</td><td>1</td><td><code>session.closed</code> with reason <code>"cancelled"</code></td></tr>
+<tr><td>UNAVAILABLE</td><td>14</td><td><code>session.error</code> with code <code>"transport_unavailable"</code></td></tr>
+<tr><td>PERMISSION_DENIED</td><td>7</td><td><code>session.error</code> with code <code>"unauthorized"</code></td></tr>
+<tr><td>UNAUTHENTICATED</td><td>16</td><td><code>session.error</code> with code <code>"unauthenticated"</code></td></tr>
+<tr><td>INTERNAL</td><td>13</td><td><code>session.error</code> with code <code>"internal_error"</code></td></tr>
+<tr><td>INVALID_ARGUMENT</td><td>3</td><td><code>session.error</code> with code <code>"invalid_envelope"</code></td></tr>
+<tr><td>RESOURCE_EXHAUSTED</td><td>8</td><td><code>session.error</code> with code <code>"rate_limited"</code></td></tr>
+<tr><td>DEADLINE_EXCEEDED</td><td>4</td><td><code>session.error</code> with code <code>"timeout"</code></td></tr>
+<tr><td>ABORTED</td><td>10</td><td><code>session.error</code> with code <code>"aborted"</code></td></tr>
+<tr><td>UNKNOWN</td><td>2</td><td><code>session.error</code> with code <code>"unknown"</code></td></tr>
+</tbody>
+</table>
 <h2>gRPC-Specific Options</h2>
-<p>| Option | Default | Description | |---|---|---| | <code>grpc.max_receive_message_length</code> | 4194304 (4 MB) | Maximum message size in bytes | | <code>grpc.max_send_message_length</code> | 4194304 (4 MB) | Maximum send message size in bytes | | <code>grpc.keepalive_time_ms</code> | 30000 | Keep-alive ping interval | | <code>grpc.keepalive_timeout_ms</code> | 10000 | Keep-alive acknowledgment timeout |</p>
+<table>
+<thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>grpc.max_receive_message_length</code></td><td>4194304 (4 MB)</td><td>Maximum message size in bytes</td></tr>
+<tr><td><code>grpc.max_send_message_length</code></td><td>4194304 (4 MB)</td><td>Maximum send message size in bytes</td></tr>
+<tr><td><code>grpc.keepalive_time_ms</code></td><td>30000</td><td>Keep-alive ping interval</td></tr>
+<tr><td><code>grpc.keepalive_timeout_ms</code></td><td>10000</td><td>Keep-alive acknowledgment timeout</td></tr>
+</tbody>
+</table>
 <h2>Implementation Notes</h2>
 <ul>
 <li>Implementations should set a reasonable maximum message size. Messages exceeding the limit will trigger a <code>RESOURCE_EXHAUSTED</code> gRPC error.</li>

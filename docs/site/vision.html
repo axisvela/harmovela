@@ -40,7 +40,18 @@
 <p>Without a unified coordination protocol, each dimension is reinvented per-vendor, per-runtime, and per-integration. Polling loops, custom webhooks, tool-specific callbacks, ad-hoc message queues, and prompt-level conventions proliferate. These approaches do not compose across agent runtimes, tools, memory systems, and deployment environments.</p>
 <h2>Vision</h2>
 <p>Harmovela integrates seven interdependent coordination dimensions into one open protocol:</p>
-<p>| Dimension | What Harmovela defines | |---|---| | Event | What happened — publish, subscribe, correlate, replay, acknowledge. | | Task | What is executing — lifecycle from submitted through completed, failed, or cancelled. | | State | What is true now — versioned state, freshness windows, invalidation, change propagation. | | Context / Memory | What informs decisions — updates, invalidation, provenance, retrieval readiness. | | Delegation | Who does what — assignment, acceptance, handoff, escalation, cancellation propagation. | | Recovery | What to do when things break — idempotency, replay, checkpoints, interruption, compensation. | | Governance | Who can do what — identity, authorization, audit, tenant isolation, policy integration. |</p>
+<table>
+<thead><tr><th>Dimension</th><th>What Harmovela defines</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td>What happened — publish, subscribe, correlate, replay, acknowledge.</td></tr>
+<tr><td>Task</td><td>What is executing — lifecycle from submitted through completed, failed, or cancelled.</td></tr>
+<tr><td>State</td><td>What is true now — versioned state, freshness windows, invalidation, change propagation.</td></tr>
+<tr><td>Context / Memory</td><td>What informs decisions — updates, invalidation, provenance, retrieval readiness.</td></tr>
+<tr><td>Delegation</td><td>Who does what — assignment, acceptance, handoff, escalation, cancellation propagation.</td></tr>
+<tr><td>Recovery</td><td>What to do when things break — idempotency, replay, checkpoints, interruption, compensation.</td></tr>
+<tr><td>Governance</td><td>Who can do what — identity, authorization, audit, tenant isolation, policy integration.</td></tr>
+</tbody>
+</table>
 <p>These dimensions are not isolated features. Task lifecycle produces events. Delegation chains produce recovery obligations. State changes trigger context invalidation. Governance constrains every other dimension. The protocol treats them as a unified whole, not a bag of features.</p>
 <p>Three interwoven qualities emerge from this unification:</p>
 <ul>

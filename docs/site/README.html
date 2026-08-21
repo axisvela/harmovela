@@ -27,7 +27,18 @@
 <h1>Harmovela Protocol</h1>
 <p>&gt; <a href="README_zh.html">中文文档 (Chinese)</a> | <a href="https://axisrobo.github.io/harmovela/">Spec Site</a></p>
 <p><strong>Harmovela Protocol</strong> is an open coordination protocol for autonomous systems. It defines how agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes coordinate across seven interdependent dimensions:</p>
-<p>| Dimension | What Harmovela defines | |---|---| | Event | What happened — publish, subscribe, correlate, replay, acknowledge. | | Task | What is executing — lifecycle from submitted through completed, failed, or cancelled. | | State | What is true now — versioned state, freshness windows, invalidation, change propagation. | | Context / Memory | What informs decisions — updates, invalidation, provenance, retrieval readiness. | | Delegation | Who does what — assignment, acceptance, handoff, escalation, cancellation propagation. | | Recovery | What to do when things break — idempotency, replay, checkpoints, interruption, compensation. | | Governance | Who can do what — identity, authorization, audit, tenant isolation, policy integration. |</p>
+<table>
+<thead><tr><th>Dimension</th><th>What Harmovela defines</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td>What happened — publish, subscribe, correlate, replay, acknowledge.</td></tr>
+<tr><td>Task</td><td>What is executing — lifecycle from submitted through completed, failed, or cancelled.</td></tr>
+<tr><td>State</td><td>What is true now — versioned state, freshness windows, invalidation, change propagation.</td></tr>
+<tr><td>Context / Memory</td><td>What informs decisions — updates, invalidation, provenance, retrieval readiness.</td></tr>
+<tr><td>Delegation</td><td>Who does what — assignment, acceptance, handoff, escalation, cancellation propagation.</td></tr>
+<tr><td>Recovery</td><td>What to do when things break — idempotency, replay, checkpoints, interruption, compensation.</td></tr>
+<tr><td>Governance</td><td>Who can do what — identity, authorization, audit, tenant isolation, policy integration.</td></tr>
+</tbody>
+</table>
 <p>Harmovela complements MCP. MCP remains the synchronous capability invocation layer; Harmovela provides the asynchronous coordination layer — event streams, task lifecycle, state management, context awareness, delegation, recovery, and governance.</p>
 <h2>About</h2>
 <p>The current 0.5 Adaptation Preview is a multi-language protocol repository with:</p>
@@ -82,7 +93,16 @@
 <li>General-purpose message brokers</li>
 </ul>
 <h2>Relationship To MCP</h2>
-<p>| MCP | Harmovela | | --- | --- | | Synchronous request / response | Asynchronous coordination streams | | Tool invocation | Task lifecycle and tool feedback | | Resource reading | Context updates, state changes, invalidation | | Client-driven calls | Producer-driven events | | Immediate result | Deferred, incremental, replayable results |</p>
+<table>
+<thead><tr><th>MCP</th><th>Harmovela</th></tr></thead>
+<tbody>
+<tr><td>Synchronous request / response</td><td>Asynchronous coordination streams</td></tr>
+<tr><td>Tool invocation</td><td>Task lifecycle and tool feedback</td></tr>
+<tr><td>Resource reading</td><td>Context updates, state changes, invalidation</td></tr>
+<tr><td>Client-driven calls</td><td>Producer-driven events</td></tr>
+<tr><td>Immediate result</td><td>Deferred, incremental, replayable results</td></tr>
+</tbody>
+</table>
 <p>Harmovela should interoperate with MCP rather than fork it. Harmovela can carry events about MCP tool calls, but it should remain protocol-independent enough to support non-MCP agents, tools, memory systems, robotics systems, browsers, IDEs, and cloud runtimes.</p>
 <h2>Documents</h2>
 <h3>Core (English)</h3>

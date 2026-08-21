@@ -1,0 +1,374 @@
+﻿鉁?adaptation event types includes all 10 registry entries (0.6325ms)
+鉁?isAdaptationEventType positives (0.1384ms)
+鉁?isAdaptationEventType negatives (0.0891ms)
+鉁?agent event types includes all 6 registry entries (0.7304ms)
+鉁?isAgentEventType positives (0.1815ms)
+鉁?isAgentEventType negatives (0.1099ms)
+鉁?command event types includes all 5 registry entries (0.6488ms)
+鉁?isCommandEventType positives (0.1404ms)
+鉁?isCommandEventType negatives (0.0962ms)
+鉁?context/memory event types includes all 20 registry entries (0.6647ms)
+鉁?isContextMemoryEventType positives (0.1448ms)
+鉁?isContextMemoryEventType negatives (0.0964ms)
+鉁?delegation event types includes all 5 registry entries (0.7091ms)
+鉁?isDelegationEventType positives (0.1465ms)
+鉁?isDelegationEventType negatives (0.0972ms)
+鉁?environment event types includes all 4 registry entries (0.5963ms)
+鉁?isEnvironmentEventType positives (0.1208ms)
+鉁?isEnvironmentEventType negatives (0.0854ms)
+鉁?Event public API validates Event envelopes and excludes Task registry types (1.09ms)
+鉁?Event public API provides session, subscription, and routing behavior (3.0579ms)
+鉁?grants the standard actions to their approved roles (1.2399ms)
+鉁?denies an action without an approved role (0.1258ms)
+鉁?denies requests missing actor identity or tenant context (0.1354ms)
+鉁?denies cross-tenant actions unless the actor has cross-tenant access (0.6813ms)
+鉁?budget established, within-budget ack, exceeding emits limit_exceeded (3.7704ms)
+鉁?query event types includes all 4 registry entries (0.7762ms)
+鉁?isQueryEventType positives (0.1795ms)
+鉁?isQueryEventType negatives (0.1081ms)
+鉁?DeliveryJournal appends events with sequence (3.4479ms)
+鉁?DeliveryJournal replays events since cursor (0.1826ms)
+鉁?DeliveryJournal replays all events with default cursor (0.1091ms)
+鉁?DeliveryJournal purges events before cursor (0.1457ms)
+鉁?DeliveryJournal provides stats (0.1371ms)
+鉁?DeliveryJournal stats are empty for new journal (0.088ms)
+鉁?PostgresDeliveryStore tracks and acknowledges events (482.8429ms)
+鉁?PostgresDeliveryStore nacks and increments attempts (407.9335ms)
+鉁?PostgresDeliveryStore dead-letters events (506.9619ms)
+鉁?PostgresDeliveryStore lists dead-lettered records (826.6401ms)
+鉁?PostgresDeliveryStore provides stats (1081.4203ms)
+鉁?PostgresDeliveryStore getPendingForSubscription filters (475.585ms)
+鉁?PostgresDeliveryStore hasAttemptsRemaining checks max (529.2075ms)
+鉁?PostgresDeliveryStore persists subscriptions (510.2811ms)
+鉁?SqliteDeliveryStore tracks and acknowledges events (14.4596ms)
+鉁?SqliteDeliveryStore nacks and increments attempts (0.9105ms)
+鉁?SqliteDeliveryStore dead-letters events (0.7373ms)
+鉁?SqliteDeliveryStore lists dead-lettered records (0.7456ms)
+鉁?SqliteDeliveryStore works with DeliveryTracker (0.8591ms)
+鉁?SqliteDeliveryStore provides stats (0.9888ms)
+鉁?SqliteDeliveryStore getPendingForSubscription filters (1.18ms)
+鉁?SqliteDeliveryStore hasAttemptsRemaining checks max (1.4167ms)
+鉁?SqliteDeliveryStore persists subscriptions (0.9495ms)
+鉁?InMemoryDeliveryStore tracks and acknowledges events (4.2419ms)
+鉁?InMemoryDeliveryStore nacks and increments attempts (0.1871ms)
+鉁?InMemoryDeliveryStore dead-letters exhausted events (0.2162ms)
+鉁?InMemoryDeliveryStore lists dead-lettered records (0.1605ms)
+鉁?InMemoryDeliveryStore provides stats (0.1933ms)
+鉁?InMemoryDeliveryStore nack returns false for unknown events (0.1027ms)
+鉁?InMemoryDeliveryStore deadLetter returns null for unknown events (0.0883ms)
+鉁?InMemoryDeliveryStore hasAttemptsRemaining checks max attempts (0.124ms)
+鉁?InMemoryDeliveryStore getPendingForSubscription filters correctly (0.809ms)
+鉁?InMemoryDeliveryStore persists subscriptions (0.246ms)
+鉁?DeliveryTracker assigns monotonically increasing sequences (3.6724ms)
+鉁?DeliveryTracker acknowledges events and advances cursor (0.2973ms)
+鉁?DeliveryTracker NAcks and retries events (0.2015ms)
+鉁?DeliveryTracker dead-letters exhausted events (0.2855ms)
+鉁?retryDelay computes exponential backoff (0.1342ms)
+鉁?retryDelay respects max_backoff_ms (0.1484ms)
+鉁?DeliveryTracker.getPendingForSubscription filters by subscription (0.3884ms)
+鉁?DeliveryTracker.stats reports comprehensive state (0.2629ms)
+鉁?DeliveryTracker uses provided store and journal (0.3517ms)
+鉁?recovery event types includes all 7 registry entries (1.3411ms)
+鉁?isRecoveryEventType positives (0.3255ms)
+鉁?isRecoveryEventType negatives (0.2383ms)
+鉁?state event types includes all registry entries (1.4757ms)
+鉁?isStateEventType positives (0.2918ms)
+鉁?isStateEventType negatives (0.2172ms)
+鉁?task full happy path: submitted -> completed (4.6861ms)
+鉁?task failure path (0.6341ms)
+鉁?task cancellation path (0.3456ms)
+鉁?task blocks and resumes (0.2537ms)
+鉁?task rejects illegal transitions (0.9183ms)
+鉁?task timed out event includes standard error (0.2424ms)
+鉁?task isActive is false for submitted (0.141ms)
+鉁?parent-child terminal: child completes before parent is valid (0.1118ms)
+鉁?parent-child terminal: child active while parent terminal is invalid (0.2318ms)
+鉁?parent-child terminal: both terminal is valid (0.249ms)
+鉁?parent-child terminal: both active is valid (0.1141ms)
+鉁?tool event types includes all 11 registry entries (0.965ms)
+鉁?isToolEventType positives (0.2118ms)
+鉁?isToolEventType negatives (0.1593ms)
+鉁?McpBridge responds to initialize (1.4098ms)
+鉁?McpBridge returns tools/list (0.317ms)
+鉁?McpBridge tools/call returns task_id and emits AEP lifecycle events (206.918ms)
+鉁?McpBridge tools/call handles errors gracefully (214.918ms)
+鉁?McpBridge returns error for unknown methods (0.521ms)
+鉁?harmovela emit delivers event through running harmovelad websocket runtime (987.8878ms)
+鉁?aep subscribe receives events emitted through running aepd (955.5079ms)
+鉁?harmovela init writes config (433.8966ms)
+鉁?harmovela --help lists core commands (410.4411ms)
+鉁?aep unknown command exits non-zero (506.675ms)
+鉁?aep emit rejects invalid JSON payload (720.1067ms)
+鉁?harmovela conformance runs conformance command (553.0619ms)
+鉁?aep dlq list outputs dead-lettered records (549.5485ms)
+鉁?aep status prints daemon health JSON (496.4457ms)
+鉁?aep init writes config containing api transport (499.8608ms)
+鉁?aep subscriptions create/list/delete round-trip (1841.1245ms)
+鉁?aep subscriptions create rejects invalid filter JSON (409.2491ms)
+鉁?aep subscriptions stream receives a published event (857.4265ms)
+鉁?DeliveryJournal appends events with sequence (3.3573ms)
+鉁?DeliveryJournal replays events since cursor (0.1749ms)
+鉁?DeliveryJournal replays all events with default cursor (0.0983ms)
+鉁?DeliveryJournal purges events before cursor (0.1418ms)
+鉁?DeliveryJournal provides stats (0.1308ms)
+鉁?DeliveryJournal stats are empty for new journal (0.081ms)
+鉁?PostgresDeliveryStore tracks and acknowledges events (440.7879ms)
+鉁?PostgresDeliveryStore nacks and increments attempts (420.3493ms)
+鉁?PostgresDeliveryStore dead-letters events (393.0766ms)
+鉁?PostgresDeliveryStore lists dead-lettered records (359.8316ms)
+鉁?PostgresDeliveryStore provides stats (412.051ms)
+鉁?PostgresDeliveryStore getPendingForSubscription filters (377.6919ms)
+鉁?PostgresDeliveryStore hasAttemptsRemaining checks max (406.6205ms)
+鉁?PostgresDeliveryStore persists subscriptions (344.4602ms)
+鉁?SqliteDeliveryStore tracks and acknowledges events (11.805ms)
+鉁?SqliteDeliveryStore nacks and increments attempts (0.8419ms)
+鉁?SqliteDeliveryStore dead-letters events (0.7348ms)
+鉁?SqliteDeliveryStore lists dead-lettered records (0.6913ms)
+鉁?SqliteDeliveryStore works with DeliveryTracker (1.0953ms)
+鉁?SqliteDeliveryStore provides stats (1.4316ms)
+鉁?SqliteDeliveryStore getPendingForSubscription filters (0.8849ms)
+鉁?SqliteDeliveryStore hasAttemptsRemaining checks max (1.0522ms)
+鉁?SqliteDeliveryStore persists subscriptions (1.2743ms)
+鉁?InMemoryDeliveryStore tracks and acknowledges events (3.2507ms)
+鉁?InMemoryDeliveryStore nacks and increments attempts (0.2008ms)
+鉁?InMemoryDeliveryStore dead-letters exhausted events (0.2405ms)
+鉁?InMemoryDeliveryStore lists dead-lettered records (0.1516ms)
+鉁?InMemoryDeliveryStore provides stats (0.1435ms)
+鉁?InMemoryDeliveryStore nack returns false for unknown events (0.0924ms)
+鉁?InMemoryDeliveryStore deadLetter returns null for unknown events (0.0907ms)
+鉁?InMemoryDeliveryStore hasAttemptsRemaining checks max attempts (0.1755ms)
+鉁?InMemoryDeliveryStore getPendingForSubscription filters correctly (0.9254ms)
+鉁?InMemoryDeliveryStore persists subscriptions (0.2484ms)
+鉁?DeliveryTracker assigns monotonically increasing sequences (3.8282ms)
+鉁?DeliveryTracker acknowledges events and advances cursor (0.2705ms)
+鉁?DeliveryTracker NAcks and retries events (0.1915ms)
+鉁?DeliveryTracker dead-letters exhausted events (0.2564ms)
+鉁?retryDelay computes exponential backoff (0.1312ms)
+鉁?retryDelay respects max_backoff_ms (0.0856ms)
+鉁?DeliveryTracker.getPendingForSubscription filters by subscription (0.1789ms)
+鉁?DeliveryTracker.stats reports comprehensive state (0.2179ms)
+鉁?DeliveryTracker uses provided store and journal (0.2723ms)
+鉁?standard error codes are defined (0.5624ms)
+鉁?errorPayload produces standard error body (0.5764ms)
+鉁?errorPayload defaults retryable to false (0.0911ms)
+鉁?isRetryableCode identifies retryable errors (0.0876ms)
+鉁?sdk runtime-embed example publishes and receives an event (434.2881ms)
+鉁?service http-api-client example round-trips through harmovelad (726.2621ms)
+unknown format "date-time" ignored in schema at path "#/properties/created_at"
+unknown format "date-time" ignored in schema at path "#/properties/created_at"
+unknown format "date-time" ignored in schema at path "#/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/properties/expires_at"
+unknown format "uri" ignored in schema at path "#/properties/payload_schema"
+unknown format "uri" ignored in schema at path "#/properties/payload_schema"
+unknown format "date-time" ignored in schema at path "#/properties/valid_from"
+unknown format "date-time" ignored in schema at path "#/properties/valid_from"
+unknown format "date-time" ignored in schema at path "#/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/properties/valid_until"
+unknown format "uri" ignored in schema at path "#/properties/refresh_hint"
+unknown format "uri" ignored in schema at path "#/properties/refresh_hint"
+unknown format "date-time" ignored in schema at path "#/properties/checkpoint_at"
+unknown format "date-time" ignored in schema at path "#/properties/checkpoint_at"
+unknown format "uri" ignored in schema at path "#/properties/data_provenance"
+unknown format "uri" ignored in schema at path "#/properties/data_provenance"
+unknown format "date-time" ignored in schema at path "#/allOf/5/then/properties/payload/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/allOf/5/then/properties/payload/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/cached_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/cached_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/detected_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/detected_at"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/previous_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/previous_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/new_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/new_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/11/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/11/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/13/then/properties/payload/properties/retry_after"
+unknown format "date-time" ignored in schema at path "#/allOf/13/then/properties/payload/properties/retry_after"
+unknown format "date-time" ignored in schema at path "#/allOf/21/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/21/then/properties/payload/properties/deadline"
+鉁?conformance manifest declares Harmovela levels (1.7619ms)
+鉁?conformance manifest declares Event and Governance contract fixtures (0.2079ms)
+鉁?governance fixture requires the defined authorization outcomes (83.4595ms)
+鉁?governance fixture requires audit correlation and causation linkage (0.5537ms)
+鉁?HARMOVELA-C0 fixtures/negative.ndjson satisfies reject_some (0.5866ms)
+鉁?HARMOVELA-C0 fixtures/reject-unknown-events.ndjson satisfies reject_some (0.3042ms)
+鉁?HARMOVELA-C0 fixtures/reject-some-protocol.ndjson satisfies reject_some (0.4119ms)
+鉁?HARMOVELA-C0 fixtures/reject-some-payload.ndjson satisfies reject_some (2.9287ms)
+鉁?HARMOVELA-C1 fixtures/task-lifecycle.ndjson satisfies stateful_flow (0.3991ms)
+鉁?HARMOVELA-C0 fixtures/memory-context-ack.ndjson satisfies accept_all (0.3945ms)
+鉁?HARMOVELA-C1 fixtures/session-flow.ndjson satisfies stateful_flow (0.3023ms)
+鉁?HARMOVELA-C1 fixtures/event-contract.ndjson satisfies stateful_flow (0.235ms)
+鉁?HARMOVELA-C1 fixtures/event-core.ndjson satisfies stateful_flow (0.2251ms)
+鉁?HARMOVELA-C0 fixtures/governance-contract.ndjson satisfies reject_some (0.341ms)
+鉁?HARMOVELA-C0 fixtures/tenant-isolation-negative.ndjson satisfies reject_some (0.3023ms)
+鉁?HARMOVELA-C1 fixtures/tenant-isolation-positive.ndjson satisfies stateful_flow (0.2174ms)
+鉁?HARMOVELA-C2 fixtures/delivery.ndjson satisfies accept_all (0.282ms)
+鉁?HARMOVELA-C2 fixtures/delivery-stateful.ndjson satisfies stateful_flow (0.2081ms)
+鉁?HARMOVELA-C3 fixtures/delivery-e2e.ndjson satisfies delivery_e2e (0.192ms)
+鉁?HARMOVELA-C0 fixtures/agent-runtime-semantics.ndjson satisfies accept_all (0.2804ms)
+鉁?HARMOVELA-C1 fixtures/task-blocked-resume.ndjson satisfies stateful_flow (0.1832ms)
+鉁?HARMOVELA-C1 fixtures/task-timed-out.ndjson satisfies stateful_flow (0.1695ms)
+鉁?HARMOVELA-C0 fixtures/task-invalid-transitions.ndjson satisfies reject_some (0.6447ms)
+鉁?HARMOVELA-C1 fixtures/core-lifecycle.ndjson satisfies stateful_flow (0.2317ms)
+鉁?HARMOVELA-C1 fixtures/task-output.ndjson satisfies stateful_flow (0.1933ms)
+鉁?HARMOVELA-C1 fixtures/task-failed.ndjson satisfies stateful_flow (0.1733ms)
+鉁?HARMOVELA-C1 fixtures/task-cancelled.ndjson satisfies stateful_flow (0.1594ms)
+鉁?HARMOVELA-C1 fixtures/task-cancel-requested.ndjson satisfies stateful_flow (0.1782ms)
+鉁?HARMOVELA-C1 fixtures/delegation-positive.ndjson satisfies accept_all (0.214ms)
+鉁?HARMOVELA-C1 fixtures/delegation-negative.ndjson satisfies reject_some (0.4772ms)
+鉁?HARMOVELA-C1 fixtures/adaptation-positive.ndjson satisfies stateful_flow (0.221ms)
+鉁?HARMOVELA-C1 fixtures/adaptation-negative.ndjson satisfies reject_some (0.3742ms)
+鉁?HARMOVELA-C1 fixtures/command-positive.ndjson satisfies stateful_flow (0.2605ms)
+鉁?HARMOVELA-C0 fixtures/command-negative.ndjson satisfies reject_some (0.3812ms)
+鉁?HARMOVELA-C1 fixtures/query-positive.ndjson satisfies stateful_flow (0.2075ms)
+鉁?HARMOVELA-C0 fixtures/query-negative.ndjson satisfies reject_some (0.3703ms)
+鉁?HARMOVELA-C1 fixtures/parent-child-positive.ndjson satisfies stateful_flow (0.345ms)
+鉁?HARMOVELA-C0 fixtures/parent-child-negative.ndjson satisfies reject_some (0.4105ms)
+鉁?conformance runner passes C0 negative fixture when invalid envelopes are rejected (3.7666ms)
+鉁?reject_some recognizes envelope-valid invalid payload schemas (0.3299ms)
+鉁?reject_some recognizes harness protocol rejections (0.2043ms)
+鉁?declares harness capabilities (1.4777ms)
+鉁?creates subscriptions (0.3422ms)
+鉁?rejects subscription with no filter criteria (0.1806ms)
+鉁?manages session opening and ready (3.0148ms)
+鉁?closes active session (0.4556ms)
+鉁?rejects duplicate session open (0.2257ms)
+鉁?accepts task submission and tracks lifecycle (0.5956ms)
+鉁?removes task on completion (0.3856ms)
+鉁?rejects task events for unknown task (0.2285ms)
+鉁?acknowledges valid non-control events (0.2605ms)
+鉁?rejects invalid envelopes with standard error (0.157ms)
+鉁?rejects unsupported protocol versions (0.1121ms)
+鉁?uses the Event package registry and preserves legacy dimension handling (0.7003ms)
+鉁?parseTaskResult extracts task_id from MCP tool response (1.6581ms)
+鉁?parseTaskResult rejects MCP error responses (0.4237ms)
+鉁?parseTaskResult rejects MCP tool-level error results (0.1379ms)
+鉁?groupEventsByTask groups only task events with task_id (0.1951ms)
+鉁?runMcpAepConsumerDemo correlates MCP task IDs with Harmovela lifecycle events (15.4168ms)
+鉁?createDemoBridge exposes the expected demo tools (0.7429ms)
+鉁?router dispatches to matching handler by type pattern (2.2008ms)
+鉁?router collects responses from handlers (0.3473ms)
+鉁?router matches specific event types (0.2621ms)
+鉁?router match-all handler (0.2477ms)
+鉁?defaultConfig returns local Harmovela runtime config (1.3258ms)
+鉁?writeDefaultConfig creates JSON file (22.3815ms)
+鉁?loadConfig reads JSON and applies env overrides (19.882ms)
+鉁?applyEnvOverrides ignores absent env fields (0.7128ms)
+鉁?createDeliveryStore creates memory and sqlite stores (13.8078ms)
+鉁?HarmovelaRuntimeService publishes valid events to router subscribers (4.5861ms)
+鉁?HarmovelaRuntimeService rejects invalid events (0.4739ms)
+鉁?HarmovelaRuntimeService starts websocket transport and broadcasts events (37.3112ms)
+鉁?api healthz returns runtime and delivery stats (24.5016ms)
+鉁?api POST events accepts valid event and delivers to subscriber (18.9005ms)
+鉁?api POST events rejects invalid event (10.2074ms)
+鉁?api POST events rejects malformed JSON (9.0535ms)
+鉁?api GET stats and pending reflect published events (13.6994ms)
+鉁?api GET dlq lists dead-lettered records (14.4028ms)
+鉁?api unknown route returns 404 (11.2409ms)
+鉁?service registry buffers matching events and drains them (5.5045ms)
+鉁?service loads persisted subscriptions on start (3.6154ms)
+鉁?api creates, lists, gets, and deletes subscriptions (50.0479ms)
+鉁?api long-poll returns buffered matching events (17.3558ms)
+鉁?api SSE stream receives matching events (19.1356ms)
+unknown format "date-time" ignored in schema at path "#/properties/created_at"
+unknown format "date-time" ignored in schema at path "#/properties/created_at"
+unknown format "date-time" ignored in schema at path "#/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/properties/expires_at"
+unknown format "uri" ignored in schema at path "#/properties/payload_schema"
+unknown format "uri" ignored in schema at path "#/properties/payload_schema"
+unknown format "date-time" ignored in schema at path "#/properties/valid_from"
+unknown format "date-time" ignored in schema at path "#/properties/valid_from"
+unknown format "date-time" ignored in schema at path "#/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/properties/valid_until"
+unknown format "uri" ignored in schema at path "#/properties/refresh_hint"
+unknown format "uri" ignored in schema at path "#/properties/refresh_hint"
+unknown format "date-time" ignored in schema at path "#/properties/checkpoint_at"
+unknown format "date-time" ignored in schema at path "#/properties/checkpoint_at"
+unknown format "uri" ignored in schema at path "#/properties/data_provenance"
+unknown format "uri" ignored in schema at path "#/properties/data_provenance"
+unknown format "date-time" ignored in schema at path "#/allOf/5/then/properties/payload/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/allOf/5/then/properties/payload/properties/expires_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/cached_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/cached_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/detected_at"
+unknown format "date-time" ignored in schema at path "#/allOf/9/then/properties/payload/properties/detected_at"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/previous_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/previous_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/new_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/10/then/properties/payload/properties/new_valid_until"
+unknown format "date-time" ignored in schema at path "#/allOf/11/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/11/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/13/then/properties/payload/properties/retry_after"
+unknown format "date-time" ignored in schema at path "#/allOf/13/then/properties/payload/properties/retry_after"
+unknown format "date-time" ignored in schema at path "#/allOf/21/then/properties/payload/properties/deadline"
+unknown format "date-time" ignored in schema at path "#/allOf/21/then/properties/payload/properties/deadline"
+鉁?all conformance fixtures pass JSON Schema envelope validation (76.2022ms)
+鉁?envelope schema rejects missing required fields (0.2269ms)
+鉁?runtime validation and schema validation agree on valid events (0.4838ms)
+鉁?schema validation catches invalid delivery mode (0.2023ms)
+鉁?subscription filter schema validates valid filter (0.5089ms)
+鉁?subscription filter schema rejects invalid delivery_mode (0.1158ms)
+鉁?harness with schema validation rejects schema-invalid envelope (0.6066ms)
+鉁?harness with schema validation accepts valid events (3.5125ms)
+鉁?session lifecycle transitions: opened -> ready -> close (3.7003ms)
+鉁?session error produces error event with standard payload (0.2062ms)
+鉁?session rejects invalid state transitions (0.4802ms)
+鉁?session heartbeat returns null when not ready (0.1841ms)
+鉁?matches dotted wildcard event type patterns (0.6992ms)
+鉁?matches subscription routing metadata (0.1822ms)
+鉁?gRPC server starts and accepts connections (171.7683ms)
+鉁?gRPC client connects and exchanges messages (243.513ms)
+鉁?gRPC bidirectional streaming (247.6422ms)
+鉁?gRPC server shutdown stops cleanly (525.1639ms)
+鉁?gRPC server can handle multiple clients (244.2216ms)
+鉁?KafkaTransport messageKey priority (0.9817ms)
+鉁?KafkaTransport targetTopic routing (0.1608ms)
+鉁?KafkaTransport messageHeaders maps all fields (0.2244ms)
+鉁?KafkaTransport constructor defaults (0.5895ms)
+鉁?KafkaTransport custom prefix (0.1007ms)
+鉁?KafkaTransport _onSend throws when not started (0.304ms)
+鉁?KafkaTransport roundtrip JSON (0.1344ms)
+鉁?NatsTransport _eventSubject routes by topic first (1.2604ms)
+鉁?NatsTransport _eventSubject routes by type when no topic (0.2429ms)
+鉁?NatsTransport _eventSubject routes by source when no topic or type (0.224ms)
+鉁?NatsTransport _eventSubject fallback (0.1132ms)
+鉁?NatsTransport subscriptionSubjects maps patterns (0.767ms)
+鉁?NatsTransport subscriptionSubjects wildcard all (0.12ms)
+鉁?NatsTransport constructor defaults (0.0989ms)
+鉁?NatsTransport _onSend throws when not connected (0.3989ms)
+鉁?NatsTransport custom prefix (0.2287ms)
+鉁?RedisTransport streamKey routing (0.6587ms)
+鉁?RedisTransport consumerGroup from session (0.1182ms)
+鉁?RedisTransport entryFields maps all fields plus body (0.175ms)
+鉁?RedisTransport constructor defaults (0.114ms)
+鉁?RedisTransport custom prefix (0.0893ms)
+鉁?RedisTransport _onSend throws when not started (0.3845ms)
+鉁?RedisTransport roundtrip JSON (0.1534ms)
+鉁?SSE server starts and serves text/event-stream (1027.2066ms)
+鉁?SSE ingest endpoint accepts POST events (29.9174ms)
+鉁?SSE ingest rejects invalid JSON gracefully (12.6488ms)
+鉁?SSE client sends events via POST to ingest endpoint (7.3087ms)
+鉁?MockStdioTransport receives and parses NDJSON events (0.9848ms)
+鉁?MockStdioTransport captures sent data (0.2896ms)
+鉁?MockStdioTransport ignores empty lines (0.1487ms)
+鉁?MockStdioTransport emits error on malformed JSON (0.1772ms)
+鉁?WebSocket server starts and accepts connections (32.5991ms)
+鉁?WebSocket bidirectional message exchange (228.1173ms)
+鉁?WebSocket server broadcasts to all clients (229.4033ms)
+鉁?WebSocket client receives close code on server shutdown (212.6632ms)
+鉁?accepts a valid Harmovela envelope (1.1769ms)
+鉁?rejects missing required envelope fields (0.2509ms)
+鉁?separates envelope validation from Event registry lookup (0.1517ms)
+鉁?rejects the legacy AEP version field (0.1044ms)
+鈩?tests 298
+鈩?suites 0
+鈩?pass 298
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 49881.2515
