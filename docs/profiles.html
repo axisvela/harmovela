@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profiles — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Profiles</h1>
+<h1>Harmovela Profiles</h1>
+<p>&gt; Status: draft. Part of the Harmovela 0.2 specification.</p>
+<h2>Purpose</h2>
+<p>Define optional capability bundles (profiles) that may be adopted independently from the core protocol. Profiles allow implementations to declare and negotiate capabilities beyond the minimum conformance baseline without requiring every implementation to support every feature.</p>
+<h2>Profile Model</h2>
+<h3>Identifier</h3>
+<p>Each profile has a unique string identifier following the pattern <code>harmovela.&lt;domain&gt;.&lt;name&gt;.&lt;version&gt;</code>, for example <code>harmovela.delivery.v1</code>. Profile identifiers are stable within a major version and must not change semantics in a backward-incompatible way without a version bump.</p>
+<h3>Dependencies</h3>
+<p>A profile may declare dependencies on other profiles or on core conformance levels. Dependencies are transitive: adopting a profile implies adopting all profiles it depends on.</p>
+<table>
+<thead><tr><th>Profile</th><th>Depends On</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.delivery.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.security.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.runtime-semantics.v1</code></td><td>Core HARMOVELA-C0 + HARMOVELA-C1</td></tr>
+<tr><td><code>harmovela.coordination.v1</code></td><td><code>harmovela.core.v1</code> + <code>harmovela.security.v1</code></td></tr>
+<tr><td><code>harmovela.adaptation.v1</code></td><td><code>harmovela.coordination.v1</code> + <code>harmovela.security.v1</code></td></tr>
+<tr><td><code>harmovela.transport.websocket.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.sse.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.grpc.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.nats.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.kafka.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+<tr><td><code>harmovela.transport.redis-streams.v1</code></td><td>Core HARMOVELA-C0</td></tr>
+</tbody>
+</table>
+<h3>Capability Negotiation</h3>
+<p>During session initialization, a peer declares supported profiles in <code>capabilities.profiles</code>:</p>
+<pre><code>{
+  "capabilities": {
+    "aep_version": "0.2",
+    "profiles": [
+      "harmovela.delivery.v1",
+      "harmovela.security.v1",
+      "harmovela.transport.websocket.v1"
+    ]
+  }
+}
+</code></pre>
+<p>Both sides negotiate a shared profile set. If a required profile is not supported by the peer, the session must not become ready. The peer should send <code>session.error</code> with code <code>unsupported_profile</code> and <code>details.required</code> listing the unavailable profiles.</p>
+<h3>Versioning</h3>
+<p>Profiles version independently of the protocol envelope and of each other. A profile version bump indicates one of:</p>
+<ul>
+<li>Addition of new required behavior within the profile.</li>
+<li>Removal or backward-incompatible change to existing behavior.</li>
+<li>Change in dependency requirements.</li>
+</ul>
+<p>Implementations should reject requests requiring an unsupported profile version.</p>
+<h3>Conformance Requirements</h3>
+<p>Each profile defines its own conformance requirements through the standard conformance levels (HARMOVELA-C0 through HARMOVELA-C3) plus profile-specific test fixtures. A profile conformance manifest lives under <code>conformance/profiles/&lt;profile-id&gt;/manifest.json</code>.</p>
+<h2>Conformance</h2>
+<h3>Profile Declaration in manifest.json</h3>
+<p>Profiles are declared in the top-level <code>profiles</code> object of <code>conformance/manifest.json</code>:</p>
+<pre><code>{
+  "profiles": {
+    "delivery": {
+      "display_name": "Durable Delivery",
+      "description": "At-least-once and replayable delivery...",
+      "fixtures": [
+        "fixtures/delivery.ndjson",
+        "fixtures/delivery-stateful.ndjson",
+        "fixtures/delivery-e2e.ndjson"
+      ]
+    }
+  }
+}
+</code></pre>
+<p>Each fixture may declare a <code>profile</code> field to associate itself with a specific profile. Fixtures without a <code>profile</code> field are considered core fixtures and are always run.</p>
+<h3>Profile Filtering in Conformance Runner</h3>
+<p>The conformance runner supports <code>--profile=&lt;name&gt;</code> to run only fixtures belonging to a specific profile, plus all core fixtures (those without a <code>profile</code> field). When profile filtering is active:</p>
+<p>1. Core fixtures (no <code>profile</code> field) are always included. 2. Only fixtures whose <code>profile</code> field matches the selected profile AND whose path appears in the profile's <code>fixtures</code> list are included. 3. Fixtures belonging to other profiles are excluded.</p>
+<p>Example: <code>--profile=delivery</code> runs core fixtures plus the three delivery-specific fixtures.</p>
+<p>This filtering behavior is available in:</p>
+<ul>
+<li><strong>Cross-language runner:</strong> <code>node tools/conformance-runner.js --profile=delivery</code></li>
+<li><strong>TypeScript CLI:</strong> <code>node implementations/typescript/src/cli/harmovela.js conformance --profile=delivery</code></li>
+<li><strong>Python CLI:</strong> <code>cd implementations/python &amp;&amp; python -m axisrobo_harmovela.cli.main conformance --profile=delivery</code></li>
+<li><strong>Go CLI:</strong> <code>cd implementations/go &amp;&amp; go run ./cmd/harmovela conformance --profile=delivery</code></li>
+<li><strong>Java CLI:</strong> <code>cd implementations/java &amp;&amp; mvn -q exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"</code></li>
+</ul>
+<h2>Dimension Contract Ownership</h2>
+<table>
+<thead><tr><th>Dimension</th><th>Contract document</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td><a href="event-contract.html">Event contract</a></td></tr>
+<tr><td>Recovery</td><td><a href="delivery.html">Delivery</a> + <a href="reliability.html">Reliability</a></td></tr>
+<tr><td>Governance</td><td><a href="governance-contract.html">Governance contract</a> + <a href="security.html">Security</a></td></tr>
+<tr><td>Task</td><td><a href="task-lifecycle.html">Task lifecycle</a></td></tr>
+<tr><td>State</td><td><a href="event-dimension-classification.html#state-dimension">Event dimension classification</a></td></tr>
+<tr><td>Context / Memory</td><td><a href="event-dimension-classification.html#context--memory-dimension">Event dimension classification</a></td></tr>
+<tr><td>Delegation</td><td><a href="agent-runtime-semantics.html#delegation-and-handoff">Agent runtime semantics</a> + <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">Coordination profile</a></td></tr>
+<tr><td>Tool</td><td><a href="event-dimension-classification.html#tool-dimension">Event dimension classification</a></td></tr>
+<tr><td>Agent</td><td><a href="event-dimension-classification.html#agent-dimension">Event dimension classification</a></td></tr>
+<tr><td>Environment</td><td><a href="event-dimension-classification.html#environment-dimension">Event dimension classification</a></td></tr>
+<tr><td>Adaptation</td><td><a href="adaptation-feedback.html">Adaptation feedback</a> + <a href="adaptation-budget.html">Adaptation budget</a> + <a href="governance-contract.html#authorization-checks">Governance contract</a></td></tr>
+<tr><td>Command</td><td><a href="command-query.html#command">Command and Query</a></td></tr>
+<tr><td>Query</td><td><a href="command-query.html#query">Command and Query</a></td></tr>
+</tbody>
+</table>
+<h2>Profile Catalog</h2>
+<h3>Core Profile</h3>
+<p><strong>Identifier:</strong> <code>harmovela.core.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C0 + HARMOVELA-C1</p>
+<p><strong>Scope:</strong> Protocol envelope, session lifecycle, subscription model, task lifecycle, error model, event routing. Every conformant Harmovela implementation must satisfy the core profile.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Envelope validation (HARMOVELA-C0)</li>
+<li>Session open, ready, heartbeat, error, close (HARMOVELA-C1)</li>
+<li>Subscription creation, validation, cancellation, matching (HARMOVELA-C1)</li>
+<li>Task lifecycle (accepted, started, progress, blocked, resumed, completed, failed, cancelled, timed out) (HARMOVELA-C1)</li>
+<li>Standard error payloads for invalid protocol actions (HARMOVELA-C1)</li>
+<li>Event routing by type, source, target, topic, session, task, metadata (HARMOVELA-C1)</li>
+</ul>
+<h3>Delivery Profile</h3>
+<p><strong>Identifier:</strong> <code>harmovela.delivery.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C2 + HARMOVELA-C3</p>
+<p><strong>Scope:</strong> Durable delivery, acknowledgement and negative acknowledgement, dead-letter, replay, delivery tracking statistics.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Delivery sequence and cursor tracking (HARMOVELA-C2)</li>
+<li>Acknowledgement (ack) and negative acknowledgement (nack) processing (HARMOVELA-C2)</li>
+<li>Retry policy with configurable backoff and max attempts (HARMOVELA-C2)</li>
+<li>Dead-letter routing for exhausted deliveries (HARMOVELA-C2)</li>
+<li>Replay behavior with observable event sequences (HARMOVELA-C2)</li>
+<li>End-to-end tracking events (published, dispatched, delivered, acknowledged) (HARMOVELA-C3)</li>
+<li>DeliveryTracker stats (in-flight, acknowledged, dead-letter, latency percentiles) (HARMOVELA-C3)</li>
+<li>Dead-letter replay with batch window and rate limiting (HARMOVELA-C3)</li>
+<li>Nack with actionable error codes for selective retry (HARMOVELA-C3)</li>
+</ul>
+<h3>Security Profile</h3>
+<p><strong>Identifier:</strong> <code>harmovela.security.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C0 + HARMOVELA-C1</p>
+<p><strong>Scope:</strong> Identity, authorization, audit, tenant isolation.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Identity: peer identity verification and mutual authentication.</li>
+<li>Authorization: capability-based access control for events, subscriptions, and tasks. Peers declare authorized actions; unauthorized actions receive <code>event.rejected</code> with code <code>unauthorized</code>.</li>
+<li>Audit: structured audit events for all protocol state transitions (session open, subscription create, task state change, delivery acknowledgement). Audit events carry actor identity, timestamp, and affected resource.</li>
+<li>Tenant isolation: events, subscriptions, and tasks are scoped to a tenant. Cross-tenant access is prohibited unless explicitly authorized. Transport-level isolation (separate connections, namespaces, or topics) is recommended.</li>
+</ul>
+<h3>Runtime Semantics Profile</h3>
+<p><strong>Identifier:</strong> <code>harmovela.runtime-semantics.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C0 + HARMOVELA-C1</p>
+<p><strong>Scope:</strong> Agent-oriented runtime semantics including belief, freshness, delegation, interruption, compensation, and provenance.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Belief: an agent may declare beliefs about world state as structured assertions. Beliefs carry confidence, source, and expiration metadata.</li>
+<li>Freshness: event producers attach freshness constraints (max age, staleness window). Stale events are flagged or rejected by the runtime.</li>
+<li>Delegation: tasks may be delegated from one agent to another. Delegation preserves task identity and establishes a delegation chain with accountability.</li>
+<li>Interruption: a running task may be interrupted by a higher-priority event. Interruption semantics include save-point, rollback, and resume.</li>
+<li>Compensation: completed tasks may define compensating actions for rollback scenarios. Compensation events are triggered on failure or explicit reversal.</li>
+<li>Provenance: every event carries optional provenance metadata (origin agent, transformation chain, lineage identifiers) for traceability.</li>
+</ul>
+<h3>Coordination Profile (L2 Multi-Agent Collaboration and Delegation)</h3>
+<p><strong>Identifier:</strong> <code>harmovela.coordination.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C1</p>
+<p><strong>Dependencies:</strong> <code>harmovela.core.v1</code> + <code>harmovela.security.v1</code></p>
+<p><strong>Scope:</strong> Task lifecycle state-machine enforcement, State freshness and invalidation semantics, Delegation ownership, handoff, escalation, and cancellation propagation, Command directed instruction lifecycle with negotiation windows, and Query directed information requests with snapshot-versioned responses.</p>
+<p>This profile exists alongside <code>harmovela.runtime-semantics.v1</code>, which retains agent-oriented belief, freshness, interruption, compensation, and provenance semantics. Where runtime-semantics covers cognitive and epistemic concerns, coordination covers operational multi-agent collaboration: who owns work, how work transfers between agents, how stale state is detected and invalidated, and how cancellation cascades through a delegation tree.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Task lifecycle: all legal state transitions (submitted→accepted→started→progress→blocked→resumed→output→completed | failed | cancelled | timed_out). Invalid transitions are rejected by the harness.</li>
+<li>State freshness and invalidation: context snapshots carry <code>valid_from</code> and <code>stale_after</code> metadata. Consumers may subscribe to <code>freshness.*</code> events. A stale state assertion triggers invalidation through the context dimension.</li>
+<li>Delegation ownership: a task may be delegated from one agent to another via <code>delegation.requested</code> → <code>delegation.accepted</code> → <code>delegation.handoff.completed</code>. Ownership transfer is atomic and trackable through a delegation chain. Handoff rejects (<code>delegation.rejected</code>) terminate the delegation flow for that target.</li>
+<li>Delegation escalation: a delegate may escalate a task to a supervisor via <code>delegation.escalated</code>. Escalation is only valid while the delegation is active (not after rejection).</li>
+<li>Cancellation propagation: when a parent task is cancelled, all child tasks must also be cancelled. The runtime emits <code>task.cancelled</code> for each child referencing the parent via <code>causation_id</code>. Cancellation is irreversible; a completed task cannot be cancelled.</li>
+<li>Command directed instructions: <code>command.requested</code> → <code>command.accepted</code>/<code>command.rejected</code> → <code>command.completed</code>/<code>command.failed</code>. Commands carry target agent, correlation_id, delegation chain, and authorization scope. Accepted commands must ack within negotiation window. Specified in <a href="command-query.html">command-query.md</a>.</li>
+<li>Query directed information requests: <code>query.requested</code> → <code>query.response</code>/<code>query.rejected</code> → <code>query.error</code>. Queries carry target, query scope, freshness requirements, and pagination hint. Responses carry snapshot version for idempotent re-query. Specified in <a href="command-query.html">command-query.md</a>.</li>
+</ul>
+<h3>Adaptation Profile (L3 Production Autonomy)</h3>
+<p><strong>Identifier:</strong> <code>harmovela.adaptation.v1</code></p>
+<p><strong>Conformance:</strong> HARMOVELA-C1</p>
+<p><strong>Dependencies:</strong> <code>harmovela.coordination.v1</code> + <code>harmovela.security.v1</code></p>
+<p><strong>Scope:</strong> Feedback/outcome correlation, protocol-level budget authority and enforcement, and adaptation-operation authorization and audit linkage. This is a C1-level optional profile that depends on both the coordination profile (for delegation and task-ownership semantics) and the security profile (for identity, authorization, audit, and tenant-isolation boundaries).</p>
+<p>The adaptation profile extends the coordination layer with the capability to observe outcomes, enforce resource boundaries, and link adaptation operations to authority and audit records. It does not duplicate coordination, security, or event envelope behavior; it defines only the adaptation-specific extensions.</p>
+<p><strong>Covered specifications:</strong></p>
+<ul>
+<li>Feedback correlation: outcome events that correlate each task outcome to its goal, delegation chain, authority, and declared and consumed cost. Event types: <code>adaptation.outcome.correlated</code>, <code>adaptation.goal.achieved</code>, <code>adaptation.goal.blocked</code>, <code>adaptation.cost.exceeded</code>. Specified in <a href="adaptation-feedback.html">adaptation feedback</a>.</li>
+<li>Budget authority: who may establish and change a budget (<code>budget.establish</code> capability), the enforcement point (harness-level check before each action dispatch), and structured events for budget lifecycle. Event types: <code>adaptation.budget.established</code>, <code>adaptation.budget.limit_approaching</code>, <code>adaptation.budget.limit_exceeded</code>. Specified in <a href="adaptation-budget.html">adaptation budget</a>.</li>
+<li>Authorization checks: the governance dimension enforces <code>budget.establish</code> and <code>budget.enforce</code> actions against the capability-based authorization model. No agent may establish a budget or trigger enforcement without the corresponding capability. Specified in <a href="governance-contract.html">governance contract</a>.</li>
+<li>Audit linkage: all adaptation feedback and budget events carry the standard audit metadata (actor identity, timestamp, affected resource, granted authority) and are subject to the same audit trail requirements as other governance-audited events. Specified in <a href="security.html">security model</a>.</li>
+</ul>
+<p><strong>Negotiation:</strong> An implementation declares adaptation support by including <code>harmovela.adaptation.v1</code> in <code>capabilities.profiles</code>. Because the adaptation profile depends on <code>harmovela.coordination.v1</code> and <code>harmovela.security.v1</code>, both must also be present in the negotiated profile set. If either dependency is absent, the session must not become ready.</p>
+<p><strong>Profile family:</strong> Adaptation feedback and budget events use the <code>adaptation.*</code> event family prefix, owned by the Governance dimension under the <a href="event-registry-governance.html">event registry governance</a> model.</p>
+<h3>Transport Profiles</h3>
+<p>Transport profiles define wire-level bindings for Harmovela communication. Each transport profile is independent and optional. An implementation may support zero or more transport profiles.</p>
+<table>
+<thead><tr><th>Profile ID</th><th>Transport</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.transport.stdio.v1</code></td><td>stdio</td><td><code>design/protocol/transport-stdio.md</code></td></tr>
+<tr><td><code>harmovela.transport.websocket.v1</code></td><td>WebSocket</td><td><code>design/protocol/transport-websocket.md</code></td></tr>
+<tr><td><code>harmovela.transport.sse.v1</code></td><td>HTTP SSE</td><td><code>design/protocol/transport-sse.md</code></td></tr>
+<tr><td><code>harmovela.transport.grpc.v1</code></td><td>gRPC streaming</td><td><code>design/protocol/transport-grpc.md</code></td></tr>
+<tr><td><code>harmovela.transport.nats.v1</code></td><td>NATS</td><td><code>design/protocol/transport-nats.md</code></td></tr>
+<tr><td><code>harmovela.transport.kafka.v1</code></td><td>Kafka</td><td><code>design/protocol/transport-kafka.md</code></td></tr>
+<tr><td><code>harmovela.transport.redis-streams.v1</code></td><td>Redis Streams</td><td><code>design/protocol/transport-redis-streams.md</code></td></tr>
+</tbody>
+</table>
+<p>Each transport profile specification defines framing rules, connection lifecycle, error handling for transport-level failures, and subprotocol or content-type identifiers.</p>
+<h3>Topology Identifiers</h3>
+<p>A topology identifier is a distinct conformance axis from both profiles and transports. It names the participant structure a deployment runs under and is recorded alongside the transport profile in compatibility evidence. Topology identifiers follow the pattern <code>harmovela.topology.&lt;name&gt;.&lt;version&gt;</code>, version independently of profiles and transports, and are used when a matrix cell or pilot report must state which participant structure produced the result.</p>
+<table>
+<thead><tr><th>Topology ID</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>harmovela.topology.hub-spoke.v1</code></td><td>A central runtime/harness hub with producer and consumer agents attached via sessions; the hub owns routing, subscription fanout, and delivery state. This is the topology every reference runtime's fanout architecture implements.</td></tr>
+</tbody>
+</table>
+<p>A topology identifier is named and versioned so that conformance and pilot evidence is reproducible; two reports with the same topology identifier must describe the same participant structure.</p>
+<h2>Profile Declaration in Capability Negotiation</h2>
+<p>Profiles are declared during session establishment in the <code>capabilities</code> object. The negotiation flow:</p>
+<p>1. Client sends <code>session.open</code> with <code>capabilities.profiles</code> listing supported profiles and versions. 2. Server responds with <code>session.opened</code> containing the intersection of supported profiles. 3. Client sends <code>session.ready</code> confirming the negotiated profile set. 4. If a required profile is absent from the intersection, either peer sends <code>session.error</code> with code <code>unsupported_profile</code>.</p>
+<p>Example negotiation:</p>
+<pre><code>// Client → Server: session.open
+{
+  "type": "session.open",
+  "aep_version": "0.2",
+  "capabilities": {
+    "aep_version": "0.2",
+    "profiles": [
+      "harmovela.core.v1",
+      "harmovela.delivery.v1",
+      "harmovela.security.v1"
+    ]
+  }
+}
+
+// Server → Client: session.opened
+{
+  "type": "session.opened",
+  "aep_version": "0.2",
+  "session_id": "sess-abc123",
+  "capabilities": {
+    "aep_version": "0.2",
+    "profiles": [
+      "harmovela.core.v1",
+      "harmovela.delivery.v1"
+    ]
+  }
+}
+
+// Client → Server: session.ready (accepts negotiated set)
+{
+  "type": "session.ready",
+  "session_id": "sess-abc123"
+}
+</code></pre>
+<p>In this example, the security profile was not supported by the server and was dropped from the negotiated set. The client accepted the reduced set by sending <code>session.ready</code>. If the client required the security profile, it would instead send <code>session.error</code> with code <code>unsupported_profile</code>.</p>
+</body>
+</html>

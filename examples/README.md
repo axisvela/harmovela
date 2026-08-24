@@ -2,13 +2,13 @@
 
 Organized by scene. Each file is named with a language suffix.
 
-For end-to-end integration scenarios demonstrating how the coordination dimensions work together, see [`docs/protocol/scenarios.md`](../docs/protocol/scenarios.md).
+For end-to-end integration scenarios demonstrating how the coordination dimensions work together, see [`design/protocol/scenarios.md`](../design/protocol/scenarios.md).
 
 ## Quickstart (`examples/quickstart/`)
 
 Minimal in-process runtime: create a service, subscribe to events, publish one event, receive it.
 
-**Scenario:** [Async Task Orchestration](../docs/protocol/scenarios.md#1-async-task-orchestration)
+**Scenario:** [Async Task Orchestration](../design/protocol/scenarios.md#1-async-task-orchestration)
 
 | File | Language | Run command |
 |---|---|---|
@@ -21,7 +21,7 @@ Minimal in-process runtime: create a service, subscribe to events, publish one e
 
 Connect to a running `harmovelad` over its HTTP API or WebSocket.
 
-**Scenario:** [Async Task Orchestration](../docs/protocol/scenarios.md#1-async-task-orchestration)
+**Scenario:** [Async Task Orchestration](../design/protocol/scenarios.md#1-async-task-orchestration)
 
 | File | Language | Description |
 |---|---|---|
@@ -37,7 +37,7 @@ npm run harmovelad
 
 Embed `McpBridge` with an async tool handler. Call the tool and observe Harmovela task lifecycle events.
 
-**Scenario:** [MCP Bridge with Async Feedback](../docs/protocol/scenarios.md#3-mcp-bridge-with-async-feedback)
+**Scenario:** [MCP Bridge with Async Feedback](../design/protocol/scenarios.md#3-mcp-bridge-with-async-feedback)
 
 | File | Language | Run command |
 |---|---|---|
@@ -50,7 +50,7 @@ Embed `McpBridge` with an async tool handler. Call the tool and observe Harmovel
 
 End-to-end domain patterns.
 
-**Scenario:** [Context and Memory Coordination](../docs/protocol/scenarios.md#2-context-and-memory-coordination)
+**Scenario:** [Context and Memory Coordination](../design/protocol/scenarios.md#2-context-and-memory-coordination)
 
 | File | Language | Description |
 |---|---|---|

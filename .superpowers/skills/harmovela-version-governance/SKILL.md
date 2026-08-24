@@ -20,7 +20,7 @@ Classify every version/status statement before editing:
 | Implementation | One language artifact, SDK, daemon, or CLI | TypeScript package `0.5.0` |
 | Milestone | Project work state; not a release version | `M-Coordination-Interop` |
 
-`0.x` in `docs/roadmap.md` and `RELEASES.md` is a **Protocol** version unless explicitly labeled otherwise.
+`0.x` in `design/roadmap.md` and `RELEASES.md` is a **Protocol** version unless explicitly labeled otherwise.
 
 ## Mandatory Gate
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dimensions — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Dimensions</h1>
+<h1>Harmovela Dimension Modules</h1>
+<p>&gt; Status: draft. Maps all 11 coordination dimensions to their event type families, public contracts, and language module locations.</p>
+<h2>Dimension Overview</h2>
+<table>
+<thead><tr><th>#</th><th>Dimension</th><th>Event Families</th><th>Concern</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Event</td><td><code>session.*</code>, <code>subscription.*</code>, <code>capabilities.*</code>, <code>event.*</code></td><td>Envelope validation, session lifecycle, subscription matching, routing, transport bindings</td></tr>
+<tr><td>2</td><td>Recovery</td><td><code>interruption.*</code>, <code>compensation.*</code></td><td>Resilience: retry, dead-letter, replay, durability, interruption and compensation lifecycle</td></tr>
+<tr><td>3</td><td>Governance</td><td>_(budget/policy control)_</td><td>Who may do what: identity, authorization, audit, tenant isolation, policy dispatch</td></tr>
+<tr><td>4</td><td>Task</td><td><code>task.*</code></td><td>Work in flight: lifecycle from submission through completion</td></tr>
+<tr><td>5</td><td>State</td><td><code>state.*</code>, <code>freshness.*</code></td><td>Current known truth: snapshots, deltas, invalidation, temporal freshness windows</td></tr>
+<tr><td>6</td><td>Context / Memory</td><td><code>context.*</code>, <code>memory.*</code>, <code>belief.*</code>, <code>provenance.*</code></td><td>Cognitive decisions: facts, episodes, invalidation, belief revision, provenance attestation</td></tr>
+<tr><td>7</td><td>Delegation</td><td><code>delegation.*</code></td><td>Work assignment across agents: ownership, handoff, escalation</td></tr>
+<tr><td>8</td><td>Tool</td><td><code>tool.call.*</code></td><td>Tool invocation lifecycle (MCP bridge)</td></tr>
+<tr><td>9</td><td>Agent</td><td><code>agent.*</code></td><td>Agent-to-agent messaging, request/response, decision recording</td></tr>
+<tr><td>10</td><td>Environment</td><td><code>environment.*</code></td><td>Environment observation, change detection, alerting</td></tr>
+<tr><td>11</td><td>Adaptation</td><td><code>adaptation.*</code></td><td>Budget enforcement, feedback correlation, outcome tracking</td></tr>
+<tr><td>12</td><td>Command</td><td><code>command.*</code></td><td>Directed instruction: command requested, accepted, rejected, completed, failed with negotiation window</td></tr>
+<tr><td>13</td><td>Query</td><td><code>query.*</code></td><td>Directed information request: query requested, response, rejected, error with snapshot versioning</td></tr>
+</tbody>
+</table>
+<h2>Public Contracts</h2>
+<p>Each dimension module publishes a language-neutral contract boundary. Dimensions depend only on Event contracts.</p>
+<table>
+<thead><tr><th>Dimension</th><th>Contract Documents</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td><a href="event-contract.html">event-contract.md</a>, <a href="session.html">session.md</a>, <a href="subscription.html">subscription.md</a>, <a href="delivery.html">delivery.md</a>, <a href="event-registry-governance.html">event-registry-governance.md</a></td></tr>
+<tr><td>Recovery</td><td><a href="reliability.html">reliability.md</a>, <a href="delivery.html">delivery.md</a>, <a href="task-lifecycle.html">task-lifecycle.md</a></td></tr>
+<tr><td>Governance</td><td><a href="governance-contract.html">governance-contract.md</a>, <a href="security.html">security.md</a>, <a href="l1-policy-surface.html">l1-policy-surface.md</a></td></tr>
+<tr><td>Task</td><td><a href="task-lifecycle.html">task-lifecycle.md</a></td></tr>
+<tr><td>State</td><td><a href="event-dimension-classification.html">event-dimension-classification.md</a></td></tr>
+<tr><td>Context / Memory</td><td><a href="event-dimension-classification.html">event-dimension-classification.md</a></td></tr>
+<tr><td>Delegation</td><td><a href="task-lifecycle.html">task-lifecycle.md</a></td></tr>
+<tr><td>Tool</td><td><a href="event-dimension-classification.html">event-dimension-classification.md</a></td></tr>
+<tr><td>Agent</td><td><a href="event-dimension-classification.html">event-dimension-classification.md</a></td></tr>
+<tr><td>Environment</td><td><a href="event-dimension-classification.html">event-dimension-classification.md</a></td></tr>
+<tr><td>Adaptation</td><td><a href="adaptation-budget.html">adaptation-budget.md</a>, <a href="adaptation-feedback.html">adaptation-feedback.md</a></td></tr>
+<tr><td>Command</td><td><a href="command-query.html">command-query.md</a></td></tr>
+<tr><td>Query</td><td><a href="command-query.html">command-query.md</a></td></tr>
+</tbody>
+</table>
+<h2>Infrastructure Modules</h2>
+<table>
+<thead><tr><th>Module</th><th>Concern</th></tr></thead>
+<tbody>
+<tr><td>Harness</td><td>Runtime ingress/egress enforcement, dimension wiring, policy dispatch</td></tr>
+<tr><td>Conformance</td><td>Cross-language fixture runner and profile verification</td></tr>
+<tr><td>CLI</td><td>Command-line interface for daemon and client operations</td></tr>
+<tr><td>Runtime</td><td>Runtime service orchestration, configuration, delivery store creation</td></tr>
+<tr><td>MCP Bridge</td><td>MCP-to-Harmovela bridge with async tool handler</td></tr>
+</tbody>
+</table>
+<p>Infrastructure modules are not dimension-specific and provide cross-cutting build, test, transport, and tool-integration support.</p>
+<h2>Language Package Locations</h2>
+<table>
+<thead><tr><th>Dimension</th><th>TypeScript</th><th>Python</th><th>Go</th><th>Java</th></tr></thead>
+<tbody>
+<tr><td>Event</td><td><code>packages/event/</code></td><td><code>axisrobo_harmovela_event/</code></td><td><code>event/</code></td><td><code>harmovela/event/</code></td></tr>
+<tr><td>Recovery</td><td><code>packages/recovery/</code></td><td><code>axisrobo_harmovela_recovery/</code></td><td><code>recovery/</code></td><td><code>harmovela/recovery/</code></td></tr>
+<tr><td>Governance</td><td><code>packages/governance/</code></td><td><code>axisrobo_harmovela_governance/</code></td><td><code>governance/</code></td><td><code>harmovela/governance/</code></td></tr>
+<tr><td>Task</td><td><code>packages/task/</code></td><td><code>axisrobo_harmovela_task/</code></td><td><code>task/</code></td><td><code>harmovela/task/</code></td></tr>
+<tr><td>State</td><td><code>packages/state/</code></td><td><code>axisrobo_harmovela_state/</code></td><td><code>state/</code></td><td><code>harmovela/state/</code></td></tr>
+<tr><td>Context / Memory</td><td><code>packages/context/</code></td><td><code>axisrobo_harmovela_context/</code></td><td><code>context/</code></td><td><code>harmovela/context/</code></td></tr>
+<tr><td>Delegation</td><td><code>packages/delegation/</code></td><td><code>axisrobo_harmovela_delegation/</code></td><td><code>delegation/</code></td><td><code>harmovela/delegation/</code></td></tr>
+<tr><td>Tool</td><td><code>packages/tool/</code></td><td><code>axisrobo_harmovela_tool/</code></td><td><code>tool/</code></td><td><code>harmovela/tool/</code></td></tr>
+<tr><td>Agent</td><td><code>packages/agent/</code></td><td><code>axisrobo_harmovela_agent/</code></td><td><code>agent/</code></td><td><code>harmovela/agent/</code></td></tr>
+<tr><td>Environment</td><td><code>packages/environment/</code></td><td><code>axisrobo_harmovela_environment/</code></td><td><code>environment/</code></td><td><code>harmovela/environment/</code></td></tr>
+<tr><td>Adaptation</td><td><code>packages/adaptation/</code></td><td><code>axisrobo_harmovela_adaptation/</code></td><td><code>adaptation/</code></td><td><code>harmovela/adaptation/</code></td></tr>
+<tr><td>Command</td><td><code>packages/command/</code></td><td><code>axisrobo_harmovela_command/</code></td><td><code>command/</code></td><td><code>harmovela/command/</code></td></tr>
+<tr><td>Query</td><td><code>packages/query/</code></td><td><code>axisrobo_harmovela_query/</code></td><td><code>query/</code></td><td><code>harmovela/query/</code></td></tr>
+</tbody>
+</table>
+<h2>Dependencies</h2>
+<p>All dimension modules depend only on Event public contracts. No dimension module imports from another dimension's internals. Infrastructure modules depend on dimension public APIs.</p>
+<h2>Related Documents</h2>
+<ul>
+<li><a href="event-dimension-classification.html">event-dimension-classification.md</a> — event type family ownership per dimension</li>
+<li><a href="compatibility-matrix.html">compatibility-matrix.md</a> — per-dimension migration evidence across all 4 languages</li>
+<li><code>design/architecture.md</code> — system-level architecture and module layout</li>
+</ul>
+</body>
+</html>

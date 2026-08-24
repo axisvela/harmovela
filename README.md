@@ -91,46 +91,46 @@ Harmovela should interoperate with MCP rather than fork it. Harmovela can carry 
 
 ### Core (English)
 
-- `docs/vision.md` -- project vision, goals, non-goals, and principles ([中文](docs/zh/vision.md))
-- `docs/architecture.md` -- system architecture and major protocol layers ([中文](docs/zh/architecture.md))
-- `docs/differentiation.md` -- non-normative positioning and comparison material
-- `docs/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([中文](docs/zh/protocol-design.md))
-- `docs/mcp-relationship.md` -- detailed comparison and interop model with MCP
-- `docs/roadmap.md` -- proposed phases toward a usable open protocol
+- `design/vision.md` -- project vision, goals, non-goals, and principles ([中文](design/zh/vision.md))
+- `design/architecture.md` -- system architecture and major protocol layers ([中文](design/zh/architecture.md))
+- `design/differentiation.md` -- non-normative positioning and comparison material
+- `design/protocol-design.md` -- initial protocol model, envelope, events, and lifecycle ([中文](design/zh/protocol-design.md))
+- `design/mcp-relationship.md` -- detailed comparison and interop model with MCP
+- `design/roadmap.md` -- proposed phases toward a usable open protocol
 
-### Protocol Specs (`docs/protocol/`)
+### Protocol Specs (`design/protocol/`)
 
-- `docs/protocol/session.md` -- session lifecycle specification
-- `docs/protocol/subscription.md` -- subscription model specification
-- `docs/protocol/task-lifecycle.md` -- task lifecycle specification
-- `docs/protocol/error-model.md` -- error model specification
-- `docs/protocol/versioning.md` -- versioning rules specification
-- `docs/protocol/transport-stdio.md` -- stdio transport specification
-- `docs/protocol/transport-websocket.md` -- WebSocket transport specification
-- `docs/protocol/transport-sse.md` -- HTTP SSE transport specification
-- `docs/protocol/transport-grpc.md` -- gRPC streaming transport specification
-- `docs/protocol/transport-kafka.md` -- Kafka transport specification
-- `docs/protocol/transport-nats.md` -- NATS transport specification
-- `docs/protocol/transport-redis-streams.md` -- Redis Streams transport specification
-- `docs/protocol/delivery.md` -- delivery semantics, acknowledgement, and replay specification
-- `docs/protocol/reliability.md` -- retry, durability, and dead-letter handling specification
-- `docs/protocol/security.md` -- identity, authorization, audit, and tenant isolation specification
-- `docs/protocol/conformance.md` -- draft conformance levels and shared fixture manifest rules
-- `docs/protocol/event-registry-governance.md` -- event type registry governance and versioning
-- `docs/protocol/agent-runtime-semantics.md` -- belief, freshness, delegation, interruption, and provenance metadata
-- `docs/protocol/adaptation-budget.md` -- adaptation budget specification
-- `docs/protocol/adaptation-feedback.md` -- adaptation feedback specification
-- `docs/protocol/compatibility-matrix.md` -- migration compatibility matrix
-- `docs/protocol/event-contract.md` -- event contract boundary
-- `docs/protocol/event-dimension-classification.md` -- event type dimension classification
-- `docs/protocol/governance-contract.md` -- governance contract boundary
-- `docs/protocol/l1-policy-surface.md` -- L1 advisory policy surface
-- `docs/protocol/profiles.md` -- protocol profiles
-- `docs/protocol/scenarios.md` -- integration scenarios
+- `design/protocol/session.md` -- session lifecycle specification
+- `design/protocol/subscription.md` -- subscription model specification
+- `design/protocol/task-lifecycle.md` -- task lifecycle specification
+- `design/protocol/error-model.md` -- error model specification
+- `design/protocol/versioning.md` -- versioning rules specification
+- `design/protocol/transport-stdio.md` -- stdio transport specification
+- `design/protocol/transport-websocket.md` -- WebSocket transport specification
+- `design/protocol/transport-sse.md` -- HTTP SSE transport specification
+- `design/protocol/transport-grpc.md` -- gRPC streaming transport specification
+- `design/protocol/transport-kafka.md` -- Kafka transport specification
+- `design/protocol/transport-nats.md` -- NATS transport specification
+- `design/protocol/transport-redis-streams.md` -- Redis Streams transport specification
+- `design/protocol/delivery.md` -- delivery semantics, acknowledgement, and replay specification
+- `design/protocol/reliability.md` -- retry, durability, and dead-letter handling specification
+- `design/protocol/security.md` -- identity, authorization, audit, and tenant isolation specification
+- `design/protocol/conformance.md` -- draft conformance levels and shared fixture manifest rules
+- `design/protocol/event-registry-governance.md` -- event type registry governance and versioning
+- `design/protocol/agent-runtime-semantics.md` -- belief, freshness, delegation, interruption, and provenance metadata
+- `design/protocol/adaptation-budget.md` -- adaptation budget specification
+- `design/protocol/adaptation-feedback.md` -- adaptation feedback specification
+- `design/protocol/compatibility-matrix.md` -- migration compatibility matrix
+- `design/protocol/event-contract.md` -- event contract boundary
+- `design/protocol/event-dimension-classification.md` -- event type dimension classification
+- `design/protocol/governance-contract.md` -- governance contract boundary
+- `design/protocol/l1-policy-surface.md` -- L1 advisory policy surface
+- `design/protocol/profiles.md` -- protocol profiles
+- `design/protocol/scenarios.md` -- integration scenarios
 
-### Design Documents (`docs/design/`)
+### Design Documents (`design/design/`)
 
-- `docs/design/` -- Superpowers-backed design specs and implementation plans
+- `design/design/` -- Superpowers-backed design specs and implementation plans
 
 ### Conformance
 
@@ -177,11 +177,11 @@ graph TB
     shared --> dim --> infra
 ```
 
-- `docs/` -- protocol vision, architecture, design drafts, specifications, roadmap
-- `docs/protocol/` -- per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning, transports)
-- `docs/design/` -- Superpowers-backed design specs and implementation plans
-- `docs/zh/` -- Chinese translations of key documents
-- `docs/site/` -- generated specification site (HTML)
+- `design/` -- protocol source documents: vision, architecture, design drafts, specifications, roadmap, translations
+- `design/protocol/` -- per-layer protocol specifications (session, subscription, task lifecycle, error model, versioning, transports)
+- `design/design/` -- Superpowers-backed design specs and implementation plans
+- `design/zh/` -- Chinese translations of key documents
+- `docs/` -- generated specification site (HTML), served by GitHub Pages
 - `schemas/` -- shared draft JSON Schema assets
 - `conformance/` -- shared fixtures for cross-language conformance
 - `examples/` -- scene-based examples: quickstart, service-client, mcp-bridge, scenarios

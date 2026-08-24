@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptation Budget — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Adaptation Budget</h1>
+<h1>Harmovela Adaptation Budget Specification</h1>
+<p>&gt; Status: draft. Part of the 0.5 Adaptation Preview.</p>
+<h2>Purpose</h2>
+<p>Define budget authority (who may establish a budget), the enforcement point (where the budget is checked), and the events emitted when a budget limit is approached or exceeded. Budget semantics provide the economic boundary for L3 production autonomy: a system that adapts must do so within declared, enforced resource limits.</p>
+<p>This specification builds on the L1 advisory budget surface in <a href="l1-policy-surface.html">L1 policy surface</a> and makes it enforceable at L3. The shape of the budget declaration is the same; the difference is that the runtime now checks, enforces, and emits structured events at the protocol boundary.</p>
+<h2>Budget Authority</h2>
+<h3>Who Sets the Budget</h3>
+<p>Budget authority follows the delegation chain. The <strong>delegating agent</strong> (the agent that dispatches a task to a bounded agent) is the budget authority for that task. This mirrors the ownership model in the <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">coordination profile</a>: the delegator owns the task and sets its resource boundaries.</p>
+<pre><code>digraph budget_authority {
+    rankdir=LR;
+    delegator [label="Delegating Agent\n(budget authority)"];
+    delegate [label="Bounded Agent\n(budget consumer)"];
+    delegator -&gt; delegate [label="task.submitted\n+budget declaration"];
+}
+</code></pre>
+<p>A bounded agent may propose a budget in its own <code>session.ready</code> capabilities, but the effective budget is always the stricter intersection of the delegator's requirement and the delegate's self-declared limits. The delegator has final authority: if the delegate proposes no budget, the delegator's budget applies; if the delegator proposes no budget, the task is unbounded (advisory at L1, rejected at L3 unless explicitly allowed).</p>
+<h3>Budget Establishment Event</h3>
+<p>The <code>adaptation.budget.established</code> event is emitted when an effective budget is agreed for a task or goal. It serves as the authoritative record of the resource contract.</p>
+<pre><code>{
+  "type": "adaptation.budget.established",
+  "id": "evt_budget_est_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T10:00:00Z",
+  "payload": {
+    "scope_type": "task",
+    "scope_id": "task_01",
+    "goal_id": "goal_ping_cycle_01",
+    "budget": {
+      "max_cost_usd_millicents": 100000,
+      "max_duration_ms": 300000,
+      "max_actions": 50
+    },
+    "authority": {
+      "issuer": "agent:supervisor",
+      "capability": "budget.establish",
+      "granted_at": "2026-07-14T10:00:00Z"
+    },
+    "delegation_chain": [
+      { "agent_id": "agent:supervisor", "role": "delegator" },
+      { "agent_id": "agent:pinger",    "role": "delegate" }
+    ],
+    "established_at": "2026-07-14T10:00:00Z"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.scope_type</code></td><td>string</td><td>yes</td><td>The scope of the budget: <code>task</code>, <code>goal</code>, or <code>session</code>.</td></tr>
+<tr><td><code>payload.scope_id</code></td><td>string</td><td>yes</td><td>Identifier of the scoped entity.</td></tr>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>no</td><td>The goal identifier if the task serves a declared goal.</td></tr>
+<tr><td><code>payload.budget</code></td><td>object</td><td>yes</td><td>The effective budget limits. Same shape as <code>capabilities.budget</code>.</td></tr>
+<tr><td><code>payload.authority</code></td><td>object</td><td>yes</td><td>The authority under which the budget was established.</td></tr>
+<tr><td><code>payload.authority.issuer</code></td><td>string</td><td>yes</td><td>The agent that authorized the budget.</td></tr>
+<tr><td><code>payload.authority.capability</code></td><td>string</td><td>yes</td><td>Must be <code>budget.establish</code>.</td></tr>
+<tr><td><code>payload.authority.granted_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp of the grant.</td></tr>
+<tr><td><code>payload.delegation_chain</code></td><td>array</td><td>yes</td><td>Ordered delegation path.</td></tr>
+<tr><td><code>payload.established_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp of establishment.</td></tr>
+</tbody>
+</table>
+<h3>Budget Change</h3>
+<p>A budget may be changed after establishment only by the delegating agent that set it, through a new <code>adaptation.budget.established</code> event with an updated <code>budget</code> payload. The new event references the prior event via <code>causation_id</code>. A bounded agent may request a budget increase through <code>task.progress</code> with a <code>budget_increase_requested</code> detail, but only the delegator may grant it.</p>
+<h2>Enforcement Point</h2>
+<h3>Where the Budget Is Checked</h3>
+<p>Budget enforcement is a <strong>runtime-level check</strong> that occurs at the protocol boundary, not in application logic. The enforcement point is the harness (orchestrator) that mediates between the delegating agent and the bounded agent:</p>
+<pre><code>digraph enforcement {
+    rankdir=TB;
+    delegate [label="Bounded Agent"];
+    harness [label="Harness\n(enforcement point)", shape=box, style=filled, fillcolor=lightgrey];
+    delegator [label="Delegating Agent"];
+
+    delegate -&gt; harness [label="action events\n(task.progress, tool.call.*)"];
+    harness -&gt; delegator [label="budget exceeded\nevents"];
+    harness -&gt; delegate [label="enforcement\n(task.cancelled,\nsession.error)"];
+}
+</code></pre>
+<p>The harness maintains a resource counter per scoped budget. Before dispatching each action event from the bounded agent, the harness checks the current counter against the declared budget:</p>
+<p>1. If the counter is <strong>below the limit</strong>, the action proceeds. 2. If the counter is <strong>approaching the limit</strong> (within the warning threshold), the harness emits <code>adaptation.budget.limit_approaching</code> and lets the action proceed. 3. If the counter <strong>exceeds the limit</strong>, the harness emits <code>adaptation.budget.limit_exceeded</code>, blocks the action, and enforces the termination declared in <code>capabilities.termination.on_budget_exhausted</code>.</p>
+<p>Per-action checks:</p>
+<ul>
+<li><strong>Cost</strong> (<code>max_cost_usd_millicents</code>): Incremented by the declared cost of each tool call or action. Tools must report their cost as part of the <code>tool.call.completed</code> payload.</li>
+<li><strong>Duration</strong> (<code>max_duration_ms</code>): Monotonically increasing wall-clock time since the task was started. Checked before each action dispatch.</li>
+<li><strong>Actions</strong> (<code>max_actions</code>): Incremented by 1 for each discrete tool call or event emission within the task scope.</li>
+</ul>
+<h3>Warning Threshold</h3>
+<p>Each budget dimension has a configurable <strong>warning ratio</strong> (default <code>0.8</code>). When consumption reaches the warning threshold, <code>adaptation.budget.limit_approaching</code> is emitted. The warning ratio may be configured per budget at establishment time:</p>
+<pre><code>{
+  "payload": {
+    "budget": {
+      "max_cost_usd_millicents": 100000,
+      "max_duration_ms": 300000,
+      "max_actions": 50,
+      "warning_ratio": 0.75
+    }
+  }
+}
+</code></pre>
+<p>A <code>warning_ratio</code> of <code>1.0</code> disables the warning event (only the exceedance event fires). A <code>warning_ratio</code> of <code>0.0</code> emits the warning immediately upon the first consumption.</p>
+<h2>Budget Events</h2>
+<h3><code>adaptation.budget.limit_approaching</code></h3>
+<p>Emitted when consumption on any budget dimension reaches the warning threshold. This is an advisory signal: the bounded agent is approaching its limit but is not yet blocked.</p>
+<pre><code>{
+  "type": "adaptation.budget.limit_approaching",
+  "id": "evt_budget_app_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T10:28:00Z",
+  "correlation_id": "task_01",
+  "payload": {
+    "scope_type": "task",
+    "scope_id": "task_01",
+    "goal_id": "goal_ping_cycle_01",
+    "dimension": "max_actions",
+    "declared": 50,
+    "consumed": 40,
+    "warning_ratio": 0.8,
+    "remaining": 10,
+    "approaching_at": "2026-07-14T10:28:00Z"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.scope_type</code></td><td>string</td><td>yes</td><td><code>task</code>, <code>goal</code>, or <code>session</code>.</td></tr>
+<tr><td><code>payload.scope_id</code></td><td>string</td><td>yes</td><td>Identifier of the scoped entity.</td></tr>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>no</td><td>The goal identifier, if applicable.</td></tr>
+<tr><td><code>payload.dimension</code></td><td>string</td><td>yes</td><td>The budget dimension approaching its limit.</td></tr>
+<tr><td><code>payload.declared</code></td><td>number</td><td>yes</td><td>The declared limit.</td></tr>
+<tr><td><code>payload.consumed</code></td><td>number</td><td>yes</td><td>Current consumption.</td></tr>
+<tr><td><code>payload.warning_ratio</code></td><td>number</td><td>yes</td><td>The warning threshold ratio used.</td></tr>
+<tr><td><code>payload.remaining</code></td><td>number</td><td>yes</td><td><code>declared - consumed</code>.</td></tr>
+<tr><td><code>payload.approaching_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp when the warning threshold was crossed.</td></tr>
+</tbody>
+</table>
+<h3><code>adaptation.budget.limit_exceeded</code></h3>
+<p>Emitted when consumption on any budget dimension exceeds the declared limit. This is an enforcement event: the runtime blocks further consumption and enforces the configured termination behavior.</p>
+<pre><code>{
+  "type": "adaptation.budget.limit_exceeded",
+  "id": "evt_budget_exc_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T10:32:00Z",
+  "correlation_id": "task_01",
+  "causation_id": "task_01",
+  "payload": {
+    "scope_type": "task",
+    "scope_id": "task_01",
+    "goal_id": "goal_ping_cycle_01",
+    "dimension": "max_actions",
+    "declared": 50,
+    "consumed": 51,
+    "enforcement_action": "task_failed",
+    "budget_established_event_id": "evt_budget_est_01",
+    "exceeded_at": "2026-07-14T10:32:00Z"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.scope_type</code></td><td>string</td><td>yes</td><td><code>task</code>, <code>goal</code>, or <code>session</code>.</td></tr>
+<tr><td><code>payload.scope_id</code></td><td>string</td><td>yes</td><td>Identifier of the scoped entity.</td></tr>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>no</td><td>The goal identifier, if applicable.</td></tr>
+<tr><td><code>payload.dimension</code></td><td>string</td><td>yes</td><td>The budget dimension that was exceeded.</td></tr>
+<tr><td><code>payload.declared</code></td><td>number</td><td>yes</td><td>The declared limit.</td></tr>
+<tr><td><code>payload.consumed</code></td><td>number</td><td>yes</td><td>Consumption at the point of exceedance.</td></tr>
+<tr><td><code>payload.enforcement_action</code></td><td>string</td><td>yes</td><td>Action taken by the runtime: <code>task_failed</code>, <code>task_cancelled</code>, <code>task_escalated</code>, <code>session_quarantined</code>.</td></tr>
+<tr><td><code>payload.budget_established_event_id</code></td><td>string</td><td>yes</td><td>The <code>id</code> of the <code>adaptation.budget.established</code> event that set this budget.</td></tr>
+<tr><td><code>payload.exceeded_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp of exceedance.</td></tr>
+</tbody>
+</table>
+<h3>Budget Exhaustion Outcome</h3>
+<p>When a budget is exceeded, the runtime also emits the more general <code>adaptation.cost.exceeded</code> event defined in <a href="adaptation-feedback.html">adaptation feedback</a>. The <code>adaptation.budget.limit_exceeded</code> is the enforcement signal; <code>adaptation.cost.exceeded</code> is the feedback signal — they carry overlapping but distinct information and serve different consumers.</p>
+<table>
+<thead><tr><th>Event</th><th>Purpose</th><th>Primary consumer</th></tr></thead>
+<tbody>
+<tr><td><code>adaptation.budget.limit_exceeded</code></td><td>Runtime enforcement record</td><td>Harness, delegator (immediate action)</td></tr>
+<tr><td><code>adaptation.cost.exceeded</code></td><td>Feedback/correlation record</td><td>Goal evaluator, audit system (post-hoc analysis)</td></tr>
+</tbody>
+</table>
+<h2>Enforcement Actions</h2>
+<p>When a budget limit is exceeded, the runtime takes the action configured in <code>capabilities.termination.on_budget_exhausted</code>:</p>
+<table>
+<thead><tr><th><code>on_budget_exhausted</code></th><th>Runtime action</th><th>Emitted task event</th></tr></thead>
+<tbody>
+<tr><td><code>fail</code></td><td>Mark the task as failed. Block further actions for this task.</td><td><code>task.failed</code> with code <code>budget_exceeded</code></td></tr>
+<tr><td><code>cancel</code></td><td>Cancel the task and propagate cancellation to child tasks.</td><td><code>task.cancelled</code></td></tr>
+<tr><td><code>escalate</code></td><td>Escalate the task back to the delegating agent.</td><td><code>task.escalated</code></td></tr>
+</tbody>
+</table>
+<p>At L3, <code>ignore</code> is not a valid <code>on_budget_exhausted</code> value. An implementation that declares <code>ignore</code> for budget exhaustion must be rejected during capability negotiation with code <code>invalid_capability</code>.</p>
+<h2>Multi-Scope Budgets</h2>
+<h3>Goal-Scoped Budgets</h3>
+<p>A budget may be established for a goal rather than a single task. A goal-scoped budget is shared across all tasks dispatched toward that goal. The counter accumulates across all tasks:</p>
+<pre><code>{
+  "type": "adaptation.budget.established",
+  "payload": {
+    "scope_type": "goal",
+    "scope_id": "goal_backup_cycle_01",
+    "budget": {
+      "max_cost_usd_millicents": 500000,
+      "max_duration_ms": 3600000,
+      "max_actions": 200
+    }
+  }
+}
+</code></pre>
+<p>When a goal-scoped budget is exceeded, all in-flight tasks for that goal are terminated with the configured enforcement action.</p>
+<h3>Session-Scoped Budgets</h3>
+<p>A session-scoped budget is established at <code>session.ready</code> negotiation and applies to all tasks within that session. Session-scoped budgets are additive with task-scoped budgets: each task must respect both its own budget and the remaining session budget.</p>
+<p>When a session-scoped budget is exceeded, the session enters a terminal state. No new tasks may be accepted. In-flight tasks are terminated per <code>capabilities.termination.on_budget_exhausted</code>.</p>
+<h3>Budget Precedence</h3>
+<p>When multiple budget scopes apply, the <strong>tightest effective remaining limit</strong> for each dimension applies. For example, if a task has <code>max_actions: 50</code> and the session has 3 actions remaining, the effective limit is 3.</p>
+<h2>Audit Trail</h2>
+<p>All budget events are governance-audited events. The audit record for each budget event includes:</p>
+<table>
+<thead><tr><th>Field</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Event <code>id</code></td><td>Envelope</td></tr>
+<tr><td>Event <code>type</code></td><td>Envelope</td></tr>
+<tr><td><code>scope_type</code> and <code>scope_id</code></td><td>Payload</td></tr>
+<tr><td><code>dimension</code></td><td>Payload</td></tr>
+<tr><td><code>declared</code> limit</td><td>Payload</td></tr>
+<tr><td><code>consumed</code> amount</td><td>Payload</td></tr>
+<tr><td><code>authority.issuer</code></td><td>Payload</td></tr>
+<tr><td>Actor identity (transport)</td><td>Transport binding</td></tr>
+<tr><td>Budget establishment event <code>id</code></td><td>Payload (<code>limit_exceeded</code> only)</td></tr>
+</tbody>
+</table>
+<h2>L1 → L3 Migration</h2>
+<table>
+<thead><tr><th>Aspect</th><th>L1 (advisory)</th><th>L3 (enforced)</th></tr></thead>
+<tbody>
+<tr><td>Budget declaration</td><td><code>capabilities.budget</code> in <code>session.ready</code></td><td>Same shape; also emitted as <code>adaptation.budget.established</code></td></tr>
+<tr><td>Enforcement point</td><td>Agent self-checks</td><td>Harness checks before each action dispatch</td></tr>
+<tr><td>Warning signal</td><td>Not defined</td><td><code>adaptation.budget.limit_approaching</code></td></tr>
+<tr><td>Exceedance signal</td><td><code>task.failed</code> with <code>budget_exceeded</code> (voluntary)</td><td><code>adaptation.budget.limit_exceeded</code> + <code>adaptation.cost.exceeded</code> (enforced)</td></tr>
+<tr><td>Authority verification</td><td>Not checked</td><td><code>budget.establish</code> capability required</td></tr>
+<tr><td>Multi-scope budgets</td><td>Not defined</td><td>Goal-scoped and session-scoped budgets with precedence rules</td></tr>
+<tr><td>Quarantine</td><td>Not defined</td><td>Runtime may quarantine sessions that exceed budgets</td></tr>
+</tbody>
+</table>
+<h2>Dependencies</h2>
+<ul>
+<li><a href="event-contract.html">Event contract</a> — envelope validation and routing.</li>
+<li><a href="l1-policy-surface.html">L1 policy surface</a> — advisory budget shape that L3 enforces.</li>
+<li><a href="governance-contract.html">Governance contract</a> — <code>budget.establish</code> and <code>budget.enforce</code> authorization checks.</li>
+<li><a href="security.html">Security profile</a> — identity, authorization, audit boundaries.</li>
+<li><a href="task-lifecycle.html">Task lifecycle</a> — terminal states triggered by budget enforcement.</li>
+<li><a href="adaptation-feedback.html">Adaptation feedback</a> — <code>adaptation.cost.exceeded</code> feedback event.</li>
+</ul>
+</body>
+</html>

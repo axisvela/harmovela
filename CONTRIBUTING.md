@@ -6,7 +6,7 @@ Harmovela is a draft open coordination protocol. Contributions that refine the s
 
 ## Getting Started
 
-1. Read [`README.md`](README.md), [`GOVERNANCE.md`](GOVERNANCE.md), and [`docs/roadmap.md`](docs/roadmap.md).
+1. Read [`README.md`](README.md), [`GOVERNANCE.md`](GOVERNANCE.md), and [`design/roadmap.md`](design/roadmap.md).
 2. Check open issues for areas where help is needed.
 3. For protocol changes, start with a design discussion before writing code.
 4. Contributions are licensed under the [Apache License 2.0](LICENSE).
@@ -15,7 +15,7 @@ Harmovela is a draft open coordination protocol. Contributions that refine the s
 
 | Directory | Purpose |
 |---|---|
-| `docs/protocol/` | Protocol specifications by layer (session, subscription, task, error, delivery, etc.) |
+| `design/protocol/` | Protocol specifications by layer (session, subscription, task, error, delivery, etc.) |
 | `.superpowers/specs/` | Design specs for planned features |
 | `.superpowers/plans/` | Implementation plans |
 | `schemas/` | Shared JSON Schema assets |
@@ -31,7 +31,7 @@ Harmovela is a draft open coordination protocol. Contributions that refine the s
 ### Protocol Spec Changes
 
 1. Start a discussion issue describing the proposed change and its motivation.
-2. Draft the specification change in `docs/protocol/<topic>.md`.
+2. Draft the specification change in `design/protocol/<topic>.md`.
 3. Update relevant JSON Schemas in `schemas/`.
 4. Add conformance fixtures that exercise the new or changed behavior.
 5. Update at least the TypeScript reference to match.

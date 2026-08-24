@@ -21,7 +21,7 @@ Maintainers are responsible for:
 - Reviewing and merging protocol specification changes.
 - Ensuring cross-language consistency across TypeScript, Python, Go, and Java reference implementations.
 - Maintaining conformance fixture integrity and cross-language runner health.
-- Enforcing versioning and compatibility policies as defined in `docs/protocol/versioning.md` and `docs/protocol/compatibility-matrix.md`.
+- Enforcing versioning and compatibility policies as defined in `design/protocol/versioning.md` and `design/protocol/compatibility-matrix.md`.
 - Upholding the [Code of Conduct](CODE_OF_CONDUCT.md).
 - Responding to security disclosures within the committed response window.
 - Triaging issues, RFCs, and pull requests in a timely manner.
@@ -58,7 +58,7 @@ Objections must be substantive and relate to protocol correctness, compatibility
 
 1. **PR discussion**: All decisions begin as pull request or issue discussion.
 2. **Maintainer tie-break**: If consensus is not reached, an Axisrobo maintainer makes a decision.
-3. **Recorded decision**: Tie-break decisions are documented in the PR or a decision record under `docs/design/decisions/` with rationale.
+3. **Recorded decision**: Tie-break decisions are documented in the PR or a decision record under `design/design/decisions/` with rationale.
 4. **Appeal**: Community members may appeal a decision by opening a new issue with "Decision Appeal: <topic>" and new evidence or analysis. Maintainers reconsider, but the second decision is final during the 0.x phase.
 
 ### Decision Types
@@ -189,7 +189,7 @@ During the 0.x pre-release phase, only the latest commit on the `main` branch is
 
 ## Compatibility and Versioning
 
-All compatibility decisions follow `docs/protocol/versioning.md` and the [compatibility matrix](docs/protocol/compatibility-matrix.md). Breaking changes to the core protocol envelope, required event families, or delivery semantics require a major version change. During the 0.x phase, breaking changes are permitted but must be documented with migration guidance and a compatibility decision record.
+All compatibility decisions follow `design/protocol/versioning.md` and the [compatibility matrix](design/protocol/compatibility-matrix.md). Breaking changes to the core protocol envelope, required event families, or delivery semantics require a major version change. During the 0.x phase, breaking changes are permitted but must be documented with migration guidance and a compatibility decision record.
 
 ## Code of Conduct
 
@@ -206,8 +206,8 @@ All governance documents, protocol specifications, schemas, and conformance fixt
 - [Security Response](SECURITY.md) — public security reporting and disclosure process
 - [Releases](RELEASES.md) — release phases, versioning, and artifacts
 - [Trademarks](TRADEMARKS.md) — name and mark usage guidelines
-- [Roadmap](docs/roadmap.md) — milestones toward 1.0
-- [Versioning](docs/protocol/versioning.md) — protocol versioning rules
-- [Compatibility Matrix](docs/protocol/compatibility-matrix.md) — legacy identifier migration inventory
-- [Event Registry Governance](docs/protocol/event-registry-governance.md) — event type registry governance
-- [Security](docs/protocol/security.md) — identity, authorization, audit, tenant isolation
+- [Roadmap](design/roadmap.md) — milestones toward 1.0
+- [Versioning](design/protocol/versioning.md) — protocol versioning rules
+- [Compatibility Matrix](design/protocol/compatibility-matrix.md) — legacy identifier migration inventory
+- [Event Registry Governance](design/protocol/event-registry-governance.md) — event type registry governance
+- [Security](design/protocol/security.md) — identity, authorization, audit, tenant isolation

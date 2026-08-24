@@ -45,6 +45,6 @@ During the 0.x pre-release phase, only the latest commit on the `main` branch is
 ## Related Documents
 
 - [Governance](GOVERNANCE.md) — governance structure and decision-making, including the security response procedure
-- [Security](docs/protocol/security.md) — identity, authorization, audit, and tenant isolation semantics
+- [Security](design/protocol/security.md) — identity, authorization, audit, and tenant isolation semantics
 - [Releases](RELEASES.md) — release phases, versioning, and artifacts
-- [Event Registry Governance](docs/protocol/event-registry-governance.md) — event type registry governance
+- [Event Registry Governance](design/protocol/event-registry-governance.md) — event type registry governance

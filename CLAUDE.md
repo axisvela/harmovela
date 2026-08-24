@@ -24,7 +24,7 @@ Harmovela Protocol is an open coordination protocol for autonomous systems acros
 
 Harmovela complements MCP. MCP is the synchronous capability invocation layer; Harmovela provides asynchronous event, subscription, lifecycle, state, recovery, and coordination semantics.
 
-Harmovela is a coordination protocol, not a platform. It defines the semantics for events, tasks, state, delegation, recovery, and governance. Capability registries, planning engines, agent runtimes, workflow engines, and governance dashboards are platform concerns that consume the protocol — they are not protocol features. See `docs/vision.md` for the full non-goals list.
+Harmovela is a coordination protocol, not a platform. It defines the semantics for events, tasks, state, delegation, recovery, and governance. Capability registries, planning engines, agent runtimes, workflow engines, and governance dashboards are platform concerns that consume the protocol — they are not protocol features. See `design/vision.md` for the full non-goals list.
 
 The canonical repository location is `https://github.com/axisrobo/harmovela`.
 
@@ -41,27 +41,27 @@ The canonical repository location is `https://github.com/axisrobo/harmovela`.
 | Document | Content |
 | --- | --- |
 | `README.md` | Project overview and document index |
-| `docs/vision.md` | Vision, goals, non-goals, principles |
-| `docs/architecture.md` | Architecture, components, protocol layers |
-| `docs/protocol-design.md` | Envelope, event families, lifecycle, subscriptions |
-| `docs/mcp-relationship.md` | MCP comparison and interop model |
-| `docs/roadmap.md` | Milestones toward a usable open protocol |
-| `docs/protocol/session.md` | Session lifecycle specification |
-| `docs/protocol/subscription.md` | Subscription model specification |
-| `docs/protocol/task-lifecycle.md` | Task lifecycle specification |
-| `docs/protocol/error-model.md` | Error model specification |
-| `docs/protocol/versioning.md` | Versioning rules specification |
-| `docs/protocol/transport-stdio.md` | stdio transport specification |
-| `docs/protocol/transport-websocket.md` | WebSocket transport specification |
-| `docs/protocol/transport-sse.md` | HTTP SSE transport specification |
-| `docs/protocol/transport-grpc.md` | gRPC streaming transport specification |
-| `docs/protocol/delivery.md` | Delivery semantics, ack protocol, replay |
-| `docs/protocol/reliability.md` | Retry policy, dead-letter, durability |
-| `docs/protocol/security.md` | Identity, authorization, audit, tenant isolation |
-| `docs/protocol/conformance.md` | Conformance levels and test manifest specification |
-| `docs/protocol/event-registry-governance.md` | Event type registry governance and versioning |
-| `docs/design/` | Superpowers-backed design specs |
-| `docs/design/` | Superpowers-backed execution plans |
+| `design/vision.md` | Vision, goals, non-goals, principles |
+| `design/architecture.md` | Architecture, components, protocol layers |
+| `design/protocol-design.md` | Envelope, event families, lifecycle, subscriptions |
+| `design/mcp-relationship.md` | MCP comparison and interop model |
+| `design/roadmap.md` | Milestones toward a usable open protocol |
+| `design/protocol/session.md` | Session lifecycle specification |
+| `design/protocol/subscription.md` | Subscription model specification |
+| `design/protocol/task-lifecycle.md` | Task lifecycle specification |
+| `design/protocol/error-model.md` | Error model specification |
+| `design/protocol/versioning.md` | Versioning rules specification |
+| `design/protocol/transport-stdio.md` | stdio transport specification |
+| `design/protocol/transport-websocket.md` | WebSocket transport specification |
+| `design/protocol/transport-sse.md` | HTTP SSE transport specification |
+| `design/protocol/transport-grpc.md` | gRPC streaming transport specification |
+| `design/protocol/delivery.md` | Delivery semantics, ack protocol, replay |
+| `design/protocol/reliability.md` | Retry policy, dead-letter, durability |
+| `design/protocol/security.md` | Identity, authorization, audit, tenant isolation |
+| `design/protocol/conformance.md` | Conformance levels and test manifest specification |
+| `design/protocol/event-registry-governance.md` | Event type registry governance and versioning |
+| `design/design/` | Superpowers-backed design specs |
+| `design/design/` | Superpowers-backed execution plans |
 | `schemas/` | Shared draft JSON Schema assets |
 | `conformance/fixtures/` | Shared cross-language conformance fixtures |
 | `implementations/typescript/` | Primary TypeScript implementation (SDK, daemon, CLI, HTTP API) |

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptation Feedback — Harmovela Protocol</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+  nav { background: #f5f5f5; padding: 12px; border-radius: 6px; margin-bottom: 24px; }
+  nav a { margin-right: 16px; color: #2563eb; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  h1 { border-bottom: 2px solid #e5e5e5; padding-bottom: 8px; }
+  h2 { margin-top: 32px; color: #374151; }
+  h3 { margin-top: 24px; color: #4b5563; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 16px 0; }
+  td, th { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background: #f5f5f5; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<nav><a href="index.html">Home</a><a href="adaptation-budget.html">Adaptation Budget</a><a href="adaptation-feedback.html">Adaptation Feedback</a><a href="agent-runtime-semantics.html">Agent Runtime Semantics</a><a href="command-query.html">Command Query</a><a href="compatibility-matrix.html">Compatibility Matrix</a><a href="conformance.html">Conformance</a><a href="delivery.html">Delivery</a><a href="dimensions.html">Dimensions</a><a href="error-model.html">Error Model</a><a href="event-contract.html">Event Contract</a><a href="event-dimension-classification.html">Event Dimension Classification</a><a href="event-registry-governance.html">Event Registry Governance</a><a href="governance-contract.html">Governance Contract</a><a href="l1-policy-surface.html">L1 Policy Surface</a><a href="profiles.html">Profiles</a><a href="reliability.html">Reliability</a><a href="scenarios.html">Scenarios</a><a href="security.html">Security</a><a href="session.html">Session</a><a href="subscription.html">Subscription</a><a href="task-lifecycle.html">Task Lifecycle</a><a href="transport-grpc.html">Transport Grpc</a><a href="transport-kafka.html">Transport Kafka</a><a href="transport-nats.html">Transport Nats</a><a href="transport-redis-streams.html">Transport Redis Streams</a><a href="transport-sse.html">Transport Sse</a><a href="transport-stdio.html">Transport Stdio</a><a href="transport-websocket.html">Transport Websocket</a><a href="versioning.html">Versioning</a></nav>
+<h1>Adaptation Feedback</h1>
+<h1>Harmovela Adaptation Feedback Specification</h1>
+<p>&gt; Status: draft. Part of the 0.5 Adaptation Preview.</p>
+<h2>Purpose</h2>
+<p>Define the feedback and outcome event family that correlates each completed outcome to its originating task, goal, delegation chain, authority, and declared and consumed cost. These events make the results of coordinated work first-class and observable so the system can reason about its own performance.</p>
+<p>Adaptation feedback builds on the <a href="event-contract.html">event contract</a> and the <a href="profiles.html#coordination-profile-l2-multi-agent-collaboration-and-delegation">coordination profile</a>. It does not duplicate envelope, session, subscription, or task-lifecycle semantics.</p>
+<h2>Ownership</h2>
+<p>Governance owns the adaptation event family (<code>adaptation.*</code>). Feedback and budget events share the same family prefix and are subject to the authorization and audit boundaries defined in the <a href="governance-contract.html">governance contract</a> and the <a href="profiles.html#adaptation-profile-l3-production-autonomy">adaptation profile</a>.</p>
+<h2>Event Types</h2>
+<h3><code>adaptation.outcome.correlated</code></h3>
+<p>Emitted when an outcome (a completed, failed, cancelled, or timed-out task) has been correlated to its upstream context. This event ties the result of work back to the goal, delegation chain, authority, and cost that produced it.</p>
+<pre><code>{
+  "type": "adaptation.outcome.correlated",
+  "id": "evt_adapt_corr_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T10:30:00Z",
+  "payload": {
+    "task_id": "task_01",
+    "task_outcome": "completed",
+    "goal_id": "goal_ping_cycle_01",
+    "goal_description": "Verify service connectivity every 60s",
+    "delegation_chain": [
+      { "agent_id": "agent:supervisor", "role": "delegator" },
+      { "agent_id": "agent:pinger",    "role": "delegate" }
+    ],
+    "authority": {
+      "issuer": "agent:supervisor",
+      "capability": "delegation.own",
+      "granted_at": "2026-07-14T10:00:00Z"
+    },
+    "cost": {
+      "declared": {
+        "max_cost_usd_millicents": 100000,
+        "max_duration_ms": 300000,
+        "max_actions": 50
+      },
+      "consumed": {
+        "cost_usd_millicents": 12500,
+        "duration_ms": 28000,
+        "actions": 3
+      }
+    }
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.task_id</code></td><td>string</td><td>yes</td><td>The correlated task identifier.</td></tr>
+<tr><td><code>payload.task_outcome</code></td><td>string</td><td>yes</td><td>The terminal task state: <code>completed</code>, <code>failed</code>, <code>cancelled</code>, or <code>timed_out</code>.</td></tr>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>no</td><td>The originating goal identifier, if the task was dispatched toward a declared goal.</td></tr>
+<tr><td><code>payload.goal_description</code></td><td>string</td><td>no</td><td>Human-readable summary of the goal.</td></tr>
+<tr><td><code>payload.delegation_chain</code></td><td>array</td><td>no</td><td>Ordered list of <code>{agent_id, role}</code> entries representing the delegation path, with the original delegator first.</td></tr>
+<tr><td><code>payload.authority</code></td><td>object</td><td>no</td><td>The authority under which the task was executed.</td></tr>
+<tr><td><code>payload.authority.issuer</code></td><td>string</td><td>yes if authority present</td><td>The agent that granted the authority.</td></tr>
+<tr><td><code>payload.authority.capability</code></td><td>string</td><td>yes if authority present</td><td>The capability granted (e.g., <code>delegation.own</code>).</td></tr>
+<tr><td><code>payload.authority.granted_at</code></td><td>string</td><td>yes if authority present</td><td>ISO 8601 timestamp of the grant.</td></tr>
+<tr><td><code>payload.cost.declared</code></td><td>object</td><td>no</td><td>The budget limits declared for the task. Mirrors the <code>capabilities.budget</code> fields.</td></tr>
+<tr><td><code>payload.cost.consumed</code></td><td>object</td><td>no</td><td>The actual resources consumed.</td></tr>
+<tr><td><code>payload.cost.consumed.cost_usd_millicents</code></td><td>number</td><td>no</td><td>Actual cost in thousandths of a cent.</td></tr>
+<tr><td><code>payload.cost.consumed.duration_ms</code></td><td>number</td><td>no</td><td>Actual wall-clock time spent.</td></tr>
+<tr><td><code>payload.cost.consumed.actions</code></td><td>number</td><td>no</td><td>Actual discrete actions performed.</td></tr>
+</tbody>
+</table>
+<h3><code>adaptation.goal.achieved</code></h3>
+<p>Emitted when a goal is evaluated and found to be achieved. A goal is achieved when all tasks dispatched toward it have reached a satisfactory terminal state.</p>
+<pre><code>{
+  "type": "adaptation.goal.achieved",
+  "id": "evt_goal_ach_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T14:00:00Z",
+  "correlation_id": "goal_ping_cycle_01",
+  "payload": {
+    "goal_id": "goal_ping_cycle_01",
+    "goal_description": "Verify service connectivity every 60s",
+    "achievement_criteria": "all_tasks_completed",
+    "completed_task_count": 5,
+    "failed_task_count": 0,
+    "task_ids": ["task_01", "task_02", "task_03", "task_04", "task_05"],
+    "evaluated_at": "2026-07-14T14:00:00Z",
+    "evaluator": "agent:supervisor"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>yes</td><td>The achieved goal identifier.</td></tr>
+<tr><td><code>payload.goal_description</code></td><td>string</td><td>no</td><td>Human-readable summary of the goal.</td></tr>
+<tr><td><code>payload.achievement_criteria</code></td><td>string</td><td>yes</td><td>How achievement was determined: <code>all_tasks_completed</code>, <code>threshold_met</code>, or a custom criterion key.</td></tr>
+<tr><td><code>payload.completed_task_count</code></td><td>number</td><td>yes</td><td>Number of tasks that reached a successful terminal state.</td></tr>
+<tr><td><code>payload.failed_task_count</code></td><td>number</td><td>yes</td><td>Number of tasks that reached a failure terminal state.</td></tr>
+<tr><td><code>payload.task_ids</code></td><td>string[]</td><td>yes</td><td>Identifiers of all tasks dispatched toward this goal.</td></tr>
+<tr><td><code>payload.evaluated_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp of the evaluation.</td></tr>
+<tr><td><code>payload.evaluator</code></td><td>string</td><td>yes</td><td>Identity of the evaluating agent.</td></tr>
+</tbody>
+</table>
+<h3><code>adaptation.goal.blocked</code></h3>
+<p>Emitted when a goal cannot progress because a required precondition is not met, a dependency is unavailable, or a budget/authorization constraint prevents further work.</p>
+<pre><code>{
+  "type": "adaptation.goal.blocked",
+  "id": "evt_goal_blk_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T11:00:00Z",
+  "correlation_id": "goal_backup_cycle_01",
+  "payload": {
+    "goal_id": "goal_backup_cycle_01",
+    "goal_description": "Perform nightly backup to remote storage",
+    "block_reason": "dependency_unavailable",
+    "block_detail": "Remote storage endpoint unreachable after 3 retries",
+    "blocked_task_ids": ["task_backup_01"],
+    "resolution_hint": "retry_after",
+    "retry_after_ms": 3600000,
+    "blocked_at": "2026-07-14T11:00:00Z"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>yes</td><td>The blocked goal identifier.</td></tr>
+<tr><td><code>payload.goal_description</code></td><td>string</td><td>no</td><td>Human-readable summary of the goal.</td></tr>
+<tr><td><code>payload.block_reason</code></td><td>string</td><td>yes</td><td>Reason for blocking: <code>dependency_unavailable</code>, <code>budget_exhausted</code>, <code>authorization_denied</code>, <code>precondition_unmet</code>, or a custom reason key.</td></tr>
+<tr><td><code>payload.block_detail</code></td><td>string</td><td>no</td><td>Human-readable description of the block.</td></tr>
+<tr><td><code>payload.blocked_task_ids</code></td><td>string[]</td><td>no</td><td>Identifiers of tasks that cannot proceed.</td></tr>
+<tr><td><code>payload.resolution_hint</code></td><td>string</td><td>no</td><td>Suggested resolution: <code>retry_after</code>, <code>escalate</code>, <code>reauthorize</code>, <code>increase_budget</code>.</td></tr>
+<tr><td><code>payload.retry_after_ms</code></td><td>number</td><td>no</td><td>Suggested wait time before retry, in milliseconds.</td></tr>
+<tr><td><code>payload.blocked_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp when the block was detected.</td></tr>
+</tbody>
+</table>
+<h3><code>adaptation.cost.exceeded</code></h3>
+<p>Emitted when the consumed cost for a task or goal exceeds the declared budget. This is the L3 enforced equivalent of the L1 advisory <code>task.failed</code> with <code>budget_exceeded</code>.</p>
+<pre><code>{
+  "type": "adaptation.cost.exceeded",
+  "id": "evt_cost_exc_01",
+  "source": "harness:adaptation",
+  "created_at": "2026-07-14T10:32:00Z",
+  "correlation_id": "task_01",
+  "causation_id": "task_01",
+  "payload": {
+    "task_id": "task_01",
+    "goal_id": "goal_ping_cycle_01",
+    "exceeded_dimension": "max_actions",
+    "declared": 50,
+    "consumed": 54,
+    "enforced": true,
+    "enforcement_action": "task_failed",
+    "exceeded_at": "2026-07-14T10:32:00Z"
+  }
+}
+</code></pre>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>payload.task_id</code></td><td>string</td><td>yes</td><td>The task that exceeded its cost budget.</td></tr>
+<tr><td><code>payload.goal_id</code></td><td>string</td><td>no</td><td>The goal the task belongs to, if any.</td></tr>
+<tr><td><code>payload.exceeded_dimension</code></td><td>string</td><td>yes</td><td>The budget dimension exceeded: <code>max_cost_usd_millicents</code>, <code>max_duration_ms</code>, or <code>max_actions</code>.</td></tr>
+<tr><td><code>payload.declared</code></td><td>number</td><td>yes</td><td>The declared limit.</td></tr>
+<tr><td><code>payload.consumed</code></td><td>number</td><td>yes</td><td>The actual consumption at the point of exceedance.</td></tr>
+<tr><td><code>payload.enforced</code></td><td>boolean</td><td>yes</td><td>Whether the runtime enforced the limit (<code>true</code> at L3).</td></tr>
+<tr><td><code>payload.enforcement_action</code></td><td>string</td><td>yes</td><td>What action the runtime took: <code>task_failed</code>, <code>task_cancelled</code>, <code>task_escalated</code>, <code>session_quarantined</code>.</td></tr>
+<tr><td><code>payload.exceeded_at</code></td><td>string</td><td>yes</td><td>ISO 8601 timestamp of exceedance.</td></tr>
+</tbody>
+</table>
+<h2>Correlation Model</h2>
+<p>All adaptation feedback events carry correlation metadata through the standard envelope:</p>
+<table>
+<thead><tr><th>Envelope field</th><th>Usage</th></tr></thead>
+<tbody>
+<tr><td><code>correlation_id</code></td><td>Links feedback events to the originating goal or batch.</td></tr>
+<tr><td><code>causation_id</code></td><td>Links feedback events to the specific task or budget event that triggered them.</td></tr>
+<tr><td><code>source</code></td><td>Set to <code>harness:adaptation</code> when emitted by the protocol runtime; set to the evaluating agent when emitted by an external evaluator.</td></tr>
+</tbody>
+</table>
+<p>The correlation chain is: <strong>goal → dispatched tasks → outcomes → correlated feedback</strong>. Each <code>adaptation.outcome.correlated</code> event closes the loop by linking the outcome back to the goal. The consumer can then evaluate goal achievement through the <code>adaptation.goal.achieved</code> or <code>adaptation.goal.blocked</code> signals.</p>
+<h2>Authorization and Audit</h2>
+<p>Adaptation feedback events are subject to the <a href="security.html">security profile</a> authorization boundary. Consumers may only receive feedback events for tasks and goals within their authorized scope. Audit linkage for adaptation feedback events follows the same pattern as all other governance-audited events: actor identity, timestamp, affected resource, and granted authority.</p>
+<p>Fee​dback events do not carry application payloads; they carry only the correlation and cost metadata defined above. Payload redaction does not apply.</p>
+<h2>Dependencies</h2>
+<ul>
+<li><a href="event-contract.html">Event contract</a> — envelope validation and routing.</li>
+<li><a href="task-lifecycle.html">Task lifecycle</a> — task terminal states that trigger outcome correlation.</li>
+<li><a href="governance-contract.html">Governance contract</a> — authorization checks for feedback visibility.</li>
+<li><a href="security.html">Security profile</a> — identity, authorization, audit boundaries.</li>
+<li><a href="adaptation-budget.html">Adaptation budget</a> — declared cost limits referenced in <code>adaptation.cost.exceeded</code>.</li>
+</ul>
+</body>
+</html>

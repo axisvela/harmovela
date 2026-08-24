@@ -105,6 +105,6 @@ node tools/conformance-runner.js --profile=coordination
 
 ## Related Documents
 
-- [Conformance Specification](docs/protocol/conformance.md) — conformance levels and fixture expectations
-- [Profiles](docs/protocol/profiles.md) — profile model, dependencies, capability negotiation
-- [Event Registry Governance](docs/protocol/event-registry-governance.md) — standard event type registry
+- [Conformance Specification](design/protocol/conformance.md) — conformance levels and fixture expectations
+- [Profiles](design/protocol/profiles.md) — profile model, dependencies, capability negotiation
+- [Event Registry Governance](design/protocol/event-registry-governance.md) — standard event type registry

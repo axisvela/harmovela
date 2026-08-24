@@ -1,21 +1,21 @@
 #!/usr/bin/env node
-// Generate a static spec site from docs/protocol/*.md and docs/*.md
+// Generate the public spec site from design/protocol/*.md.
 // Usage: node tools/generate-spec-site.js
-// Output: docs/site/
+// Output: docs/ (served by GitHub Pages legacy /docs source)
+//
+// Only protocol specification pages are published. All source documents
+// live under design/ and are intentionally not rendered on the public site.
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { resolve, basename, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
-const specsDir = resolve(root, "docs/protocol");
-const docsDir = resolve(root, "docs");
-const outDir = resolve(root, "docs/site");
+const specsDir = resolve(root, "design/protocol");
+const outDir = resolve(root, "docs");
 
 const specFiles = readdirSync(specsDir).filter((f) => f.endsWith(".md"));
-const docFiles = ["vision.md", "architecture.md", "protocol-design.md", "mcp-relationship.md", "roadmap.md", "differentiation.md"];
-const rootDocFiles = ["CONFORMANCE.md", "GOVERNANCE.md", "RELEASES.md", "SECURITY.md", "TRADEMARKS.md", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "README.md", "README_zh.md"];
 
 mkdirSync(outDir, { recursive: true });
 
@@ -37,10 +37,7 @@ function mdToHtml(md) {
     const trimmed = target.trim();
     const localMarkdown = !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(trimmed) && /^.*\.md(?:#.*)?$/i.test(trimmed);
     const href = localMarkdown
-      ? trimmed.replace(/^(?:.*\/)?([^/]+)\.md(#.*)?$/i, (_m, name, anchor = "") => {
-          const base = rootDocOutput(`${name}.md`);
-          return base + (anchor || "");
-        })
+      ? trimmed.replace(/^(?:.*\/)?([^/]+)\.md(#.*)?$/i, (_m, name, anchor = "") => name + ".html" + (anchor || ""))
       : trimmed;
     const allowed = /^(?:https?:|mailto:|#)/i.test(href) || (!/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith("//"));
     return allowed ? `<a href="${escapeAttribute(href)}">${renderInline(text)}</a>` : renderInline(text);
@@ -167,12 +164,11 @@ ${content}
 </html>`;
 }
 
+const pageName = (f) => f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
 // Generate nav
 const navLinks = '<a href="index.html">Home</a>' +
-  '<a href="roadmap.html">Roadmap</a>' +
-  '<a href="conformance-matrix.html">Conformance Matrix</a>' +
-  '<a href="GOVERNANCE.html">Governance</a>' +
-  specFiles.map((f) => `<a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a>`).join("");
+  specFiles.map((f) => `<a href="${f.replace('.md', '.html')}">${pageName(f)}</a>`).join("");
 
 // Generate spec pages
 for (const file of specFiles) {
@@ -180,62 +176,14 @@ for (const file of specFiles) {
   writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
 }
 
-// Generate design document pages
-for (const file of docFiles.filter((f) => existsSync(resolve(docsDir, f)))) {
-  const { title, html } = readAndConvert(resolve(docsDir, file));
-  writeFileSync(resolve(outDir, file.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
-}
-
-// Generate subdirectory document pages (roadmap layers, release docs, key design records)
-// referenced by top-level docs but not rendered by the loops above.
-const subDocDirs = {
-  "docs/roadmap": resolve(docsDir, "roadmap"),
-  "docs/release": resolve(docsDir, "release"),
-};
-const referencedDesignDocs = ["docs/design/2026-07-12-layered-roadmap-design.md"];
-for (const [label, dirPath] of Object.entries(subDocDirs)) {
-  if (!existsSync(dirPath)) continue;
-  for (const f of readdirSync(dirPath).filter((x) => x.endsWith(".md"))) {
-    const { title, html } = readAndConvert(resolve(dirPath, f));
-    writeFileSync(resolve(outDir, f.replace(".md", ".html")), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
-  }
-}
-for (const rel of referencedDesignDocs) {
-  const full = resolve(root, rel);
-  if (!existsSync(full)) continue;
-  const { title, html } = readAndConvert(full);
-  const outName = rel.split("/").pop().replace(".md", ".html");
-  writeFileSync(resolve(outDir, outName), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
-}
-
-// Generate root doc pages
-function rootDocOutput(file) {
-  const base = file.replace(".md", ".html");
-  // CONFORMANCE.md and SECURITY.md collide case-insensitively with
-  // docs/protocol/conformance.md and docs/protocol/security.md;
-  // publish each under a distinct lowercase name so both survive deployment.
-  if (file === "CONFORMANCE.md") return "conformance-matrix.html";
-  if (file === "SECURITY.md") return "security-response.html";
-  return base;
-}
-for (const file of rootDocFiles.filter((f) => existsSync(resolve(root, f)))) {
-  const { title, html } = readAndConvert(resolve(root, file));
-  writeFileSync(resolve(outDir, rootDocOutput(file)), pageTemplate(title, `<h1>${title}</h1>\n${html}`, navLinks));
-}
-
 // Generate home page
 const homeContent = `<h1>Harmovela Protocol</h1>
 <p>An open coordination protocol for autonomous systems: agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes.</p>
 <h2>Specifications</h2>
-<ul>${specFiles.map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
-<h2>Design Documents</h2>
-<ul>${docFiles.filter((f) => existsSync(resolve(docsDir, f))).map((f) => `<li><a href="${f.replace('.md', '.html')}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}</ul>
-<h2>Project</h2>
-<ul>${rootDocFiles.filter((f) => existsSync(resolve(root, f))).map((f) => `<li><a href="${rootDocOutput(f)}">${f.replace('.md', '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</a></li>`).join("")}
-<li><a href="schemas/harmovela-envelope.schema.json">Envelope Schema</a></li></ul>
-<p>Generated from <code>docs/protocol/</code> and <code>docs/</code>.</p>`;
+<ul>${specFiles.map((f) => `<li><a href="${f.replace('.md', '.html')}">${pageName(f)}</a></li>`).join("")}</ul>
+<p>Generated from <code>design/protocol/</code>.</p>`;
 
 writeFileSync(resolve(outDir, "index.html"), pageTemplate("Home", homeContent, navLinks));
 
 console.log(`Site generated: ${outDir}`);
-console.log(`Open: docs/site/index.html`);
+console.log(`Open: docs/index.html`);

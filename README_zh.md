@@ -75,46 +75,46 @@ Harmovela 应与 MCP 互操作而非分叉。Harmovela 可以承载关于 MCP �
 
 ### 核心文档 (中文)
 
-- `docs/vision.md`：愿景、目标、非目标和原则 ([中文](docs/zh/vision.md))
-- `docs/architecture.md`：系统架构和主要协议层 ([中文](docs/zh/architecture.md))
-- `docs/differentiation.md`：非规范性定位与对比材料 ([中文](docs/zh/differentiation.md))
-- `docs/protocol-design.md`：协议模型、envelope、事件和生命周期 ([中文](docs/zh/protocol-design.md))
-- `docs/mcp-relationship.md`：与 MCP 的详细对比与互操作模型
-- `docs/roadmap.md`：通向可用开放协议的阶段路线 ([中文](docs/zh/roadmap.md))
+- `design/vision.md`：愿景、目标、非目标和原则 ([中文](design/zh/vision.md))
+- `design/architecture.md`：系统架构和主要协议层 ([中文](design/zh/architecture.md))
+- `design/differentiation.md`：非规范性定位与对比材料 ([中文](design/zh/differentiation.md))
+- `design/protocol-design.md`：协议模型、envelope、事件和生命周期 ([中文](design/zh/protocol-design.md))
+- `design/mcp-relationship.md`：与 MCP 的详细对比与互操作模型
+- `design/roadmap.md`：通向可用开放协议的阶段路线 ([中文](design/zh/roadmap.md))
 
-### 协议规范 (`docs/protocol/`)
+### 协议规范 (`design/protocol/`)
 
-- `docs/protocol/session.md`：会话生命周期规范
-- `docs/protocol/subscription.md`：订阅模型规范
-- `docs/protocol/task-lifecycle.md`：任务生命周期规范
-- `docs/protocol/error-model.md`：错误模型规范
-- `docs/protocol/versioning.md`：版本管理规范
-- `docs/protocol/transport-stdio.md`：stdio 传输规范
-- `docs/protocol/transport-websocket.md`：WebSocket 传输规范
-- `docs/protocol/transport-sse.md`：HTTP SSE 传输规范
-- `docs/protocol/transport-grpc.md`：gRPC 流式传输规范
-- `docs/protocol/transport-kafka.md`：Kafka 传输规范
-- `docs/protocol/transport-nats.md`：NATS 传输规范
-- `docs/protocol/transport-redis-streams.md`：Redis Streams 传输规范
-- `docs/protocol/delivery.md`：交付语义、确认和重放规范
-- `docs/protocol/reliability.md`：重试、持久化和死信处理规范
-- `docs/protocol/security.md`：身份、授权、审计和租户隔离规范
-- `docs/protocol/conformance.md`：一致性级别和共享fixture清单规范
-- `docs/protocol/event-registry-governance.md`：事件类型注册治理和版本管理
-- `docs/protocol/agent-runtime-semantics.md`：信念、新鲜度、委派、中断和溯源元数据
-- `docs/protocol/adaptation-budget.md`：适配预算规范
-- `docs/protocol/adaptation-feedback.md`：适配反馈规范
-- `docs/protocol/compatibility-matrix.md`：迁移兼容性矩阵
-- `docs/protocol/event-contract.md`：事件契约边界
-- `docs/protocol/event-dimension-classification.md`：事件类型维度分类
-- `docs/protocol/governance-contract.md`：治理契约边界
-- `docs/protocol/l1-policy-surface.md`：L1 咨询策略表面
-- `docs/protocol/profiles.md`：协议配置文件
-- `docs/protocol/scenarios.md`：集成场景
+- `design/protocol/session.md`：会话生命周期规范
+- `design/protocol/subscription.md`：订阅模型规范
+- `design/protocol/task-lifecycle.md`：任务生命周期规范
+- `design/protocol/error-model.md`：错误模型规范
+- `design/protocol/versioning.md`：版本管理规范
+- `design/protocol/transport-stdio.md`：stdio 传输规范
+- `design/protocol/transport-websocket.md`：WebSocket 传输规范
+- `design/protocol/transport-sse.md`：HTTP SSE 传输规范
+- `design/protocol/transport-grpc.md`：gRPC 流式传输规范
+- `design/protocol/transport-kafka.md`：Kafka 传输规范
+- `design/protocol/transport-nats.md`：NATS 传输规范
+- `design/protocol/transport-redis-streams.md`：Redis Streams 传输规范
+- `design/protocol/delivery.md`：交付语义、确认和重放规范
+- `design/protocol/reliability.md`：重试、持久化和死信处理规范
+- `design/protocol/security.md`：身份、授权、审计和租户隔离规范
+- `design/protocol/conformance.md`：一致性级别和共享fixture清单规范
+- `design/protocol/event-registry-governance.md`：事件类型注册治理和版本管理
+- `design/protocol/agent-runtime-semantics.md`：信念、新鲜度、委派、中断和溯源元数据
+- `design/protocol/adaptation-budget.md`：适配预算规范
+- `design/protocol/adaptation-feedback.md`：适配反馈规范
+- `design/protocol/compatibility-matrix.md`：迁移兼容性矩阵
+- `design/protocol/event-contract.md`：事件契约边界
+- `design/protocol/event-dimension-classification.md`：事件类型维度分类
+- `design/protocol/governance-contract.md`：治理契约边界
+- `design/protocol/l1-policy-surface.md`：L1 咨询策略表面
+- `design/protocol/profiles.md`：协议配置文件
+- `design/protocol/scenarios.md`：集成场景
 
-### 设计文档 (`docs/design/`)
+### 设计文档 (`design/design/`)
 
-- `docs/design/`：Superpowers 支持的设计规格与实施计划
+- `design/design/`：Superpowers 支持的设计规格与实施计划
 
 ### 一致性验证
 
@@ -134,11 +134,11 @@ Harmovela 应与 MCP 互操作而非分叉。Harmovela 可以承载关于 MCP �
 
 ## 仓库结构
 
-- `docs/`：协议愿景、架构、设计草案、规范、路线图
-- `docs/protocol/`：分层协议规范（会话、订阅、任务生命周期、错误模型、版本管理、传输层）
-- `docs/design/`：Superpowers 支持的设计规格与实施计划
-- `docs/zh/`：核心文档的中文翻译
-- `docs/site/`：生成的规范站点（HTML）
+- `design/`：协议源文档（愿景、架构、设计草案、规范、路线图、翻译）
+- `design/protocol/`：分层协议规范（会话、订阅、任务生命周期、错误模型、版本管理、传输层）
+- `design/design/`：Superpowers 支持的设计规格与实施计划
+- `design/zh/`：核心文档的中文翻译
+- `docs/`：生成的规范站点（HTML），由 GitHub Pages 提供
 - `schemas/`：共享 JSON Schema 草案资产
 - `conformance/`：跨语言一致性的共享 fixtures
 - `examples/`：基于场景的示例：quickstart、service-client、mcp-bridge、scenarios
