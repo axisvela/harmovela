@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisvela/harmovela/event"
-	"github.com/axisvela/harmovela/harness"
-	"github.com/axisvela/harmovela/task"
+	"github.com/axisvela/harmovela/v3/event"
+	"github.com/axisvela/harmovela/v3/harness"
+	"github.com/axisvela/harmovela/v3/task"
 )
 
 type Sender interface {

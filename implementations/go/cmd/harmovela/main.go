@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	eventcore "github.com/axisvela/harmovela/event"
-	"github.com/axisvela/harmovela/runtime"
+	eventcore "github.com/axisvela/harmovela/v3/event"
+	"github.com/axisvela/harmovela/v3/runtime"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
 )

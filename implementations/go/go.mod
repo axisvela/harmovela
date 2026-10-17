@@ -1,4 +1,4 @@
-module github.com/axisvela/harmovela
+module github.com/axisvela/harmovela/v3
 
 go 1.25.0
 

@@ -7,7 +7,7 @@ import (
 	"net"
 	"sync"
 
-	"github.com/axisvela/harmovela/event"
+	"github.com/axisvela/harmovela/v3/event"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
