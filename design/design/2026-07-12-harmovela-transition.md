@@ -56,7 +56,7 @@ git commit -m "docs: establish Harmovela protocol identity"
 
 - [ ] **Step 1: Inventory every wire and schema identifier containing the legacy name**
 
-Run: `rg -n "aep_version|AEP-C[0-9]|@axisrobo/aep|github.com/axisrobo/aep|aep-" schemas conformance implementations design/protocol`
+Run: `rg -n "aep_version|AEP-C[0-9]|@axisvela/aep|github.com/axisvela/aep|aep-" schemas conformance implementations design/protocol`
 
 Expected: A reviewed inventory separating externally serialized fields, package artifact names, schema URIs, conformance levels, transport defaults, and internal symbols.
 

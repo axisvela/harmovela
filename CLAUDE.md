@@ -26,7 +26,7 @@ Harmovela complements MCP. MCP is the synchronous capability invocation layer; H
 
 Harmovela is a coordination protocol, not a platform. It defines the semantics for events, tasks, state, delegation, recovery, and governance. Capability registries, planning engines, agent runtimes, workflow engines, and governance dashboards are platform concerns that consume the protocol — they are not protocol features. See `design/vision.md` for the full non-goals list.
 
-The canonical repository location is `https://github.com/axisrobo/harmovela`.
+The canonical repository location is `https://github.com/axisvela/harmovela`.
 
 ## Naming And Namespace Rules
 

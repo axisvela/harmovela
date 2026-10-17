@@ -8,9 +8,9 @@ Move new Governance policy code out of legacy `aep` namespaces into independent 
 
 | Language | Governance module | Legacy adapter boundary |
 | --- | --- | --- |
-| TypeScript | `implementations/typescript/packages/governance/` (`@axisrobo/harmovela-governance`) | Existing runtime/harness imports public exports only |
+| TypeScript | `implementations/typescript/packages/governance/` (`@axisvela/harmovela-governance`) | Existing runtime/harness imports public exports only |
 | Python | `implementations/python/src/axisrobo_harmovela_governance/` | `aep` imports package API only |
-| Go | `implementations/go/governance/` | `aep` imports `github.com/axisrobo/harmovela/governance` |
+| Go | `implementations/go/governance/` | `aep` imports `github.com/axisvela/harmovela/governance` |
 | Java | `com.axisrobo.harmovela.governance` | `com.axisrobo.aep` imports public classes only |
 
 ## Rule

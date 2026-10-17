@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { NatsTransport } from "@axisrobo/harmovela-event";
+import { NatsTransport } from "@axisvela/harmovela-event";
 
 test("NatsTransport _eventSubject routes by topic first", () => {
   const t = new NatsTransport({ prefix: "aep" });

@@ -236,7 +236,7 @@ git commit -m "feat: add Python adaptation dimension module with 10 event types"
 
 ```json
 {
-  "name": "@axisrobo/harmovela-adaptation",
+  "name": "@axisvela/harmovela-adaptation",
   "version": "0.1.0-draft",
   "private": true,
   "type": "module",
@@ -324,7 +324,7 @@ describe("Adaptation event type registry", () => {
 
 Add to `implementations/typescript/package.json`:
 - In `workspaces` array: add `"packages/adaptation"`
-- In `dependencies` object: add `"@axisrobo/harmovela-adaptation": "file:packages/adaptation"`
+- In `dependencies` object: add `"@axisvela/harmovela-adaptation": "file:packages/adaptation"`
 
 - [ ] **Step 5: Run TypeScript adaptation tests**
 
@@ -498,7 +498,7 @@ git commit -m "feat: add budget_exceeded error code across all implementations"
 
 - [ ] **Step 1: Add Adaptation import and budget state to Harness struct**
 
-In harness.go, add import for `"github.com/axisrobo/harmovela/adaptation"`.
+In harness.go, add import for `"github.com/axisvela/harmovela/adaptation"`.
 
 Add `AdaptationEvents` to the legacy event types in util.go by merging adaptation types.
 
@@ -917,7 +917,7 @@ git commit -m "feat: add budget enforcement to Python harness"
 
 Add import:
 ```js
-import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
+import { ADAPTATION_EVENT_TYPES } from "@axisvela/harmovela-adaptation";
 ```
 
 Add adaptation types to `LEGACY_DIMENSION_EVENT_TYPES`:
@@ -1023,7 +1023,7 @@ Create `implementations/typescript/packages/harness/test/budget.test.js`:
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { HarmovelaHarness } from "../src/harness.js";
-import { ErrorCode } from "@axisrobo/harmovela-event";
+import { ErrorCode } from "@axisvela/harmovela-event";
 
 describe("Harness budget enforcement", () => {
   it("establishes budget, allows within-budget, rejects exceeding", () => {

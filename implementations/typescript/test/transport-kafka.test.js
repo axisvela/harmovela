@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { KafkaTransport } from "@axisrobo/harmovela-event";
+import { KafkaTransport } from "@axisvela/harmovela-event";
 
 test("KafkaTransport messageKey priority", () => {
   const t = new KafkaTransport();

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { GrpcServerTransport, GrpcClientTransport } from "@axisrobo/harmovela-event";
+import { GrpcServerTransport, GrpcClientTransport } from "@axisvela/harmovela-event";
 
 test("gRPC server starts and accepts connections", async () => {
   const server = new GrpcServerTransport({ host: "127.0.0.1", port: 0 });

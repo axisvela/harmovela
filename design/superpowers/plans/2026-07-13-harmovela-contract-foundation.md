@@ -22,7 +22,7 @@
 Run:
 
 ```powershell
-rg -n "\baep\b|AEPD_|AEP_|aep_version|/aep|aep-0\.|@axisrobo/aep|com\.axisrobo\.aep" schemas conformance implementations design/protocol README.md README_zh.md
+rg -n "\baep\b|AEPD_|AEP_|aep_version|/aep|aep-0\.|@axisvela/aep|com\.axisrobo\.aep" schemas conformance implementations design/protocol README.md README_zh.md
 ```
 
 Record each result in `design/protocol/compatibility-matrix.md` with these columns:

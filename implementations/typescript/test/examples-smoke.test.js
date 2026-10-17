@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { defaultConfig } from "@axisrobo/harmovela-runtime";
+import { defaultConfig } from "@axisvela/harmovela-runtime";
 
 const repoRoot = path.resolve("..", "..");
 

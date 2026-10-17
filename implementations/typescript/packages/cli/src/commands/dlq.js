@@ -1,4 +1,4 @@
-import { loadConfig, createDeliveryStore } from "@axisrobo/harmovela-runtime";
+import { loadConfig, createDeliveryStore } from "@axisvela/harmovela-runtime";
 
 export async function dlqCommand(subcommand = "list", options = {}) {
   if (subcommand !== "list") throw new Error(`unsupported dlq command: ${subcommand}`);

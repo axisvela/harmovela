@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { HarmovelaHarness, MockStdioTransport, HarmovelaSession, subscriptionMatches } from "@axisrobo/aep";
+import { HarmovelaHarness, MockStdioTransport, HarmovelaSession, subscriptionMatches } from "@axisvela/aep";
 
 console.log("=== Memory Event Producer Demo ===\n");
 

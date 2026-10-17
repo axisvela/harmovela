@@ -1,18 +1,18 @@
-import { isStandardEventType, validateEnvelope, isValidBySchema, ErrorCode, errorPayload } from "@axisrobo/harmovela-event";
-import { EventRouter, HarmovelaSession } from "@axisrobo/harmovela-event";
-import { TaskTracker } from "@axisrobo/harmovela-task";
-import { DeliveryTracker } from "@axisrobo/harmovela-recovery";
-import { authorize } from "@axisrobo/harmovela-governance";
-import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisrobo/harmovela-context";
-import { DELEGATION_EVENT_TYPES } from "@axisrobo/harmovela-delegation";
-import { RECOVERY_EVENT_TYPES } from "@axisrobo/harmovela-recovery";
-import { STATE_EVENT_TYPES } from "@axisrobo/harmovela-state";
-import { TOOL_EVENT_TYPES } from "@axisrobo/harmovela-tool";
-import { AGENT_EVENT_TYPES } from "@axisrobo/harmovela-agent";
-import { ENVIRONMENT_EVENT_TYPES } from "@axisrobo/harmovela-environment";
-import { ADAPTATION_EVENT_TYPES } from "@axisrobo/harmovela-adaptation";
-import { COMMAND_EVENT_TYPES } from "@axisrobo/harmovela-command";
-import { QUERY_EVENT_TYPES } from "@axisrobo/harmovela-query";
+import { isStandardEventType, validateEnvelope, isValidBySchema, ErrorCode, errorPayload } from "@axisvela/harmovela-event";
+import { EventRouter, HarmovelaSession } from "@axisvela/harmovela-event";
+import { TaskTracker } from "@axisvela/harmovela-task";
+import { DeliveryTracker } from "@axisvela/harmovela-recovery";
+import { authorize } from "@axisvela/harmovela-governance";
+import { CONTEXT_MEMORY_EVENT_TYPES } from "@axisvela/harmovela-context";
+import { DELEGATION_EVENT_TYPES } from "@axisvela/harmovela-delegation";
+import { RECOVERY_EVENT_TYPES } from "@axisvela/harmovela-recovery";
+import { STATE_EVENT_TYPES } from "@axisvela/harmovela-state";
+import { TOOL_EVENT_TYPES } from "@axisvela/harmovela-tool";
+import { AGENT_EVENT_TYPES } from "@axisvela/harmovela-agent";
+import { ENVIRONMENT_EVENT_TYPES } from "@axisvela/harmovela-environment";
+import { ADAPTATION_EVENT_TYPES } from "@axisvela/harmovela-adaptation";
+import { COMMAND_EVENT_TYPES } from "@axisvela/harmovela-command";
+import { QUERY_EVENT_TYPES } from "@axisvela/harmovela-query";
 
 const TERMINAL_TASK_EVENT_TYPES = new Set([
   "task.completed",

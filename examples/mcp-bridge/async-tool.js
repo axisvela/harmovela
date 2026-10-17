@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { McpBridge, asyncToolHandler } from "@axisrobo/aep";
+import { McpBridge, asyncToolHandler } from "@axisvela/aep";
 
 const events = [];
 const bridge = new McpBridge({ transport: { send: (event) => events.push(event) } });

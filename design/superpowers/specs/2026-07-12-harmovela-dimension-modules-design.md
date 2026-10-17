@@ -33,16 +33,16 @@ Modules communicate through public contracts and Harmovela event envelopes. No m
 
 | Dimension | TypeScript | Python | Go | Java |
 | --- | --- | --- | --- | --- |
-| Event | `@axisrobo/harmovela-event` | `axisrobo_harmovela_event` | `event` | `com.axisrobo.harmovela.event` |
-| Task | `@axisrobo/harmovela-task` | `axisrobo_harmovela_task` | `task` | `com.axisrobo.harmovela.task` |
-| State | `@axisrobo/harmovela-state` | `axisrobo_harmovela_state` | `state` | `com.axisrobo.harmovela.state` |
-| Context / Memory | `@axisrobo/harmovela-context` | `axisrobo_harmovela_context` | `context` | `com.axisrobo.harmovela.context` |
-| Delegation | `@axisrobo/harmovela-delegation` | `axisrobo_harmovela_delegation` | `delegation` | `com.axisrobo.harmovela.delegation` |
-| Recovery | `@axisrobo/harmovela-recovery` | `axisrobo_harmovela_recovery` | `recovery` | `com.axisrobo.harmovela.recovery` |
-| Governance | `@axisrobo/harmovela-governance` | `axisrobo_harmovela_governance` | `governance` | `com.axisrobo.harmovela.governance` |
-| Adaptation (future) | `@axisrobo/harmovela-adaptation` | `axisrobo_harmovela_adaptation` | `adaptation` | `com.axisrobo.harmovela.adaptation` |
+| Event | `@axisvela/harmovela-event` | `axisrobo_harmovela_event` | `event` | `com.axisrobo.harmovela.event` |
+| Task | `@axisvela/harmovela-task` | `axisrobo_harmovela_task` | `task` | `com.axisrobo.harmovela.task` |
+| State | `@axisvela/harmovela-state` | `axisrobo_harmovela_state` | `state` | `com.axisrobo.harmovela.state` |
+| Context / Memory | `@axisvela/harmovela-context` | `axisrobo_harmovela_context` | `context` | `com.axisrobo.harmovela.context` |
+| Delegation | `@axisvela/harmovela-delegation` | `axisrobo_harmovela_delegation` | `delegation` | `com.axisrobo.harmovela.delegation` |
+| Recovery | `@axisvela/harmovela-recovery` | `axisrobo_harmovela_recovery` | `recovery` | `com.axisrobo.harmovela.recovery` |
+| Governance | `@axisvela/harmovela-governance` | `axisrobo_harmovela_governance` | `governance` | `com.axisrobo.harmovela.governance` |
+| Adaptation (future) | `@axisvela/harmovela-adaptation` | `axisrobo_harmovela_adaptation` | `adaptation` | `com.axisrobo.harmovela.adaptation` |
 
-The Go module remains `github.com/axisrobo/harmovela`; dimensions are Go subpackages. Each other language publishes a package/artifact per dimension. A language may initially ship a dimension package as a thin public module over a shared internal implementation, but its public dependency graph must already match this specification.
+The Go module remains `github.com/axisvela/harmovela`; dimensions are Go subpackages. Each other language publishes a package/artifact per dimension. A language may initially ship a dimension package as a thin public module over a shared internal implementation, but its public dependency graph must already match this specification.
 
 ## Breaking Release Compatibility Policy
 

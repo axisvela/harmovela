@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { HarmovelaHarness } from "../src/harness.js";
-import { ErrorCode } from "@axisrobo/harmovela-event";
+import { ErrorCode } from "@axisvela/harmovela-event";
 
 test("budget established, within-budget ack, exceeding emits limit_exceeded", () => {
   const h = new HarmovelaHarness();

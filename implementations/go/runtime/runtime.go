@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/axisrobo/harmovela/event"
-	eventtransport "github.com/axisrobo/harmovela/event/transport"
-	"github.com/axisrobo/harmovela/harness"
-	"github.com/axisrobo/harmovela/recovery"
+	"github.com/axisvela/harmovela/event"
+	eventtransport "github.com/axisvela/harmovela/event/transport"
+	"github.com/axisvela/harmovela/harness"
+	"github.com/axisvela/harmovela/recovery"
 	"github.com/google/uuid"
 )
 

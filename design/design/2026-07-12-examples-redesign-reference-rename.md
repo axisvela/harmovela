@@ -26,8 +26,8 @@ Each language under `implementations/` is now a fully productized implementation
 
 ### Not Changed
 
-- Go module path (`github.com/axisrobo/aep`) stays â€?it's independent of the directory name.
-- TypeScript package name (`@axisrobo/aep`) stays.
+- Go module path (`github.com/axisvela/aep`) stays â€?it's independent of the directory name.
+- TypeScript package name (`@axisvela/aep`) stays.
 - Python package name (`aep-reference-python` in pyproject.toml) stays â€?internal package name unchanged.
 - Java Maven artifact name stays.
 - Internal source code does not reference `implementations/` â€?only docs and config files reference it.

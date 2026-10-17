@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { HarmovelaHarness, MockStdioTransport, HarmovelaSession } from "@axisrobo/aep";
+import { HarmovelaHarness, MockStdioTransport, HarmovelaSession } from "@axisvela/aep";
 
 console.log("=== Agent Subscriber Demo ===\n");
 

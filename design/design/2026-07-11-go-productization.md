@@ -1057,7 +1057,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisvela/aep/aep"
 )
 
 func main() {
@@ -1096,7 +1096,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axisrobo/aep/aep"
+	"github.com/axisvela/aep/aep"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/cobra"
 )

@@ -16,7 +16,7 @@ The designated release maintainer for `v0.9.0-rc.1` is the **Axisrobo team**, ac
 
 ## Public Tracker
 
-The public tracker for release-blocker tagging is the GitHub issue tracker of the canonical repository `https://github.com/axisrobo/harmovela`. A `release-blocker` is an open issue tagged `release-blocker` by the designated release maintainer.
+The public tracker for release-blocker tagging is the GitHub issue tracker of the canonical repository `https://github.com/axisvela/harmovela`. A `release-blocker` is an open issue tagged `release-blocker` by the designated release maintainer.
 
 ## Required Test Commands
 

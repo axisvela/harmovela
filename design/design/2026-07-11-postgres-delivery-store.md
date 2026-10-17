@@ -458,7 +458,7 @@ Expected: all `TestPostgres*` PASS.
 - [ ] **Step 6: Run the full Go suite**
 
 Run: `cd implementations/go && go test ./...`
-Expected: `ok  github.com/axisrobo/aep/aep`.
+Expected: `ok  github.com/axisvela/aep/aep`.
 
 - [ ] **Step 7: Commit**
 

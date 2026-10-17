@@ -9,7 +9,7 @@ Status: approved
 
 Harmovela is an open coordination protocol for autonomous systems. It defines interoperable asynchronous coordination across tasks, events, state, context, memory, delegation, recovery, and governance.
 
-Axisrobo is the founding implementation organization. The Harmovela protocol is designed for multi-party adoption and open governance. Its canonical repository location is `https://github.com/axisrobo/harmovela`.
+Axisrobo is the founding implementation organization. The Harmovela protocol is designed for multi-party adoption and open governance. Its canonical repository location is `https://github.com/axisvela/harmovela`.
 
 ## Scope
 

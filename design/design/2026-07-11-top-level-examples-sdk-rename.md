@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Rename the TypeScript reference package to `@axisrobo/aep`, add a top-level npm workspace, and create a top-level `examples/` directory with SDK-embed and service-client examples.
+**Goal:** Rename the TypeScript reference package to `@axisvela/aep`, add a top-level npm workspace, and create a top-level `examples/` directory with SDK-embed and service-client examples.
 
-**Architecture:** A root `package.json` declares a workspace over `implementations/typescript`, so `@axisrobo/aep` resolves locally without publishing. Top-level `examples/sdk/` imports the package by name; `examples/service/` connects to a running `aepd` over WebSocket and HTTP API. A smoke test spawns one example of each kind.
+**Architecture:** A root `package.json` declares a workspace over `implementations/typescript`, so `@axisvela/aep` resolves locally without publishing. Top-level `examples/sdk/` imports the package by name; `examples/service/` connects to a running `aepd` over WebSocket and HTTP API. A smoke test spawns one example of each kind.
 
 **Tech Stack:** Node.js >=20 ESM, npm workspaces, `node:test`, `ws`, `fetch`, existing runtime modules.
 
@@ -14,7 +14,7 @@
 
 ## File Structure
 
-- Modify `implementations/typescript/package.json`: rename to `@axisrobo/aep`, drop moved demo scripts.
+- Modify `implementations/typescript/package.json`: rename to `@axisvela/aep`, drop moved demo scripts.
 - Modify `implementations/typescript/package-lock.json`: update name fields.
 - Create `package.json` (root): workspace config.
 - Modify `.gitignore`: ignore root `node_modules`.
@@ -42,12 +42,12 @@
 In `implementations/typescript/package.json`, change line 2:
 
 ```json
-  "name": "@axisrobo/aep",
+  "name": "@axisvela/aep",
 ```
 
 - [ ] **Step 2: Update lockfile name fields**
 
-In `implementations/typescript/package-lock.json`, change the top-level `"name"` (line 2) and the root package `"name"` (line 8) from `@axisrobo/aep-reference-typescript` to `@axisrobo/aep`.
+In `implementations/typescript/package-lock.json`, change the top-level `"name"` (line 2) and the root package `"name"` (line 8) from `@axisvela/aep-reference-typescript` to `@axisvela/aep`.
 
 - [ ] **Step 3: Create root workspace package.json**
 
@@ -59,7 +59,7 @@ Create `package.json` at repo root:
   "private": true,
   "workspaces": ["implementations/typescript"],
   "scripts": {
-    "test": "npm test --workspace @axisrobo/aep",
+    "test": "npm test --workspace @axisvela/aep",
     "example:sdk": "node examples/sdk/runtime-embed.js"
   }
 }
@@ -76,21 +76,21 @@ Check `.gitignore` includes `node_modules`. If it does not include a root-level 
 - [ ] **Step 5: Install workspace links**
 
 Run: `npm install`
-Expected: creates root `node_modules` with `@axisrobo/aep` linked to `implementations/typescript`.
+Expected: creates root `node_modules` with `@axisvela/aep` linked to `implementations/typescript`.
 
 - [ ] **Step 6: Verify package resolves and tests pass**
 
-Run: `node -e "import('@axisrobo/aep').then(m => console.log(typeof m.AepRuntimeService))"`
+Run: `node -e "import('@axisvela/aep').then(m => console.log(typeof m.AepRuntimeService))"`
 Expected: prints `function`.
 
-Run: `npm test --workspace @axisrobo/aep`
+Run: `npm test --workspace @axisvela/aep`
 Expected: full TypeScript suite passes.
 
 - [ ] **Step 7: Commit and push**
 
 ```bash
 git add package.json package-lock.json implementations/typescript/package.json implementations/typescript/package-lock.json .gitignore
-git commit -m "feat: rename reference package to @axisrobo/aep and add npm workspace"
+git commit -m "feat: rename reference package to @axisvela/aep and add npm workspace"
 git push origin master
 ```
 
@@ -144,7 +144,7 @@ Create `examples/sdk/runtime-embed.js`:
 
 ```javascript
 #!/usr/bin/env node
-import { AepRuntimeService, defaultConfig } from "@axisrobo/aep";
+import { AepRuntimeService, defaultConfig } from "@axisvela/aep";
 
 const config = defaultConfig();
 config.delivery.store = "memory";
@@ -180,7 +180,7 @@ Two categories of examples.
 
 ## SDK examples (`examples/sdk/`)
 
-Embed AEP in-process by importing `@axisrobo/aep`. Run from the repo root after `npm install`:
+Embed AEP in-process by importing `@axisvela/aep`. Run from the repo root after `npm install`:
 
 ```bash
 node examples/sdk/runtime-embed.js
@@ -193,8 +193,8 @@ node examples/sdk/memory-event-producer.js
 Connect to a running `aepd` daemon. Start it first:
 
 ```bash
-npm run aep --workspace @axisrobo/aep -- init --config aep.config.json
-npm run aepd --workspace @axisrobo/aep
+npm run aep --workspace @axisvela/aep -- init --config aep.config.json
+npm run aepd --workspace @axisvela/aep
 ```
 
 Then run a client:
@@ -204,7 +204,7 @@ node examples/service/emit-and-subscribe.js
 node examples/service/http-api-client.js
 ```
 
-Requires `npm install` at the repo root so the `@axisrobo/aep` workspace link exists.
+Requires `npm install` at the repo root so the `@axisvela/aep` workspace link exists.
 ```
 
 - [ ] **Step 5: Run smoke test**
@@ -242,7 +242,7 @@ import { AepHarness, MockStdioTransport, AepSession } from "../src/index.js";
 to:
 
 ```javascript
-import { AepHarness, MockStdioTransport, AepSession } from "@axisrobo/aep";
+import { AepHarness, MockStdioTransport, AepSession } from "@axisvela/aep";
 ```
 
 Keep the rest of the file identical.
@@ -258,7 +258,7 @@ import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from 
 to:
 
 ```javascript
-import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "@axisrobo/aep";
+import { AepHarness, MockStdioTransport, AepSession, subscriptionMatches } from "@axisvela/aep";
 ```
 
 Keep the rest of the file identical.
@@ -286,7 +286,7 @@ Expected: exits 0 and prints the memory event demo output.
 
 - [ ] **Step 6: Run full workspace test suite**
 
-Run: `npm test --workspace @axisrobo/aep`
+Run: `npm test --workspace @axisvela/aep`
 Expected: all tests pass.
 
 - [ ] **Step 7: Commit and push**
@@ -462,7 +462,7 @@ git push origin master
 
 - [ ] **Step 1: Run full workspace test suite**
 
-Run: `npm test --workspace @axisrobo/aep`
+Run: `npm test --workspace @axisvela/aep`
 Expected: all tests pass.
 
 - [ ] **Step 2: Verify git sync**

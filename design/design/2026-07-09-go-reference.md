@@ -4,7 +4,7 @@
 
 **Goal:** Add a minimal Go reference implementation under `implementations/go/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
-**Architecture:** One Go module (`github.com/axisrobo/aep`) with zero external dependencies. Six source files mirror the TypeScript reference structure: event types, errors, envelope validation, router, session, harness, and fixtures. Table-driven `go test` runs the shared conformance manifest.
+**Architecture:** One Go module (`github.com/axisvela/aep`) with zero external dependencies. Six source files mirror the TypeScript reference structure: event types, errors, envelope validation, router, session, harness, and fixtures. Table-driven `go test` runs the shared conformance manifest.
 
 **Tech Stack:** Go 1.21+, `encoding/json`, `testing`, `os`, `time`, standard library only.
 
@@ -12,7 +12,7 @@
 
 ## File Structure
 
-- Create: `implementations/go/go.mod` â€?module path `github.com/axisrobo/aep`, Go 1.21.
+- Create: `implementations/go/go.mod` â€?module path `github.com/axisvela/aep`, Go 1.21.
 - Create: `implementations/go/aep/event_types.go` â€?standard event type registry.
 - Create: `implementations/go/aep/errors.go` â€?error code constants and payload builder.
 - Create: `implementations/go/aep/envelope.go` â€?Validates raw envelope maps.
@@ -42,7 +42,7 @@
 Create `implementations/go/go.mod`:
 
 ```
-module github.com/axisrobo/aep
+module github.com/axisvela/aep
 
 go 1.21
 ```

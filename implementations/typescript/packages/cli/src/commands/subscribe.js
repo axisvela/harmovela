@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { matchesType } from "@axisrobo/harmovela-event";
+import { matchesType } from "@axisvela/harmovela-event";
 
 export async function subscribeCommand(options = {}) {
   const pattern = options.type ?? "*";

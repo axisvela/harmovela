@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { WsClientTransport } from "@axisrobo/aep";
+import { WsClientTransport } from "@axisvela/aep";
 
 function argValue(name, fallback) {
   const i = process.argv.indexOf(name);

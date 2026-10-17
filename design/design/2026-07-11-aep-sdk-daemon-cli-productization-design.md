@@ -182,7 +182,7 @@ Environment overrides:
 }
 ```
 
-The package name can remain the current reference package during the first implementation pass. A later packaging pass can rename or publish as `@axisrobo/aep` once the public surface is stable enough.
+The package name can remain the current reference package during the first implementation pass. A later packaging pass can rename or publish as `@axisvela/aep` once the public surface is stable enough.
 
 ## Data Flow
 

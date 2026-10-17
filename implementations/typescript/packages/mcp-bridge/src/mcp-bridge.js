@@ -1,6 +1,6 @@
-import { HarmovelaHarness } from "@axisrobo/harmovela-harness";
-import { TaskTracker } from "@axisrobo/harmovela-task";
-import { ErrorCode } from "@axisrobo/harmovela-event";
+import { HarmovelaHarness } from "@axisvela/harmovela-harness";
+import { TaskTracker } from "@axisvela/harmovela-task";
+import { ErrorCode } from "@axisvela/harmovela-event";
 
 export class McpBridge {
   constructor(options = {}) {

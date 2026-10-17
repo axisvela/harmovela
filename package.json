@@ -4,7 +4,7 @@
   "type": "module",
   "workspaces": ["implementations/typescript", "implementations/typescript/packages/*"],
   "scripts": {
-    "test": "npm test --workspace @axisrobo/aep",
+    "test": "npm test --workspace @axisvela/aep",
     "example:sdk": "node examples/quickstart/runtime-embed.js"
   }
 }

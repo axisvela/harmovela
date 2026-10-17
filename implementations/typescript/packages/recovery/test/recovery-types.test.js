@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { RECOVERY_EVENT_TYPES, isRecoveryEventType } from "@axisrobo/harmovela-recovery";
+import { RECOVERY_EVENT_TYPES, isRecoveryEventType } from "@axisvela/harmovela-recovery";
 
 test("recovery event types includes all 7 registry entries", () => {
   const expected = [

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { McpBridge, asyncToolHandler } from "../src/bridge/mcp-bridge.js";
-import { SqliteDeliveryStore, DeliveryTracker, retryDelay, DeliveryJournal } from "@axisrobo/harmovela-recovery";
-import { MockStdioTransport } from "@axisrobo/harmovela-event";
+import { SqliteDeliveryStore, DeliveryTracker, retryDelay, DeliveryJournal } from "@axisvela/harmovela-recovery";
+import { MockStdioTransport } from "@axisvela/harmovela-event";
 
 const DEFAULT_MAX_ATTEMPTS = 3;
 

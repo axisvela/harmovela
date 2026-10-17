@@ -9,5 +9,5 @@
 - [x] Governance (`GOVERNANCE.md`), release (`RELEASES.md`), and registry (`design/protocol/event-registry-governance.md`) processes are published and rendered in `docs/site/`. Applicability review remains pending.
 - [ ] External L3 pilot report is accepted using [`design/release/external-l3-pilot-template.md`](design/release/external-l3-pilot-template.md).
 - [ ] Evidence for two independently maintained implementations is reviewed and accepted (fill [`design/release/independent-implementation-guide.md`](design/release/independent-implementation-guide.md) per implementation).
-- [ ] No open `release-blocker` issues remain. Public tracker and release maintainer designated (`https://github.com/axisrobo/harmovela/issues`, Axisrobo team); zero blockers recorded; independent review pending.
+- [ ] No open `release-blocker` issues remain. Public tracker and release maintainer designated (`https://github.com/axisvela/harmovela/issues`, Axisrobo team); zero blockers recorded; independent review pending.
 - [x] Release notes describe RC scope, compatibility snapshot, known limitations, and evidence status ([`design/release/release-notes-v0.9.0-rc.1.md`](design/release/release-notes-v0.9.0-rc.1.md)).

@@ -59,7 +59,7 @@ End-to-end domain patterns.
 
 ## Prerequisites
 
-- TypeScript: `npm install` at repo root (establishes workspace links for `@axisrobo/harmovela-*` packages).
+- TypeScript: `npm install` at repo root (establishes workspace links for `@axisvela/harmovela-*` packages).
 - Python: `pip install -e implementations/python/` or set `PYTHONPATH=implementations/python/src`.
 - Go: compile from the module root (`implementations/go/`).
 - Java: compile with Maven classpath from `implementations/java/`.

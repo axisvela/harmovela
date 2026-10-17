@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { McpBridge, asyncToolHandler } from "@axisrobo/harmovela-mcp-bridge";
-import { MockStdioTransport } from "@axisrobo/harmovela-event";
+import { McpBridge, asyncToolHandler } from "@axisvela/harmovela-mcp-bridge";
+import { MockStdioTransport } from "@axisvela/harmovela-event";
 
 test("McpBridge responds to initialize", async () => {
   const bridge = new McpBridge();

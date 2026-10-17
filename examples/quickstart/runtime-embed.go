@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/axisrobo/harmovela/runtime"
+	"github.com/axisvela/harmovela/runtime"
 )
 
 func main() {

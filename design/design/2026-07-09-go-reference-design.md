@@ -24,7 +24,7 @@ Follow the same minimal pattern as the first TypeScript and Python slices: typed
 
 ### Module Setup
 
-Create `implementations/go/go.mod` with module path `github.com/axisrobo/aep` and Go 1.21 minimum. No external dependencies for this slice.
+Create `implementations/go/go.mod` with module path `github.com/axisvela/aep` and Go 1.21 minimum. No external dependencies for this slice.
 
 ### Envelope
 
@@ -124,7 +124,7 @@ Update:
 
 ## Open Decisions Resolved
 
-- Go module path: `github.com/axisrobo/aep`.
+- Go module path: `github.com/axisvela/aep`.
 - No external dependencies for this slice.
 - Synchronous-only harness, no goroutines or channels.
 - No JSON Schema validation; field-level validation is sufficient for C1.

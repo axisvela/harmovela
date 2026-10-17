@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/axisrobo/harmovela/event"
-	"github.com/axisrobo/harmovela/harness"
+	"github.com/axisvela/harmovela/event"
+	"github.com/axisvela/harmovela/harness"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 

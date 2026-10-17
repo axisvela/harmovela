@@ -4,9 +4,9 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { defaultConfig } from "@axisrobo/harmovela-runtime";
-import { SqliteDeliveryStore } from "@axisrobo/harmovela-recovery";
-import { HarmovelaRuntimeService } from "@axisrobo/harmovela-runtime";
+import { defaultConfig } from "@axisvela/harmovela-runtime";
+import { SqliteDeliveryStore } from "@axisvela/harmovela-recovery";
+import { HarmovelaRuntimeService } from "@axisvela/harmovela-runtime";
 
 const cli = path.resolve("packages/cli/src/harmovela.js");
 

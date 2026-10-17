@@ -33,7 +33,7 @@ Full matrix rows in `design/release/rc-compatibility-matrix.md` (revision `9cba1
 | External L3 pilot | PENDING — external evidence |
 | Zero `release-blocker` issues | PENDING — 0 recorded in public tracker; review required |
 
-Designated release maintainer: **Axisrobo team** (recorded in `design/release/rc-validation.md`). Public tracker: `https://github.com/axisrobo/harmovela/issues`.
+Designated release maintainer: **Axisrobo team** (recorded in `design/release/rc-validation.md`). Public tracker: `https://github.com/axisvela/harmovela/issues`.
 
 Retained logs in `conformance/rc-logs-20260817/` and `conformance/rc-snapshot-20260817.txt`.
 

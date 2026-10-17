@@ -65,7 +65,7 @@ Each store/*.go: `package aep` â†?`package store`.
 - [ ] **Step 5: Build store package**
 
 Run: `cd implementations/go && go build ./aep/store/`
-Expected: compile â€?the store package imports nothing from outside stdlib + `github.com/axisrobo/aep` (which is `aep` root for shared constants/types).
+Expected: compile â€?the store package imports nothing from outside stdlib + `github.com/axisvela/aep` (which is `aep` root for shared constants/types).
 
 - [ ] **Step 6: Build root package without store files**
 
@@ -153,7 +153,7 @@ Bridge references `Harness`, `NewHarness`, `TaskTracker`, `NewTaskTracker`, `Err
 These are in the root `aep/` package. Add:
 
 ```go
-import "github.com/axisrobo/aep/aep"
+import "github.com/axisvela/aep/aep"
 ```
 
 And qualify all references: `aep.Harness`, `aep.NewHarness`, `aep.TaskTracker`, etc.
@@ -194,9 +194,9 @@ The runtime package now needs imports from the root `aep/` package, `aep/store/`
 
 ```go
 import (
-    "github.com/axisrobo/aep/aep"
-    "github.com/axisrobo/aep/aep/store"
-    "github.com/axisrobo/aep/aep/transport"
+    "github.com/axisvela/aep/aep"
+    "github.com/axisvela/aep/aep/store"
+    "github.com/axisvela/aep/aep/transport"
 )
 ```
 
@@ -278,14 +278,14 @@ Update cmd/aep/main.go to import:
 
 ```go
 import (
-    "github.com/axisrobo/aep/aep"
-    "github.com/axisrobo/aep/aep/runtime"
+    "github.com/axisvela/aep/aep"
+    "github.com/axisvela/aep/aep/runtime"
 )
 ```
 
 And qualify all runtime symbols with `runtime.`, root symbols with `aep.`.
 
-Also, the old `import "github.com/axisrobo/aep/aep"` imports are currently `aep` â€?the root package; no rename needed there.
+Also, the old `import "github.com/axisvela/aep/aep"` imports are currently `aep` â€?the root package; no rename needed there.
 
 - [ ] **Step 2: Update cmd/aepd imports**
 

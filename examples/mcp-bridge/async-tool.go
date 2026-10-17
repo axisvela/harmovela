@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	bridge "github.com/axisrobo/harmovela/mcp-bridge"
-	"github.com/axisrobo/harmovela/task"
+	bridge "github.com/axisvela/harmovela/mcp-bridge"
+	"github.com/axisvela/harmovela/task"
 )
 
 type sink struct {

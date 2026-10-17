@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { HarmovelaRuntimeService, defaultConfig } from "@axisrobo/aep";
+import { HarmovelaRuntimeService, defaultConfig } from "@axisvela/aep";
 
 const config = defaultConfig();
 config.delivery.store = "memory";

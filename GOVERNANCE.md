@@ -10,7 +10,7 @@ This document defines how the Harmovela Protocol is governed: who makes decision
 
 ### Founding Organization
 
-Axisrobo is the founding organization of the Harmovela Protocol. Axisrobo initiated the protocol design, maintains the canonical repository (`https://github.com/axisrobo/harmovela`), and stewards the 0.x draft phase.
+Axisrobo is the founding organization of the Harmovela Protocol. Axisrobo initiated the protocol design, maintains the canonical repository (`https://github.com/axisvela/harmovela`), and stewards the 0.x draft phase.
 
 Axisrobo maintainers hold final decision-making authority over the specification, event type registry, conformance fixtures, and implementation repositories during the pre-1.0 phase.
 

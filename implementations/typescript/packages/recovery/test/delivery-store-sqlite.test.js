@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { SqliteDeliveryStore, DeliveryTracker, DeliveryJournal } from "@axisrobo/harmovela-recovery";
+import { SqliteDeliveryStore, DeliveryTracker, DeliveryJournal } from "@axisvela/harmovela-recovery";
 
 test("SqliteDeliveryStore tracks and acknowledges events", () => {
   const store = new SqliteDeliveryStore(":memory:");

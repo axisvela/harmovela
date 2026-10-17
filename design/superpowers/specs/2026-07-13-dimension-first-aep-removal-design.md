@@ -51,16 +51,16 @@ All ten dimensions have been extracted from the legacy `aep` namespace into inde
 
 | # | Dimension | TypeScript | Python | Go | Java | Adapter wired | Tests present |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Event | `@axisrobo/harmovela-event` | `axisrobo_harmovela_event` | `github.com/axisrobo/harmovela/event` | `com.axisrobo.harmovela.event.*` | Yes (harness + transport) | Yes (28 test modules) |
-| 2 | Recovery | `@axisrobo/harmovela-recovery` | `axisrobo_harmovela_recovery` | `github.com/axisrobo/harmovela/recovery` | `com.axisrobo.harmovela.recovery.*` | Yes (harness + config + barrel) | Yes (5 test modules per language) |
-| 3 | Governance | `@axisrobo/harmovela-governance` | `axisrobo_harmovela_governance` | `github.com/axisrobo/harmovela/governance` | `com.axisrobo.harmovela.governance.GovernancePolicy` | Yes (harness) | Yes (1 test module per language) |
-| 4 | Task | `@axisrobo/harmovela-task` | `axisrobo_harmovela_task` | `github.com/axisrobo/harmovela/task` | `com.axisrobo.harmovela.task.TaskTracker` | Yes (harness + barrel) | Yes (1 test module per language) |
-| 5 | State | `@axisrobo/harmovela-state` | `axisrobo_harmovela_state` | `github.com/axisrobo/harmovela/state` | `com.axisrobo.harmovela.state.StateTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
-| 6 | Context/Memory | `@axisrobo/harmovela-context` | `axisrobo_harmovela_context` | `github.com/axisrobo/harmovela/context` | `com.axisrobo.harmovela.context.ContextMemoryTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
-| 7 | Delegation | `@axisrobo/harmovela-delegation` | `axisrobo_harmovela_delegation` | `github.com/axisrobo/harmovela/delegation` | `com.axisrobo.harmovela.delegation.DelegationTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
-| 8 | Tool | `@axisrobo/harmovela-tool` | `axisrobo_harmovela_tool` | `github.com/axisrobo/harmovela/tool` | `com.axisrobo.harmovela.tool.ToolTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
-| 9 | Agent | `@axisrobo/harmovela-agent` | `axisrobo_harmovela_agent` | `github.com/axisrobo/harmovela/agent` | `com.axisrobo.harmovela.agent.AgentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
-| 10 | Environment | `@axisrobo/harmovela-environment` | `axisrobo_harmovela_environment` | `github.com/axisrobo/harmovela/environment` | `com.axisrobo.harmovela.environment.EnvironmentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 1 | Event | `@axisvela/harmovela-event` | `axisrobo_harmovela_event` | `github.com/axisvela/harmovela/event` | `com.axisrobo.harmovela.event.*` | Yes (harness + transport) | Yes (28 test modules) |
+| 2 | Recovery | `@axisvela/harmovela-recovery` | `axisrobo_harmovela_recovery` | `github.com/axisvela/harmovela/recovery` | `com.axisrobo.harmovela.recovery.*` | Yes (harness + config + barrel) | Yes (5 test modules per language) |
+| 3 | Governance | `@axisvela/harmovela-governance` | `axisrobo_harmovela_governance` | `github.com/axisvela/harmovela/governance` | `com.axisrobo.harmovela.governance.GovernancePolicy` | Yes (harness) | Yes (1 test module per language) |
+| 4 | Task | `@axisvela/harmovela-task` | `axisrobo_harmovela_task` | `github.com/axisvela/harmovela/task` | `com.axisrobo.harmovela.task.TaskTracker` | Yes (harness + barrel) | Yes (1 test module per language) |
+| 5 | State | `@axisvela/harmovela-state` | `axisrobo_harmovela_state` | `github.com/axisvela/harmovela/state` | `com.axisrobo.harmovela.state.StateTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 6 | Context/Memory | `@axisvela/harmovela-context` | `axisrobo_harmovela_context` | `github.com/axisvela/harmovela/context` | `com.axisrobo.harmovela.context.ContextMemoryTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 7 | Delegation | `@axisvela/harmovela-delegation` | `axisrobo_harmovela_delegation` | `github.com/axisvela/harmovela/delegation` | `com.axisrobo.harmovela.delegation.DelegationTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 8 | Tool | `@axisvela/harmovela-tool` | `axisrobo_harmovela_tool` | `github.com/axisvela/harmovela/tool` | `com.axisrobo.harmovela.tool.ToolTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 9 | Agent | `@axisvela/harmovela-agent` | `axisrobo_harmovela_agent` | `github.com/axisvela/harmovela/agent` | `com.axisrobo.harmovela.agent.AgentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
+| 10 | Environment | `@axisvela/harmovela-environment` | `axisrobo_harmovela_environment` | `github.com/axisvela/harmovela/environment` | `com.axisrobo.harmovela.environment.EnvironmentTypes` | Yes (legacy-dimension-types union) | Yes (1 test module per language) |
 
 ### Architecture Compliance
 
@@ -74,7 +74,7 @@ All ten dimensions have been extracted from the legacy `aep` namespace into inde
 | --- | --- | --- |
 | Dimension migration (10 dimensions, 4 languages) | Event, Recovery, Governance, Task, State, Context/Memory, Delegation, Tool, Agent, Environment | **COMPLETE** — All 40 modules exist with adapter wiring and tests |
 | Wire identifier compatibility decisions | Endpoints, subprotocols, transport prefixes, schema IDs, proto filenames | Pending explicit Protocol/Profile decisions |
-| Package/CLI/config rename | 4 languages | `@axisrobo/aep` top-level identity retained |
+| Package/CLI/config rename | 4 languages | `@axisvela/aep` top-level identity retained |
 | Shared contract decisions | Envelope schemas, error helpers, gRPC proto | Pending explicit Protocol decisions |
 
 ## 1.0 Gate

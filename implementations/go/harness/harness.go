@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/axisrobo/harmovela/event"
-	"github.com/axisrobo/harmovela/governance"
-	"github.com/axisrobo/harmovela/recovery"
-	"github.com/axisrobo/harmovela/task"
+	"github.com/axisvela/harmovela/event"
+	"github.com/axisvela/harmovela/governance"
+	"github.com/axisvela/harmovela/recovery"
+	"github.com/axisvela/harmovela/task"
 )
 
 type AuditRecord struct {

@@ -4,7 +4,7 @@ import { HarmovelaHarness, isStandardEventType, validateEnvelope } from "../src/
 import {
   isStandardEventType as isEventRegistryType,
   validateEnvelope as validateEventEnvelope
-} from "@axisrobo/harmovela-event";
+} from "@axisvela/harmovela-event";
 
 const now = () => "2026-07-09T10:00:01Z";
 

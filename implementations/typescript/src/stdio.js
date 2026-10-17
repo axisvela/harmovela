@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { StdioTransport } from "@axisrobo/harmovela-event";
-import { HarmovelaHarness } from "@axisrobo/harmovela-harness";
+import { StdioTransport } from "@axisvela/harmovela-event";
+import { HarmovelaHarness } from "@axisvela/harmovela-harness";
 
 const harness = new HarmovelaHarness();
 const transport = new StdioTransport();
