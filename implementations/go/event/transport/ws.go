@@ -82,6 +82,7 @@ type WsClient struct {
 	conn    *websocket.Conn
 	handler ReceiveHandler
 	mu      sync.RWMutex
+	writeMu sync.Mutex
 	done    chan struct{}
 }
 
@@ -128,12 +129,17 @@ func (c *WsClient) Send(msg *Message) error {
 	if c.conn == nil {
 		return fmt.Errorf("not connected")
 	}
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
 	return c.conn.WriteMessage(websocket.TextMessage, []byte(msg.JsonPayload))
 }
 
 func (c *WsClient) Close() {
-	if c.conn != nil {
-		c.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		c.conn.Close()
+	if c.conn == nil {
+		return
 	}
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+	_ = c.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	_ = c.conn.Close()
 }
