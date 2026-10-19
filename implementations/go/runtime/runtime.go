@@ -27,9 +27,14 @@ type TransportConfig struct {
 }
 
 type DeliveryConfig struct {
-	Store    string            `json:"store"`
-	Sqlite   map[string]string `json:"sqlite"`
-	Postgres map[string]string `json:"postgres"`
+	Store     string            `json:"store"`
+	Sqlite    map[string]string `json:"sqlite"`
+	Postgres  map[string]string `json:"postgres"`
+	Retention RetentionConfig   `json:"retention"`
+}
+
+type RetentionConfig struct {
+	PruneIntervalSeconds int `json:"prune_interval_seconds"`
 }
 
 type RuntimeConfig struct {
@@ -151,6 +156,7 @@ type registryEntry struct {
 type RuntimeService struct {
 	Config        RuntimeConfig
 	store         recovery.DeliveryStore
+	eventLog      recovery.EventLog
 	subs          []subEntry
 	subscriptions map[string]*registryEntry
 	maxBuffer     int
@@ -158,12 +164,26 @@ type RuntimeService struct {
 	api           *http.Server
 	apiPort       int
 	mu            sync.Mutex
+	consumerMu    sync.Mutex
+	consumers     map[string]struct{}
+	done          chan struct{}
+	stopOnce      sync.Once
+	pruneWG       sync.WaitGroup
 	started       bool
 }
 
 func NewRuntimeService(c RuntimeConfig) *RuntimeService {
 	store, _ := CreateDeliveryStore(c)
-	return &RuntimeService{Config: c, store: store, subscriptions: make(map[string]*registryEntry), maxBuffer: 1000}
+	eventLog, _ := store.(recovery.EventLog)
+	return &RuntimeService{
+		Config:        c,
+		store:         store,
+		eventLog:      eventLog,
+		subscriptions: make(map[string]*registryEntry),
+		consumers:     make(map[string]struct{}),
+		done:          make(chan struct{}),
+		maxBuffer:     1000,
+	}
 }
 
 func (s *RuntimeService) Subscribe(pattern string, handler func(evt map[string]any)) {
@@ -179,6 +199,11 @@ func (s *RuntimeService) Publish(evt map[string]any) (map[string]any, error) {
 	sub, _ := evt["subscription_id"].(string)
 	if sub == "" {
 		sub = "_runtime"
+	}
+	if s.eventLog != nil {
+		if _, err := s.eventLog.RecordEvent(evt); err != nil {
+			return nil, err
+		}
 	}
 	if s.store != nil {
 		s.store.Track(id, sub)
@@ -218,7 +243,38 @@ func (s *RuntimeService) Start() error {
 	}
 	if s.Config.Transports.WebSocket.Enabled {
 		ws := eventtransport.NewWsBroadcastServer(s.Config.Transports.WebSocket.Path)
-		ws.OnMessage(func(evt map[string]any) { s.Publish(evt) })
+		ws.OnMessage(func(evt map[string]any) {
+			if _, err := s.Publish(evt); err != nil {
+				fmt.Fprintf(os.Stderr, "harmovela publish: %v\n", err)
+			}
+		})
+		if s.eventLog != nil {
+			ws.OnReplay(func(fromCursor string, filter map[string]any, limit int) []map[string]any {
+				events := s.eventLog.ReplayEvents(fromCursor, limit)
+				matched := make([]map[string]any, 0, len(events))
+				for _, evt := range events {
+					if event.SubscriptionMatches(filter, evt) {
+						matched = append(matched, evt)
+					}
+				}
+				return matched
+			})
+			ws.OnAck(func(consumerID, eventID, cursor string) (eventtransport.AckResult, error) {
+				if err := s.eventLog.AckConsumer(consumerID, eventID, cursor); err != nil {
+					return eventtransport.AckResult{}, err
+				}
+				latest := s.eventLog.LastCursor()
+				return eventtransport.AckResult{
+					LatestCursor: latest,
+					Lag:          cursorLag(latest, cursor),
+				}, nil
+			})
+			ws.OnSubscribe(func(consumerID string) {
+				s.consumerMu.Lock()
+				s.consumers[consumerID] = struct{}{}
+				s.consumerMu.Unlock()
+			})
+		}
 		addr := fmt.Sprintf("%s:%d", s.Config.Transports.WebSocket.Host, s.Config.Transports.WebSocket.Port)
 		go ws.Start(addr)
 		s.ws = ws
@@ -232,11 +288,64 @@ func (s *RuntimeService) Start() error {
 		id, _ := record["id"].(string)
 		s.subscriptions[id] = &registryEntry{record: record, sinks: make(map[chan map[string]any]bool)}
 	}
+	if s.Config.Delivery.Retention.PruneIntervalSeconds > 0 {
+		s.pruneWG.Add(1)
+		go s.pruneLoop(time.Duration(s.Config.Delivery.Retention.PruneIntervalSeconds) * time.Second)
+	}
 	s.started = true
 	return nil
 }
 
+func (s *RuntimeService) pruneLoop(interval time.Duration) {
+	defer s.pruneWG.Done()
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			s.pruneOnce()
+		case <-s.done:
+			return
+		}
+	}
+}
+
+func (s *RuntimeService) pruneOnce() {
+	if s.eventLog == nil {
+		return
+	}
+	s.consumerMu.Lock()
+	consumers := make([]string, 0, len(s.consumers))
+	for consumerID := range s.consumers {
+		consumers = append(consumers, consumerID)
+	}
+	s.consumerMu.Unlock()
+	if len(consumers) == 0 {
+		return
+	}
+	minCursor := ""
+	minSequence := -1
+	for _, consumerID := range consumers {
+		cursor, ok := s.eventLog.ConsumerCursor(consumerID)
+		if !ok || cursor == "" {
+			return
+		}
+		sequence := cursorSequence(cursor)
+		if minSequence < 0 || sequence < minSequence {
+			minSequence = sequence
+			minCursor = cursor
+		}
+	}
+	if minCursor != "" {
+		_, _ = s.eventLog.PruneEvents(minCursor)
+	}
+}
+
 func (s *RuntimeService) Stop() {
+	s.stopOnce.Do(func() {
+		close(s.done)
+	})
+	s.pruneWG.Wait()
 	if s.ws != nil {
 		s.ws.Stop()
 		s.ws = nil
@@ -525,6 +634,27 @@ func envMap() map[string]string {
 		}
 	}
 	return m
+}
+
+func cursorLag(latest, cursor string) int {
+	latestSequence := cursorSequence(latest)
+	cursorPosition := cursorSequence(cursor)
+	if latestSequence <= cursorPosition {
+		return 0
+	}
+	return latestSequence - cursorPosition
+}
+
+func cursorSequence(cursor string) int {
+	if cursor == "" {
+		return 0
+	}
+	index := strings.LastIndexByte(cursor, ':')
+	if index < 0 || index == len(cursor)-1 {
+		return 0
+	}
+	sequence, _ := strconv.Atoi(cursor[index+1:])
+	return sequence
 }
 
 func envOr(env map[string]string, key, fallback string) string {

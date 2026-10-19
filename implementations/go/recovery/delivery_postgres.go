@@ -89,16 +89,30 @@ func (s *PostgresDeliveryStore) migrate() error {
 		id TEXT PRIMARY KEY,
 		filter JSONB NOT NULL,
 		created_at TEXT NOT NULL
+	);
+	CREATE TABLE IF NOT EXISTS %s (
+		sequence BIGSERIAL PRIMARY KEY,
+		event_id TEXT NOT NULL UNIQUE,
+		cursor TEXT NOT NULL DEFAULT '',
+		payload JSONB NOT NULL,
+		created_at TEXT NOT NULL
+	);
+	CREATE TABLE IF NOT EXISTS %s (
+		consumer_id TEXT PRIMARY KEY,
+		cursor TEXT NOT NULL,
+		updated_at TEXT NOT NULL
 	);`,
-		s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions"))
+		s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions"),
+		s.t("events"), s.t("consumer_offsets"))
 	_, err := s.db.Exec(schema)
 	return err
 }
 
 func (s *PostgresDeliveryStore) Close() error {
 	if s.dropOnClose {
-		s.db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s, %s, %s, %s, %s",
-			s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions")))
+		s.db.Exec(fmt.Sprintf("DROP TABLE IF EXISTS %s, %s, %s, %s, %s, %s, %s",
+			s.t("meta"), s.t("pending"), s.t("acked"), s.t("dead_lettered"), s.t("subscriptions"),
+			s.t("events"), s.t("consumer_offsets")))
 	}
 	return s.db.Close()
 }

@@ -2,6 +2,7 @@ package recovery
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -32,6 +33,8 @@ type InMemoryDeliveryStore struct {
 	deadLettered  map[string]map[string]any
 	subscriptions map[string]map[string]any
 	lastAckCursor string
+	eventMu       sync.Mutex
+	eventLog      *eventLogState
 }
 
 func NewInMemoryDeliveryStore(startSequence int, streamID string) *InMemoryDeliveryStore {
@@ -45,6 +48,7 @@ func NewInMemoryDeliveryStore(startSequence int, streamID string) *InMemoryDeliv
 		acked:         make(map[string]bool),
 		deadLettered:  make(map[string]map[string]any),
 		subscriptions: make(map[string]map[string]any),
+		eventLog:      newEventLogState(streamID),
 	}
 }
 
@@ -60,14 +64,14 @@ func (s *InMemoryDeliveryStore) NextSequence() int {
 func (s *InMemoryDeliveryStore) Track(eventID, subscriptionID string) int {
 	seq := s.NextSequence()
 	s.pending[eventID] = map[string]any{
-		"eventId":         eventID,
-		"subscriptionId":  subscriptionID,
-		"sequence":        seq,
-		"cursor":          fmt.Sprintf("%s:%d", s.streamID, seq),
-		"attempts":        1,
-		"firstAttemptAt":  now(),
-		"lastAttemptAt":   now(),
-		"nextRetryAt":     nil,
+		"eventId":        eventID,
+		"subscriptionId": subscriptionID,
+		"sequence":       seq,
+		"cursor":         fmt.Sprintf("%s:%d", s.streamID, seq),
+		"attempts":       1,
+		"firstAttemptAt": now(),
+		"lastAttemptAt":  now(),
+		"nextRetryAt":    nil,
 	}
 	return seq
 }
@@ -110,16 +114,16 @@ func (s *InMemoryDeliveryStore) DeadLetter(eventID string, reason map[string]any
 		reason = map[string]any{}
 	}
 	record := map[string]any{
-		"eventId":         entry["eventId"],
-		"subscriptionId":  entry["subscriptionId"],
-		"sequence":        entry["sequence"],
-		"cursor":          entry["cursor"],
-		"attempts":        entry["attempts"],
-		"firstAttemptAt":  entry["firstAttemptAt"],
-		"lastAttemptAt":   entry["lastAttemptAt"],
-		"nextRetryAt":     entry["nextRetryAt"],
-		"deadLetteredAt":  now(),
-		"reason":          reason,
+		"eventId":        entry["eventId"],
+		"subscriptionId": entry["subscriptionId"],
+		"sequence":       entry["sequence"],
+		"cursor":         entry["cursor"],
+		"attempts":       entry["attempts"],
+		"firstAttemptAt": entry["firstAttemptAt"],
+		"lastAttemptAt":  entry["lastAttemptAt"],
+		"nextRetryAt":    entry["nextRetryAt"],
+		"deadLetteredAt": now(),
+		"reason":         reason,
 	}
 	s.deadLettered[eventID] = record
 

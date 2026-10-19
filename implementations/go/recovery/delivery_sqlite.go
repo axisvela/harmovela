@@ -4,16 +4,18 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	_ "modernc.org/sqlite"
 )
 
 type SqliteDeliveryStore struct {
-	db          *sql.DB
-	sequence    int
-	streamID    string
+	db            *sql.DB
+	sequence      int
+	streamID      string
 	lastAckCursor string
+	eventMu       sync.Mutex
 }
 
 func NewSqliteDeliveryStore(dsn string, streamID string) (*SqliteDeliveryStore, error) {
@@ -84,6 +86,20 @@ func (s *SqliteDeliveryStore) migrate() error {
 		id TEXT PRIMARY KEY,
 		filter TEXT NOT NULL,
 		created_at TEXT NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS delivery_events (
+		sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+		event_id TEXT NOT NULL UNIQUE,
+		cursor TEXT NOT NULL DEFAULT '',
+		payload TEXT NOT NULL,
+		created_at TEXT NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS delivery_consumer_offsets (
+		consumer_id TEXT PRIMARY KEY,
+		cursor TEXT NOT NULL,
+		updated_at TEXT NOT NULL
 	);
 	`
 	_, err := s.db.Exec(schema)
