@@ -136,12 +136,12 @@ git commit -m "feat: add Go adaptation dimension module with 10 event types"
 ### Task 2: Python Adaptation dimension module
 
 **Files:**
-- Create: `implementations/python/src/axisrobo_harmovela_adaptation/__init__.py`
+- Create: `implementations/python/src/axisvela_harmovela_adaptation/__init__.py`
 - Modify: `implementations/python/tests/test_governance_module.py` (no, create new test)
 
 - [ ] **Step 1: Create the Python adaptation module**
 
-Create `implementations/python/src/axisrobo_harmovela_adaptation/__init__.py`:
+Create `implementations/python/src/axisvela_harmovela_adaptation/__init__.py`:
 
 ```python
 ADAPTATION_EVENT_TYPES = frozenset({
@@ -170,7 +170,7 @@ __all__ = ["ADAPTATION_EVENT_TYPES", "is_adaptation_event_type"]
 Create `implementations/python/tests/test_adaptation_module.py`:
 
 ```python
-from axisrobo_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
+from axisvela_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
 
 
 def test_adaptation_event_types_includes_all_10_registry_entries():
@@ -219,7 +219,7 @@ Expected: PASS (3 tests)
 - [ ] **Step 4: Commit Python adaptation module**
 
 ```bash
-git add implementations/python/src/axisrobo_harmovela_adaptation/ implementations/python/tests/test_adaptation_module.py
+git add implementations/python/src/axisvela_harmovela_adaptation/ implementations/python/tests/test_adaptation_module.py
 git commit -m "feat: add Python adaptation dimension module with 10 event types"
 ```
 
@@ -343,13 +343,13 @@ git commit -m "feat: add TypeScript adaptation dimension module with 10 event ty
 ### Task 4: Java Adaptation dimension module
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/harmovela/adaptation/AdaptationTypes.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/harmovela/adaptation/AdaptationTypesTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/harmovela/adaptation/AdaptationTypes.java`
+- Create: `implementations/java/src/test/java/com/axisvela/harmovela/adaptation/AdaptationTypesTest.java`
 
 - [ ] **Step 1: Write AdaptationTypes.java**
 
 ```java
-package com.axisrobo.harmovela.adaptation;
+package com.axisvela.harmovela.adaptation;
 
 import java.util.Set;
 
@@ -378,7 +378,7 @@ public final class AdaptationTypes {
 - [ ] **Step 2: Write AdaptationTypesTest.java**
 
 ```java
-package com.axisrobo.harmovela.adaptation;
+package com.axisvela.harmovela.adaptation;
 
 import org.junit.jupiter.api.Test;
 
@@ -433,7 +433,7 @@ Expected: PASS
 - [ ] **Step 4: Commit Java adaptation module**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/harmovela/adaptation/ implementations/java/src/test/java/com/axisrobo/harmovela/adaptation/
+git add implementations/java/src/main/java/com/axisvela/harmovela/adaptation/ implementations/java/src/test/java/com/axisvela/harmovela/adaptation/
 git commit -m "feat: add Java adaptation dimension module with 10 event types"
 ```
 
@@ -443,9 +443,9 @@ git commit -m "feat: add Java adaptation dimension module with 10 event types"
 
 **Files:**
 - Modify: `implementations/go/event/errors.go`
-- Modify: `implementations/python/src/axisrobo_harmovela_event/errors.py`
+- Modify: `implementations/python/src/axisvela_harmovela_event/errors.py`
 - Modify: `implementations/typescript/packages/event/src/errors.js`
-- Modify: `implementations/java/src/main/java/com/axisrobo/harmovela/event/Errors.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/harmovela/event/Errors.java`
 
 - [ ] **Step 1: Add ErrorCodeBudgetExceeded to Go errors.go**
 
@@ -484,7 +484,7 @@ public static final String BUDGET_EXCEEDED = "budget_exceeded";
 - [ ] **Step 5: Commit error codes**
 
 ```bash
-git add implementations/go/event/errors.go implementations/python/src/axisrobo_harmovela_event/errors.py implementations/typescript/packages/event/src/errors.js implementations/java/src/main/java/com/axisrobo/harmovela/event/Errors.java
+git add implementations/go/event/errors.go implementations/python/src/axisvela_harmovela_event/errors.py implementations/typescript/packages/event/src/errors.js implementations/java/src/main/java/com/axisvela/harmovela/event/Errors.java
 git commit -m "feat: add budget_exceeded error code across all implementations"
 ```
 
@@ -743,7 +743,7 @@ git commit -m "feat: add budget enforcement to Go harness"
 
 Add import at top:
 ```python
-from axisrobo_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
+from axisvela_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
 ```
 
 Update `LEGACY_DIMENSION_EVENT_TYPES` to include adaptation types:
@@ -841,7 +841,7 @@ def _handle_adaptation_event(self, event: dict) -> list:
 Add to `implementations/python/tests/test_harness.py`:
 
 ```python
-from axisrobo_harmovela_event import ErrorCode
+from axisvela_harmovela_event import ErrorCode
 from harmovela_harness import HarmovelaHarness
 
 
@@ -1094,8 +1094,8 @@ git commit -m "feat: add budget enforcement to TypeScript harness"
 ### Task 9: Budget enforcement in Java harness
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/harmovela/harness/Harness.java`
-- Modify: `implementations/java/src/test/java/com/axisrobo/harmovela/harness/HarnessTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/harmovela/harness/Harness.java`
+- Modify: `implementations/java/src/test/java/com/axisvela/harmovela/harness/HarnessTest.java`
 
 - [ ] **Step 1: Add adaptation types to Java Harness STANDARD_TYPES**
 
@@ -1265,7 +1265,7 @@ Expected: PASS
 - [ ] **Step 6: Commit Java harness budget enforcement**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/harmovela/harness/Harness.java implementations/java/src/test/java/com/axisrobo/harmovela/harness/HarnessTest.java
+git add implementations/java/src/main/java/com/axisvela/harmovela/harness/Harness.java implementations/java/src/test/java/com/axisvela/harmovela/harness/HarnessTest.java
 git commit -m "feat: add budget enforcement to Java harness"
 ```
 

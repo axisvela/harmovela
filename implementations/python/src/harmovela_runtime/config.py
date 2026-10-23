@@ -2,7 +2,7 @@ import copy
 import json
 import os
 
-from axisrobo_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliveryStore, PostgresDeliveryStore
+from axisvela_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliveryStore, PostgresDeliveryStore
 
 
 def default_config() -> dict:

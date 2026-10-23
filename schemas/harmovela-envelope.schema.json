@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/harmovela-envelope.v0.2.schema.json",
+  "$id": "https://schemas.axisvela.com/harmovela-envelope.v0.2.schema.json",
   "title": "Harmovela Event Envelope",
   "type": "object",
   "additionalProperties": true,

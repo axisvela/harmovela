@@ -40,7 +40,7 @@
 
 ## 当前状态
 
-协议涵盖 17 个规范、4 个一致性等级（C0–C3）、7 个跨语言 fixtures、4 种传输绑定、四种语言约 370 个测试用例，以及发布于 https://axisrobo.github.io/harmovela/ 的规范站点。默认一致性目标为 `HARMOVELA-C3`。每种语言均可使用 DeliveryTracker 集成。网络化 PostgreSQL 交付存储后端与内存和 SQLite 后端一同在所有四种语言中提供。
+协议涵盖 17 个规范、4 个一致性等级（C0–C3）、7 个跨语言 fixtures、4 种传输绑定、四种语言约 370 个测试用例，以及发布于 https://axisvela.github.io/harmovela/ 的规范站点。默认一致性目标为 `HARMOVELA-C3`。每种语言均可使用 DeliveryTracker 集成。网络化 PostgreSQL 交付存储后端与内存和 SQLite 后端一同在所有四种语言中提供。
 
 ## 剩余基础工作
 

@@ -10,13 +10,13 @@
 
 ## File Structure
 
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/StdioTransport.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/SseServer.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/WsServer.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/WsClient.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/GrpcServer.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/transport/GrpcClient.java`
-- Create corresponding test files in `implementations/java/src/test/java/com/axisrobo/aep/transport/`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/StdioTransport.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/SseServer.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/WsServer.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/WsClient.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/GrpcServer.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/transport/GrpcClient.java`
+- Create corresponding test files in `implementations/java/src/test/java/com/axisvela/aep/transport/`
 - Modify: `implementations/java/pom.xml` â€?add WS + gRPC deps
 
 ---

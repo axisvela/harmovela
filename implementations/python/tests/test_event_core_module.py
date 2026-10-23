@@ -1,4 +1,4 @@
-from axisrobo_harmovela_event import (
+from axisvela_harmovela_event import (
     EventRouter,
     HarmovelaSession,
     is_standard_event_type,

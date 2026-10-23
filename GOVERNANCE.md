@@ -1,6 +1,6 @@
 # Harmovela Protocol Governance
 
-> Status: draft. Community governance model evolves toward 1.0. Current decision authority rests with Axisrobo maintainers during the 0.x phase.
+> Status: draft. Community governance model evolves toward 1.0. Current decision authority rests with AxisVela maintainers during the 0.x phase.
 
 ## Purpose
 
@@ -10,9 +10,9 @@ This document defines how the Harmovela Protocol is governed: who makes decision
 
 ### Founding Organization
 
-Axisrobo is the founding organization of the Harmovela Protocol. Axisrobo initiated the protocol design, maintains the canonical repository (`https://github.com/axisvela/harmovela`), and stewards the 0.x draft phase.
+AxisVela is the founding organization of the Harmovela Protocol. AxisVela initiated the protocol design, maintains the canonical repository (`https://github.com/axisvela/harmovela`), and stewards the 0.x draft phase.
 
-Axisrobo maintainers hold final decision-making authority over the specification, event type registry, conformance fixtures, and implementation repositories during the pre-1.0 phase.
+AxisVela maintainers hold final decision-making authority over the specification, event type registry, conformance fixtures, and implementation repositories during the pre-1.0 phase.
 
 ### Maintainer Responsibilities
 
@@ -57,7 +57,7 @@ Objections must be substantive and relate to protocol correctness, compatibility
 ### Escalation Path
 
 1. **PR discussion**: All decisions begin as pull request or issue discussion.
-2. **Maintainer tie-break**: If consensus is not reached, an Axisrobo maintainer makes a decision.
+2. **Maintainer tie-break**: If consensus is not reached, an AxisVela maintainer makes a decision.
 3. **Recorded decision**: Tie-break decisions are documented in the PR or a decision record under `design/design/decisions/` with rationale.
 4. **Appeal**: Community members may appeal a decision by opening a new issue with "Decision Appeal: <topic>" and new evidence or analysis. Maintainers reconsider, but the second decision is final during the 0.x phase.
 
@@ -65,14 +65,14 @@ Objections must be substantive and relate to protocol correctness, compatibility
 
 | Decision Type | Process | Review Period | Approver |
 |--------------|---------|--------------|----------|
-| Protocol specification change | RFC or detailed PR | 7 days | Axisrobo maintainer |
-| New event type or event family | Proposal + registry update + fixture | 7 days | Axisrobo maintainer |
-| Conformance fixture change | PR with fixture diff | 3 days | Axisrobo maintainer |
-| Reference implementation change (non-semantic) | Standard PR | 3 days | Axisrobo maintainer |
-| Bug fix | Standard PR | 3 days | Axisrobo maintainer |
-| Documentation improvement | Standard PR | 3 days | Axisrobo maintainer |
-| Security fix | Coordinated disclosure (see Security Response) | As needed | Axisrobo maintainer |
-| Compatibility decision | RFC + compatibility matrix update | 7 days | Axisrobo maintainer |
+| Protocol specification change | RFC or detailed PR | 7 days | AxisVela maintainer |
+| New event type or event family | Proposal + registry update + fixture | 7 days | AxisVela maintainer |
+| Conformance fixture change | PR with fixture diff | 3 days | AxisVela maintainer |
+| Reference implementation change (non-semantic) | Standard PR | 3 days | AxisVela maintainer |
+| Bug fix | Standard PR | 3 days | AxisVela maintainer |
+| Documentation improvement | Standard PR | 3 days | AxisVela maintainer |
+| Security fix | Coordinated disclosure (see Security Response) | As needed | AxisVela maintainer |
+| Compatibility decision | RFC + compatibility matrix update | 7 days | AxisVela maintainer |
 
 ## Contribution Path
 
@@ -149,7 +149,7 @@ An RFC is not required for:
 
 ### Reporting a Vulnerability
 
-Security vulnerabilities should be reported privately to the Axisrobo security team at `security@axisrobo.com`. Do not open a public issue.
+Security vulnerabilities should be reported privately to the AxisVela security team at `security@axisvela.com`. Do not open a public issue.
 
 Include in your report:
 

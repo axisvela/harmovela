@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_task import TaskTracker, validate_parent_child_terminal
+from axisvela_harmovela_task import TaskTracker, validate_parent_child_terminal
 
 
 class TestTask:

@@ -1,4 +1,4 @@
-from axisrobo_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES, is_context_memory_event_type
+from axisvela_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES, is_context_memory_event_type
 
 
 def test_context_memory_event_types_includes_all_20_registry_entries():

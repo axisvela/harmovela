@@ -1,19 +1,19 @@
 from datetime import datetime, timezone
 
-from axisrobo_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
-from axisrobo_harmovela_agent import AGENT_EVENT_TYPES
-from axisrobo_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES
-from axisrobo_harmovela_delegation import DELEGATION_EVENT_TYPES
-from axisrobo_harmovela_environment import ENVIRONMENT_EVENT_TYPES
-from axisrobo_harmovela_event import EventRouter, HarmovelaSession, is_standard_event_type, validate_envelope
-from axisrobo_harmovela_event import ErrorCode, error_payload
-from axisrobo_harmovela_governance import authorize
-from axisrobo_harmovela_recovery import RECOVERY_EVENT_TYPES, DeliveryTracker
-from axisrobo_harmovela_state import STATE_EVENT_TYPES
-from axisrobo_harmovela_task import TaskTracker
-from axisrobo_harmovela_tool import TOOL_EVENT_TYPES
-from axisrobo_harmovela_command import COMMAND_EVENT_TYPES
-from axisrobo_harmovela_query import QUERY_EVENT_TYPES
+from axisvela_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
+from axisvela_harmovela_agent import AGENT_EVENT_TYPES
+from axisvela_harmovela_context import CONTEXT_MEMORY_EVENT_TYPES
+from axisvela_harmovela_delegation import DELEGATION_EVENT_TYPES
+from axisvela_harmovela_environment import ENVIRONMENT_EVENT_TYPES
+from axisvela_harmovela_event import EventRouter, HarmovelaSession, is_standard_event_type, validate_envelope
+from axisvela_harmovela_event import ErrorCode, error_payload
+from axisvela_harmovela_governance import authorize
+from axisvela_harmovela_recovery import RECOVERY_EVENT_TYPES, DeliveryTracker
+from axisvela_harmovela_state import STATE_EVENT_TYPES
+from axisvela_harmovela_task import TaskTracker
+from axisvela_harmovela_tool import TOOL_EVENT_TYPES
+from axisvela_harmovela_command import COMMAND_EVENT_TYPES
+from axisvela_harmovela_query import QUERY_EVENT_TYPES
 
 TERMINAL_TASK_EVENT_TYPES = frozenset({
     "task.completed", "task.failed", "task.cancelled", "task.timed_out",

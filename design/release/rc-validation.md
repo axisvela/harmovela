@@ -12,7 +12,7 @@
 
 ## Designated Release Maintainer
 
-The designated release maintainer for `v0.9.0-rc.1` is the **Axisrobo team**, acting through the Axisrobo maintainers who hold decision authority during the 0.x phase (see [GOVERNANCE.md](../GOVERNANCE.md)). The release maintainer tags `release-blocker` issues in the public tracker, approves RC exceptions, and owns promotion. This designation is recorded in the current release documents; it does not alter the historical 0.4/0.5 release records.
+The designated release maintainer for `v0.9.0-rc.1` is the **AxisVela team**, acting through the AxisVela maintainers who hold decision authority during the 0.x phase (see [GOVERNANCE.md](../GOVERNANCE.md)). The release maintainer tags `release-blocker` issues in the public tracker, approves RC exceptions, and owns promotion. This designation is recorded in the current release documents; it does not alter the historical 0.4/0.5 release records.
 
 ## Public Tracker
 

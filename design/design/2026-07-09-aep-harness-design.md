@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define the project development harness for Axisrobo AEP using Superpowers, and define the first implementation target that the harness should drive: a minimal AEP 0.1 conformance harness.
+Define the project development harness for AxisVela AEP using Superpowers, and define the first implementation target that the harness should drive: a minimal AEP 0.1 conformance harness.
 
 ## Background
 

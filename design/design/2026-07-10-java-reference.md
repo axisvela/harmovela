@@ -4,7 +4,7 @@
 
 **Goal:** Add a minimal Java reference implementation under `implementations/java/` that passes AEP-C0 and AEP-C1 conformance against the shared fixture manifest.
 
-**Architecture:** One Maven module (`com.axisrobo:aep-reference-java`) with Jackson for JSON, JUnit 5 for tests. Eight source files mirror the Go reference structure: event types, errors, envelope, router, session, harness, fixtures. Conformance tests consume the shared manifest.
+**Architecture:** One Maven module (`com.axisvela:aep-reference-java`) with Jackson for JSON, JUnit 5 for tests. Eight source files mirror the Go reference structure: event types, errors, envelope, router, session, harness, fixtures. Conformance tests consume the shared manifest.
 
 **Tech Stack:** JDK 21, Maven 3.9+, JUnit Jupiter 5.10+, Jackson Databind 2.17+.
 
@@ -13,17 +13,17 @@
 ## File Structure
 
 - Create: `implementations/java/pom.xml`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Session.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/EventTypes.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Errors.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Envelope.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/EventRouter.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Session.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Harness.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Fixtures.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/EnvelopeTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/EventRouterTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/HarnessTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 - Modify: `implementations/java/README.md`
 - Modify: `README.md`
 
@@ -33,8 +33,8 @@
 
 **Files:**
 - Create: `implementations/java/pom.xml`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/EventTypes.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Errors.java`
 
 - [ ] **Step 1: Create Maven POM**
 
@@ -47,7 +47,7 @@ Create `implementations/java/pom.xml`:
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.axisrobo</groupId>
+    <groupId>com.axisvela</groupId>
     <artifactId>aep-reference-java</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -86,14 +86,14 @@ Create `implementations/java/pom.xml`:
 </project>
 ```
 
-Also create the directory structure â€?`implementations/java/src/main/java/com/axisrobo/aep/` and `implementations/java/src/test/java/com/axisrobo/aep/` must exist.
+Also create the directory structure â€?`implementations/java/src/main/java/com/axisvela/aep/` and `implementations/java/src/test/java/com/axisvela/aep/` must exist.
 
 - [ ] **Step 2: Add EventTypes**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/EventTypes.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.Set;
 
@@ -128,10 +128,10 @@ public final class EventTypes {
 
 - [ ] **Step 3: Add Errors**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Errors.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Errors.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.Map;
 
@@ -178,7 +178,7 @@ Expected: BUILD SUCCESS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java implementations/java/src/main/java/com/axisrobo/aep/Errors.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisvela/aep/EventTypes.java implementations/java/src/main/java/com/axisvela/aep/Errors.java
 git commit -m "feat: add Java Maven project with event types and error model"
 ```
 
@@ -189,15 +189,15 @@ Expected: commit succeeds.
 ### Task 2: Envelope Validation
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Envelope.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/EnvelopeTest.java`
 
 - [ ] **Step 1: Write failing envelope tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/EnvelopeTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -271,10 +271,10 @@ Expected: FAIL with compilation error (Envelope class not found).
 
 - [ ] **Step 3: Implement Envelope**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Envelope.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Envelope.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -390,7 +390,7 @@ Expected: 4 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/Envelope.java implementations/java/src/test/java/com/axisrobo/aep/EnvelopeTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/Envelope.java implementations/java/src/test/java/com/axisvela/aep/EnvelopeTest.java
 git commit -m "feat: add Java envelope validation"
 ```
 
@@ -401,15 +401,15 @@ Expected: commit succeeds.
 ### Task 3: Event Router
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/EventRouter.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/EventRouterTest.java`
 
 - [ ] **Step 1: Write failing router tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/EventRouterTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -484,10 +484,10 @@ Expected: FAIL with compilation error.
 
 - [ ] **Step 3: Implement EventRouter**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/EventRouter.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.*;
 import java.util.function.Function;
@@ -548,7 +548,7 @@ Expected: 5 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/EventRouter.java implementations/java/src/test/java/com/axisrobo/aep/EventRouterTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/EventRouter.java implementations/java/src/test/java/com/axisvela/aep/EventRouterTest.java
 git commit -m "feat: add Java event router"
 ```
 
@@ -559,16 +559,16 @@ Expected: commit succeeds.
 ### Task 4: Session And Harness
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Session.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Session.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Harness.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/HarnessTest.java`
 
 - [ ] **Step 1: Write failing harness tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/HarnessTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -700,10 +700,10 @@ Expected: FAIL with compilation error.
 
 - [ ] **Step 3: Implement Session**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Session.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Session.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.Instant;
 import java.util.Map;
@@ -774,10 +774,10 @@ public class Session {
 
 - [ ] **Step 4: Implement Harness**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Harness.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.Instant;
 import java.util.*;
@@ -1076,7 +1076,7 @@ Expected: all tests pass.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/Session.java implementations/java/src/main/java/com/axisrobo/aep/Harness.java implementations/java/src/test/java/com/axisrobo/aep/HarnessTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/Session.java implementations/java/src/main/java/com/axisvela/aep/Harness.java implementations/java/src/test/java/com/axisvela/aep/HarnessTest.java
 git commit -m "feat: add Java session and harness"
 ```
 
@@ -1087,15 +1087,15 @@ Expected: commit succeeds.
 ### Task 5: Fixtures And Conformance Tests
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Fixtures.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 
 - [ ] **Step 1: Add Fixtures**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Fixtures.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -1136,10 +1136,10 @@ public final class Fixtures {
 
 - [ ] **Step 2: Add conformance test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
@@ -1223,7 +1223,7 @@ Expected: all tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/Fixtures.java implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/Fixtures.java implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java
 git commit -m "feat: add Java conformance tests"
 ```
 

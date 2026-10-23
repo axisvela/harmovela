@@ -17,7 +17,7 @@ Harmovela versions four distinct assets independently:
 |---|---|---|---|---|
 | Protocol envelope | `spec_version` | `"0.2"` | Envelope field set, required fields, semantic rules | core |
 | Event type families | Event type registry | — | Standard event type names and semantics | core |
-| Payload schemas | `payload_schema` (URI) | `https://schemas.axisrobo.com/tool.call.progress.v1.json` | Per-event payload structure | profile |
+| Payload schemas | `payload_schema` (URI) | `https://schemas.axisvela.com/tool.call.progress.v1.json` | Per-event payload structure | profile |
 | Transport bindings | Transport spec | — | stdio framing, WebSocket subprotocol, etc. | profile |
 
 Core assets are required by every conformant implementation. Profile assets may be adopted independently and carry their own conformance requirements.
@@ -61,7 +61,7 @@ Each event type family may define one or more payload schemas. A payload schema 
 ```json
 {
   "type": "memory.fact.added",
-  "payload_schema": "https://schemas.axisrobo.com/memory.fact.added.v1.json",
+  "payload_schema": "https://schemas.axisvela.com/memory.fact.added.v1.json",
   "payload": { ... }
 }
 ```

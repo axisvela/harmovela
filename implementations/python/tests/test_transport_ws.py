@@ -2,7 +2,7 @@ import threading
 import time
 
 import pytest
-from axisrobo_harmovela_event.transport.websocket import WsServerTransport, WsClientTransport
+from axisvela_harmovela_event.transport.websocket import WsServerTransport, WsClientTransport
 
 
 class TestWsServerTransport:

@@ -1,4 +1,4 @@
-from axisrobo_harmovela_event import ErrorCode, error_payload, is_retryable
+from axisvela_harmovela_event import ErrorCode, error_payload, is_retryable
 
 
 class TestErrors:

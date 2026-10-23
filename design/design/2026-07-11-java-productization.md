@@ -4,7 +4,7 @@
 
 **Goal:** Give the Java reference a config loader, a runtime service, an `aepd` daemon, an `aep` CLI, and an HTTP read+ingest API, matching TypeScript core parity.
 
-**Architecture:** A `Subscriptions.matchesType` helper is extracted. Delivery stores gain `getDeadLettered` and the `DeliveryStore` interface is made public. A `com.axisrobo.aep.runtime` package provides `Config`, `AepRuntimeService` (compose validation, subscriber fanout, broadcast WebSocket, delivery store), and `ApiServer` (JDK `com.sun.net.httpserver`). A picocli CLI and a daemon main class wrap the runtime. The existing `WsServer` already broadcasts, so no transport rewrite is needed.
+**Architecture:** A `Subscriptions.matchesType` helper is extracted. Delivery stores gain `getDeadLettered` and the `DeliveryStore` interface is made public. A `com.axisvela.aep.runtime` package provides `Config`, `AepRuntimeService` (compose validation, subscriber fanout, broadcast WebSocket, delivery store), and `ApiServer` (JDK `com.sun.net.httpserver`). A picocli CLI and a daemon main class wrap the runtime. The existing `WsServer` already broadcasts, so no transport rewrite is needed.
 
 **Tech Stack:** Java 21, Jackson, `org.java-websocket`, JDK `com.sun.net.httpserver`, `info.picocli`, JUnit Jupiter.
 
@@ -14,28 +14,28 @@
 
 ## File Structure
 
-- Create `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`: `matchesType`.
+- Create `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`: `matchesType`.
 - Modify `DeliveryStore.java`: make public, add `getDeadLettered`.
 - Modify `InMemoryDeliveryStore.java`, `SqliteDeliveryStore.java`, `PostgresDeliveryStore.java`: add `getDeadLettered`; fix sqlite reason to JSON.
 - Create `runtime/Config.java`, `runtime/AepRuntimeService.java`, `runtime/ApiServer.java`, `runtime/Aepd.java`.
 - Create `cli/AepCli.java` (picocli).
 - Modify `pom.xml`: add picocli.
-- Create tests under `src/test/java/com/axisrobo/aep`.
+- Create tests under `src/test/java/com/axisvela/aep`.
 
 ---
 
 ## Task 1: Subscriptions.matchesType
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,10 +61,10 @@ Expected: compilation failure, `Subscriptions` not found.
 
 - [ ] **Step 3: Implement Subscriptions**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 public final class Subscriptions {
     private Subscriptions() {}
@@ -95,7 +95,7 @@ Expected: `Tests run: 1, Failures: 0`.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java
 git commit -m "feat(java): add Subscriptions.matchesType helper"
 git push origin master
 ```
@@ -105,15 +105,15 @@ git push origin master
 ## Task 2: DeliveryStore getDeadLettered
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/DeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Append to `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java` (inside the class):
+Append to `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java` (inside the class):
 
 ```java
     @Test
@@ -134,10 +134,10 @@ Expected: compilation failure, `getDeadLettered` not found.
 
 - [ ] **Step 3: Make the interface public and add the method**
 
-Replace `implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java` with:
+Replace `implementations/java/src/main/java/com/axisvela/aep/DeliveryStore.java` with:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.List;
 import java.util.Map;
@@ -250,7 +250,7 @@ Expected: all pass.
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/DeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java
 git commit -m "feat(java): make DeliveryStore public and add getDeadLettered"
 git push origin master
 ```
@@ -260,18 +260,18 @@ git push origin master
 ## Task 3: Runtime config
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/runtime/Config.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/runtime/ConfigTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/runtime/ConfigTest.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.InMemoryDeliveryStore;
+import com.axisvela.aep.DeliveryStore;
+import com.axisvela.aep.InMemoryDeliveryStore;
 import org.junit.jupiter.api.Test;
 import java.nio.file.*;
 import java.util.Map;
@@ -319,15 +319,15 @@ Expected: compilation failure, `Config` not found.
 
 - [ ] **Step 3: Implement Config**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/runtime/Config.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.InMemoryDeliveryStore;
-import com.axisrobo.aep.SqliteDeliveryStore;
-import com.axisrobo.aep.PostgresDeliveryStore;
+import com.axisvela.aep.DeliveryStore;
+import com.axisvela.aep.InMemoryDeliveryStore;
+import com.axisvela.aep.SqliteDeliveryStore;
+import com.axisvela.aep.PostgresDeliveryStore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.file.Files;
@@ -503,7 +503,7 @@ Expected: all pass.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/runtime/Config.java implementations/java/src/test/java/com/axisrobo/aep/runtime/ConfigTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/runtime/Config.java implementations/java/src/test/java/com/axisvela/aep/runtime/ConfigTest.java
 git commit -m "feat(java): add runtime Config"
 git push origin master
 ```
@@ -513,16 +513,16 @@ git push origin master
 ## Task 4: Runtime service and HTTP api
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeServiceTest.java`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeServiceTest.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -613,10 +613,10 @@ Expected: compilation failure, `AepRuntimeService` not found.
 
 - [ ] **Step 3: Implement ApiServer**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -696,7 +696,7 @@ public class ApiServer {
             send(exchange, 400, Map.of("accepted", false, "errors", List.of("invalid JSON body")));
             return;
         }
-        var errors = com.axisrobo.aep.Envelope.validate(event);
+        var errors = com.axisvela.aep.Envelope.validate(event);
         if (!errors.isEmpty()) {
             send(exchange, 400, Map.of("accepted", false, "errors", errors));
             return;
@@ -718,15 +718,15 @@ public class ApiServer {
 
 - [ ] **Step 4: Implement AepRuntimeService**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.Envelope;
-import com.axisrobo.aep.Subscriptions;
-import com.axisrobo.aep.transport.WsServer;
+import com.axisvela.aep.DeliveryStore;
+import com.axisvela.aep.Envelope;
+import com.axisvela.aep.Subscriptions;
+import com.axisvela.aep.transport.WsServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -823,7 +823,7 @@ Expected: all pass.
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeServiceTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeServiceTest.java
 git commit -m "feat(java): add runtime service and HTTP api server"
 git push origin master
 ```
@@ -834,9 +834,9 @@ git push origin master
 
 **Files:**
 - Modify: `implementations/java/pom.xml` (add picocli)
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/runtime/Aepd.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/cli/AepCli.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/cli/AepCliTest.java`
 
 - [ ] **Step 1: Add picocli dependency**
 
@@ -852,10 +852,10 @@ In `implementations/java/pom.xml`, add after the `junit-jupiter` dependency:
 
 - [ ] **Step 2: Write failing CLI test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/cli/AepCliTest.java`:
 
 ```java
-package com.axisrobo.aep.cli;
+package com.axisvela.aep.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -886,10 +886,10 @@ Expected: compilation failure, `AepCli` not found.
 
 - [ ] **Step 4: Implement the daemon main**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/runtime/Aepd.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
 public class Aepd {
     public static void main(String[] args) throws Exception {
@@ -908,16 +908,16 @@ public class Aepd {
 
 - [ ] **Step 5: Implement the picocli CLI**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/cli/AepCli.java`:
 
 ```java
-package com.axisrobo.aep.cli;
+package com.axisvela.aep.cli;
 
-import com.axisrobo.aep.DeliveryStore;
-import com.axisrobo.aep.Subscriptions;
-import com.axisrobo.aep.runtime.AepRuntimeService;
-import com.axisrobo.aep.runtime.Config;
-import com.axisrobo.aep.transport.WsClient;
+import com.axisvela.aep.DeliveryStore;
+import com.axisvela.aep.Subscriptions;
+import com.axisvela.aep.runtime.AepRuntimeService;
+import com.axisvela.aep.runtime.Config;
+import com.axisvela.aep.transport.WsClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -1071,7 +1071,7 @@ Expected: compiles.
 - [ ] **Step 7: Commit and push**
 
 ```bash
-git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/runtime/Aepd.java implementations/java/src/main/java/com/axisrobo/aep/cli/AepCli.java implementations/java/src/test/java/com/axisrobo/aep/cli/AepCliTest.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisvela/aep/runtime/Aepd.java implementations/java/src/main/java/com/axisvela/aep/cli/AepCli.java implementations/java/src/test/java/com/axisvela/aep/cli/AepCliTest.java
 git commit -m "feat(java): add aepd daemon and aep picocli CLI"
 git push origin master
 ```

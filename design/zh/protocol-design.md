@@ -30,7 +30,7 @@
     "sequence": 42,
     "cursor": "stream_01:42"
   },
-  "payload_schema": "https://schemas.axisrobo.com/tool.call.progress.v1.json",
+  "payload_schema": "https://schemas.axisvela.com/tool.call.progress.v1.json",
   "payload": {
     "message": "Indexed 120 of 500 pages",
     "progress": 0.24

@@ -101,9 +101,9 @@ This filtering behavior is available in:
 
 - **Cross-language runner:** `node tools/conformance-runner.js --profile=delivery`
 - **TypeScript CLI:** `node implementations/typescript/src/cli/harmovela.js conformance --profile=delivery`
-- **Python CLI:** `cd implementations/python && python -m axisrobo_harmovela.cli.main conformance --profile=delivery`
+- **Python CLI:** `cd implementations/python && python -m axisvela_harmovela.cli.main conformance --profile=delivery`
 - **Go CLI:** `cd implementations/go && go run ./cmd/harmovela conformance --profile=delivery`
-- **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
+- **Java CLI:** `cd implementations/java && mvn -q exec:java -Dexec.mainClass=com.axisvela.harmovela.cli.HarmovelaCli -Dexec.args="conformance --profile=delivery"`
 
 ## Dimension Contract Ownership
 

@@ -1,7 +1,7 @@
 import os
 import uuid
 import pytest
-from axisrobo_harmovela_recovery import PostgresDeliveryStore
+from axisvela_harmovela_recovery import PostgresDeliveryStore
 
 
 def _url() -> str:

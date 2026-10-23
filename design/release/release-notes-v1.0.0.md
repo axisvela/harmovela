@@ -8,7 +8,7 @@ Harmovela Protocol 1.0 declares the L3 adaptation coordination semantics stable 
 
 ## Explicit Compatibility Decision
 
-This release records an explicit compatibility decision by the release maintainer (Axisrobo team): the 0.9 RC exit gates requiring **external evidence** were not satisfied when 1.0 was declared, and they are **exempted from 1.0 and deferred to 1.1**. The deferred gates are:
+This release records an explicit compatibility decision by the release maintainer (AxisVela team): the 0.9 RC exit gates requiring **external evidence** were not satisfied when 1.0 was declared, and they are **exempted from 1.0 and deferred to 1.1**. The deferred gates are:
 
 1. Two implementations maintained in distinct public repositories by distinct maintainers.
 2. An external L3 autonomy pilot whose operator is not a maintainer of either participating implementation.

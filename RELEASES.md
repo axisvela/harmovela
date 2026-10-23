@@ -105,7 +105,7 @@ Each versioned release produces the following artifacts:
 
 | Artifact | Description |
 |---|---|
-| **Spec site** | Rendered HTML specification at `https://axisrobo.github.io/harmovela/`, version-pinned |
+| **Spec site** | Rendered HTML specification at `https://axisvela.github.io/harmovela/`, version-pinned |
 | **Schemas** | JSON Schema assets in `schemas/`, tagged with the release version |
 | **Conformance fixtures** | Shared cross-language fixtures in `conformance/fixtures/`, tagged with the release version |
 | **Implementation tags** | Git tags on each language implementation directory (e.g., `implementations/typescript`, `implementations/python`, `implementations/go`, `implementations/java`) |

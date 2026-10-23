@@ -65,7 +65,7 @@ Conformance: HARMOVELA-C1. Depends on `harmovela.security.v1` for base identity,
 | TypeScript | `@axisvela/harmovela-event` (v0.1.0-draft) | 42 | `cd implementations/typescript && npm run conformance` |
 | Python | `harmovela-reference-python` | 45 | `cd implementations/python && python -m harmovela_cli.main conformance` |
 | Go | `github.com/axisvela/harmovela` | 37 | `cd implementations/go && go run ./cmd/harmovela conformance` |
-| Java | `com.axisrobo.harmovela` (JDK 21) | 38 | `cd implementations/java && mvn exec:java -Dexec.mainClass=com.axisrobo.harmovela.cli.HarmovelaCli -Dexec.args="conformance"` |
+| Java | `com.axisvela.harmovela` (JDK 21) | 38 | `cd implementations/java && mvn exec:java -Dexec.mainClass=com.axisvela.harmovela.cli.HarmovelaCli -Dexec.args="conformance"` |
 
 ## Conformance Fixtures
 

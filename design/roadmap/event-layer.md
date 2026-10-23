@@ -40,7 +40,7 @@ Identity, authorization, audit, tenant isolation, and registry governance are cr
 
 ## Current State
 
-The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisrobo.github.io/harmovela/. The default conformance target is `HARMOVELA-C3`. DeliveryTracker integration is available in every language. A networked PostgreSQL delivery-store backend ships in all four languages alongside the in-memory and SQLite backends.
+The protocol covers 17 specifications, 4 conformance levels (C0–C3), 7 cross-language fixtures, 4 transport bindings, ~370 tests across four languages, and a published spec site at https://axisvela.github.io/harmovela/. The default conformance target is `HARMOVELA-C3`. DeliveryTracker integration is available in every language. A networked PostgreSQL delivery-store backend ships in all four languages alongside the in-memory and SQLite backends.
 
 ## Remaining Foundation Work
 

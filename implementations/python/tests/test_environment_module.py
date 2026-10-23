@@ -1,4 +1,4 @@
-from axisrobo_harmovela_environment import ENVIRONMENT_EVENT_TYPES, is_environment_event_type
+from axisvela_harmovela_environment import ENVIRONMENT_EVENT_TYPES, is_environment_event_type
 
 
 def test_environment_event_types_includes_all_4_registry_entries():

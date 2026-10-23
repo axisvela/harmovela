@@ -1,4 +1,4 @@
-from axisrobo_harmovela_delegation import DELEGATION_EVENT_TYPES, is_delegation_event_type
+from axisvela_harmovela_delegation import DELEGATION_EVENT_TYPES, is_delegation_event_type
 
 
 def test_delegation_event_types_includes_all_5_registry_entries():

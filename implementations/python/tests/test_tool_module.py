@@ -1,4 +1,4 @@
-from axisrobo_harmovela_tool import TOOL_EVENT_TYPES, is_tool_event_type
+from axisvela_harmovela_tool import TOOL_EVENT_TYPES, is_tool_event_type
 
 
 def test_tool_event_types_includes_all_11_registry_entries():

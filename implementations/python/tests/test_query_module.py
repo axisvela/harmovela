@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_query import QUERY_EVENT_TYPES, is_query_event_type
+from axisvela_harmovela_query import QUERY_EVENT_TYPES, is_query_event_type
 
 
 def test_query_event_types_includes_all_4_entries():

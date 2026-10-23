@@ -1,4 +1,4 @@
-from axisrobo_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
+from axisvela_harmovela_adaptation import ADAPTATION_EVENT_TYPES, is_adaptation_event_type
 
 
 def test_adaptation_event_types_includes_all_10_registry_entries():

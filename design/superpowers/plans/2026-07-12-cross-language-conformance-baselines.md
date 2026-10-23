@@ -16,7 +16,7 @@
 - Modify: `implementations/typescript/test/fixtures.test.js`
 - Modify: `implementations/python/tests/test_fixtures.py`
 - Modify: `implementations/go/aep/conformance_test.go`
-- Modify: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Modify: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 
 - [x] **Step 1: Add `reject_some` expectation assertions before normal positive validation**
 
@@ -48,7 +48,7 @@ Expected: FAIL because `negative.ndjson` is validated as positive.
 - Modify: `implementations/typescript/src/conformance.js`
 - Modify: `implementations/python/tests/test_fixtures.py`
 - Modify: `implementations/go/aep/conformance_test.go`
-- Modify: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Modify: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 
 - [x] **Step 1: Include payload-schema validation in TypeScript negative rejection detection**
 
@@ -99,5 +99,5 @@ Expected: all available suites pass.
 - [x] **Step 3: Commit only the scoped fixtures, runner, test, documentation, and plan files**
 
 ```bash
-git add implementations/typescript/src/conformance.js implementations/typescript/test/fixtures.test.js implementations/python/tests/test_fixtures.py implementations/go/aep/conformance_test.go implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java design/protocol/conformance.md design/protocol/transport-websocket.md design/superpowers/plans/2026-07-12-cross-language-conformance-baselines.md
+git add implementations/typescript/src/conformance.js implementations/typescript/test/fixtures.test.js implementations/python/tests/test_fixtures.py implementations/go/aep/conformance_test.go implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java design/protocol/conformance.md design/protocol/transport-websocket.md design/superpowers/plans/2026-07-12-cross-language-conformance-baselines.md
 ```

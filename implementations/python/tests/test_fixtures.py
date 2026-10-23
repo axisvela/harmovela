@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from axisrobo_harmovela_event import validate_envelope, is_valid_by_schema
+from axisvela_harmovela_event import validate_envelope, is_valid_by_schema
 from harmovela_harness import HarmovelaHarness
 
 CONFORMANCE_DIR = Path(__file__).resolve().parent.parent.parent.parent / "conformance"

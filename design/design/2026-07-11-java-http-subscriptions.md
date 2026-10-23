@@ -14,23 +14,23 @@
 
 ## File Structure
 
-- Modify `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`: add `matches`.
+- Modify `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`: add `matches`.
 - Modify `DeliveryStore.java` (interface), `InMemoryDeliveryStore.java`, `SqliteDeliveryStore.java`, `PostgresDeliveryStore.java`: subscription CRUD.
 - Modify `runtime/AepRuntimeService.java`: registry, fanout, load on start.
 - Modify `runtime/ApiServer.java`: subscription routes, long-poll, SSE, executor.
-- Add tests under `src/test/java/com/axisrobo/aep`.
+- Add tests under `src/test/java/com/axisvela/aep`.
 
 ---
 
 ## Task 1: Subscriptions.matches filter helper
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java`
 
 - [ ] **Step 1: Add failing test**
 
-Append inside the `SubscriptionsTest` class in `implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java`:
+Append inside the `SubscriptionsTest` class in `implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java`:
 
 ```java
     @Test
@@ -51,10 +51,10 @@ Expected: compilation failure, `matches` not found.
 
 - [ ] **Step 3: Implement matches**
 
-In `implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java`, add imports and methods. Change the file to:
+In `implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java`, add imports and methods. Change the file to:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.List;
 import java.util.Map;
@@ -122,7 +122,7 @@ Expected: `Tests run: 2, Failures: 0`.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/Subscriptions.java implementations/java/src/test/java/com/axisrobo/aep/SubscriptionsTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/Subscriptions.java implementations/java/src/test/java/com/axisvela/aep/SubscriptionsTest.java
 git commit -m "feat(java): add Subscriptions.matches filter helper"
 git push origin master
 ```
@@ -132,11 +132,11 @@ git push origin master
 ## Task 2: Delivery store subscription CRUD
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/DeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java`
 
 - [ ] **Step 1: Add failing test**
 
@@ -352,7 +352,7 @@ Expected: all pass.
 - [ ] **Step 8: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/DeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java
 git commit -m "feat(java): add subscription CRUD to delivery stores"
 git push origin master
 ```
@@ -362,15 +362,15 @@ git push origin master
 ## Task 3: Runtime registry
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeSubscriptionsTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeSubscriptionsTest.java`
 
 - [ ] **Step 1: Add failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeSubscriptionsTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeSubscriptionsTest.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
@@ -423,12 +423,12 @@ Expected: compilation failure, `createSubscription` not found on the service.
 
 - [ ] **Step 3: Implement the registry**
 
-In `implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java`:
+In `implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java`:
 
 Add imports:
 
 ```java
-import com.axisrobo.aep.Subscriptions;
+import com.axisvela.aep.Subscriptions;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -534,7 +534,7 @@ Expected: all pass.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/runtime/AepRuntimeService.java implementations/java/src/test/java/com/axisrobo/aep/runtime/RuntimeSubscriptionsTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/runtime/AepRuntimeService.java implementations/java/src/test/java/com/axisvela/aep/runtime/RuntimeSubscriptionsTest.java
 git commit -m "feat(java): add runtime subscription registry with fanout"
 git push origin master
 ```
@@ -544,15 +544,15 @@ git push origin master
 ## Task 4: HTTP subscription endpoints, long-poll, SSE
 
 **Files:**
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/runtime/ApiSubscriptionsTest.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/runtime/ApiSubscriptionsTest.java`
 
 - [ ] **Step 1: Add failing tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/runtime/ApiSubscriptionsTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/runtime/ApiSubscriptionsTest.java`:
 
 ```java
-package com.axisrobo.aep.runtime;
+package com.axisvela.aep.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -646,7 +646,7 @@ Expected: FAIL â€?subscription routes return 404 / SSE not implemented.
 
 - [ ] **Step 3: Switch the api server to a thread pool and add routes**
 
-In `implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java`:
+In `implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java`:
 
 Add imports:
 
@@ -764,7 +764,7 @@ Expected: all pass.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/runtime/ApiServer.java implementations/java/src/test/java/com/axisrobo/aep/runtime/ApiSubscriptionsTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/runtime/ApiServer.java implementations/java/src/test/java/com/axisvela/aep/runtime/ApiSubscriptionsTest.java
 git commit -m "feat(java): add HTTP subscription CRUD, long-poll, and SSE"
 git push origin master
 ```

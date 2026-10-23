@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_recovery import SqliteDeliveryStore, DeliveryTracker, DeliveryJournal
+from axisvela_harmovela_recovery import SqliteDeliveryStore, DeliveryTracker, DeliveryJournal
 
 
 @pytest.fixture

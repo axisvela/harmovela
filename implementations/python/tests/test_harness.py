@@ -1,5 +1,5 @@
 from harmovela_harness import HarmovelaHarness
-from axisrobo_harmovela_event import ErrorCode
+from axisvela_harmovela_event import ErrorCode
 
 _now = "2026-07-09T10:00:01Z"
 _valid_base = {

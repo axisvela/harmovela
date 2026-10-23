@@ -1,6 +1,6 @@
 import json
 import pytest
-from axisrobo_harmovela_event.transport.redis import RedisTransport
+from axisvela_harmovela_event.transport.redis import RedisTransport
 
 def test_stream_key_routing():
     t = RedisTransport(prefix="aep")

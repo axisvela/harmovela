@@ -60,7 +60,7 @@ Extend the `docFiles` list in `tools/generate-spec-site.js` with `differentiatio
 
 Run: `node tools/generate-spec-site.js`
 
-Expected: output reports `Site generated: D:\profile\paper-code\Axisrobo-AEP\docs`.
+Expected: output reports `Site generated: D:\profile\paper-code\AxisVela-AEP\docs`.
 
 - [ ] **Step 3: Verify documentation links and terminology**
 

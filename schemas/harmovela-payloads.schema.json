@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/aep-payloads.v0.1.schema.json",
+  "$id": "https://schemas.axisvela.com/aep-payloads.v0.1.schema.json",
   "title": "AEP Standard Event Payloads",
   "description": "Payload validation schema for standard AEP event types. Validate by passing the full envelope; the schema uses if/then discriminator by event type to validate the payload field.",
   "type": "object",

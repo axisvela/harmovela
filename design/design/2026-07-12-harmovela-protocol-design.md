@@ -9,7 +9,7 @@ Status: approved
 
 Harmovela is an open coordination protocol for autonomous systems. It defines interoperable asynchronous coordination across tasks, events, state, context, memory, delegation, recovery, and governance.
 
-Axisrobo is the founding implementation organization. The Harmovela protocol is designed for multi-party adoption and open governance. Its canonical repository location is `https://github.com/axisvela/harmovela`.
+AxisVela is the founding implementation organization. The Harmovela protocol is designed for multi-party adoption and open governance. Its canonical repository location is `https://github.com/axisvela/harmovela`.
 
 ## Scope
 
@@ -31,7 +31,7 @@ The protocol does not define a general intelligence model, a universal ontology,
 
 The existing 0.1 draft implementation remains the compatibility baseline during the transition. Naming changes must not silently alter wire behavior, delivery guarantees, or conformance claims.
 
-Protocol identity, schema identifiers, package artifact names, repository paths, and public documentation are migrated through versioned releases. The Axisrobo package and group namespace remains unchanged. Compatibility aliases, when required, must have explicit ownership, duration, and removal criteria.
+Protocol identity, schema identifiers, package artifact names, repository paths, and public documentation are migrated through versioned releases. The AxisVela package and group namespace remains unchanged. Compatibility aliases, when required, must have explicit ownership, duration, and removal criteria.
 
 ### 0.2 Breaking Identifier Migration
 
@@ -46,7 +46,7 @@ Harmovela 0.2 performs a clean breaking migration of public protocol identifiers
 | `aep.config.json` and `.aep/` | `harmovela.config.json` and `.harmovela/` |
 | `AEP_CONFIG` | `HARMOVELA_CONFIG` |
 
-Axisrobo remains the package and group namespace. The transition must not replace `axisrobo` with `harmovela` in package or group identifiers.
+AxisVela remains the package and group namespace. The transition must not replace `axisvela` with `harmovela` in package or group identifiers.
 
 ## Governance Direction
 

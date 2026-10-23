@@ -19,7 +19,7 @@ TypeScript reference: `implementations/typescript/src/bridge/mcp-bridge.js`.
 Python's `TaskTracker` already exposes `accepted()`, `started()`, `progress()`, `completed()`, `failed()` returning event dicts, plus `.id`. Go and Java do not. Before the bridge:
 
 - **Go** (`aep/harness.go` or a new `aep/task.go`): add exported methods `Accepted()`, `Started()`, `Progress(map[string]any)`, `Completed(map[string]any)`, `Failed(code, message string)` that return `map[string]any` AEP task events, mirroring the existing private `transition`. `ID` is already an exported field. Keep `Accept()` working (it may delegate to `Accepted()`), so `handler` behavior in the harness is unchanged.
-- **Java** (`Harness.TaskTracker`): promote to a standalone public class `com.axisrobo.aep.TaskTracker` (own file) with a public constructor `(String id, String source)`, a `String id()` accessor, and public methods `accepted()`, `started()`, `progress(Map)`, `completed(Map)`, `failed(code, message)` returning `Map<String, Object>`. Update `Harness` to use the standalone class; keep harness behavior identical.
+- **Java** (`Harness.TaskTracker`): promote to a standalone public class `com.axisvela.aep.TaskTracker` (own file) with a public constructor `(String id, String source)`, a `String id()` accessor, and public methods `accepted()`, `started()`, `progress(Map)`, `completed(Map)`, `failed(code, message)` returning `Map<String, Object>`. Update `Harness` to use the standalone class; keep harness behavior identical.
 
 These upgrades are additive; existing harness/task tests must stay green.
 
@@ -101,7 +101,7 @@ Sink may be null; the bridge tolerates a nil/None sink (no-op).
 ### Java (`implementations/java`)
 
 - Promote `TaskTracker` to a public standalone class; update `Harness`.
-- New `com.axisrobo.aep.McpBridge` with tool registration, `handleRequest(Map) -> Map`, and an async tool handler. Async emission uses a thread or executor; tests synchronize via a latch/future.
+- New `com.axisvela.aep.McpBridge` with tool registration, `handleRequest(Map) -> Map`, and an async tool handler. Async emission uses a thread or executor; tests synchronize via a latch/future.
 - Define a `@FunctionalInterface` event sink.
 
 ## Error Handling

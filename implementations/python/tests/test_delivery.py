@@ -1,4 +1,4 @@
-from axisrobo_harmovela_recovery import DeliveryTracker, retry_delay, DEFAULT_RETRY, InMemoryDeliveryStore, DeliveryJournal
+from axisvela_harmovela_recovery import DeliveryTracker, retry_delay, DEFAULT_RETRY, InMemoryDeliveryStore, DeliveryJournal
 
 
 def test_retry_delay_computes_exponential_backoff():
