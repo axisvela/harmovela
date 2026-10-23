@@ -1,6 +1,6 @@
 # Harmovela Protocol
 
-> [中文文档 (Chinese)](README_zh.md) | [Spec Site](https://axisrobo.github.io/harmovela/)
+> [中文文档 (Chinese)](README_zh.md) | [Spec Site](https://axisvela.github.io/harmovela/)
 
 **Harmovela Protocol** is an open coordination protocol for autonomous systems. It defines how agents, tools, memory systems, context providers, environment observers, and multi-agent runtimes coordinate across seven interdependent dimensions:
 
@@ -28,7 +28,7 @@ The current 0.5 Adaptation Preview is a multi-language protocol repository with:
 - **~700 tests** across four languages, all passing
 - **7 transport bindings** (stdio, WebSocket, SSE, gRPC, NATS, Kafka, Redis Streams) implemented across all languages
 - **SQLite and PostgreSQL delivery stores** with retry, dead-letter, replay, and cross-language conformance
-- **Spec site** at [axisrobo.github.io/harmovela](https://axisrobo.github.io/harmovela/)
+- **Spec site** at [axisvela.github.io/harmovela](https://axisvela.github.io/harmovela/)
 
 ```mermaid
 graph LR
@@ -255,7 +255,7 @@ node examples/mcp-bridge/async-tool.js
 
 ## Spec Site
 
-The rendered specification is published at **[https://axisrobo.github.io/harmovela/](https://axisrobo.github.io/harmovela/)**.
+The rendered specification is published at **[https://axisvela.github.io/harmovela/](https://axisvela.github.io/harmovela/)**.
 
 ## Status
 

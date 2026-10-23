@@ -13,8 +13,8 @@
 ## File Structure
 
 - Modify: `implementations/java/pom.xml` â€?add sqlite-jdbc dependency
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/SqliteDeliveryStoreTest.java`
 
 ---
 
@@ -22,7 +22,7 @@
 
 **Files:**
 - Modify: `implementations/java/pom.xml`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java`
 
 - [ ] **Step 1: Add sqlite-jdbc to pom.xml**
 
@@ -46,10 +46,10 @@ Expected: BUILD SUCCESS.
 
 - [ ] **Step 3: Implement SqliteDeliveryStore**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.sql.*;
 import java.time.Instant;
@@ -352,7 +352,7 @@ public class SqliteDeliveryStore {
 - [ ] **Step 4: Commit**
 
 ```bash
-git add implementations/java/pom.xml implementations/java/src/main/java/com/axisrobo/aep/SqliteDeliveryStore.java
+git add implementations/java/pom.xml implementations/java/src/main/java/com/axisvela/aep/SqliteDeliveryStore.java
 git commit -m "feat: add Java SqliteDeliveryStore"
 ```
 
@@ -361,14 +361,14 @@ git commit -m "feat: add Java SqliteDeliveryStore"
 ### Task 2: SQLite Store Tests
 
 **Files:**
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/SqliteDeliveryStoreTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/SqliteDeliveryStoreTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.*;
 import java.sql.SQLException;
@@ -489,7 +489,7 @@ Expected: all pass (~47 tests).
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/test/java/com/axisrobo/aep/SqliteDeliveryStoreTest.java
+git add implementations/java/src/test/java/com/axisvela/aep/SqliteDeliveryStoreTest.java
 git commit -m "test: add Java SqliteDeliveryStore tests"
 ```
 

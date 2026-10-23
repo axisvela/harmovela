@@ -1,0 +1,34 @@
+package com.axisvela.harmovela.event;
+
+import com.axisvela.harmovela.event.envelope.Envelope;
+import com.axisvela.harmovela.event.router.EventRouter;
+import com.axisvela.harmovela.event.session.Session;
+import com.axisvela.harmovela.event.subscription.Subscriptions;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class EventCoreTest {
+    @Test
+    void validatesEventEnvelopeAndExcludesTaskRegistryTypes() {
+        var event = Map.<String, Object>of(
+            "spec_version", "0.2", "id", "evt_01", "type", "session.opened",
+            "source", "agent:test", "created_at", "2026-07-09T10:00:00Z", "payload", Map.of()
+        );
+        assertTrue(Envelope.validate(event).isEmpty());
+        assertTrue(Envelope.isStandardEventType("task.submitted"));
+    }
+
+    @Test
+    void providesEventSessionSubscriptionAndRoutingBehavior() {
+        var session = new Session("sess_event", null, null);
+        assertEquals("session.opened", session.opened().get("type"));
+        assertTrue(Subscriptions.matchesType("session.*", "session.ready"));
+        assertTrue(Subscriptions.matches(Map.of("types", "session.*"), Map.of("type", "session.ready")));
+
+        var router = new EventRouter();
+        router.onAll(event -> Map.of("type", "event.acknowledged"));
+        assertEquals(1, router.dispatch(Map.of("type", "session.ready")).size());
+    }
+}

@@ -2,7 +2,7 @@ import json
 import os
 import tempfile
 from harmovela_runtime.config import default_config, write_default_config, load_config, apply_env_overrides, create_delivery_store
-from axisrobo_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliveryStore
+from axisvela_harmovela_recovery import InMemoryDeliveryStore, SqliteDeliveryStore
 
 
 def test_default_config():

@@ -1,6 +1,6 @@
-package com.axisrobo.harmovela.examples;
+package com.axisvela.harmovela.examples;
 
-import com.axisrobo.harmovela.bridge.McpBridge;
+import com.axisvela.harmovela.bridge.McpBridge;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;

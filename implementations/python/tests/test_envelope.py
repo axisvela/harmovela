@@ -1,4 +1,4 @@
-from axisrobo_harmovela_event import validate_envelope, is_standard_event_type
+from axisvela_harmovela_event import validate_envelope, is_standard_event_type
 
 
 class TestEnvelope:

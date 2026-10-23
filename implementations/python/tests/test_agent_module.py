@@ -1,4 +1,4 @@
-from axisrobo_harmovela_agent import AGENT_EVENT_TYPES, is_agent_event_type
+from axisvela_harmovela_agent import AGENT_EVENT_TYPES, is_agent_event_type
 
 
 def test_agent_event_types_includes_all_6_registry_entries():

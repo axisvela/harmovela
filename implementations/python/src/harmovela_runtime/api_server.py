@@ -3,7 +3,7 @@ import queue
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from axisrobo_harmovela_event import validate_envelope
+from axisvela_harmovela_event import validate_envelope
 
 
 def _parse_subscription_route(route):

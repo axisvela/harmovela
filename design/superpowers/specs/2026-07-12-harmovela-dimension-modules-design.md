@@ -4,13 +4,13 @@
 
 ## Goal
 
-Replace the monolithic legacy `aep` implementation boundary with independently publishable, low-coupling Harmovela modules organized by coordination dimension. Harmovela is the public protocol identity; Axisrobo remains the implementation organization and package namespace.
+Replace the monolithic legacy `aep` implementation boundary with independently publishable, low-coupling Harmovela modules organized by coordination dimension. Harmovela is the public protocol identity; AxisVela remains the implementation organization and package namespace.
 
 ## Decision
 
 Use **dimension-first** physical modules. The maturity layers Event -> Coordination -> Adaptation remain dependency and release-planning labels, not a second competing directory hierarchy.
 
-Every new public API must live in a Harmovela-named Axisrobo package. The legacy `aep` public surface is removed in the breaking release; no public compatibility facade is retained.
+Every new public API must live in a Harmovela-named AxisVela package. The legacy `aep` public surface is removed in the breaking release; no public compatibility facade is retained.
 
 ## Module Model
 
@@ -33,14 +33,14 @@ Modules communicate through public contracts and Harmovela event envelopes. No m
 
 | Dimension | TypeScript | Python | Go | Java |
 | --- | --- | --- | --- | --- |
-| Event | `@axisvela/harmovela-event` | `axisrobo_harmovela_event` | `event` | `com.axisrobo.harmovela.event` |
-| Task | `@axisvela/harmovela-task` | `axisrobo_harmovela_task` | `task` | `com.axisrobo.harmovela.task` |
-| State | `@axisvela/harmovela-state` | `axisrobo_harmovela_state` | `state` | `com.axisrobo.harmovela.state` |
-| Context / Memory | `@axisvela/harmovela-context` | `axisrobo_harmovela_context` | `context` | `com.axisrobo.harmovela.context` |
-| Delegation | `@axisvela/harmovela-delegation` | `axisrobo_harmovela_delegation` | `delegation` | `com.axisrobo.harmovela.delegation` |
-| Recovery | `@axisvela/harmovela-recovery` | `axisrobo_harmovela_recovery` | `recovery` | `com.axisrobo.harmovela.recovery` |
-| Governance | `@axisvela/harmovela-governance` | `axisrobo_harmovela_governance` | `governance` | `com.axisrobo.harmovela.governance` |
-| Adaptation (future) | `@axisvela/harmovela-adaptation` | `axisrobo_harmovela_adaptation` | `adaptation` | `com.axisrobo.harmovela.adaptation` |
+| Event | `@axisvela/harmovela-event` | `axisvela_harmovela_event` | `event` | `com.axisvela.harmovela.event` |
+| Task | `@axisvela/harmovela-task` | `axisvela_harmovela_task` | `task` | `com.axisvela.harmovela.task` |
+| State | `@axisvela/harmovela-state` | `axisvela_harmovela_state` | `state` | `com.axisvela.harmovela.state` |
+| Context / Memory | `@axisvela/harmovela-context` | `axisvela_harmovela_context` | `context` | `com.axisvela.harmovela.context` |
+| Delegation | `@axisvela/harmovela-delegation` | `axisvela_harmovela_delegation` | `delegation` | `com.axisvela.harmovela.delegation` |
+| Recovery | `@axisvela/harmovela-recovery` | `axisvela_harmovela_recovery` | `recovery` | `com.axisvela.harmovela.recovery` |
+| Governance | `@axisvela/harmovela-governance` | `axisvela_harmovela_governance` | `governance` | `com.axisvela.harmovela.governance` |
+| Adaptation (future) | `@axisvela/harmovela-adaptation` | `axisvela_harmovela_adaptation` | `adaptation` | `com.axisvela.harmovela.adaptation` |
 
 The Go module remains `github.com/axisvela/harmovela`; dimensions are Go subpackages. Each other language publishes a package/artifact per dimension. A language may initially ship a dimension package as a thin public module over a shared internal implementation, but its public dependency graph must already match this specification.
 

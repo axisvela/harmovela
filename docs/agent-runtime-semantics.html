@@ -475,7 +475,7 @@ interruption.acknowledged
 <p>Implementations MAY validate conditional requiredness at envelope validation time by examining the negotiated profile set. A fixture that passes core envelope validation (HARMOVELA-C0) MAY fail profile-level validation if conditionally required fields are missing. Conformance fixtures for profile validation are tagged with the corresponding profile identifier in the manifest.</p>
 <h2>Payload Schemas</h2>
 <p>Structured payload validation is defined in the shared payloads schema:</p>
-<p><code>schemas/harmovela-payloads.schema.json</code> (<code>https://schemas.axisrobo.com/harmovela-payloads.v0.1.schema.json</code>)</p>
+<p><code>schemas/harmovela-payloads.schema.json</code> (<code>https://schemas.axisvela.com/harmovela-payloads.v0.1.schema.json</code>)</p>
 <p>The schema uses <code>if</code>/<code>then</code> discriminator blocks keyed on the envelope <code>type</code> field to validate payloads for the following event types:</p>
 <table>
 <thead><tr><th>Family</th><th>Validated types</th></tr></thead>

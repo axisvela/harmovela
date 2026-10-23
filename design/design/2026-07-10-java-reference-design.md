@@ -26,7 +26,7 @@ Same minimal pattern as the Go reference: typed classes, validation, fixture rea
 - **Maven** â€?build tool, no wrapper needed
 - **JUnit 5** â€?`@Test`, `@ParameterizedTest`, assertions
 - **Jackson Databind** â€?JSON parsing (single dependency, standard)
-- **GroupId**: `com.axisrobo`, **ArtifactId**: `aep-reference-java`
+- **GroupId**: `com.axisvela`, **ArtifactId**: `aep-reference-java`
 
 ## Components
 
@@ -38,10 +38,10 @@ Same minimal pattern as the Go reference: typed classes, validation, fixture rea
 
 ### Package Structure
 
-All sources under `com.axisrobo.aep`:
+All sources under `com.axisvela.aep`:
 
 ```
-src/main/java/com/axisrobo/aep/
+src/main/java/com/axisvela/aep/
   Envelope.java      â€?validate(Map<String,Object>) returns List<String>
   EventTypes.java    â€?static Set<String> STANDARD_TYPES + isStandardEventType()
   Errors.java        â€?static error code constants + errorPayload()
@@ -49,7 +49,7 @@ src/main/java/com/axisrobo/aep/
   Session.java       â€?session state machine
   Harness.java       â€?Harness + TaskTracker, C1 behavior
   Fixtures.java      â€?manifest + NDJSON loader
-src/test/java/com/axisrobo/aep/
+src/test/java/com/axisvela/aep/
   EnvelopeTest.java
   EventRouterTest.java
   HarnessTest.java

@@ -4,7 +4,7 @@
 
 ## Reporting a Vulnerability
 
-Report security vulnerabilities privately to the Axisrobo security team at **security@axisrobo.com**. Do **not** open a public issue for a security vulnerability.
+Report security vulnerabilities privately to the AxisVela security team at **security@axisvela.com**. Do **not** open a public issue for a security vulnerability.
 
 Include in your report:
 

@@ -1,4 +1,4 @@
-from axisrobo_harmovela_recovery import InMemoryDeliveryStore
+from axisvela_harmovela_recovery import InMemoryDeliveryStore
 
 
 def test_tracks_and_acknowledges_events():

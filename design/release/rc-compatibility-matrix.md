@@ -14,7 +14,7 @@
 | Topology ID/version | `harmovela.topology.hub-spoke.v1` |
 | External L3 pilot | **PENDING** |
 | Release-blocker count | `0 open release-blocker issues recorded` |
-| Release maintainer | Axisrobo team (designated for `v0.9.0-rc.1`; see `rc-validation.md`) |
+| Release maintainer | AxisVela team (designated for `v0.9.0-rc.1`; see `rc-validation.md`) |
 | Public tracker | `https://github.com/axisvela/harmovela/issues` |
 
 ## Module Inventory

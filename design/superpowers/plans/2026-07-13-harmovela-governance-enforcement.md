@@ -18,7 +18,7 @@
 - Modify: `implementations/typescript/test/fixtures.test.js`
 - Modify: `implementations/python/tests/test_fixtures.py`
 - Modify: `implementations/go/aep/conformance_test.go`
-- Modify: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Modify: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 
 - [ ] **Step 1: Preserve and complete failing fixture assertions**
 
@@ -59,7 +59,7 @@ Create fixture events that carry `actor_id`, `tenant_id`, `roles`, requested act
 - Create: `implementations/typescript/src/governance.js`
 - Create: `implementations/python/src/aep/governance.py`
 - Create: `implementations/go/aep/governance.go`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/GovernancePolicy.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/GovernancePolicy.java`
 
 - [ ] **Step 1: Write failing unit tests for role/action and tenant rules**
 
@@ -86,7 +86,7 @@ Expected: each policy test passes without altering existing non-governance behav
 - Modify: `implementations/typescript/src/harness.js`
 - Modify: `implementations/python/src/aep/harness.py`
 - Modify: `implementations/go/aep/harness.go`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/Harness.java`
 
 - [ ] **Step 1: Route protected operations through the policy**
 

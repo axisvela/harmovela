@@ -22,7 +22,7 @@
 Run:
 
 ```powershell
-rg -n "\baep\b|AEPD_|AEP_|aep_version|/aep|aep-0\.|@axisvela/aep|com\.axisrobo\.aep" schemas conformance implementations design/protocol README.md README_zh.md
+rg -n "\baep\b|AEPD_|AEP_|aep_version|/aep|aep-0\.|@axisvela/aep|com\.axisvela\.aep" schemas conformance implementations design/protocol README.md README_zh.md
 ```
 
 Record each result in `design/protocol/compatibility-matrix.md` with these columns:
@@ -144,7 +144,7 @@ git add design/protocol/event-contract.md design/protocol/governance-contract.md
 - Modify: `implementations/typescript/test/fixtures.test.js`
 - Modify: `implementations/python/tests/test_fixtures.py`
 - Modify: `implementations/go/aep/conformance_test.go`
-- Modify: `implementations/java/src/test/java/com/axisrobo/aep/ConformanceTest.java`
+- Modify: `implementations/java/src/test/java/com/axisvela/aep/ConformanceTest.java`
 
 - [ ] **Step 1: Write failing fixture tests in all four languages**
 

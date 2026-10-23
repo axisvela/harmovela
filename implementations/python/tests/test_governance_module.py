@@ -1,4 +1,4 @@
-from axisrobo_harmovela_governance import authorize
+from axisvela_harmovela_governance import authorize
 
 
 def actor(roles, tenant_id="tenant-a"):

@@ -13,9 +13,9 @@ The standard event type registry is defined in each language reference:
 | Language | File |
 |---|---|
 | TypeScript | `implementations/typescript/packages/event/src/index.js` |
-| Python | `implementations/python/src/axisrobo_harmovela_event/__init__.py` |
+| Python | `implementations/python/src/axisvela_harmovela_event/__init__.py` |
 | Go | `implementations/go/event/event_types.go` |
-| Java | `implementations/java/src/main/java/com/axisrobo/harmovela/event/` |
+| Java | `implementations/java/src/main/java/com/axisvela/harmovela/event/` |
 
 All implementations share the same set of standard types. The shared conformance manifest defines fixture-level expectations for each event family.
 

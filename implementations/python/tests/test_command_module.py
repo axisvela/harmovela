@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_command import COMMAND_EVENT_TYPES, is_command_event_type
+from axisvela_harmovela_command import COMMAND_EVENT_TYPES, is_command_event_type
 
 
 def test_command_event_types_includes_all_5_entries():

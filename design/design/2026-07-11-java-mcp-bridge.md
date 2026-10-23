@@ -4,7 +4,7 @@
 
 **Goal:** Port the TypeScript MCP bridge to Java: promote `TaskTracker` to a standalone public class with a full lifecycle API, then add an `McpBridge` JSON-RPC handler and an async tool handler emitting AEP task lifecycle events.
 
-**Architecture:** Move `TaskTracker` and its state machine out of `Harness` into a public `com.axisrobo.aep.TaskTracker` with a public `TaskState` enum, `id()` accessor, and public `accepted/started/progress/completed/failed` methods returning event maps. `Harness` uses the standalone class with identical behavior. A new `com.axisrobo.aep.McpBridge` provides JSON-RPC dispatch and an async tool handler that emits lifecycle events to a functional `EventSink`.
+**Architecture:** Move `TaskTracker` and its state machine out of `Harness` into a public `com.axisvela.aep.TaskTracker` with a public `TaskState` enum, `id()` accessor, and public `accepted/started/progress/completed/failed` methods returning event maps. `Harness` uses the standalone class with identical behavior. A new `com.axisvela.aep.McpBridge` provides JSON-RPC dispatch and an async tool handler that emits lifecycle events to a functional `EventSink`.
 
 **Tech Stack:** Java 21, Jackson, JUnit Jupiter.
 
@@ -14,9 +14,9 @@
 
 ## File Structure
 
-- Create `implementations/java/src/main/java/com/axisrobo/aep/TaskTracker.java`: standalone public class + `TaskState` enum + lifecycle methods.
-- Modify `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`: remove inner `TaskTracker`/`TaskState`/state maps; use the standalone class.
-- Create `implementations/java/src/main/java/com/axisrobo/aep/McpBridge.java`: bridge + `EventSink` + async tool handler.
+- Create `implementations/java/src/main/java/com/axisvela/aep/TaskTracker.java`: standalone public class + `TaskState` enum + lifecycle methods.
+- Modify `implementations/java/src/main/java/com/axisvela/aep/Harness.java`: remove inner `TaskTracker`/`TaskState`/state maps; use the standalone class.
+- Create `implementations/java/src/main/java/com/axisvela/aep/McpBridge.java`: bridge + `EventSink` + async tool handler.
 - Create tests: `TaskTrackerTest.java`, `McpBridgeTest.java`.
 
 ---
@@ -24,16 +24,16 @@
 ## Task 1: Promote TaskTracker to a standalone public class
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/TaskTracker.java`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/TaskTrackerTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/TaskTracker.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/Harness.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/TaskTrackerTest.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/TaskTrackerTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/TaskTrackerTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
@@ -92,10 +92,10 @@ Expected: compilation failure â€?`TaskTracker` is not a public top-level type; `
 
 - [ ] **Step 3: Create the standalone TaskTracker**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/TaskTracker.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/TaskTracker.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -183,7 +183,7 @@ public class TaskTracker {
 
 - [ ] **Step 4: Update Harness to use the standalone class**
 
-In `implementations/java/src/main/java/com/axisrobo/aep/Harness.java`:
+In `implementations/java/src/main/java/com/axisvela/aep/Harness.java`:
 
 Remove the inner `enum TaskState`, the static `EVENT_TO_STATE`, `TERMINAL`, `TRANSITIONS` maps, and the inner `static class TaskTracker` (lines 8â€?5). Keep everything else.
 
@@ -203,7 +203,7 @@ Expected: all pass.
 - [ ] **Step 6: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/TaskTracker.java implementations/java/src/main/java/com/axisrobo/aep/Harness.java implementations/java/src/test/java/com/axisrobo/aep/TaskTrackerTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/TaskTracker.java implementations/java/src/main/java/com/axisvela/aep/Harness.java implementations/java/src/test/java/com/axisvela/aep/TaskTrackerTest.java
 git commit -m "feat(java): promote TaskTracker to standalone public class with lifecycle API"
 git push origin master
 ```
@@ -213,15 +213,15 @@ git push origin master
 ## Task 2: McpBridge and async tool handler
 
 **Files:**
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/McpBridge.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/McpBridgeTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/McpBridge.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/McpBridgeTest.java`
 
 - [ ] **Step 1: Write failing tests**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/McpBridgeTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/McpBridgeTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -364,10 +364,10 @@ Expected: compilation failure â€?`McpBridge` not found.
 
 - [ ] **Step 3: Implement McpBridge**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/McpBridge.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/McpBridge.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -538,7 +538,7 @@ Expected: all pass.
 - [ ] **Step 5: Commit and push**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/McpBridge.java implementations/java/src/test/java/com/axisrobo/aep/McpBridgeTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/McpBridge.java implementations/java/src/test/java/com/axisvela/aep/McpBridgeTest.java
 git commit -m "feat(java): add MCP bridge with JSON-RPC handler and async tool handler"
 git push origin master
 ```

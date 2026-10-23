@@ -12,12 +12,12 @@
 
 ## File Structure
 
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/DeliveryJournal.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/DeliveryTracker.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/DeliveryJournalTest.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/DeliveryTrackerTest.java`
 - Modify: `implementations/java/README.md`
 
 ---
@@ -25,15 +25,15 @@
 ### Task 1: InMemoryDeliveryStore
 
 **Files:**
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
@@ -136,10 +136,10 @@ Expected: FAIL (compilation error).
 
 - [ ] **Step 3: Implement**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.Instant;
 import java.util.*;
@@ -269,7 +269,7 @@ Expected: 8 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/InMemoryDeliveryStore.java implementations/java/src/test/java/com/axisrobo/aep/InMemoryDeliveryStoreTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/InMemoryDeliveryStore.java implementations/java/src/test/java/com/axisvela/aep/InMemoryDeliveryStoreTest.java
 git commit -m "feat: add Java InMemoryDeliveryStore with tests"
 ```
 
@@ -278,15 +278,15 @@ git commit -m "feat: add Java InMemoryDeliveryStore with tests"
 ### Task 2: DeliveryJournal
 
 **Files:**
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/DeliveryJournalTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/DeliveryJournal.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/DeliveryJournalTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
@@ -369,10 +369,10 @@ Expected: FAIL.
 
 - [ ] **Step 3: Implement**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/DeliveryJournal.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.time.Instant;
 import java.util.*;
@@ -451,7 +451,7 @@ Expected: 6 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryJournal.java implementations/java/src/test/java/com/axisrobo/aep/DeliveryJournalTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/DeliveryJournal.java implementations/java/src/test/java/com/axisvela/aep/DeliveryJournalTest.java
 git commit -m "feat: add Java DeliveryJournal with tests"
 ```
 
@@ -460,15 +460,15 @@ git commit -m "feat: add Java DeliveryJournal with tests"
 ### Task 3: DeliveryTracker
 
 **Files:**
-- Create: `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`
+- Create: `implementations/java/src/test/java/com/axisvela/aep/DeliveryTrackerTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/DeliveryTracker.java`
 
 - [ ] **Step 1: Write failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/DeliveryTrackerTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
@@ -571,10 +571,10 @@ Expected: FAIL.
 
 - [ ] **Step 3: Implement**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/DeliveryTracker.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import java.util.List;
 import java.util.Map;
@@ -682,7 +682,7 @@ Expected: ~40 tests pass (17 existing + 23 new).
 - [ ] **Step 6: Commit**
 
 ```bash
-git add implementations/java/src/main/java/com/axisrobo/aep/DeliveryTracker.java implementations/java/src/test/java/com/axisrobo/aep/DeliveryTrackerTest.java
+git add implementations/java/src/main/java/com/axisvela/aep/DeliveryTracker.java implementations/java/src/test/java/com/axisvela/aep/DeliveryTrackerTest.java
 git commit -m "feat: add Java DeliveryTracker with store and journal"
 ```
 

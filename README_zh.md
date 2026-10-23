@@ -1,6 +1,6 @@
 # Harmovela Protocol
 
-> [English](README.md) | [规范站点](https://axisrobo.github.io/harmovela/)
+> [English](README.md) | [规范站点](https://axisvela.github.io/harmovela/)
 
 **Harmovela Protocol** 是一个面向自主系统的开放协调协议。它定义了智能体、工具、记忆系统、上下文提供者、环境观察器和多智能体运行时如何在七个相互依存的维度上进行协调：
 
@@ -27,7 +27,7 @@ Harmovela 补充 MCP。MCP 仍是同步能力调用层；Harmovela 提供异步�
 - **10+ 维度模块**：事件、恢复、治理、任务、状态、上下文/记忆、委派、工具、智能体、环境、适配
 - **5 个基础设施模块**：Harness、Runtime、CLI、Conformance、MCP Bridge
 - **SQLite 和 PostgreSQL 交付存储**：支持重试、死信、重放，并通过跨语言一致性验证
-- **规范站点**：[axisrobo.github.io/harmovela](https://axisrobo.github.io/harmovela/)
+- **规范站点**：[axisvela.github.io/harmovela](https://axisvela.github.io/harmovela/)
 
 ## 愿景
 
@@ -200,7 +200,7 @@ node examples/mcp-bridge/async-tool.js
 
 ## 规范站点
 
-渲染后的规范发布在 [https://axisrobo.github.io/harmovela/](https://axisrobo.github.io/harmovela/)。
+渲染后的规范发布在 [https://axisvela.github.io/harmovela/](https://axisvela.github.io/harmovela/)。
 
 ## 当前状态
 

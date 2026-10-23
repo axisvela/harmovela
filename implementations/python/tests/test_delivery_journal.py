@@ -1,4 +1,4 @@
-from axisrobo_harmovela_recovery import DeliveryJournal
+from axisvela_harmovela_recovery import DeliveryJournal
 
 
 def test_appends_events_with_sequence():

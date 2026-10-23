@@ -1158,8 +1158,8 @@ git commit -m "feat: add TypeScript PostgresDeliveryStore backend (async standal
 
 **Files:**
 - Modify: `implementations/java/pom.xml` (add PostgreSQL JDBC dependency)
-- Create: `implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`
-- Test: `implementations/java/src/test/java/com/axisrobo/aep/PostgresDeliveryStoreTest.java`
+- Create: `implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java`
+- Test: `implementations/java/src/test/java/com/axisvela/aep/PostgresDeliveryStoreTest.java`
 
 - [ ] **Step 1: Add the PostgreSQL JDBC dependency**
 
@@ -1175,10 +1175,10 @@ Modify `implementations/java/pom.xml` â€?add after the `sqlite-jdbc` dependency 
 
 - [ ] **Step 2: Write the failing test**
 
-Create `implementations/java/src/test/java/com/axisrobo/aep/PostgresDeliveryStoreTest.java`:
+Create `implementations/java/src/test/java/com/axisvela/aep/PostgresDeliveryStoreTest.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1272,10 +1272,10 @@ Expected: compilation failure â€?`PostgresDeliveryStore` does not exist.
 
 - [ ] **Step 4: Write the implementation**
 
-Create `implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java`:
+Create `implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java`:
 
 ```java
-package com.axisrobo.aep;
+package com.axisvela.aep;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.*;
@@ -1559,7 +1559,7 @@ public class PostgresDeliveryStore implements DeliveryStore {
 }
 ```
 
-Note: `DeliveryStore` is package-private but `PostgresDeliveryStore` is in the same package `com.axisrobo.aep`, so it can implement the interface.
+Note: `DeliveryStore` is package-private but `PostgresDeliveryStore` is in the same package `com.axisvela.aep`, so it can implement the interface.
 
 - [ ] **Step 5: Run tests to verify they pass**
 
@@ -1574,7 +1574,7 @@ Expected: BUILD SUCCESS, all tests pass (previous 86 + 6 new = 92).
 - [ ] **Step 7: Commit**
 
 ```bash
-git add implementations/java/pom.xml "implementations/java/src/main/java/com/axisrobo/aep/PostgresDeliveryStore.java" "implementations/java/src/test/java/com/axisrobo/aep/PostgresDeliveryStoreTest.java"
+git add implementations/java/pom.xml "implementations/java/src/main/java/com/axisvela/aep/PostgresDeliveryStore.java" "implementations/java/src/test/java/com/axisvela/aep/PostgresDeliveryStoreTest.java"
 git commit -m "feat: add Java PostgresDeliveryStore backend"
 ```
 

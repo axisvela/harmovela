@@ -4,7 +4,7 @@
 
 **Goal:** Transition the public protocol identity to Harmovela and establish versioned gates from the current draft through 1.0.
 
-**Architecture:** Treat naming, wire identity, package artifact identity, and repository identity as separate versioned surfaces. Axisrobo remains the package and group namespace. Publish Harmovela as the formal protocol identity first, then migrate technical identifiers only through explicit compatibility decisions and conformance coverage.
+**Architecture:** Treat naming, wire identity, package artifact identity, and repository identity as separate versioned surfaces. AxisVela remains the package and group namespace. Publish Harmovela as the formal protocol identity first, then migrate technical identifiers only through explicit compatibility decisions and conformance coverage.
 
 **Tech Stack:** Markdown specifications, JSON Schema, TypeScript, Python, Go, Java, shared conformance fixtures, GitHub Actions.
 
@@ -52,7 +52,7 @@ git commit -m "docs: establish Harmovela protocol identity"
 - Modify: `implementations/typescript/src/event-types.js`
 - Modify: `implementations/python/src/aep/event_types.py`
 - Modify: `implementations/go/aep/event_types.go`
-- Modify: `implementations/java/src/main/java/com/axisrobo/aep/EventTypes.java`
+- Modify: `implementations/java/src/main/java/com/axisvela/aep/EventTypes.java`
 
 - [ ] **Step 1: Inventory every wire and schema identifier containing the legacy name**
 
@@ -62,7 +62,7 @@ Expected: A reviewed inventory separating externally serialized fields, package 
 
 - [ ] **Step 2: Write the compatibility decision before editing schemas**
 
-Document whether the existing envelope version field remains supported through 0.x, the first version that introduces a neutral protocol identifier, and the exact reader behavior for both forms. Preserve the `axisrobo` package and group namespace while deciding each artifact's public name.
+Document whether the existing envelope version field remains supported through 0.x, the first version that introduces a neutral protocol identifier, and the exact reader behavior for both forms. Preserve the `axisvela` package and group namespace while deciding each artifact's public name.
 
 - [ ] **Step 3: Add shared positive and negative conformance fixtures**
 

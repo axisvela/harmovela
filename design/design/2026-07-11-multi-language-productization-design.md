@@ -107,8 +107,8 @@ Each language is its own implementation plan and its own set of batched commits.
 
 - Dependencies: `info.picocli:picocli` for CLI; JDK `com.sun.net.httpserver.HttpServer` for the API server.
 - First extract standalone subscription matching into `Subscriptions.java` and task lifecycle into `TaskTracker.java` (moved out of `Harness`).
-- New package `com.axisrobo.aep.runtime` with `Config`, `AepRuntimeService`, `ApiServer`, and a daemon main class `Aepd`.
-- New `com.axisrobo.aep.cli.AepCli` picocli entrypoint.
+- New package `com.axisvela.aep.runtime` with `Config`, `AepRuntimeService`, `ApiServer`, and a daemon main class `Aepd`.
+- New `com.axisvela.aep.cli.AepCli` picocli entrypoint.
 - `pom.xml` adds picocli and an exec/shade configuration to run the CLI and daemon main classes.
 - Tests with `mvn test` (JUnit Jupiter), spawning processes or invoking main methods, and HTTP api tests via `java.net.http.HttpClient`.
 

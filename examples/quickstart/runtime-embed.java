@@ -1,7 +1,7 @@
-package com.axisrobo.harmovela.examples;
+package com.axisvela.harmovela.examples;
 
-import com.axisrobo.harmovela.runtime.HarmovelaRuntimeService;
-import com.axisrobo.harmovela.runtime.Config;
+import com.axisvela.harmovela.runtime.HarmovelaRuntimeService;
+import com.axisvela.harmovela.runtime.Config;
 
 public class Quickstart {
     public static void main(String[] args) {

@@ -5,7 +5,7 @@ import time
 import grpc
 import pytest
 
-from axisrobo_harmovela_event.transport.grpc import GrpcServerTransport, GrpcClientTransport
+from axisvela_harmovela_event.transport.grpc import GrpcServerTransport, GrpcClientTransport
 
 
 def _event(t, payload=None):

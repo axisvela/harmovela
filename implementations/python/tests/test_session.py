@@ -1,5 +1,5 @@
 import pytest
-from axisrobo_harmovela_event import HarmovelaSession
+from axisvela_harmovela_event import HarmovelaSession
 
 
 class TestSession:

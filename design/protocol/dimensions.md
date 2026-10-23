@@ -56,19 +56,19 @@ Infrastructure modules are not dimension-specific and provide cross-cutting buil
 
 | Dimension | TypeScript | Python | Go | Java |
 |---|---|---|---|---|
-| Event | `packages/event/` | `axisrobo_harmovela_event/` | `event/` | `harmovela/event/` |
-| Recovery | `packages/recovery/` | `axisrobo_harmovela_recovery/` | `recovery/` | `harmovela/recovery/` |
-| Governance | `packages/governance/` | `axisrobo_harmovela_governance/` | `governance/` | `harmovela/governance/` |
-| Task | `packages/task/` | `axisrobo_harmovela_task/` | `task/` | `harmovela/task/` |
-| State | `packages/state/` | `axisrobo_harmovela_state/` | `state/` | `harmovela/state/` |
-| Context / Memory | `packages/context/` | `axisrobo_harmovela_context/` | `context/` | `harmovela/context/` |
-| Delegation | `packages/delegation/` | `axisrobo_harmovela_delegation/` | `delegation/` | `harmovela/delegation/` |
-| Tool | `packages/tool/` | `axisrobo_harmovela_tool/` | `tool/` | `harmovela/tool/` |
-| Agent | `packages/agent/` | `axisrobo_harmovela_agent/` | `agent/` | `harmovela/agent/` |
-| Environment | `packages/environment/` | `axisrobo_harmovela_environment/` | `environment/` | `harmovela/environment/` |
-| Adaptation | `packages/adaptation/` | `axisrobo_harmovela_adaptation/` | `adaptation/` | `harmovela/adaptation/` |
-| Command | `packages/command/` | `axisrobo_harmovela_command/` | `command/` | `harmovela/command/` |
-| Query | `packages/query/` | `axisrobo_harmovela_query/` | `query/` | `harmovela/query/` |
+| Event | `packages/event/` | `axisvela_harmovela_event/` | `event/` | `harmovela/event/` |
+| Recovery | `packages/recovery/` | `axisvela_harmovela_recovery/` | `recovery/` | `harmovela/recovery/` |
+| Governance | `packages/governance/` | `axisvela_harmovela_governance/` | `governance/` | `harmovela/governance/` |
+| Task | `packages/task/` | `axisvela_harmovela_task/` | `task/` | `harmovela/task/` |
+| State | `packages/state/` | `axisvela_harmovela_state/` | `state/` | `harmovela/state/` |
+| Context / Memory | `packages/context/` | `axisvela_harmovela_context/` | `context/` | `harmovela/context/` |
+| Delegation | `packages/delegation/` | `axisvela_harmovela_delegation/` | `delegation/` | `harmovela/delegation/` |
+| Tool | `packages/tool/` | `axisvela_harmovela_tool/` | `tool/` | `harmovela/tool/` |
+| Agent | `packages/agent/` | `axisvela_harmovela_agent/` | `agent/` | `harmovela/agent/` |
+| Environment | `packages/environment/` | `axisvela_harmovela_environment/` | `environment/` | `harmovela/environment/` |
+| Adaptation | `packages/adaptation/` | `axisvela_harmovela_adaptation/` | `adaptation/` | `harmovela/adaptation/` |
+| Command | `packages/command/` | `axisvela_harmovela_command/` | `command/` | `harmovela/command/` |
+| Query | `packages/query/` | `axisvela_harmovela_query/` | `query/` | `harmovela/query/` |
 
 ## Dependencies
 
