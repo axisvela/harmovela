@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/axisvela/harmovela/v3/event"
+	"github.com/axisvela/harmovela/implementations/go/v3/event"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

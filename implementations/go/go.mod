@@ -1,4 +1,4 @@
-module github.com/axisvela/harmovela/v3
+module github.com/axisvela/harmovela/implementations/go/v3
 
 go 1.26.0
 

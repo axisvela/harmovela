@@ -3,17 +3,17 @@ package harness
 import (
 	"time"
 
-	"github.com/axisvela/harmovela/v3/adaptation"
-	"github.com/axisvela/harmovela/v3/agent"
-	"github.com/axisvela/harmovela/v3/command"
-	"github.com/axisvela/harmovela/v3/context"
-	"github.com/axisvela/harmovela/v3/delegation"
-	"github.com/axisvela/harmovela/v3/environment"
-	"github.com/axisvela/harmovela/v3/event"
-	"github.com/axisvela/harmovela/v3/query"
-	"github.com/axisvela/harmovela/v3/recovery"
-	"github.com/axisvela/harmovela/v3/state"
-	"github.com/axisvela/harmovela/v3/tool"
+	"github.com/axisvela/harmovela/implementations/go/v3/adaptation"
+	"github.com/axisvela/harmovela/implementations/go/v3/agent"
+	"github.com/axisvela/harmovela/implementations/go/v3/command"
+	"github.com/axisvela/harmovela/implementations/go/v3/context"
+	"github.com/axisvela/harmovela/implementations/go/v3/delegation"
+	"github.com/axisvela/harmovela/implementations/go/v3/environment"
+	"github.com/axisvela/harmovela/implementations/go/v3/event"
+	"github.com/axisvela/harmovela/implementations/go/v3/query"
+	"github.com/axisvela/harmovela/implementations/go/v3/recovery"
+	"github.com/axisvela/harmovela/implementations/go/v3/state"
+	"github.com/axisvela/harmovela/implementations/go/v3/tool"
 )
 
 func Now() string {

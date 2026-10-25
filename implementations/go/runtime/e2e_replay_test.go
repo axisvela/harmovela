@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	hmevent "github.com/axisvela/harmovela/v3/event"
-	hmtransport "github.com/axisvela/harmovela/v3/event/transport"
+	hmevent "github.com/axisvela/harmovela/implementations/go/v3/event"
+	hmtransport "github.com/axisvela/harmovela/implementations/go/v3/event/transport"
 )
 
 type replayTestConsumer struct {

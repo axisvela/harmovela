@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/axisvela/harmovela/v3/task"
+	"github.com/axisvela/harmovela/implementations/go/v3/task"
 )
 
 func TestMcpInitialize(t *testing.T) {

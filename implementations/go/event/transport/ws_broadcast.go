@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/axisvela/harmovela/v3/event"
+	"github.com/axisvela/harmovela/implementations/go/v3/event"
 	"github.com/gorilla/websocket"
 )
 

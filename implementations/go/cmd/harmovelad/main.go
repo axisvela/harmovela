@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/axisvela/harmovela/v3/runtime"
+	"github.com/axisvela/harmovela/implementations/go/v3/runtime"
 )
 
 func main() {

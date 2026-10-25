@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/axisvela/harmovela/v3/event"
-	eventtransport "github.com/axisvela/harmovela/v3/event/transport"
-	"github.com/axisvela/harmovela/v3/harness"
-	"github.com/axisvela/harmovela/v3/recovery"
+	"github.com/axisvela/harmovela/implementations/go/v3/event"
+	eventtransport "github.com/axisvela/harmovela/implementations/go/v3/event/transport"
+	"github.com/axisvela/harmovela/implementations/go/v3/harness"
+	"github.com/axisvela/harmovela/implementations/go/v3/recovery"
 	"github.com/google/uuid"
 )
 
