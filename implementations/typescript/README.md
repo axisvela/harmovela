@@ -51,5 +51,7 @@ Current scope:
 - JSON Schema validation with shared schemas
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store (InMemory + SQLite), and event journal
 - MCP bridge, bridge demo, and MCP+AEP consumer demo
+- `@axisvela/harmovela-client` HTTP client SDK for publish, subscriptions,
+  polling, SSE streams, and delivery inspection
 - Async tool producer, memory event producer, and agent subscriber demos
 - Deterministic shared fixtures from `../../conformance/fixtures/`

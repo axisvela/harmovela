@@ -21,7 +21,8 @@
     "packages/runtime",
     "packages/cli",
     "packages/conformance",
-    "packages/mcp-bridge"
+    "packages/mcp-bridge",
+    "packages/client"
   ],
   "description": "Harmovela Protocol TypeScript reference implementation.",
   "main": "./src/index.js",
@@ -69,7 +70,8 @@
     "better-sqlite3": "^13.0.3",
     "commander": "^15.0.0",
     "pg": "^8.22.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "@axisvela/harmovela-client": "file:packages/client"
   },
   "engines": {
     "node": ">=20"

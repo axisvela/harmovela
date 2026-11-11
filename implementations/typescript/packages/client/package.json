@@ -1,0 +1,12 @@
+{
+  "name": "@axisvela/harmovela-client",
+  "version": "0.1.0-draft",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "@axisvela/harmovela-event": "file:../event"
+  }
+}
