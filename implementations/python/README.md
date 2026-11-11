@@ -20,6 +20,7 @@ Current scope:
 - Harness with capabilities, session, subscription, and task handling
 - Transport bindings: stdio, WebSocket (server/client), SSE, gRPC (server/client)
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store (InMemory + SQLite), and event journal
+- HTTP client SDK: harmovela_client for publish, subscriptions, polling, SSE streams, and delivery inspection
 - Pytest conformance tests using shared fixtures from `../../conformance/fixtures/`
 
 Aligned with `reference/typescript/` behavior.
