@@ -17,6 +17,24 @@ mvn compile
 mvn test
 ```
 
+## HTTP Client SDK
+
+`com.axisvela.harmovela.client.HarmovelaClient` covers publish, subscriptions,
+polling, SSE streams, and delivery inspection.
+
+```java
+var client = new HarmovelaClient("http://127.0.0.1:8790");
+client.publish(Map.of(
+        "spec_version", "0.2",
+        "id", "evt_1",
+        "type", "task.submitted",
+        "source", "my-service",
+        "created_at", Instant.now().toString(),
+        "payload", Map.of()));
+var subscription = client.createSubscription(Map.of("types", "task.*"));
+client.stream((String) subscription.get("id"), event -> System.out.println(event));
+```
+
 ## Current Scope
 
 - Typed envelope and field-level validation
@@ -30,3 +48,5 @@ mvn test
 - Delivery tracking with ack/retry/dead-letter helpers, pluggable store, and event journal
 - Transport bindings: stdio, WebSocket, SSE, gRPC
 - Shared fixture integration from `../../conformance/fixtures/`
+- HTTP client SDK for publish, subscriptions, polling, SSE streams, and delivery
+  inspection
