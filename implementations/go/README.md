@@ -32,5 +32,6 @@ Conformance tests consume the shared manifest and fixtures from `../../../confor
 - WebSocket transport (JSON frames)
 - SSE transport (server-sent events)
 - gRPC bidirectional streaming transport (server + client)
+- HTTP client SDK in client/ for publish, subscriptions, polling, SSE streams, and delivery inspection
 - Manifest-driven C0 and C1 conformance tests
 - Shared fixture integration from `../../../conformance/fixtures/`
